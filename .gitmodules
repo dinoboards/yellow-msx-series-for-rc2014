@@ -1,3 +1,8 @@
 [submodule "cbios"]
 	path = cbios
 	url = git@github.com:vipoo/cbios.git
+	branch = dean/spike
+[submodule "nextor"]
+	path = nextor
+	url = git@github.com:vipoo/Nextor.git
+	branch = dean/spike

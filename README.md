@@ -29,10 +29,19 @@ For more details, see its README file:
 
 [cbios/README.md](cbios/README.md)
 
+### NEXTOR
 
-### Assembling
+For more details, see its README file:
 
-#### MEMORY.JED
+the original [nextor/README.md](nextor/README.md)
+
+and for the linux build process:
+
+[nextor/linuxtools/README.md](nextor/linuxtools/README.md)
+
+### Building
+
+#### memory.jed
 
 To assembly jed file, on a windows system:
 
@@ -49,6 +58,15 @@ If you are using Windows Subsystem for linux, you can invoke this script thru th
 
 `make memory.jed`
 
-#### CBIOS
+#### cbios
 
 `make cbios`
+
+#### nextor
+
+Must install the required prerequisites with `make install-prereq`
+
+there after:
+
+`make nextor`
+
