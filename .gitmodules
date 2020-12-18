@@ -1,0 +1,3 @@
+[submodule "cbios"]
+	path = cbios
+	url = git@github.com:vipoo/cbios.git
