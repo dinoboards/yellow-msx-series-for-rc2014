@@ -21,7 +21,8 @@ cbios:
 .PHONY: nextor
 nextor:
 	@mkdir -p ./bin
-	sudo echo "Requires sudo permission"
+	echo "Requires sudo permission"
+	sudo echo
 	cd nextor/source
 	BUILD_TYPE=cbios $(MAKE) nextor-2.1.1-alpha2.embedded.rom -O -j --no-print-directory
 
