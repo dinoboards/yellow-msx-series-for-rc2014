@@ -4,6 +4,7 @@ SHELL := /bin/bash
 .ONESHELL:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
+CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
 
 all: rom-image
 
@@ -11,7 +12,14 @@ all: rom-image
 memory.jed: bin/memory.jed
 
 bin/memory.jed:
-	@cmd.exe /C build-jed.bat
+	@cmd.exe /C "$(CDWINDOWS) build-jed.bat memory"
+
+.PHONY: rom-mapper.jed
+rom-mapper.jed: bin/rom-mapper.jed
+
+bin/rom-mapper.jed:
+	@cmd.exe /C "$(CDWINDOWS) build-jed.bat rom-mapper"
+
 
 .PHONY: cbios
 cbios:
