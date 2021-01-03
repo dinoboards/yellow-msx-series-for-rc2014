@@ -21,6 +21,12 @@ bin/rom-mapper.jed:
 	@cmd.exe /C "$(CDWINDOWS) build-jed.bat rom-mapper"
 
 
+.PHONY: cpu-clk-selector.jed
+cpu-clk-selector.jed: bin/cpu-clk-selector.jed
+
+bin/cpu-clk-selector.jed:
+	@cmd.exe /C "$(CDWINDOWS) build-jed.bat cpu-clk-selector"
+
 
 .PHONY: cbios
 cbios:

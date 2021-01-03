@@ -1,0 +1,103 @@
+Name     cpu-clk-selector ;
+PartNo   00 ;
+Date     15/12/2020 ;
+Revision 01 ;
+Designer Dean Netherton ;
+Company  Dino ;
+Assembly None ;
+Location  ;
+Device   g22v10;
+
+
+/************* INPUT PINS *********************/
+PIN  1 = CPU_CLK;
+PIN  2 = Q0;
+PIN  3 = Q1;
+PIN  4 = Q2;
+PIN  5 = Q3;
+PIN  6 = Q4;
+PIN  7 = Q5;
+PIN  8 = Q6;
+PIN  9 = Q7;
+PIN 10 = !IORQ;
+PIN 11 = !MREQ;
+PIN 12 = GND;
+PIN 13 = !M1;
+
+/**************** OUTPUT PINS *********************/
+PIN 14 = CNT4;
+PIN 15 = C0;
+PIN 16 = C1;
+PIN 17 = C2;
+PIN 18 = AWAIT;
+PIN 19 = !WAIT;
+PIN 20 = C3;
+PIN 21 = CNT1;
+PIN 22 = CNT2;
+PIN 23 = CNT3;
+PIN 24 = VCC;
+
+WAIT_IO_0 = !Q2 & !Q1 & !Q0;
+WAIT_IO_1 = !Q2 & !Q1 &  Q0;
+WAIT_IO_2 = !Q2 &  Q1 & !Q0;
+WAIT_IO_3 = !Q2 &  Q1 &  Q0;
+WAIT_IO_4 =  Q2 & !Q1 & !Q0;
+
+WAIT_MR_0 = !Q5 & !Q4 & !Q3;
+WAIT_MR_1 = !Q5 & !Q4 &  Q3;
+WAIT_MR_2 = !Q5 &  Q4 & !Q3;
+WAIT_MR_3 = !Q5 &  Q4 &  Q3;
+WAIT_MR_4 =  Q5 & !Q4 & !Q3;
+
+WAIT_M1_0 = !Q7 & !Q6;
+WAIT_M1_1 = !Q7 &  Q6;
+
+IO = IORQ & !M1;
+MR = MREQ;
+WAITE	= IORQ # MREQ # M1;
+
+CNT0 = !C2 & !C1 & !C0;
+CNT1 = !C2 & !C1 &  C0;
+CNT2 = !C2 &  C1 & !C0;
+CNT3 = !C2 &  C1 &  C0;
+CNT4 =  C2 & !C1 & !C0;
+
+WAIT = 		(IO & !AWAIT & WAIT_IO_1 & !CNT1) #
+		(IO & !AWAIT & WAIT_IO_2 & !CNT2) #
+		(IO & !AWAIT & WAIT_IO_3 & !CNT3) #
+		(IO & !AWAIT & WAIT_IO_4 & !CNT4) #
+		(MR & !AWAIT & WAIT_MR_1 & !CNT1) #
+		(MR & !AWAIT & WAIT_MR_2 & !CNT2) #
+		(MR & !AWAIT & WAIT_MR_3 & !CNT3) #
+		(MR & !AWAIT & WAIT_MR_4 & !CNT4) #
+		(M1 & !AWAIT & WAIT_M1_1 & !CNT1);
+
+AWAIT.D =	(IO & !AWAIT & WAIT_IO_1 & CNT1) #
+		(IO & !AWAIT & WAIT_IO_2 & CNT2) #
+		(IO & !AWAIT & WAIT_IO_3 & CNT3) #
+		(IO & !AWAIT & WAIT_IO_4 & CNT4) #
+		(MR & !AWAIT & WAIT_MR_1 & CNT1) #
+		(MR & !AWAIT & WAIT_MR_2 & CNT2) #
+		(MR & !AWAIT & WAIT_MR_3 & CNT3) #
+		(MR & !AWAIT & WAIT_MR_4 & CNT4) #
+		(M1 & !AWAIT & WAIT_M1_1 & CNT1) #
+		(WAITE & AWAIT);
+
+C0.D	= WAIT & !C0;
+
+C1.D	= (WAIT & !C1 &  C0) #
+	  (WAIT &  C1 & !C0);
+
+C2.D	= (WAIT & !C2 &  C1 &  C0) #
+	  (WAIT &  C2 & !C1 & !C0) #
+	  (WAIT &  C2 & !C1 &  C0) #
+	  (WAIT &  C2 &  C1 & !C0);
+
+C3.D	= (WAIT & !C3 &  C2 &  C1 &  C0) #
+	  (WAIT &  C3 & !C2 & !C1 & !C0) #
+	  (WAIT &  C3 & !C2 & !C1 &  C0) #
+	  (WAIT &  C3 & !C2 &  C1 & !C0) #
+	  (WAIT &  C3 & !C2 &  C1 &  C0) #
+	  (WAIT &  C3 &  C2 & !C1 & !C0) #
+	  (WAIT &  C3 &  C2 & !C1 &  C0) #
+	  (WAIT &  C3 &  C2 &  C1 & !C0);
