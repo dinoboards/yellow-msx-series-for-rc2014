@@ -6,7 +6,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
 
-all: rom-image
+all: rom-image bin/lines.com
 
 .PHONY: memory.jed
 memory.jed: bin/memory.jed
@@ -63,8 +63,8 @@ clean:
 
 ## Tools
 
-VPATH = ./tools/xmodem:./bin/
-ASM := ~/pasmo-0.5.3/pasmo --public -v -I ./bin/ -I ./tools/xmodem/
+VPATH = ./tools/xmodem:./bin/:./apps
+PASMO := ~/pasmo-0.5.3/pasmo --public -v -I ./bin/ -I ./tools/xmodem/
 
 bin/xrecv.com: xrecv.asm sio.asm bin/highpage.bin bdos.inc cbios.inc sio.inc ascii.inc cbios/src/hardware.asm cbios/src/hooks.asm
 
@@ -75,8 +75,18 @@ nextor/extras/xrecv.com: bin/xrecv.com
 
 bin/%.com: %.asm
 	@mkdir -p bin
-	@$(ASM) $< $@ $(@:.com=.sym)
+	@$(PASMO) $< $@ $(@:.com=.sym)
 
 bin/%.bin: %.asm
 	@mkdir -p bin
-	@$(ASM) $< $@ $(@:.bin=.sym)
+	@$(PASMO) $< $@ $(@:.bin=.sym)
+
+
+## Apps
+
+bin/lines.com: lines.c v9958.c msx.asm v9958.asm
+	@mkdir -p bin
+	@cd apps
+	zcc +msx -create-app -subtype=msxdos2 lines.c v9958.c v9958.asm msx.asm -compiler=sdcc -o lines.com
+	mv lines.com ../bin/
+	rm lines.img
