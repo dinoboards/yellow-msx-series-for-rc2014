@@ -130,30 +130,13 @@ void setMode7(uint8_t lines, uint8_t mode) {
   setBaseRegisters(mode7Reg);
 }
 
-RGB palette[16] = {
-  {0, 0, 0},
-  {1, 0, 0},
-  {4, 0, 0},
-  {4, 1, 1},
-  {15, 0, 0},
-  {0, 1, 0},
-  {0, 4, 0},
-  {1, 4, 1},
-  {1, 8, 1},
-  {0, 0, 1},
-  {0, 0, 4},
-  {1, 1, 4},
-  {1, 1, 8},
-  {10, 0, 10},
-  {0, 15, 15},
-  {15, 15, 15},
-};
-void setPalette() {
+void setPalette(RGB* pPalette) __z88dk_fastcall {
   DI
   writeRegister(16, 0);
   for(uint8_t c = 0; c < 16; c++) {
-    outPal(palette[c].red * 16 + palette[c].blue);
-    outPal(palette[c].green);
+    outPal(pPalette->red * 16 + pPalette->blue);
+    outPal(pPalette->green);
+    pPalette++;
   }
   EI
 }

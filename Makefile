@@ -6,7 +6,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
 
-all: rom-image bin/lines.com
+all: rom-image bin/lines.com bin/dots.com bin/mbrot.com
 
 .PHONY: memory.jed
 memory.jed: bin/memory.jed
@@ -84,16 +84,25 @@ bin/%.bin: %.asm
 
 ## Apps
 
+Z88DK := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 --c-code-in-asm -SO3 --max-allocs-per-node200000
+
 bin/lines.com: lines.c v9958.c msx.asm v9958.asm
 	@mkdir -p bin
-	@cd apps
-	zcc +msx -create-app -subtype=msxdos2 lines.c v9958.c v9958.asm msx.asm -compiler=sdcc -o lines.com
+	cd apps
+	$(Z88DK) lines.c v9958.c v9958.asm msx.asm -o lines.com
 	mv lines.com ../bin/
 	rm lines.img
 
 bin/dots.com: dots.c v9958.c msx.asm v9958.asm
 	@mkdir -p bin
-	@cd apps
-	zcc +msx -create-app -subtype=msxdos2 dots.c v9958.c v9958.asm msx.asm -compiler=sdcc -o dots.com
+	cd apps
+	$(Z88DK) dots.c v9958.c v9958.asm msx.asm -o dots.com
 	mv dots.com ../bin/
 	rm dots.img
+
+bin/mbrot.com: mbrot.c v9958.c msx.asm v9958.asm
+	@mkdir -p bin
+	cd apps
+	$(Z88DK) mbrot.c v9958.c v9958.asm msx.asm -o mbrot.com
+	mv mbrot.com ../bin/
+	rm mbrot.img

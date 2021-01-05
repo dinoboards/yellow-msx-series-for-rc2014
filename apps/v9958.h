@@ -4,11 +4,17 @@
 #define PAL 1
 #define NTSC 2
 
+typedef struct {
+  uint8_t red;
+  uint8_t blue;
+  uint8_t green;
+} RGB;
+
 extern void outCmd(uint8_t b) __z88dk_fastcall;
 extern void outDat(uint8_t b) __z88dk_fastcall;
 
 extern void clearAllMemory();
-extern void setPalette();
+extern void setPalette(RGB*) __z88dk_fastcall;
 extern void setMode6(uint8_t lines, uint8_t mode);
 extern void setMode7(uint8_t lines, uint8_t mode);
 extern void clearScreenBank0(uint8_t color) __z88dk_fastcall;
@@ -25,12 +31,6 @@ extern void _writeRegister(uint16_t rd) __z88dk_fastcall;
 #define CMD_PSET(op) (0x50 | op)
 #define CMD_LOGIC_IMP 0x00
 #define CMD_LOGIC_AND 0x01
-
-typedef struct {
-  uint8_t red;
-  uint8_t blue;
-  uint8_t green;
-} RGB;
 
 
 void commandDrawLine();
