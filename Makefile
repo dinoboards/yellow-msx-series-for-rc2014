@@ -90,3 +90,10 @@ bin/lines.com: lines.c v9958.c msx.asm v9958.asm
 	zcc +msx -create-app -subtype=msxdos2 lines.c v9958.c v9958.asm msx.asm -compiler=sdcc -o lines.com
 	mv lines.com ../bin/
 	rm lines.img
+
+bin/dots.com: dots.c v9958.c msx.asm v9958.asm
+	@mkdir -p bin
+	@cd apps
+	zcc +msx -create-app -subtype=msxdos2 dots.c v9958.c v9958.asm msx.asm -compiler=sdcc -o dots.com
+	mv dots.com ../bin/
+	rm dots.img

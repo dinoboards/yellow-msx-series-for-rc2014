@@ -22,6 +22,7 @@ extern void _writeRegister(uint16_t rd) __z88dk_fastcall;
 
 #define CMD_VDP_TO_VRAM 0xC0
 #define CMD_LINE(op) (0x70 | op)
+#define CMD_PSET(op) (0x50 | op)
 #define CMD_LOGIC_IMP 0x00
 #define CMD_LOGIC_AND 0x01
 
@@ -55,3 +56,10 @@ extern uint16_t _toY;
   _drawLine()
 
 extern void _drawLine();
+
+#define pointSet(x, y, color, operation) \
+  _fromX = (x); \
+  _fromY = (y); \
+  _color = (color); \
+  _operation = CMD_PSET((operation)); \
+  commandDrawLine()

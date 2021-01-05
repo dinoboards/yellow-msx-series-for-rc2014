@@ -28,10 +28,11 @@ _commandDrawLine:
 	LD	A, 0x80 | 15
 	OUT	(VDP_ADDR), A
 
-waitForCommandCompletionLoop:
+	; WAIT FOR ANY PREVIOUS COMMAND TO COMPLETE
+_commandDrawLineReady:
 	IN	A, (0x99)
 	RRCA
-	JR	C, waitForCommandCompletionLoop
+	JR	C, _commandDrawLineReady
 
 	; SET INDIRECT REGISTER TO 36
 	LD	A, 36
@@ -51,6 +52,23 @@ waitForCommandCompletionLoop:
 
 	EI
 	RET
+
+
+; _commandPset:
+; 	DI
+; 	; Set read register to 2 (status)
+; 	LD	A, 2
+; 	OUT	(VDP_ADDR), A
+; 	LD	A, 0x80 | 15
+; 	OUT	(VDP_ADDR), A
+
+; 	; WAIT FOR ANY PREVIOUS COMMAND TO COMPLETE
+; _commandPsetReady:
+; 	IN	A, (0x99)
+; 	RRCA
+; 	JR	C, _commandPsetReady
+
+
 
 _waitForCommandCompletion:
 	DI
