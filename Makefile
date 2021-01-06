@@ -34,7 +34,7 @@ cbios:
 	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014.rom derived/bin/cbios_logo_msx2+.rom derived/bin/cbios_sub.rom
 
 .PHONY: nextor
-nextor: nextor/extras/xrecv.com
+nextor: nextor/extras/xrecv.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com
 	@mkdir -p ./bin
 	echo "Requires sudo permission"
 	sudo echo
@@ -52,7 +52,7 @@ rom-image: nextor cbios
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014.rom 			of=bin/ymsx.rom bs=16k count=2 seek=0
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_msx2+.rom 			of=bin/ymsx.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/ymsx.rom bs=16k count=1 seek=4
-	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.embedded.rom  of=bin/ymsx.rom bs=16k count=16 seek=8
+	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.embedded.rom  of=bin/ymsx.rom bs=16k count=24 seek=8
 
 clean:
 	@rm -rf ./bin
@@ -93,6 +93,9 @@ bin/lines.com: lines.c v9958.c msx.asm v9958.asm
 	mv lines.com ../bin/
 	rm lines.img
 
+nextor/extras/lines.com: bin/lines.com
+	cp bin/lines.com nextor/extras/lines.com
+
 bin/dots.com: dots.c v9958.c msx.asm v9958.asm
 	@mkdir -p bin
 	cd apps
@@ -100,9 +103,15 @@ bin/dots.com: dots.c v9958.c msx.asm v9958.asm
 	mv dots.com ../bin/
 	rm dots.img
 
+nextor/extras/dots.com: bin/dots.com
+	cp bin/dots.com nextor/extras/dots.com
+
 bin/mbrot.com: mbrot.c v9958.c msx.asm v9958.asm
 	@mkdir -p bin
 	cd apps
 	$(Z88DK) mbrot.c v9958.c v9958.asm msx.asm -o mbrot.com
 	mv mbrot.com ../bin/
 	rm mbrot.img
+
+nextor/extras/mbrot.com: bin/mbrot.com
+	cp bin/mbrot.com nextor/extras/mbrot.com
