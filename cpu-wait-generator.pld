@@ -18,7 +18,7 @@ PIN  5 = Q3;
 PIN  6 = Q4;
 PIN  7 = Q5;
 PIN  8 = Q6;
-PIN  9 = Q7;
+PIN  9 = BWAIT;
 PIN 10 = !IORQ;
 PIN 11 = !MREQ;
 PIN 12 = GND;
@@ -49,8 +49,8 @@ WAIT_MR_2 = !Q5 &  Q4 & !Q3;
 WAIT_MR_3 = !Q5 &  Q4 &  Q3;
 WAIT_MR_4 =  Q5 & !Q4 & !Q3;
 
-WAIT_M1_0 = !Q7 & !Q6;
-WAIT_M1_1 = !Q7 &  Q6;
+WAIT_M1_0 = !Q6;
+WAIT_M1_1 = Q6;
 
 IO = IORQ & !M1;
 MR = MREQ;
@@ -62,7 +62,8 @@ CNT2 = !C2 &  C1 & !C0;
 CNT3 = !C2 &  C1 &  C0;
 CNT4 =  C2 & !C1 & !C0;
 
-WAIT = 		(IO & !AWAIT & WAIT_IO_1 & !CNT1) #
+WAIT = 		BWAIT #
+		(IO & !AWAIT & WAIT_IO_1 & !CNT1) #
 		(IO & !AWAIT & WAIT_IO_2 & !CNT2) #
 		(IO & !AWAIT & WAIT_IO_3 & !CNT3) #
 		(IO & !AWAIT & WAIT_IO_4 & !CNT4) #
