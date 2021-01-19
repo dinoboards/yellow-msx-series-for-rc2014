@@ -80,7 +80,9 @@ A quick video of it in operation: https://youtu.be/cfbAkXvbp94
 
 In the [apps-rc2014](apps-rc2014) directory you will find the source code for some apps - they can be run under CP/M on a RC2014 system.  The prebuilt binaries can be found in the [bin](bin) directory.
 
-I am also in the process of writing a chip8 interpreter, including the [Octo - https://github.com/JohnEarnest/Octo](https://github.com/JohnEarnest/Octo) extensions.
+I am also in the process of writing/updating my chip8 interpreter, including the [Octo - https://github.com/JohnEarnest/Octo](https://github.com/JohnEarnest/Octo) extensions, for the v9958 chip.
+
+That project can be found at: https://github.com/vipoo/rc2014-chip8/tree/v9958
 
 A short video demonstration of a Octo game running on my RC2014 - https://youtu.be/Io6a7p538Uc
 
