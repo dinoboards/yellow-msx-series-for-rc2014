@@ -11,8 +11,11 @@ The design of this board has borrowed a lot from pre-existing solutions out ther
 * [S100 Computers VDP Project](http://www.s100computers.com/My%20System%20Pages/VDP%20Video%20Board/VDP%20Board.htm)
 * [The MTXPlus+ Project](http://primrosebank.net/computers/mtx/projects/mtxplus/video/mtxplus_vdp_design.htm)
 * [V9958 Video Board for rosco_m68k](https://github.com/rosco-m68k/hardware-projects/tree/master/video9958)
+* [Steckschwein](https://steckschwein.de/hardware/v9958-video-board/)
 * [The Artemisa Project](https://github.com/apoloval/artemisa)
 * [The Omega MSX Kit](https://github.com/skiselev/omega)
+
+*Standing on the sholders of giants.  Many thanks to all who share their knowledge and passions*
 
 ### Highlights:
 
@@ -24,6 +27,8 @@ The design of this board has borrowed a lot from pre-existing solutions out ther
 For the PAL version, R13 must be 16K, C14 18pf.
 For the NTSC version, R13 must be 20K and C14 27pf.
 J1 and J2 are shorted appropriately.
+
+A quick video of it in operation: https://youtu.be/cfbAkXvbp94
 
 ## Bill of Materials
 
@@ -62,10 +67,11 @@ J1 and J2 are shorted appropriately.
 | 4      |  41464C  |  U6,U7,U8,U5
 | 1      |  21.47727MHz  |  X1
 | 1      |  4.433618MHz  |  X2
-| 1      |  Right Angle 40x2 Header  |  B1
+| 1      | Right Angle 20x2 Header | B1
+| 1      | Right Angle header 1x20 |B1
 | 1      |  14 POS IC SOCKET    |
 | 1      |  16 POS IC SOCKET    |
-| 1      |  18 POS IC SOCKET    |
+| 4      |  18 POS IC SOCKET    |
 | 1      |  24 POS IC SOCKET    |
 | 1      |  64 POS IC SOCKET    |
 
@@ -74,29 +80,39 @@ J1 and J2 are shorted appropriately.
 
 In the [apps-rc2014](apps-rc2014) directory you will find the source code for some apps - they can be run under CP/M on a RC2014 system.  The prebuilt binaries can be found in the [bin](bin) directory.
 
+I am also in the process of writing a chip8 interpreter, including the [Octo - https://github.com/JohnEarnest/Octo](https://github.com/JohnEarnest/Octo) extensions.
 ## Output connections
 
 You may want to think about how you plan to connect this board to your chosen monitor.  The video signals produced by 80's hardware is not trivial to connect to modern HDMI LCD monitors.  For such monitors you will need a converter to upscale the output.  Although VGA Monitors can accept a RGB signal, they are unlikely to support the lower frequency of 15Khz produced by this board.
 
 The board produces 3 output types, Composite, S-Video and RGB.  The RGB output is recommended for best results.  The RGB output is provided via an 8 pin mini-din connector.  You will almost certainly need to make up a cable to connect to an RGB monitor or HDMI converter.
 
-The RGB output of this board provides 4 video signals (Red, Green, Blue and Sync) and 1 Ground.
+I cant recommend any specific converters - there are a few options out there OSSC, retrotink and others.
+
+I have been using an [OSSC](http://junkerhq.net/xrgb/index.php?title=OSSC), that  I purchased fully assembled. It's a bit pricey but it works really well.
+
+I suspect the [Retrotink 2x-scart](https://www.retrotink.com/product-page/retrotink-2x-scart) will work, but as I dont have one, I am unable to verify.
+
+The RGB output of this board provides 4 video signals (Red, Green, Blue and Sync) and  Ground.
 
 For more details I recommend [retrorgb.com](https://www.retrorgb.com/)'s [RGB Guide](https://www.retrorgb.com/rgbguide.html) for all things RGB, Video and conversion.
 
 ### RGB mini din pin out
 
-| Pin | Signal |
-|-----|--------|
-|  1  | Audio*  |
-|  2  | Audio  |
-|  3  | Sync**  |
-|  4  | Ground |
-|  5  | NC     |
-|  6  | Blue   |
-|  7  | Green  |
-|  8  | Red    |
+<table>
+  <tr>
+    <th>Pin</th><th>Signal</th><th/>
+  </tr>
+  <tr><td>1</td><td>Audio* </td><td rowspan=8><img src="./pictures/8pinminidin.jpg"/></td></tr>
+  <tr><td>2</td><td>Audio </td></tr>
+  <tr><td>3</td><td>Sync** </td></tr>
+  <tr><td>4</td><td>Ground</td></tr>
+  <tr><td>5</td><td>NC    </td></tr>
+  <tr><td>6</td><td>Blue  </td></tr>
+  <tr><td>7</td><td>Green </td></tr>
+  <tr><td>8</td><td>Red   </td></tr>
 
+</table>
 
 \* The sync provided is Sync on composite.
 
