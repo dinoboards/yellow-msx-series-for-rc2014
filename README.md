@@ -1,7 +1,9 @@
 
 # V9958 Video Board Designed for RC2014
 
-Hackaday Project: https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014
+Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
+
+Kit available at: https://www.tindie.com/products/dinotron/v9958-msx-video-board-for-rc2014/
 
 The repo describes the a V9958 video board designed for RC2014 systems.  It is part of planned series of boards,
 to provide full MSX2+ compliance.
