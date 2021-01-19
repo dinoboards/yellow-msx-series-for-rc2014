@@ -81,6 +81,9 @@ A quick video of it in operation: https://youtu.be/cfbAkXvbp94
 In the [apps-rc2014](apps-rc2014) directory you will find the source code for some apps - they can be run under CP/M on a RC2014 system.  The prebuilt binaries can be found in the [bin](bin) directory.
 
 I am also in the process of writing a chip8 interpreter, including the [Octo - https://github.com/JohnEarnest/Octo](https://github.com/JohnEarnest/Octo) extensions.
+
+A short video demonstration of a Octo game running on my RC2014 - https://youtu.be/Io6a7p538Uc
+
 ## Output connections
 
 You may want to think about how you plan to connect this board to your chosen monitor.  The video signals produced by 80's hardware is not trivial to connect to modern HDMI LCD monitors.  For such monitors you will need a converter to upscale the output.  Although VGA Monitors can accept a RGB signal, they are unlikely to support the lower frequency of 15Khz produced by this board.
