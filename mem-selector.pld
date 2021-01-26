@@ -1,4 +1,4 @@
-Name     memory ;
+Name     mem-selector ;
 PartNo   00 ;
 Date     15/12/2020 ;
 Revision 01 ;
@@ -24,7 +24,7 @@ PIN 12 = GND;
 PIN 13 = !IORQ;
 
 /**************** OUTPUT PINS *********************/
-PIN 14 = ROMCS;
+PIN 14 = !ROMCS;
 PIN 15 = NC;
 PIN 16 = !SLTSL31;
 PIN 17 = !RAMCS;
@@ -49,7 +49,10 @@ SLTSL31	= SLT3 & SUBSLT1 & MREQ;		// SLOT 3-1 (EXTERNAL EXPANSION ROM)
 RAMCS	= SLT3 & SUBSLT2 & MREQ;		// SLOT 3-0 (INTERNAL RAM)
 SLTWR 	= FFFF & SLT3 & MREQ & WR;		// SLT3 SUB-SLOT REGISTER WRITE
 SLTRD 	= FFFF & SLT3 & MREQ & RD;		// SLT3 SUB-SLOT REGISTER READ
+
+
 PAGEWR	= FCFF & WR & IORQ;			// RAM MAPPER REGISTERS WRITE
+
 ROMCS	= (MREQ & SLT0) #
 	  (MREQ & SLT3 & SUBSLT0) #
 	  (MREQ & SLT3 & SUBSLT3);

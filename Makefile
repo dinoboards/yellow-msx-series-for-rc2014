@@ -6,13 +6,15 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
 
-all: rom-image bin/lines.com bin/dots.com bin/mbrot.com
+all: rom-image-pal bin/lines.com bin/dots.com bin/mbrot.com
 
-.PHONY: memory.jed
-memory.jed: bin/memory.jed
+jeds: mem-selector.jed rom-mapper.jed
 
-bin/memory.jed:
-	@cmd.exe /C "$(CDWINDOWS) build-jed.bat memory"
+.PHONY: mem-selector.jed
+mem-selector.jed: bin/mem-selector.jed
+
+bin/mem-selector.jed:
+	@cmd.exe /C "$(CDWINDOWS) build-jed.bat mem-selector"
 
 .PHONY: rom-mapper.jed
 rom-mapper.jed: bin/rom-mapper.jed
@@ -31,7 +33,7 @@ bin/cpu-clk-selector.jed:
 .PHONY: cbios
 cbios:
 	@mkdir -p ./bin
-	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014.rom derived/bin/cbios_logo_msx2+.rom derived/bin/cbios_sub.rom
+	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014_pal.rom  derived/bin/cbios_main_rc2014_ntsc.rom derived/bin/cbios_logo_msx2+.rom derived/bin/cbios_sub.rom
 
 .PHONY: nextor
 nextor: nextor/extras/xrecv.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com
@@ -45,14 +47,14 @@ install-prereq:
 	@cd nextor/source
 	$(MAKE) install-prereq --no-print-directory
 
-.PHONY: rom-image
-rom-image: nextor cbios
-	@rm -f bin/ymsx.rom
-	dd if=/dev/zero bs=16k count=8 of=bin/ymsx.rom
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014.rom 			of=bin/ymsx.rom bs=16k count=2 seek=0
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_msx2+.rom 			of=bin/ymsx.rom bs=16k count=1 seek=2
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/ymsx.rom bs=16k count=1 seek=4
-	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.embedded.rom  of=bin/ymsx.rom bs=16k count=24 seek=8
+.PHONY: rom-image-pal
+rom-image-pal: nextor cbios
+	@rm -f bin/ymsx-pal.rom
+	dd if=/dev/zero bs=16k count=8 of=bin/ymsx-pal.rom
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_pal.rom 	of=bin/ymsx-pal.rom bs=16k count=2 seek=0
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_msx2+.rom 			of=bin/ymsx-pal.rom bs=16k count=1 seek=2
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/ymsx-pal.rom bs=16k count=1 seek=3
+	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.embedded.rom  of=bin/ymsx-pal.rom bs=16k count=24 seek=4
 
 clean:
 	@rm -rf ./bin
