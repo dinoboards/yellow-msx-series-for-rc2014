@@ -36,7 +36,7 @@ cbios:
 	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014_pal.rom  derived/bin/cbios_main_rc2014_ntsc.rom derived/bin/cbios_logo_msx2+.rom derived/bin/cbios_sub.rom
 
 .PHONY: nextor
-nextor: nextor/extras/xrecv.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com
+nextor: nextor/extras/xrecv.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI
 	@mkdir -p ./bin
 	echo "Requires sudo permission"
 	sudo echo
@@ -125,5 +125,8 @@ bin/spike-fdd.com: spike-fdd.c fdd.asm
 
 nextor/extras/mbrot.com: bin/mbrot.com
 	cp bin/mbrot.com nextor/extras/mbrot.com
+
+nextor/extras/SROM.%: 3rdparty/SROM.%
+	@cp "$<" "$@"
 
 bin/fdu.com: fdu.asm
