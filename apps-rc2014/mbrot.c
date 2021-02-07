@@ -12,9 +12,7 @@ to see the file use external application ( graphic viewer)
  */
 #include <math.h>
 #include <stdio.h>
-
-// #include <conio.h>
-
+#include "config_request.h"
 #include "v9958.h"
 
 extern void cleanexit();
@@ -44,10 +42,10 @@ RGB palette[16] = {
 #define CY_MIN -2.0
 #define CY_MAX 2.0
 #define IX_MAX 512
-#define IY_MAX 212
+// #define lines 212
 
 #define PIXEL_WIDTH  ((CX_MAX - CX_MIN) / IX_MAX)
-#define PIXEL_HEIGHT ((CY_MAX - CY_MIN) / IY_MAX)
+// #define pixelHeight ((CY_MAX - CY_MIN) / lines)
 
 #define ESCAPE_RADIUS 2
 /* bail-out value , radius of circle ;  */
@@ -65,14 +63,19 @@ uint16_t iX, iY;
 uint8_t iteration;
 
 void main() {
-  setMode6(IY_MAX, PAL);
+  const uint8_t mode = getVideoMode();
+  const uint8_t lines = getLineCount();
+
+  setMode6(lines, PAL);
   setPalette(palette);
   clearScreenBank0(0);
 
-  for (iY = 0; iY < IY_MAX; iY++) {
-    Cy = CY_MIN + iY * PIXEL_HEIGHT;
+  const float pixelHeight = ((CY_MAX - CY_MIN) / lines);
 
-    if (fabs(Cy) < PIXEL_HEIGHT / 2)
+  for (iY = 0; iY < lines; iY++) {
+    Cy = CY_MIN + iY * pixelHeight;
+
+    if (fabs(Cy) < pixelHeight / 2)
       Cy = 0.0;
 
     for (iX = 0; iX < IX_MAX; iX++) {
@@ -91,11 +94,6 @@ void main() {
       };
 
       pointSet(iX, iY, iteration, CMD_LOGIC_IMP);
-
-      // if(kbhit())
     }
   }
-
-  // while(!kbhit())
-  //   ;
 }

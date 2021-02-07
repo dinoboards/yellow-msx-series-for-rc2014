@@ -12,9 +12,9 @@ APPS := dots lines mbrot
 
 all: $(addsuffix .com,$(APPS))
 
-$(BIN)dots.com: dots.c v9958.c v9958.asm
-$(BIN)lines.com: lines.c v9958.c v9958.asm
-$(BIN)mbrot.com: mbrot.c v9958.c v9958.asm
+$(BIN)dots.com: dots.c v9958.c v9958.h v9958.asm config_request.c config_request.h
+$(BIN)lines.com: lines.c v9958.c v9958.c v9958.asm config_request.c config_request.h
+$(BIN)mbrot.com: mbrot.c v9958.c v9958.c v9958.asm config_request.c config_request.h
 
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
@@ -23,10 +23,10 @@ TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
 $(TARGETS):
 	@mkdir -p $(BIN)
-	$(ZCC) $^ -o $(notdir $@)
+	$(ZCC) $(filter-out %.h,$^) -o $(notdir $@)
 	mv $(call uppercase,$(notdir $@)) "$@"
 	rm *.bin
-	echo "Compiled $(notdir $@) from $^"
+	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
 
 
 

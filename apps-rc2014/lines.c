@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "v9958.h"
+#include "config_request.h"
 
 uint8_t getRandomSeed() __naked __z88dk_fastcall {
   __asm
@@ -34,6 +35,9 @@ RGB palette[16] = {
 };
 
 void main() {
+  const uint8_t mode = getVideoMode();
+  const uint8_t lines = getLineCount();
+
   srand(getRandomSeed());
   setMode6(212, NTSC);
   setPalette(palette);
