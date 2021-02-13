@@ -39,12 +39,12 @@ void main() {
   const uint8_t lines = getLineCount();
 
   srand(getRandomSeed());
-  setMode6(212, NTSC);
+  setMode6(lines, mode);
   setPalette(palette);
   clearScreenBank0(4);
   uint8_t c = rand() & 15;
 
   for(unsigned int i = 0; i < 4000; i++) {
-    drawLine(rand() % 512, i % 212, rand() % 512, i % 212, rand() & 15, CMD_LOGIC_IMP);
+    drawLine(rand() % 512, i % lines, rand() % 512, i % lines, rand() & 15, CMD_LOGIC_IMP);
   }
 }

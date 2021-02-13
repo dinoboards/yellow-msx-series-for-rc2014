@@ -27,6 +27,15 @@ The design of the boards has borrowed a lot from pre-existing solutions out ther
 
 *Standing on the sholders of giants.  Many thanks to all who share their knowledge and passions*
 
+## Building
+
+to build the code:
+
+```
+cd apps-rc2014
+make
+```
+
 ## V9958 Video Board Designed for RC2014
 
 See the [README file here](./video/README.md)

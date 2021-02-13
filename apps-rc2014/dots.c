@@ -47,6 +47,6 @@ void main() {
   uint8_t c = rand() & 15;
 
   for(unsigned int i = 0; i < 40000; i++) {
-    pointSet(rand() % 512, i % 212, rand() & 15, CMD_LOGIC_IMP);
+    pointSet(rand() % 512, i % lines, rand() & 15, CMD_LOGIC_IMP);
   }
 }

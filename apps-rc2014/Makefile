@@ -3,7 +3,6 @@ SHELL := /bin/bash
 .ONESHELL:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
-CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
 
 BIN = ../bin/
 ZCC := zcc +cpm -clib=sdcc_iy -SO3 -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 --max-allocs-per-node200000 -create-app
