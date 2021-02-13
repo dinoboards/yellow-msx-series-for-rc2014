@@ -11,6 +11,7 @@ see http://en.wikipedia.org/wiki/Portable_pixmap
 to see the file use external application ( graphic viewer)
  */
 #include "config_request.h"
+#include "cpm.h"
 #include "v9958.h"
 #include <math.h>
 #include <stdio.h>
@@ -27,10 +28,8 @@ RGB palette[16] = {
 #define CY_MIN        -2.0
 #define CY_MAX        2.0
 #define IX_MAX        512
-// #define lines 212
 
 #define PIXEL_WIDTH ((CX_MAX - CX_MIN) / IX_MAX)
-// #define pixelHeight ((CY_MAX - CY_MIN) / lines)
 
 #define ESCAPE_RADIUS 2
 /* bail-out value , radius of circle ;  */
@@ -55,6 +54,8 @@ void main() {
   setPalette(palette);
   clearScreenBank0(0);
 
+  printf("Press any key to abort\r\n");
+
   const float pixelHeight = ((CY_MAX - CY_MIN) / lines);
 
   for (iY = 0; iY < lines; iY++) {
@@ -77,6 +78,9 @@ void main() {
         Zx2 = Zx * Zx;
         Zy2 = Zy * Zy;
       };
+
+      if (cRawIo() != 0)
+        return;
 
       pointSet(iX, iY, iteration, CMD_LOGIC_IMP);
     }

@@ -1,3 +1,4 @@
+#include "cpm.h"
 #include "ym2149.h"
 #include <stdarg.h>
 #include <stdio.h>
@@ -68,7 +69,10 @@ void main() {
     return;
   }
 
-  while (true) {
+  printf("Press buttons on your game pad controller now\r\n");
+  printf("Press any key, on keyboard, to exit\r\n");
+
+  while (cRawIo() == 0) {
     logController(0);
     logController(1);
   }

@@ -1,4 +1,5 @@
 #include "config_request.h"
+#include "cpm.h"
 #include "v9958.h"
 #include <stdarg.h>
 #include <stdio.h>
@@ -32,7 +33,11 @@ void main() {
   clearScreenBank0(4);
   uint8_t c = rand() & 15;
 
+  printf("Press any key to abort\r\n");
+
   for (unsigned int i = 0; i < 40000; i++) {
+    if (cRawIo() != 0)
+      return;
     pointSet(rand() % 512, i % lines, rand() & 15, CMD_LOGIC_IMP);
   }
 }
