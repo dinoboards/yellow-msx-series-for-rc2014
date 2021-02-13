@@ -1,13 +1,13 @@
+#include "v9958.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "v9958.h"
 
 char input[4];
 
 uint8_t getVideoMode() {
-  while(true) {
+  while (true) {
     printf("NTSC (n) or PAL (p) mode?\r\n");
     fgets(input, sizeof(input), stdin);
     printf("\r\n");
@@ -23,7 +23,7 @@ uint8_t getVideoMode() {
 }
 
 uint8_t getLineCount() {
-  while(true) {
+  while (true) {
     printf("Vertical dot count 212(2) or 192?\r\n");
     fgets(input, sizeof(input), stdin);
     printf("\r\n");
