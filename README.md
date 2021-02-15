@@ -12,6 +12,12 @@ At the moment only the Video and Sound/Game boards are detailed - so the ability
 
 The [apps-rc2014](./apps-rc2014) directory contains source code to test and explorer the functionality of these boards.
 
+* dots.com - test the V9958 video board by drawing a series random dots
+* lines.com - test the V9958 video board by drawing a series random lines
+* mbrot.com - test the V9958 video board by slowly drawing a mandelbrot set
+* control.com - test the GAME board by writing to serial out, as buttons are pressed on any attached joystick/game pads
+* tune.com - copied from [RomWBW project](https://github.com/wwarthen/RomWBW). Play chiptune files on the GAME board - see the tunes directory for samples
+
 The story of the prototyping and development these boards can be found at the Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014) project page.
 
 ## Acknowledgements
@@ -46,7 +52,7 @@ Kit available at: https://www.tindie.com/products/dinotron/v9958-msx-video-board
 
 See the [README file here](./game/README.md)
 
-Comming Soon.
+Kit available at: https://www.tindie.com/products/dinotron/ym2149-msx-game-board-for-rc2014/
 
 ## Real-Time-Clock Board Designed for RC2014
 
@@ -60,7 +66,11 @@ See the [README file here](./ppi/README.md)
 
 Comming Soon.
 
-## Memory Board Designed for RC2014
+## Full size keyboard for RC2014
+
+Comming Soon.
+
+## MSX Memory Board Designed for RC2014
 
 See the [README file here](./memory/README.md)
 

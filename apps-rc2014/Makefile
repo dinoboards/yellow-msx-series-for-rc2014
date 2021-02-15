@@ -28,8 +28,6 @@ $(TARGETS):
 	rm *.bin
 	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
 
-
-
 .PHONY: format
 format: SHELL:=/bin/bash
 format:
