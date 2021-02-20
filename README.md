@@ -68,6 +68,8 @@ Comming Soon.
 
 ## Full size keyboard for RC2014
 
+See the [README file here](./keyboard/README.md)
+
 Comming Soon.
 
 ## MSX Memory Board Designed for RC2014

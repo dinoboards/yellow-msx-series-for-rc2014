@@ -56,7 +56,7 @@ For more see [msx.org wiki page](https://www.msx.org/wiki/Programmable_Periphera
 
 ## Using keyboard on RomWBW
 
-Although this board is designed to work under MSX's software, it can be used in a stock RC2014 build.
+Although the keyboard and PPI board are designed to work under MSX software, it can be used in a stock RC2014 build.
 
 You can write your own software to interface to the keyboard (see the demo app msxkeyb), or you can activate the
 custom driver written for RomWBW's HBIOS.  The drivers code is on my fork of [RomWBW](https://github.com/vipoo/RomWBW/tree/dean/dev-v9958).
