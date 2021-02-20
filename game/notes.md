@@ -10,11 +10,7 @@ play chiptunes, receive input from MSX compatible game pads/joysticks.
 Its based around the YM2149 chip which was include in many MSX/MSX2 systems.  The chip is very similar
 and generally compatible with the AY-3-8910.  Although this board is designed for the YM2149 to keep things simple.
 
-As per the [msx.org wiki](https://www.msx.org/wiki/Yamaha_YM2149)
-
-"The main difference between the YM2149 and AY-3-8910 is that the internal volume control of the D/A converter has 32 levels instead of 16, so the hardware envelope is more smooth"
-
-### Key features?
+### Key features
 * YM2149 PSG - 3 channel audio, +1 noise channel
 * 2 Controller Inputs (joystick, game-pad, and other input types) - MSX compatible
 * optional additional audio input lines, for mixing into the audio out
