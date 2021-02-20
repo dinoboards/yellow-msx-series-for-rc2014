@@ -25,7 +25,7 @@ The first board in the series is the [V9958 Video board](https://www.tindie.com/
 
 The Game board is the second in that series.
 
-More details are availble within the [hackaday project](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
+More details are available within the [hackaday project](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
 ### What's included in this kit
 
@@ -33,7 +33,7 @@ The full kits includes everything you need (PCB, passive components, crystals, s
 
 ### What else do I need to make this work?
 
-* You need a working RC2014 system (cpu, RomWBW, Clock, etc - enhanced bus required).
+* You need a working RC2014 system (CPU, RomWBW, Clock, etc - enhanced bus required).
 * For audio output, an external powered speaker to plug into the standard 3.5 socket
 * For controller, a MSX compatible controller
 
