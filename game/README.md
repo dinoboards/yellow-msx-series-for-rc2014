@@ -2,7 +2,7 @@
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-The repo describes the YM2149 sound and controller board designed for RC2014 systems.  It is part of planned series of boards, to provide full MSX2+ compliance.
+The YM2149 sound and controller board, designed for RC2014 systems, is part of planned series of boards, to provide full MSX2+ compliance.
 
 Highlights:
 * YM2149 PSG - 3 channel audio, +1 noise channel
