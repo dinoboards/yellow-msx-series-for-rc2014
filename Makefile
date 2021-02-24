@@ -33,7 +33,7 @@ bin/cpu-clk-selector.jed:
 .PHONY: cbios
 cbios:
 	@mkdir -p ./bin
-	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014_pal.rom  derived/bin/cbios_main_rc2014_ntsc.rom derived/bin/cbios_logo_msx2+.rom derived/bin/cbios_sub.rom
+	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014_pal.rom  derived/bin/cbios_main_rc2014_ntsc.rom derived/bin/cbios_logo_rc2014.rom derived/bin/cbios_sub.rom
 
 .PHONY: nextor
 nextor: nextor/extras/xrecv.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI
@@ -52,7 +52,7 @@ rom-image-pal: nextor cbios
 	@rm -f bin/ymsx-pal.rom
 	dd if=/dev/zero bs=16k count=8 of=bin/ymsx-pal.rom
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_pal.rom 	of=bin/ymsx-pal.rom bs=16k count=2 seek=0
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_msx2+.rom 			of=bin/ymsx-pal.rom bs=16k count=1 seek=2
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/ymsx-pal.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/ymsx-pal.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.embedded.rom  of=bin/ymsx-pal.rom bs=16k count=24 seek=4
 
