@@ -18,8 +18,10 @@ static void convert(rtcDateTime* datetime) __z88dk_fastcall {
   datetime->year = bcdToDecimal(datetime->year);
 }
 
+rtcDateTime datetime;
+
 void main() {
-  printf("TODO: Test the RP5C01 chip\r\n");
+  printf("Test application for RC5C01 RTC chip\r\n");
 
   const uint8_t detected = rp5c01Detect();
 
@@ -42,9 +44,12 @@ void main() {
   else
     printf("NVRAM success for index 1\r\n");
 
-  rtcDateTime datetime;
+  rp5c01TestMode(0); // Bit 0 to bit 3 can be set to place chip into test modes
+  rp5c01SetHourMode(HR_MD_24); //24 hour clock
+  rp5c01SetMode(MD_TIME);  //Enable timer
 
   printf("Showing current time.  Please any key to exit\r\n");
+
   // hide terminal cursor
   printf("\x1b[?25l");
 

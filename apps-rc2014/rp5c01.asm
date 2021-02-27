@@ -1,5 +1,5 @@
 
-	PUBLIC	_rp5c01Detect, __rp5c01SetByte, _rp5c01GetByte, _rp5c01GetTime
+	PUBLIC	_rp5c01Detect, __rp5c01SetByte, _rp5c01GetByte, _rp5c01GetTime, _rp5c01TestMode, _rp5c01SetHourMode, _rp5c01SetMode
 
 	SECTION code_user
 
@@ -180,6 +180,15 @@ RP5RTC_SETMD:
 	OUT	(RP5RTC_DAT), A			; ASSIGN MODE
 	RET
 
+; extern void rp5c01SetMode(uint8_t mode) __z88dk_fastcall;
+_rp5c01SetMode:
+	LD	A, REG_MODE			; SELECT MODE REGISTER
+	OUT	(RP5RTC_REG), A
+
+	LD	A, L
+	OUT	(RP5RTC_DAT), A			; ASSIGN MODE
+	RET
+
 ;
 ; RTC GET TIME
 ;   HL: DATE/TIME BUFFER (OUT)
@@ -243,4 +252,26 @@ RP5RTC_RDVL:
 	RLCA					; MOVE TO TOP NIBBLE
 	OR	D				; MERGE IN LOW NIBBLE
 						; A = VALUE AS BCD
+	RET
+
+; extern void rp5c01TestMode(uint8_t testBits) __z88dk_fastcall;
+
+_rp5c01TestMode:
+	LD	A, REG_TEST		; SELECT TEST REGISTER
+	OUT	(RP5RTC_REG), A
+	LD	A, L
+	OUT	(RP5RTC_DAT), A		; TURN OFF ALL TEST MODE BITS
+	RET
+
+; 0 ->12 hour system, 1 -> 24 hour system
+; extern void rp5c01SetHourMode(uint8_t mode) __z88dk_fastcall;
+
+_rp5c01SetHourMode:
+	LD	B, MODE_ALRMST
+	CALL	RP5RTC_SETMD
+
+	LD	A, REG_12_24		; SET TO 24 HOUR CLOCK
+	OUT	(RP5RTC_REG), A
+	LD	A, L
+	OUT	(RP5RTC_DAT), A
 	RET
