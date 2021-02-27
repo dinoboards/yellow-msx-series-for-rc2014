@@ -1,5 +1,5 @@
 
-	PUBLIC	_rp5c01Detect, __rp5c01SetByte, _rp5c01GetByte
+	PUBLIC	_rp5c01Detect, __rp5c01SetByte, _rp5c01GetByte, _rp5c01GetTime
 
 	SECTION code_user
 
@@ -73,7 +73,7 @@ RP5RTC_DETECT1:
 	LD	L, 0
 	RET
 
-; extern uint16_t rp5c01GetByte(uint8_t index)
+; extern uint16_t rp5c01GetByte(uint8_t index) __z88dk_fastcall
 ; result:	low byte is output value
 ; 		high byte is 0 if ok, 255 if index out of range
 _rp5c01GetByte:
@@ -123,7 +123,7 @@ RP5RTC_BADIDX:
 	LD	A, ERR_RANGE
 	RET
 
-; extern uint8_t _rp5c01SetByte(uint16_t r)
+; extern uint8_t _rp5c01SetByte(uint16_t r) __z88dk_fastcall
 ; r low byte is byte to write
 ; r high byte is index
 ; result is 0 if ok, 255 is index is out of range
@@ -178,4 +178,69 @@ RP5RTC_SETMD:
 	AND	MD_TIME | MD_ALRM
 	OR	B
 	OUT	(RP5RTC_DAT), A			; ASSIGN MODE
+	RET
+
+;
+; RTC GET TIME
+;   HL: DATE/TIME BUFFER (OUT)
+; BUFFER FORMAT IS BCD: YYMMDDHHMMSS
+; 24 HOUR TIME FORMAT IS ASSUMED
+;
+; extern void _rp5c01GetTime(rtcDateTime*) __z88dk_fastcall
+_rp5c01GetTime:
+	LD	B, MODE_TIMEST
+	CALL	RP5RTC_SETMD
+
+	LD	B, REG_1SEC
+	CALL	RP5RTC_RDVL
+	LD	(HL), A			; RP5RTC_SS
+	INC	HL
+
+	LD	B, REG_1MIN
+	CALL	RP5RTC_RDVL
+	LD	(HL), A			; RP5RTC_MM
+	INC	HL
+
+	LD	B, REG_1HR
+	CALL	RP5RTC_RDVL
+	LD	(HL), A			; RP5RTC_HH
+	INC	HL
+
+	LD	B, REG_1DAY
+	CALL	RP5RTC_RDVL
+	LD	(HL), A			; RP5RTC_DT
+	INC	HL
+
+	LD	B, REG_1MNTH
+	CALL	RP5RTC_RDVL
+	LD	(HL), A			; RP5RTC_MO
+	INC	HL
+
+	LD	B, REG_1YEAR
+	CALL	RP5RTC_RDVL
+	LD	(HL), A			; RP5RTC_YR
+
+	RET
+
+
+; READ OUT 2 REGISTERS - 2 NIBBLES TO 1 BYTE
+; REGISTER IN B
+RP5RTC_RDVL:
+	LD	A, B				; SELECT UNIT REGISTER
+	OUT	(RP5RTC_REG), A
+	IN	A, (RP5RTC_DAT)
+	AND	$0F				; RETRIEVE UNIT NIBBLE
+	LD	D, A
+
+	INC	B
+	LD	A, B				; SELECT TENS REGISTER
+	OUT	(RP5RTC_REG), A
+	IN	A, (RP5RTC_DAT)
+	AND	$0F
+	RLCA
+	RLCA
+	RLCA
+	RLCA					; MOVE TO TOP NIBBLE
+	OR	D				; MERGE IN LOW NIBBLE
+						; A = VALUE AS BCD
 	RET
