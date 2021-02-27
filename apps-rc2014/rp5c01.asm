@@ -1,5 +1,5 @@
 
-	PUBLIC	_rp5c01Detect, __rp5c01SetByte, _rp5c01GetByte, _rp5c01GetTime, _rp5c01TestMode, _rp5c01SetHourMode, _rp5c01SetMode
+	PUBLIC	_rp5c01Detect, __rp5c01SetByte, _rp5c01GetByte, _rp5c01GetTime, _rp5c01SetTime, _rp5c01TestMode, _rp5c01SetHourMode, _rp5c01SetMode
 
 	SECTION code_user
 
@@ -232,6 +232,58 @@ _rp5c01GetTime:
 	RET
 
 
+; RTC SET TIME
+;   A: RESULT (OUT), 0=OK, Z=OK, NZ=ERR
+;   HL: DATE/TIME BUFFER (IN)
+; BUFFER FORMAT IS BCD: YYMMDDHHMMSSWW
+; 24 HOUR TIME FORMAT IS ASSUMED
+;
+; extern void _rp5c01SetTime(rtcDateTime*) __z88dk_fastcall
+_rp5c01SetTime:
+	; COPY TO BCD BUF
+	LD	B, MODE_TIMEST
+	CALL	RP5RTC_SETMD
+
+	LD	B, REG_1SEC
+	LD	A, (HL)
+	INC	HL
+	CALL	RP5RTC_WRVL
+
+	LD	B, REG_1MIN
+	LD	A, (HL)
+	INC	HL
+	CALL	RP5RTC_WRVL
+
+	LD	B, REG_1HR
+	LD	A, (HL)
+	INC	HL
+	CALL	RP5RTC_WRVL
+
+	LD	B, REG_1DAY
+	LD	A, (HL)
+	INC	HL
+	CALL	RP5RTC_WRVL
+
+	LD	B, REG_1MNTH
+	LD	A, (HL)
+	INC	HL
+	CALL	RP5RTC_WRVL
+
+	LD	B, REG_1YEAR
+	LD	A, (HL)
+	CALL	RP5RTC_WRVL
+
+	LD	B, MODE_ALRMST
+	CALL	RP5RTC_SETMD
+
+	LD	A, (HL)
+	CALL	BCD2BYTE
+	AND	3
+	LD	B, REG_LEAPYR
+	CALL	RP5RTC_WRVL
+
+	RET
+
 ; READ OUT 2 REGISTERS - 2 NIBBLES TO 1 BYTE
 ; REGISTER IN B
 RP5RTC_RDVL:
@@ -254,6 +306,30 @@ RP5RTC_RDVL:
 						; A = VALUE AS BCD
 	RET
 
+; WRITE OUT 2 REGISTERS - 1 BYTE TO 2 NIBBLES
+; REGISTER IN B (B+1)
+; VALUE IN A
+RP5RTC_WRVL:
+	LD	C, A
+	LD	A, B				; SELECT UNIT REGISTER
+	OUT	(RP5RTC_REG), A
+
+	LD	A, C				; WRITE C (ONLY LOW NIBBLE WILL BE USED)
+	OUT	(RP5RTC_DAT), A
+
+	INC	B
+	LD	A, B				; SELECT TENS REGISTER
+	OUT	(RP5RTC_REG), A
+
+	LD	A, C				; SHIFT TOP NIBBLE TO LOW NIBBLE
+	RRCA
+	RRCA
+	RRCA
+	RRCA
+	OUT	(RP5RTC_DAT), A			; WRITE IT
+
+	RET
+
 ; extern void rp5c01TestMode(uint8_t testBits) __z88dk_fastcall;
 
 _rp5c01TestMode:
@@ -274,4 +350,26 @@ _rp5c01SetHourMode:
 	OUT	(RP5RTC_REG), A
 	LD	A, L
 	OUT	(RP5RTC_DAT), A
+	RET
+
+;
+;****************************
+;	A(BCD) => A(BIN)
+;	[00H..99H] -> [0..99]
+;****************************
+;
+BCD2BYTE:
+	PUSH	BC
+	LD	C, A
+	AND	$F0
+	SRL	A
+	LD	B, A
+	SRL	A
+	SRL	A
+	ADD	A, B
+	LD	B, A
+	LD	A, C
+	AND	$0F
+	ADD	A, B
+	POP	BC
 	RET

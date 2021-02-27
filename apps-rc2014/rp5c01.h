@@ -29,5 +29,6 @@ typedef struct {
 } rtcDateTime;
 
 extern void rp5c01GetTime(rtcDateTime*) __z88dk_fastcall;
+extern void rp5c01SetTime(rtcDateTime*) __z88dk_fastcall;
 
 #endif
