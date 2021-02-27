@@ -12,14 +12,13 @@ With diodes associated with every switch, it possible to identify all multi key 
 
 * Unambiguous key detection (diodes associated with every switch)
 * Power, caps-lock, and code indicator LEDs
-* Cherry 5 pin switches
+* Designed for cherry compatible 5 pin switches
 * 73 keys
 
 ### Using keyboard on RomWBW
 
 Although this kit is designed to work under MSX's software, it can be used in a stock RC2014 build for keyboard.
 
-As the 82C55 is a general purpose interface chip, you could, within the constraints of the schematic, customise many of the control lines.
 
 ### What is the 'Yellow MSX Series of Boards'?
 
@@ -35,7 +34,7 @@ This project includes both the keyboard kit and the PPI interface board kit.
 
 * Keyboard PCB and components (passive components, IDC socket, and ICs)
 * PPI PCB and components (passive components, IDC socket, and ICs including the 82C55 chip)
-* Optional Gateron switches, stabilisers and keycaps
+* Optional Gateron switches, stabilizers and keycaps
 
 ### What else do I need to make this work?
 
