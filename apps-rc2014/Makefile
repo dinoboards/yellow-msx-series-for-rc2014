@@ -7,7 +7,7 @@ MAKEFLAGS += --no-builtin-rules
 BIN = ../bin/
 ZCC := zcc +cpm -clib=sdcc_iy -SO3 -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 --max-allocs-per-node200000 -create-app
 
-APPS := dots lines mbrot control msxkeyb
+APPS := dots lines mbrot control msxkeyb rtctest
 
 all: $(addsuffix .com,$(APPS))
 
@@ -16,6 +16,7 @@ $(BIN)lines.com: lines.c v9958.c v9958.c v9958.asm config_request.c config_reque
 $(BIN)mbrot.com: mbrot.c v9958.c v9958.c v9958.asm config_request.c config_request.h cpm.asm cpm.h
 $(BIN)control.com: control.c ym2149.asm ym2149.h cpm.asm cpm.h
 $(BIN)msxkeyb.com: msxkeyb.c msxkeyb.asm  cpm.asm cpm.h
+$(BIN)rtctest.com: rtctest.c rp5c01.asm rp5c01.h cpm.asm cpm.h
 
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
