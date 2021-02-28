@@ -115,13 +115,19 @@ bin/mbrot.com: mbrot.c v9958.c msx.asm v9958.asm
 	mv mbrot.com ../bin/
 	rm mbrot.img
 
-
 bin/spike-fdd.com: spike-fdd.c fdd.asm
 	@mkdir -p bin
 	cd apps
 	$(Z88DK) spike-fdd.c fdd.asm -o spike-fdd.com
 	mv spike-fdd.com ../bin/
 	rm spike-fdd.img
+
+bin/ide.com: spike-ide.c spike-ide.asm spike-ide.h utils.asm
+	@mkdir -p bin
+	cd apps
+	$(Z88DK) spike-ide.c spike-ide.asm utils.asm -o ide.com
+	mv ide.com ../bin/
+	rm ide.img
 
 nextor/extras/mbrot.com: bin/mbrot.com
 	cp bin/mbrot.com nextor/extras/mbrot.com
