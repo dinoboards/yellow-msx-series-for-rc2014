@@ -7,7 +7,7 @@
 ;  CREATE DATE :		19 June 15
 ;***************************************************************************
 
-	PUBLIC	_cfInit, _cfReadTest, _cfReadIdentity
+	PUBLIC	_cfInit, _cfReadTest, _cfWriteTest, _cfReadIdentity
 
 	SECTION	CODE
 
@@ -70,9 +70,7 @@ LOOP_DAT_RDY:
 	IN		A,(CFSTAT)					;Read status
 	AND		%10001000					;mask off busy and drq bits
 	XOR		%00001000					;we want busy(7) to be 0 and drq(3) to be 1
-	JP		NZ,LOOP_DAT_RDY
-
-
+	JR		NZ, LOOP_DAT_RDY
 	RET
 
 ;***************************************************************************
@@ -103,9 +101,11 @@ CF_RD_SECT:
 	DJNZ 	CF_RD_SECT
 	RET
 
+
+
 ;***************************************************************************
 ;CF_TEST
-;Function: Read sector 0 into RAM buffer.
+;Function: Read a sector into RAM buffer.
 ;***************************************************************************
 
 ; extern void cfReadTest(ioBuf*)
@@ -131,10 +131,13 @@ _cfReadTest:
 	CALL 	LOOP_BUSY
 	LD	A, (HL)
 	INC	HL
-	LD	A, $E0						; SELECT MASTER DRIVE
-	OUT 	(CFLBA3),A					;LBA 24:27 + DRV 0 selected + bits 5:7=111
+	AND	$0F						; LBA 24:27 + DRV 0 selected + bits 5:7=111
+	OR	$E0						; SELECT MASTER DRIVE
+	OUT 	(CFLBA3), A
+	CALL 	LOOP_BUSY
 
 	JR	CF_RD_CMD
+
 
 _cfReadIdentity:
 	CALL	LOOP_CMD_RDY
@@ -149,9 +152,60 @@ _cfReadIdentity:
 loop:
 	djnz	loop
 
-	; CALL	LOOP_DAT_RDY
-
 	; //TODO CHECK ERROR
 
 	JR	CF_REDDAT
 
+
+
+CF_WR_CMD:
+	CALL	LOOP_CMD_RDY				;Make sure drive is ready for command
+	LD	A, $30					;Prepare write command
+	OUT	(CFCMD), A				;Send read command
+	CALL	LOOP_DAT_RDY				;Wait until data is ready to be read
+
+	IN	A, (CFSTAT)				;Read status
+	AND	%00000001				;mask off error bit
+	RET	NZ				;return if error
+
+	LD 	B, 0					;write 256 words (512 bytes per sector)
+CF_WR_SECT:
+	CALL	LOOP_DAT_RDY
+	LD	A, (HL)
+	OUT 	(CFDATA), A				;set byte of ide data
+	INC 	HL
+	CALL	LOOP_DAT_RDY
+	LD	A, (HL)
+	OUT 	(CFDATA), A				;set byte of ide data
+	INC 	HL
+	DJNZ 	CF_WR_SECT
+	RET
+
+_cfWriteTest:
+	CALL	LOOP_CMD_RDY
+
+
+	LD 	A, 1
+	OUT 	(CFSECCO), A					; Deal with only one sector at a time (512 bytes)
+	CALL 	LOOP_BUSY
+
+	LD	A, (HL)
+	INC	HL
+	OUT	(CFLBA0), A					;LBA 0:7
+	CALL 	LOOP_BUSY
+	LD	A, (HL)
+	INC	HL
+	OUT	(CFLBA1),A					;LBA 8:15
+	CALL 	LOOP_BUSY
+	LD	A, (HL)
+	INC	HL
+	OUT 	(CFLBA2),A					;LBA 16:23
+	CALL 	LOOP_BUSY
+	LD	A, (HL)
+	INC	HL
+	AND	$0F						; LBA 24:27 + DRV 0 selected + bits 5:7=111
+	OR	$E0						; SELECT MASTER DRIVE
+	OUT 	(CFLBA3), A
+	CALL 	LOOP_BUSY
+
+	JR	CF_WR_CMD

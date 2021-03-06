@@ -20,14 +20,7 @@ void main() {
   // buf.lba0 = buf.lba1 = buf.lba2 = buf.lba3 = 0;
   // cfReadTest(&buf);
 
-  printf("--------------\r\n");
 
-  // for(int i = 0; i < 128; i++) {
-  //   if (i % 16 == 0)
-  //     printf("\r\n");
-
-  //   printf("%02X ", buf.data[i]);
-  // }
 
   IdeIdentity* x = (IdeIdentity*)buf.data;
   x->ModelNumber[39] = 0;
@@ -38,4 +31,29 @@ void main() {
   printf("CurrentSectorsPerTrack %u\r\n", x->CurrentSectorsPerTrack);
   printf("CurrentSectorCapacity %lu\r\n", x->CurrentSectorCapacity);
   printf("Storage Capacity: %lu mega bytes\r\n", x->CurrentSectorCapacity * 512 / 1024 / 1024);
+
+  const uint32_t lastSector = x->CurrentSectorCapacity - 1;
+
+  buf.lba0 = lastSector;
+  buf.lba1 = (lastSector >> 8) & 0xFF;
+  buf.lba2 = (lastSector >> 16) & 0xFF;
+  buf.lba3 = (lastSector >> 24) & 0xFF;
+
+  printf("lba: %02X %02X %02X %02X", buf.lba0, buf.lba1, buf.lba2, buf.lba3);
+
+  cfReadTest(&buf);
+
+  printf("--------------\r\n");
+
+  for(int i = 0; i < 128; i++) {
+    if (i % 16 == 0)
+      printf("\r\n");
+
+    printf("%02X ", buf.data[i]);
+  }
+
+  for(int i = 0; i < 512; i++)
+    buf.data[i] = i;
+
+  cfWriteTest(&buf);
 }
