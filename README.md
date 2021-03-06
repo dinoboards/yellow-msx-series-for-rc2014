@@ -70,3 +70,18 @@ there after:
 
 `make nextor`
 
+
+
+### Special Magic numbers
+
+Makefile: dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.rc2014.rom  of=bin/ymsx-pal.rom bs=16k count=**27** seek=4
+
+Makefile-main.mk:	dd if=/dev/zero of=rc2014-driver-with-sectors.bin bs=16k count=**19** seek=0
+
+Makefile-main.mk:	for i in {1..**18**}
+
+Makefile-main.mk:	dd if=/dev/zero of=fdd.dsk bs=$$(($$DATSIZ* **18**)) count=1
+
+embinc.mac: SECTOT	EQU	**19** *SECCNT
+
+
