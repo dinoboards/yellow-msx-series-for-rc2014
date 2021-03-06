@@ -154,3 +154,4 @@ loop:
 	; //TODO CHECK ERROR
 
 	JR	CF_REDDAT
+

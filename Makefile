@@ -6,7 +6,10 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
 
-all: rom-image-pal bin/lines.com bin/dots.com bin/mbrot.com
+all: rom-image-pal apps
+
+.PHONY: apps
+apps: bin/lines.com bin/dots.com bin/mbrot.com bin/cpusptst.com bin/ide.com
 
 jeds: mem-selector.jed rom-mapper.jed
 
@@ -128,6 +131,13 @@ bin/ide.com: spike-ide.c spike-ide.asm spike-ide.h utils.asm
 	$(Z88DK) spike-ide.c spike-ide.asm utils.asm -o ide.com
 	mv ide.com ../bin/
 	rm ide.img
+
+bin/cpusptst.com: cpusptst.c cpusptst.asm
+	@mkdir -p bin
+	cd apps
+	$(Z88DK) cpusptst.c cpusptst.asm -o cpusptst.com
+	mv cpusptst.com ../bin/
+	rm cpusptst.img
 
 nextor/extras/mbrot.com: bin/mbrot.com
 	cp bin/mbrot.com nextor/extras/mbrot.com

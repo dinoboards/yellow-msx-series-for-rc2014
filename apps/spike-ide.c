@@ -7,6 +7,7 @@
 
 ioBuf buf;
 
+
 void main() {
   printf("spike-ide - ver: 0.4\r\n");
 
@@ -36,4 +37,5 @@ void main() {
   printf("Model Number: %s\r\n", x->ModelNumber);
   printf("CurrentSectorsPerTrack %u\r\n", x->CurrentSectorsPerTrack);
   printf("CurrentSectorCapacity %lu\r\n", x->CurrentSectorCapacity);
+  printf("Storage Capacity: %lu mega bytes\r\n", x->CurrentSectorCapacity * 512 / 1024 / 1024);
 }
