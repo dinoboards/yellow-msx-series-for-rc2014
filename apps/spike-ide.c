@@ -7,19 +7,21 @@
 
 ioBuf buf;
 
-
 void main() {
   printf("spike-ide - ver: 0.4\r\n");
 
   printf("Retriving Identity info\r\n");
 
+  const uint8_t d = cfProbe();
+
+  if (d == 0) {
+    printf("Compact Flash Module not detected\r\n");
+    exit(0);
+  }
+
   cfInit();
 
   cfReadIdentity(buf.data);
-
-  // buf.lba0 = buf.lba1 = buf.lba2 = buf.lba3 = 0;
-  // cfReadTest(&buf);
-
 
 
   IdeIdentity* x = (IdeIdentity*)buf.data;

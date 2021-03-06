@@ -7,7 +7,7 @@
 ;  CREATE DATE :		19 June 15
 ;***************************************************************************
 
-	PUBLIC	_cfInit, _cfReadTest, _cfWriteTest, _cfReadIdentity
+	PUBLIC	_cfInit, _cfReadTest, _cfWriteTest, _cfReadIdentity, _cfProbe
 
 	SECTION	CODE
 
@@ -46,9 +46,34 @@ _cfInit:
 ;Function: Loops until status register bit 7 (busy) is 0
 ;***************************************************************************
 LOOP_BUSY:
-	IN		A, (CFSTAT)					;Read status
-	AND		%10000000					;Mask busy bit
-	JP		NZ,LOOP_BUSY				;Loop until busy(7) is 0
+	IN		A, (CFSTAT)				;Read status
+	AND		%10000000				;Mask busy bit
+	JR		NZ, LOOP_BUSY				;Loop until busy(7) is 0
+	RET
+
+
+;***************************************************************************
+; CF_WHLE_BSY_TIMEOUT
+; WAIT WHILE BUSY
+; RETURN Z IF NOT BUSY
+; RETURN NZ IF STILL BUSY (TIMEOUT)
+;***************************************************************************
+
+CF_WHLE_BSY_TIMEOUT:
+	LD	B, 0			; OUTER LOOP COUNTER
+CF_WBT1:
+	LD	DE, 8000		; INNER LOOP COUNTER
+CF_WBT2:
+	IN	A, (CFSTAT)		; WAIT FOR DRIVE'S 512 BYTE READ BUFFER
+	AND	%10000000		; TEST BUSY BIT
+	RET	Z			; NOT BUSY, RETURN Z
+	DEC	DE
+	LD	A,D
+	OR	E
+	JR	NZ, CF_WBT2
+	DJNZ	CF_WBT1
+
+	OR	255			; TIMEOUT, RETURN NZ
 	RET
 
 ;***************************************************************************
@@ -59,7 +84,7 @@ LOOP_CMD_RDY:
 	IN		A,(CFSTAT)					;Read status
 	AND		%11000000					;mask off busy and rdy bits
 	XOR		%01000000					;we want busy(7) to be 0 and drvrdy(6) to be 1
-	JP		NZ,LOOP_CMD_RDY
+	JR		NZ, LOOP_CMD_RDY
 	RET
 
 ;***************************************************************************
@@ -100,7 +125,6 @@ CF_RD_SECT:
 	INC 	HL
 	DJNZ 	CF_RD_SECT
 	RET
-
 
 
 ;***************************************************************************
@@ -209,3 +233,31 @@ _cfWriteTest:
 	CALL 	LOOP_BUSY
 
 	JR	CF_WR_CMD
+
+
+_cfProbe:
+	LD	A, 1
+	OUT	(CFSECCO), A
+	LD	A, 2
+	OUT	(CFLBA0), A
+	LD	A, 4
+	OUT	(CFLBA1), A
+
+	IN	A, (CFSECCO)
+	CP	1
+	JR	NZ, NO_CF
+
+	IN	A, (CFLBA0)
+	CP	2
+	JR	NZ, NO_CF
+
+	IN	A, (CFLBA1)
+	CP	4
+	JR	NZ, NO_CF
+
+	LD	L, 255
+	RET
+
+NO_CF:
+	LD	L, 0
+	RET

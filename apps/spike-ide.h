@@ -15,6 +15,7 @@ extern void cfInit();
 extern void cfReadTest(ioBuf*) __z88dk_fastcall;
 extern void cfWriteTest(ioBuf*) __z88dk_fastcall;
 extern void cfReadIdentity(uint8_t*) __z88dk_fastcall;
+extern uint8_t cfProbe() __z88dk_fastcall;
 
 //name in ASCII (40 chars @ byte offset $36) and the capacity of the drive in sectors (2 words @ byte offset $72, least significant first).
 
