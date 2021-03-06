@@ -44,7 +44,7 @@ nextor: nextor/extras/xrecv.com nextor/extras/lines.com nextor/extras/dots.com n
 	echo "Requires sudo permission"
 	sudo echo
 	cd nextor/source
-	BUILD_TYPE=cbios $(MAKE) nextor-2.1.1-alpha2.embedded.rom -O -j --no-print-directory
+	BUILD_TYPE=cbios $(MAKE) nextor-2.1.1-alpha2.rc2014.rom -O -j --no-print-directory
 
 install-prereq:
 	@cd nextor/source
@@ -57,7 +57,7 @@ rom-image-pal: nextor cbios
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_pal.rom 	of=bin/ymsx-pal.rom bs=16k count=2 seek=0
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/ymsx-pal.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/ymsx-pal.rom bs=16k count=1 seek=3
-	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.embedded.rom  of=bin/ymsx-pal.rom bs=16k count=24 seek=4
+	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.rc2014.rom  of=bin/ymsx-pal.rom bs=16k count=24 seek=4
 
 clean:
 	@rm -rf ./bin
