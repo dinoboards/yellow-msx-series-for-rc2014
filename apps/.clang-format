@@ -1,0 +1,7 @@
+BasedOnStyle: LLVM
+IndentWidth: 2
+AlignConsecutiveMacros: true
+ColumnLimit: 240
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: true
+AlignEscapedNewlines: true

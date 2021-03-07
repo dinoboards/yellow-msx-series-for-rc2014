@@ -1,9 +1,10 @@
 #define __Z88DK_R2L_CALLING_CONVENTION
+#include "spike-ide.h"
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "spike-ide.h"
 
 ioBuf buf;
 
@@ -23,16 +24,18 @@ void main() {
 
   cfReadIdentity(buf.data);
 
-
-  IdeIdentity* x = (IdeIdentity*)buf.data;
+  IdeIdentity *x = (IdeIdentity *)buf.data;
   x->ModelNumber[39] = 0;
   x->SerialNumber[19] = 0;
 
+  printf("General Configuration %04X\r\n", x->GeneralConfiguration);
   printf("Serial Number: %s\r\n", x->SerialNumber);
   printf("Model Number: %s\r\n", x->ModelNumber);
   printf("CurrentSectorsPerTrack %u\r\n", x->CurrentSectorsPerTrack);
   printf("CurrentSectorCapacity %lu\r\n", x->CurrentSectorCapacity);
   printf("Storage Capacity: %lu mega bytes\r\n", x->CurrentSectorCapacity * 512 / 1024 / 1024);
+  printf("CurrentSectorCapacity Offset: %d\r\n", offsetof(struct _IdeIdentity, CurrentSectorCapacity));
+  printf("ModelNumber Offset: %d\r\n", offsetof(struct _IdeIdentity, ModelNumber));
 
   const uint32_t lastSector = x->CurrentSectorCapacity - 1;
 
@@ -47,14 +50,14 @@ void main() {
 
   printf("--------------\r\n");
 
-  for(int i = 0; i < 128; i++) {
+  for (int i = 0; i < 128; i++) {
     if (i % 16 == 0)
       printf("\r\n");
 
     printf("%02X ", buf.data[i]);
   }
 
-  for(int i = 0; i < 512; i++)
+  for (int i = 0; i < 512; i++)
     buf.data[i] = i;
 
   cfWriteTest(&buf);

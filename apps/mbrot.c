@@ -20,38 +20,23 @@ to see the file use external application ( graphic viewer)
 extern void cleanexit();
 
 RGB palette[16] = {
-  {0, 0, 0},
-  {1, 0, 0},
-  {2, 0, 0},
-  {3, 0, 0},
-  {4, 0, 0},
-  {5, 0, 0},
-  {6, 0, 0},
-  {7, 0, 0},
-  {8, 0, 0},
-  {9, 0, 0},
-  {10, 0, 0},
-  {11, 0, 0},
-  {12, 0, 0},
-  {13, 0, 0},
-  {14, 0, 0},
-  {15, 0, 0},
+    {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}, {4, 0, 0}, {5, 0, 0}, {6, 0, 0}, {7, 0, 0}, {8, 0, 0}, {9, 0, 0}, {10, 0, 0}, {11, 0, 0}, {12, 0, 0}, {13, 0, 0}, {14, 0, 0}, {15, 0, 0},
 };
 
 #define ITERATION_MAX 16
-#define CX_MIN -2.5
-#define CX_MAX 1.5
-#define CY_MIN -2.0
-#define CY_MAX 2.0
-#define IX_MAX 512
-#define IY_MAX 212
+#define CX_MIN        -2.5
+#define CX_MAX        1.5
+#define CY_MIN        -2.0
+#define CY_MAX        2.0
+#define IX_MAX        512
+#define IY_MAX        212
 
 #define PIXEL_WIDTH  ((CX_MAX - CX_MIN) / IX_MAX)
 #define PIXEL_HEIGHT ((CY_MAX - CY_MIN) / IY_MAX)
 
 #define ESCAPE_RADIUS 2
 /* bail-out value , radius of circle ;  */
-#define ER2  (ESCAPE_RADIUS * ESCAPE_RADIUS)
+#define ER2 (ESCAPE_RADIUS * ESCAPE_RADIUS)
 
 float Cx;
 float Cy;
@@ -60,9 +45,9 @@ float Zy;
 float Zx2;
 float Zy2;
 
- /* screen ( integer) coordinate */
+/* screen ( integer) coordinate */
 uint16_t iX, iY;
-uint8_t iteration;
+uint8_t  iteration;
 
 void main() {
   setMode6(IY_MAX, PAL);
@@ -92,12 +77,12 @@ void main() {
 
       pointSet(iX, iY, iteration, CMD_LOGIC_IMP);
 
-      if(kbhit())
+      if (kbhit())
         cleanexit();
     }
   }
 
-  while(!kbhit())
+  while (!kbhit())
     ;
 
   cleanexit();

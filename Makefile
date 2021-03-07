@@ -8,9 +8,6 @@ CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
 
 all: rom-image-pal apps
 
-.PHONY: apps
-apps: bin/lines.com bin/dots.com bin/mbrot.com bin/cpusptst.com bin/ide.com
-
 jeds: mem-selector.jed rom-mapper.jed
 
 .PHONY: mem-selector.jed
@@ -39,7 +36,7 @@ cbios:
 	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014_pal.rom  derived/bin/cbios_main_rc2014_ntsc.rom derived/bin/cbios_logo_rc2014.rom derived/bin/cbios_sub.rom
 
 .PHONY: nextor
-nextor: nextor/extras/xrecv.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI
+nextor: nextor/extras/xrecv.com nextor/extras/fdisk.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI
 	@mkdir -p ./bin
 	echo "Requires sudo permission"
 	sudo echo
@@ -87,62 +84,19 @@ bin/%.bin: %.asm
 	@$(PASMO) $< $@ $(@:.bin=.sym)
 
 
-## Apps
-
-Z88DK := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 --c-code-in-asm -SO3 --max-allocs-per-node200000
-
-bin/lines.com: lines.c v9958.c msx.asm v9958.asm
-	@mkdir -p bin
-	cd apps
-	$(Z88DK) lines.c v9958.c v9958.asm msx.asm -o lines.com
-	mv lines.com ../bin/
-	rm lines.img
-
 nextor/extras/lines.com: bin/lines.com
 	cp bin/lines.com nextor/extras/lines.com
-
-bin/dots.com: dots.c v9958.c msx.asm v9958.asm
-	@mkdir -p bin
-	cd apps
-	$(Z88DK) dots.c v9958.c v9958.asm msx.asm -o dots.com
-	mv dots.com ../bin/
-	rm dots.img
 
 nextor/extras/dots.com: bin/dots.com
 	cp bin/dots.com nextor/extras/dots.com
 
-bin/mbrot.com: mbrot.c v9958.c msx.asm v9958.asm
-	@mkdir -p bin
-	cd apps
-	$(Z88DK) mbrot.c v9958.c v9958.asm msx.asm -o mbrot.com
-	mv mbrot.com ../bin/
-	rm mbrot.img
-
-bin/spike-fdd.com: spike-fdd.c fdd.asm
-	@mkdir -p bin
-	cd apps
-	$(Z88DK) spike-fdd.c fdd.asm -o spike-fdd.com
-	mv spike-fdd.com ../bin/
-	rm spike-fdd.img
-
-bin/ide.com: spike-ide.c spike-ide.asm spike-ide.h utils.asm
-	@mkdir -p bin
-	cd apps
-	$(Z88DK) spike-ide.c spike-ide.asm utils.asm -o ide.com
-	mv ide.com ../bin/
-	rm ide.img
-
-bin/cpusptst.com: cpusptst.c cpusptst.asm
-	@mkdir -p bin
-	cd apps
-	$(Z88DK) cpusptst.c cpusptst.asm -o cpusptst.com
-	mv cpusptst.com ../bin/
-	rm cpusptst.img
-
 nextor/extras/mbrot.com: bin/mbrot.com
 	cp bin/mbrot.com nextor/extras/mbrot.com
+
+nextor/extras/fdisk.com: bin/fdisk.com
+	cp bin/fdisk.com nextor/extras/fdisk.com
 
 nextor/extras/SROM.%: 3rdparty/SROM.%
 	@cp "$<" "$@"
 
-bin/fdu.com: fdu.asm
+include Makefile-apps.mk
