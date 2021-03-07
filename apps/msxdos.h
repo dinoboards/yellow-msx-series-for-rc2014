@@ -4,11 +4,12 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define DRIVER_NAME_LENGTH     32
-#define MAX_INSTALLED_DRIVERS  8
-#define MAX_LUNS_PER_DEVICE    7
-#define MAX_INFO_LENGTH        64
-#define MAX_DEVICES_PER_DRIVER 7
+#define DRIVER_NAME_LENGTH       32
+#define MAX_INSTALLED_DRIVERS    8
+#define MAX_LUNS_PER_DEVICE      7
+#define MAX_INFO_LENGTH          64
+#define MAX_DEVICES_PER_DRIVER   7
+#define MAX_ERROR_EXPLAIN_LENGTH 64
 
 #define BLOCK_DEVICE    0
 #define READ_ONLY_LUN   (1 << 1)
@@ -54,9 +55,25 @@ typedef struct {
   uint8_t  number;
 } msxddosLunInfo;
 
-extern uint8_t  msxDosGdrvr(int8_t driverIndex, msxdosDriverInfo *data);
+typedef struct {
+  uint8_t typeCode;
+  uint8_t status;
+  union {
+    uint32_t startingSector;
+    uint32_t partitionSector;
+  };
+  uint32_t sectorCount;
+} GPartInfo;
+
+extern uint8_t msxDosGdrvr(int8_t driverIndex, msxdosDriverInfo *data);
+extern uint8_t msxdosGpartInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t logicalUnitNumber, uint8_t primaryPartitionNumber, uint8_t extendedPartitionNumber, bool getSectorNumber, GPartInfo *result);
+extern uint8_t msxdosExplain(uint8_t code, char *buffer);
+
 extern uint16_t msxdosDrvDevLogicalUnitCount(uint8_t slotNumber, uint8_t deviceNumber, msxdosDeviceBasicInfo *pCount);
 extern uint16_t msxdosDrvDevGetName(uint8_t slotNumber, uint8_t deviceNumber, char *pDeviceName);
 extern uint16_t msxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, msxddosLunInfo *pLunInfo);
+
+#define _IPART 0xB4
+#define _NOFIL 0xD7
 
 #endif

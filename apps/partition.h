@@ -3,7 +3,7 @@
 
 #include "datatypes.h"
 
-#define MAX_PARTITIONS_TO_HANDLE                   256
+#define MAX_PARTITIONS_TO_HANDLE                   255
 #define MIN_DEVICE_SIZE_IN_K                       10
 #define MIN_DEVICE_SIZE_FOR_PARTITIONS_IN_K        1024
 #define MIN_REMAINING_SIZE_FOR_NEW_PARTITIONS_IN_K 100

@@ -12,9 +12,12 @@
 msxdosDriverInfo drivers[MAX_INSTALLED_DRIVERS];
 deviceInfo       devices[MAX_DEVICES_PER_DRIVER];
 msxddosLunInfo   luns[MAX_LUNS_PER_DEVICE];
+partitionInfo    partitions[MAX_PARTITIONS_TO_HANDLE];
 
+// SELECTED ITEMS
 msxdosDriverInfo *pSelectedDriverInfo;
 deviceInfo *      pSelectedDeviceInfo;
+msxddosLunInfo *  pSelectedLunInfo;
 
 struct _partitionState partitionState;
 
@@ -113,13 +116,15 @@ void main() {
   pSelectedDeviceInfo = &devices[selectedDeviceNumber - 1];
 
   retrieveLunInfors();
-  // printf("Enter logical unit number: ");
-  // fgets(input, sizeof(input), stdin);
-  // uint8_t selectedLun = atoi(input);
+  printf("Enter logical unit number: ");
+  fgets(input, sizeof(input), stdin);
+  uint8_t selectedLun = atoi(input);
+  pSelectedLunInfo = &luns[selectedLun];
 
-  // msxddosLunInfo* pSelectedLunInfo = &luns[selectedLun];
+  preparePartitionAnalysis();
+  uint8_t error = getDiskPartitionsInfo();
 
-  // preparePartitionAnalysis(pSelectedLunInfo);
+  printf("error: %d, %s\r\n", error, getDosErrorMessage(error));
 }
 
 void recalculateAutoPartitionSize(bool setToAllSpaceAvailable) {
@@ -141,7 +146,7 @@ void recalculateAutoPartitionSize(bool setToAllSpaceAvailable) {
   }
 }
 
-void preparePartitionAnalysis(msxddosLunInfo *pSelectedLunInfo) {
+void preparePartitionAnalysis() {
   partitionState.pLunInfo = pSelectedLunInfo;
   partitionState.canCreate = (pSelectedLunInfo->sectorCount >= (MIN_DEVICE_SIZE_FOR_PARTITIONS_IN_K * 2));
   partitionState.canDoDirectFormat = (pSelectedLunInfo->sectorCount <= MAX_DEVICE_SIZE_FOR_DIRECT_FORMAT_IN_K * 2);
@@ -191,9 +196,9 @@ void printSize(uint32_t sizeInK) {
   }
 }
 
-byte getRemainingBy1024String(uint32_t value, char *destination) {
-  byte remaining2;
-  char remainingDigit;
+uint8_t getRemainingBy1024String(uint32_t value, char *destination) {
+  uint8_t remaining2;
+  char    remainingDigit;
 
   int remaining = value & 0x3FF;
   if (remaining >= 950) {
@@ -215,4 +220,48 @@ byte getRemainingBy1024String(uint32_t value, char *destination) {
   }
 
   return 0;
+}
+
+uint8_t getDiskPartitionsInfo() {
+  uint8_t        primaryIndex = 1;
+  uint8_t        extendedIndex = 0;
+  uint8_t        error;
+  partitionInfo *currentPartition = &partitions[0];
+
+  partitionState.partitionsCount = 0;
+
+  GPartInfo result;
+
+  do {
+    error = msxdosGpartInfo(pSelectedDriverInfo->slot, pSelectedDeviceInfo->number, pSelectedLunInfo->number, primaryIndex, extendedIndex, false, &result);
+
+    if (error == 0) {
+      if (result.typeCode == PARTYPE_EXTENDED) {
+        extendedIndex = 1;
+      } else {
+        currentPartition->primaryIndex = primaryIndex;
+        currentPartition->extendedIndex = extendedIndex;
+        currentPartition->partitionType = result.typeCode;
+        currentPartition->status = result.status;
+        currentPartition->sizeInK = result.sectorCount / 2;
+        partitionState.partitionsCount++;
+        currentPartition++;
+        extendedIndex++;
+      }
+    } else if (error == _IPART) {
+      primaryIndex++;
+      extendedIndex = 0;
+    } else {
+      return error;
+    }
+  } while (primaryIndex <= 4 && partitionState.partitionsCount < MAX_PARTITIONS_TO_HANDLE);
+
+  return 0;
+}
+
+char buffer[MAX_ERROR_EXPLAIN_LENGTH];
+
+const char *getDosErrorMessage(uint8_t code) {
+  msxdosExplain(code, buffer);
+  return buffer;
 }
