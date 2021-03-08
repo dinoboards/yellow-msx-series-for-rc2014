@@ -15,6 +15,9 @@
 #define READ_ONLY_LUN   (1 << 1)
 #define FLOPPY_DISK_LUN (1 << 2)
 
+#define DRIVER_IS_DOS250       (1 << 7)
+#define DRIVER_IS_DEVICE_BASED 1
+
 // +4: Driver flags:
 //     bit 7: 1 => the driver is a Nextor driver
 //            0 => the driver is a MSX-DOS driver
@@ -65,9 +68,10 @@ typedef struct {
   uint32_t sectorCount;
 } GPartInfo;
 
-extern uint8_t msxDosGdrvr(int8_t driverIndex, msxdosDriverInfo *data);
+extern uint8_t msxdosGdrvr(int8_t driverIndex, msxdosDriverInfo *data);
 extern uint8_t msxdosGpartInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t logicalUnitNumber, uint8_t primaryPartitionNumber, uint8_t extendedPartitionNumber, bool getSectorNumber, GPartInfo *result);
 extern uint8_t msxdosExplain(uint8_t code, char *buffer);
+extern uint8_t msxdosDirio(uint8_t code) __z88dk_fastcall;
 
 extern uint16_t msxdosDrvDevLogicalUnitCount(uint8_t slotNumber, uint8_t deviceNumber, msxdosDeviceBasicInfo *pCount);
 extern uint16_t msxdosDrvDevGetName(uint8_t slotNumber, uint8_t deviceNumber, char *pDeviceName);

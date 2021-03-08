@@ -56,9 +56,22 @@ _msxbiosPosit:
 	RET
 
 
-; void msxDosGdrvr(int8_t driverIndex, byte* data) {
-	PUBLIC	_msxDosGdrvr
-_msxDosGdrvr:
+; extern uint8_t msxdosDirio(uint8_t code) __z88dk_fastcall;
+	PUBLIC	_msxdosDirio
+_msxdosDirio:
+	PUSH	IX
+
+	LD	E, L
+	LD	C, _GDRVR
+	CALL	BDOS
+
+	POP	IX
+	RET
+
+
+; void msxdosGdrvr(int8_t driverIndex, byte* data) {
+	PUBLIC	_msxdosGdrvr
+_msxdosGdrvr:
 	PUSH	IX
 	LD	IX, 0
 	ADD	IX, SP
