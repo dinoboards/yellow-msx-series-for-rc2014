@@ -76,4 +76,23 @@ extern uint16_t msxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8
 #define _IPART 0xB4
 #define _NOFIL 0xD7
 
+// MSX BIOS functions
+void msxbiosInit32();
+void msxbiosInitxt();
+void msxbiosPosit(uint8_t col, uint8_t row);
+
+/* MSX work area variables */
+
+#define LINL40 0xF3AE
+#define LINL32 0xF3AF
+#define LINLEN 0xF3B0
+#define CRTCNT 0xF3B1
+#define CSRY   0xF3DC
+#define CSRX   0xF3DD
+#define CNSDFG 0xF3DE
+#define VALTYP 0xF663
+#define DAC    0xF7F6
+#define SCRMOD 0xFCAF
+#define EXPTBL 0xFCC1
+
 #endif

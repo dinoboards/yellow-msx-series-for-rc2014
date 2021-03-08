@@ -1,4 +1,10 @@
 
+INITXT	EQU	0x6C
+INIT32	EQU	0x6F
+POSIT	EQU	0xC6
+
+CALSLT	EQU	0x001C
+EXPTBL	EQU	0xFCC1
 _EXPLAIN	EQU	0x66
 _GDRVR	EQU	0x78
 _GPART	EQU	0x7A
@@ -10,6 +16,45 @@ DEV_INFO	EQU 	0x4163
 LUN_INFO 	EQU	0x4169
 
 	SECTION	CODE
+
+; void msxbiosInit32();
+	PUBLIC	_msxbiosInit32
+_msxbiosInit32:
+	PUSH	IX
+	LD	IY, (EXPTBL-1)
+	LD	IX, INIT32
+	CALL	CALSLT
+	POP	IX
+	RET
+
+
+; void msxbiosInitxt();
+	PUBLIC	_msxbiosInitxt
+_msxbiosInitxt:
+	PUSH	IX
+	LD	IY, (EXPTBL-1)
+	LD	IX, INITXT
+	CALL	CALSLT
+	POP	IX
+	RET
+
+; void msxbiosPosit(uint8_t col, uint8_t row);
+	PUBLIC	_msxbiosPosit
+_msxbiosPosit:
+	PUSH	IX
+	LD	IX, 0
+	ADD	IX, SP
+
+	LD	H, (IX+4) 	; COL
+	LD	L, (IX+5)  	; ROW
+
+	LD	IY, (EXPTBL-1)
+	LD	IX, POSIT
+	CALL	CALSLT
+
+	POP	IX
+	RET
+
 
 ; void msxDosGdrvr(int8_t driverIndex, byte* data) {
 	PUBLIC	_msxDosGdrvr

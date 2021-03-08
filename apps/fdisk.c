@@ -96,80 +96,77 @@ uint8_t retrieveLunInfors() {
   return count - 1;
 }
 
-char input[4];
+//   printf("FDISK Utility\r\n");
 
-void main() {
-  printf("FDISK Utility\r\n");
+//   uint8_t installedDriverCount = retrieveAllDriverInfos();
 
-  uint8_t installedDriverCount = retrieveAllDriverInfos();
+//   printf("Enter driver number: ");
+//   fgets(input, sizeof(input), stdin);
+//   uint8_t selectedDriverNumber = atoi(input);
+//   pSelectedDriverInfo = &drivers[selectedDriverNumber - 1];
 
-  printf("Enter driver number: ");
-  fgets(input, sizeof(input), stdin);
-  uint8_t selectedDriverNumber = atoi(input);
-  pSelectedDriverInfo = &drivers[selectedDriverNumber - 1];
+//   retrieveAllDeviceInfo();
 
-  retrieveAllDeviceInfo();
+//   printf("Enter device number: ");
+//   fgets(input, sizeof(input), stdin);
+//   uint8_t selectedDeviceNumber = atoi(input);
+//   pSelectedDeviceInfo = &devices[selectedDeviceNumber - 1];
 
-  printf("Enter device number: ");
-  fgets(input, sizeof(input), stdin);
-  uint8_t selectedDeviceNumber = atoi(input);
-  pSelectedDeviceInfo = &devices[selectedDeviceNumber - 1];
+//   retrieveLunInfors();
+//   printf("Enter logical unit number: ");
+//   fgets(input, sizeof(input), stdin);
+//   uint8_t selectedLun = atoi(input);
+//   pSelectedLunInfo = &luns[selectedLun - 1];
 
-  retrieveLunInfors();
-  printf("Enter logical unit number: ");
-  fgets(input, sizeof(input), stdin);
-  uint8_t selectedLun = atoi(input);
-  pSelectedLunInfo = &luns[selectedLun - 1];
+//   preparePartitionAnalysis();
+//   uint8_t error = getDiskPartitionsInfo();
 
-  preparePartitionAnalysis();
-  uint8_t error = getDiskPartitionsInfo();
+//   printf("Error '%d: %s' when searching for patitions.\r\nProceed to manage (y/n)\r\n", error, getDosErrorMessage(error));
+//   fgets(input, sizeof(input), stdin);
+//   if (input[0] != 'y')
+//     exit(0);
 
-  printf("Error '%d: %s' when searching for patitions.\r\nProceed to manage (y/n)\r\n", error, getDosErrorMessage(error));
-  fgets(input, sizeof(input), stdin);
-  if (input[0] != 'y')
-    exit(0);
+//   printf("Proceeding\r\n");
 
-  printf("Proceeding\r\n");
+//   partitionState.partitionsExistInDisk = partitionState.partitionsCount > 0;
 
-  partitionState.partitionsExistInDisk = partitionState.partitionsCount > 0;
+//   if (!partitionState.partitionsExistInDisk) {
+//     printf("Unpartitionned space available: ");
+//     printSize(partitionState.unpartitionnedSpaceInSectors / 2);
+//     printf("\r\n");
+//   }
 
-  if (!partitionState.partitionsExistInDisk) {
-    printf("Unpartitionned space available: ");
-    printSize(partitionState.unpartitionnedSpaceInSectors / 2);
-    printf("\r\n");
-  }
+//   if (partitionState.partitionsCount > 0)
+//     printf("S. Show partitions (%d %s)\r\nD. Delete all partitions\r\n", partitionState.partitionsCount, partitionState.partitionsExistInDisk ? "found" : "defined");
+//   else if (partitionState.canCreate) {
+//     printf("(No partitions found or defined)\r\n");
+//   }
 
-  if (partitionState.partitionsCount > 0)
-    printf("S. Show partitions (%d %s)\r\nD. Delete all partitions\r\n", partitionState.partitionsCount, partitionState.partitionsExistInDisk ? "found" : "defined");
-  else if (partitionState.canCreate) {
-    printf("(No partitions found or defined)\r\n");
-  }
+//   partitionState.canAddNow = !partitionState.partitionsExistInDisk && partitionState.canCreate && partitionState.unpartitionnedSpaceInSectors >= (MIN_REMAINING_SIZE_FOR_NEW_PARTITIONS_IN_K * 2) + (EXTRA_PARTITION_SECTORS) &&
+//                              partitionState.partitionsCount < MAX_PARTITIONS_TO_HANDLE;
 
-  partitionState.canAddNow = !partitionState.partitionsExistInDisk && partitionState.canCreate && partitionState.unpartitionnedSpaceInSectors >= (MIN_REMAINING_SIZE_FOR_NEW_PARTITIONS_IN_K * 2) + (EXTRA_PARTITION_SECTORS) &&
-                             partitionState.partitionsCount < MAX_PARTITIONS_TO_HANDLE;
+//   if (partitionState.canAddNow) {
+//     printf("A. Add one ");
+//     printSize(partitionState.autoSizeInK);
+//     printf(" partition\r\n");
+//     printf("P. Add partition...\r\n");
+//   }
 
-  if (partitionState.canAddNow) {
-    printf("A. Add one ");
-    printSize(partitionState.autoSizeInK);
-    printf(" partition\r\n");
-    printf("P. Add partition...\r\n");
-  }
+//   if (!partitionState.partitionsExistInDisk && partitionState.partitionsCount > 0) {
+//     printf("U. Undo add ");
+//     printSize(partitions[partitionState.partitionsCount - 1].sizeInK);
+//     printf(" partition\r\n");
+//   }
+//   printf("\r\n");
 
-  if (!partitionState.partitionsExistInDisk && partitionState.partitionsCount > 0) {
-    printf("U. Undo add ");
-    printSize(partitions[partitionState.partitionsCount - 1].sizeInK);
-    printf(" partition\r\n");
-  }
-  printf("\r\n");
+//   if (partitionState.canDoDirectFormat)
+//     printf("F. Format device without partitions\r\n\r\n");
 
-  if (partitionState.canDoDirectFormat)
-    printf("F. Format device without partitions\r\n\r\n");
+//   if (!partitionState.partitionsExistInDisk && partitionState.partitionsCount > 0)
+//     printf("W. Write partitions to disk\r\n\r\n");
 
-  if (!partitionState.partitionsExistInDisk && partitionState.partitionsCount > 0)
-    printf("W. Write partitions to disk\r\n\r\n");
-
-  printf("T. Test device access\r\n");
-}
+//   printf("T. Test device access\r\n");
+// }
 
 void recalculateAutoPartitionSize(bool setToAllSpaceAvailable) {
   ulong maxAbsolutePartitionSizeInK = (partitionState.unpartitionnedSpaceInSectors - EXTRA_PARTITION_SECTORS) / 2;
@@ -309,4 +306,76 @@ char buffer[MAX_ERROR_EXPLAIN_LENGTH];
 const char *getDosErrorMessage(uint8_t code) {
   msxdosExplain(code, buffer);
   return buffer;
+}
+
+// ATTEMPT AT ORIGINAL CODE
+
+screenConfiguration currentScreenConfig;
+screenConfiguration originalScreenConfig;
+uint8_t             screenLinesCount;
+
+void saveOriginalScreenConfiguration() {
+  originalScreenConfig.screenMode = *(uint8_t *)SCRMOD;
+  originalScreenConfig.screenWidth = *(uint8_t *)LINLEN;
+  originalScreenConfig.functionKeysVisible = (*(uint8_t *)CNSDFG != 0);
+}
+
+void composeWorkScreenConfiguration() {
+  currentScreenConfig.screenMode = 0;
+  currentScreenConfig.screenWidth = 80;
+  currentScreenConfig.functionKeysVisible = false;
+  screenLinesCount = *(uint8_t *)CRTCNT;
+}
+
+void setScreenConfiguration(screenConfiguration *screenConfig) {
+  *((uint8_t *)LINL40) = 80; // screenConfig->screenWidth;
+  msxbiosInitxt();
+}
+
+#define clearScreen() printf("\x0C")
+#define homeCursor()  printf("\x0D\x1BK")
+#define cursorDown()  printf("\x1F")
+
+void locateX(uint8_t x) { msxbiosPosit(x + 1, *(uint8_t *)CSRY); }
+
+void locate(uint8_t x, uint8_t y) { msxbiosPosit(x + 1, y + 1); }
+void printCentered(char *string) {
+  uint8_t pos = (currentScreenConfig.screenWidth - strlen(string)) / 2;
+  homeCursor();
+  locateX(pos);
+  printf(string);
+}
+
+void printRuler() {
+  uint8_t i;
+
+  homeCursor();
+  for (i = 0; i < currentScreenConfig.screenWidth; i++)
+    printf("-");
+}
+
+void initializeWorkingScreen(char *header) {
+  clearScreen();
+  printCentered(header);
+  cursorDown();
+  printRuler();
+  locate(0, screenLinesCount - 2);
+  printRuler();
+}
+
+void main() {
+  printf("1: ???? %d", *((uint8_t *)LINL32));
+
+  saveOriginalScreenConfiguration();
+
+  composeWorkScreenConfiguration();
+  setScreenConfiguration(&currentScreenConfig);
+  initializeWorkingScreen("Nextor disk partitioning tool");
+
+  // GoDriverSelectionScreen();
+
+  for (uint32_t i = 0; i < 100000; i++)
+    ;
+
+  // setScreenConfiguration(&originalScreenConfig);
 }

@@ -33,4 +33,10 @@ void        preparePartitionAnalysis();
 uint8_t     getDiskPartitionsInfo();
 const char *getDosErrorMessage(uint8_t code);
 
+typedef struct {
+  uint8_t screenMode;
+  uint8_t screenWidth;
+  bool    functionKeysVisible;
+} screenConfiguration;
+
 #endif
