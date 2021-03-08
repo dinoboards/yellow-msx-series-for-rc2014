@@ -678,6 +678,50 @@ void showPartitions() {
   }
 }
 
+void initializeScreenForTestDeviceAccess(const char *message) {
+  clearInformationArea();
+  printTargetInfo();
+  locate(0, MESSAGE_ROW);
+  printf(message);
+  printStateMessage("Press any key to stop...");
+}
+
+void testDeviceAccess() {
+  uint32_t    sectorNumber = 0;
+  const char *message = "Now reading device sector ";
+  uint8_t     messageLen = strlen(message);
+  uint16_t    error;
+  const char *errorMessageHeader = "Error when reading sector ";
+
+  initializeScreenForTestDeviceAccess(message);
+
+  while (getKey() == 0) {
+    sprintf(buffer, "%u", sectorNumber);
+    locate(messageLen, MESSAGE_ROW);
+    printf(buffer);
+    printf(" ...\x1BK");
+
+    error = msxdosDevRw(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 0, buffer);
+
+    if (error != 0) {
+      strcpy(buffer, errorMessageHeader);
+      sprintf(buffer + strlen(errorMessageHeader), "%u", sectorNumber);
+      strcpy(buffer + strlen(buffer), ":");
+      printDosErrorMessage(error, buffer);
+      printStateMessage("Continue reading sectors? (y/n) ");
+      if (!getYesOrNo()) {
+        return;
+      }
+      initializeScreenForTestDeviceAccess(message);
+    }
+
+    sectorNumber++;
+    if (sectorNumber >= selectedLun->sectorCount) {
+      sectorNumber = 0;
+    }
+  }
+}
+
 void goPartitioningMainMenuScreen() {
   char    key;
   uint8_t error;
@@ -772,8 +816,8 @@ void goPartitioningMainMenuScreen() {
       addAutoPartition();
     // } else if(key == 'u' && !partitionsExistInDisk && partitionsCount > 0) {
     // 	UndoAddPartition();
-    // }else if(key == 't') {
-    // 	TestDeviceAccess();
+    else if (key == 't')
+      testDeviceAccess();
     // } else if(key == 'f' && canDoDirectFormat) {
     // 	if(FormatWithoutPartitions()) {
     // 		mustRetrievePartitionInfo = true;
