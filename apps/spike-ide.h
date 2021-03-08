@@ -11,10 +11,10 @@ typedef struct {
   uint8_t data[1024];
 } ioBuf;
 
-extern void    cfInit();
-extern void    cfReadTest(ioBuf *) __z88dk_fastcall;
-extern void    cfWriteTest(ioBuf *) __z88dk_fastcall;
-extern void    cfReadIdentity(uint8_t *) __z88dk_fastcall;
+extern uint8_t cfInit();
+extern uint8_t cfReadTest(ioBuf *) __z88dk_fastcall;
+extern uint8_t cfWriteTest(ioBuf *) __z88dk_fastcall;
+extern uint8_t cfReadIdentity(uint8_t *) __z88dk_fastcall;
 extern uint8_t cfProbe() __z88dk_fastcall;
 
 // name in ASCII (40 chars @ byte offset $36) and the capacity of the drive in

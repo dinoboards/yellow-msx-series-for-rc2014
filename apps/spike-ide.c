@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-ioBuf buf;
+ioBuf   buf;
+uint8_t result;
 
 void main() {
   printf("spike-ide - ver: 0.4\r\n");
@@ -22,7 +23,11 @@ void main() {
 
   cfInit();
 
-  cfReadIdentity(buf.data);
+  result = cfReadIdentity(buf.data);
+  if (result != 0) {
+    printf("cfReadIdentity error %d\r\n", result);
+    exit(0);
+  }
 
   IdeIdentity *x = (IdeIdentity *)buf.data;
   x->ModelNumber[39] = 0;
@@ -44,10 +49,13 @@ void main() {
   buf.lba2 = (lastSector >> 16) & 0xFF;
   buf.lba3 = (lastSector >> 24) & 0xFF;
 
-  printf("lba: %02X %02X %02X %02X", buf.lba0, buf.lba1, buf.lba2, buf.lba3);
+  printf("lba: %02X %02X %02X %02X\r\n", buf.lba0, buf.lba1, buf.lba2, buf.lba3);
 
-  cfReadTest(&buf);
-
+  result = cfReadTest(&buf);
+  if (result != 0) {
+    printf("cfReadTest error %d\r\n", result);
+    exit(0);
+  }
   printf("--------------\r\n");
 
   for (int i = 0; i < 128; i++) {
@@ -58,7 +66,11 @@ void main() {
   }
 
   for (int i = 0; i < 512; i++)
-    buf.data[i] = i;
+    buf.data[i] = buf.data[i] + 1;
 
-  cfWriteTest(&buf);
+  result = cfWriteTest(&buf);
+  if (result != 0) {
+    printf("cfWriteTest error %d\r\n", result);
+    exit(0);
+  }
 }
