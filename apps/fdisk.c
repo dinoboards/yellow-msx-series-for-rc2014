@@ -764,8 +764,14 @@ void testDeviceWriteAccess() {
   uint16_t error;
   uint16_t i;
 
-  initializeScreenForTestDeviceWriteAccess("Checking write access on last sector");
-  locate(0, MESSAGE_ROW + 4);
+  initializeScreenForTestDeviceWriteAccess("Checking write access on last sector\r\n");
+  locate(0, MESSAGE_ROW + 1);
+  printf("WARNING! Potential data corruption.\r\n");
+  printStateMessage("Proceed? (y/n) ");
+  if (!getYesOrNo())
+    return;
+
+  locate(0, MESSAGE_ROW + 2);
 
   const uint32_t targetSector = selectedLun->sectorCount - 1;
 
@@ -811,7 +817,7 @@ void testDeviceWriteAccess() {
     goto abortTest;
   }
 
-  printf("Success.");
+  printStateMessage("Success.  Press any key to exit");
 
 abortTest:
   waitKey();
