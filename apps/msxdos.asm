@@ -88,10 +88,10 @@ _msxdosGdrvr:
 	POP	IX
 	RET
 
-; extern uint8_t  msxdosGpartInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t logicalUnitNumber, uint8_t primaryPartitionNumber, uint8_t extendedPartitionNumber, bool getSectorNumber, GPartInfo* result);
-	PUBLIC	_msxdosGpartInfo
+; extern uint8_t  msxdosGpart(uint8_t slotNumber, uint8_t deviceNumber, uint8_t logicalUnitNumber, uint8_t primaryPartitionNumber, uint8_t extendedPartitionNumber, bool getSectorNumber, GPartInfo* result);
+	PUBLIC	_msxdosGpart
 
-_msxdosGpartInfo:
+_msxdosGpart:
 	PUSH	IX
 	LD	IX, 0
 	ADD	IX, SP

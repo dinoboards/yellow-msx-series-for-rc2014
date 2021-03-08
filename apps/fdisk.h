@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define MESSAGE_ROW 9
 
 typedef struct {
   uint8_t lunCount;
@@ -12,11 +13,10 @@ typedef struct {
   uint8_t number;
 } deviceInfo;
 
-void        terminateRightPaddedString(char *string, uint8_t length);
-void        composeSlotString(uint8_t slot, char *destination);
-void        printSize(uint32_t sizeInK);
-uint8_t     getRemainingBy1024String(uint32_t value, char *destination);
-// void        preparePartitionAnalysis();
+void    terminateRightPaddedString(char *string, uint8_t length);
+void    composeSlotString(uint8_t slot, char *destination);
+void    printSize(uint32_t sizeInK);
+uint8_t getRemainingBy1024String(uint32_t value, char *destination);
 // uint8_t     getDiskPartitionsInfo();
 // const char *getDosErrorMessage(uint8_t code);
 

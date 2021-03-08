@@ -9,7 +9,7 @@
 #define MAX_LUNS_PER_DEVICE      7
 #define MAX_INFO_LENGTH          64
 #define MAX_DEVICES_PER_DRIVER   7
-#define MAX_ERROR_EXPLAIN_LENGTH 64
+#define MAX_ERROR_EXPLAIN_LENGTH 65
 
 #define BLOCK_DEVICE    0
 #define READ_ONLY_LUN   (1 << 1)
@@ -69,7 +69,7 @@ typedef struct {
 } GPartInfo;
 
 extern uint8_t msxdosGdrvr(int8_t driverIndex, msxdosDriverInfo *data);
-extern uint8_t msxdosGpartInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t logicalUnitNumber, uint8_t primaryPartitionNumber, uint8_t extendedPartitionNumber, bool getSectorNumber, GPartInfo *result);
+extern uint8_t msxdosGpart(uint8_t slotNumber, uint8_t deviceNumber, uint8_t logicalUnitNumber, uint8_t primaryPartitionNumber, uint8_t extendedPartitionNumber, bool getSectorNumber, GPartInfo *result);
 extern uint8_t msxdosExplain(uint8_t code, char *buffer);
 extern uint8_t msxdosDirio(uint8_t code) __z88dk_fastcall;
 

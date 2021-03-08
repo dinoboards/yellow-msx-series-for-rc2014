@@ -82,50 +82,6 @@ uint8_t getRemainingBy1024String(uint32_t value, char *destination) {
   return 0;
 }
 
-// uint8_t getDiskPartitionsInfo() {
-//   uint8_t        primaryIndex = 1;
-//   uint8_t        extendedIndex = 0;
-//   uint8_t        error;
-//   partitionInfo *currentPartition = &partitions[0];
-
-//   partitionState.partitionsCount = 0;
-
-//   GPartInfo result;
-
-//   do {
-//     error = msxdosGpartInfo(pSelectedDriverInfo->slot, pSelectedDeviceInfo->number, pSelectedLunInfo->number, primaryIndex, extendedIndex, false, &result);
-
-//     if (error == 0) {
-//       if (result.typeCode == PARTYPE_EXTENDED) {
-//         extendedIndex = 1;
-//       } else {
-//         currentPartition->primaryIndex = primaryIndex;
-//         currentPartition->extendedIndex = extendedIndex;
-//         currentPartition->partitionType = result.typeCode;
-//         currentPartition->status = result.status;
-//         currentPartition->sizeInK = result.sectorCount / 2;
-//         partitionState.partitionsCount++;
-//         currentPartition++;
-//         extendedIndex++;
-//       }
-//     } else if (error == _IPART) {
-//       primaryIndex++;
-//       extendedIndex = 0;
-//     } else {
-//       return error;
-//     }
-//   } while (primaryIndex <= 4 && partitionState.partitionsCount < MAX_PARTITIONS_TO_HANDLE);
-
-//   return 0;
-// }
-
-char buffer[MAX_ERROR_EXPLAIN_LENGTH];
-
-const char *getDosErrorMessage(uint8_t code) {
-  msxdosExplain(code, buffer);
-  return buffer;
-}
-
 // ATTEMPT AT ORIGINAL CODE
 
 screenConfiguration currentScreenConfig;
@@ -139,6 +95,14 @@ deviceInfo *        currentDevice;
 uint8_t             selectedDeviceIndex;
 uint8_t             availableLunsCount;
 uint8_t             selectedLunIndex;
+msxdosLunInfo *     selectedLun;
+uint8_t             partitionsCount;
+bool                partitionsExistInDisk;
+bool                canCreatePartitions;
+bool                canDoDirectFormat;
+uint32_t            unpartitionnedSpaceInSectors;
+uint32_t            autoPartitionSizeInK;
+char                buffer[MAX_ERROR_EXPLAIN_LENGTH];
 
 void saveOriginalScreenConfiguration() {
   originalScreenConfig.screenMode = *(uint8_t *)SCRMOD;
@@ -164,6 +128,8 @@ void setScreenConfiguration() {
 #define deleteToEndOfLine()              printf("\x1BK")
 #define deleteToEndOfLineAndCursorDown() printf("\x1BK\x1F");
 #define newLine()                        printf("\x0A\x0D");
+#define hideCursor()                     printf("\x1Bx5")
+#define displayCursor()                  printf("\x1By5")
 
 void locateX(uint8_t x) { msxbiosPosit(x + 1, *(uint8_t *)CSRY); }
 
@@ -191,12 +157,6 @@ void initializeWorkingScreen(char *header) {
   printRuler();
   locate(0, screenLinesCount - 2);
   printRuler();
-}
-
-void PrintStateMessage(char *string) {
-  locate(0, screenLinesCount - 1);
-  deleteToEndOfLine();
-  printf(string);
 }
 
 char getKey() { return msxdosDirio(0xFF); }
@@ -393,7 +353,7 @@ void getLunsInformation() {
 void printDeviceInfoWithIndex() { printf(" (Id = %d)", selectedDeviceIndex); }
 
 void showLunSelectionScreen() {
-  byte           i;
+  uint8_t        i;
   msxdosLunInfo *currentLun;
 
   clearInformationArea();
@@ -438,6 +398,215 @@ void showLunSelectionScreen() {
   printStateMessage("Select the logical unit");
 }
 
+void recalculateAutoPartitionSize(bool setToAllSpaceAvailable) {
+  uint32_t maxAbsolutePartitionSizeInK = (unpartitionnedSpaceInSectors - EXTRA_PARTITION_SECTORS) / 2;
+
+  if (setToAllSpaceAvailable) {
+    autoPartitionSizeInK = maxAbsolutePartitionSizeInK;
+  }
+
+  if (autoPartitionSizeInK > MAX_FAT16_PARTITION_SIZE_IN_K) {
+    autoPartitionSizeInK = MAX_FAT16_PARTITION_SIZE_IN_K;
+  } else if (!setToAllSpaceAvailable && autoPartitionSizeInK > maxAbsolutePartitionSizeInK) {
+    autoPartitionSizeInK = maxAbsolutePartitionSizeInK;
+  }
+
+  if (autoPartitionSizeInK < MIN_PARTITION_SIZE_IN_K) {
+    autoPartitionSizeInK = MIN_PARTITION_SIZE_IN_K;
+  } else if (autoPartitionSizeInK > maxAbsolutePartitionSizeInK) {
+    autoPartitionSizeInK = maxAbsolutePartitionSizeInK;
+  }
+}
+
+void initializePartitioningVariables(uint8_t lunIndex) {
+  selectedLunIndex = lunIndex - 1;
+  selectedLun = &luns[selectedLunIndex];
+  partitionsCount = 0;
+  partitionsExistInDisk = true;
+  canCreatePartitions = (selectedLun->sectorCount >= (MIN_DEVICE_SIZE_FOR_PARTITIONS_IN_K * 2));
+  canDoDirectFormat = (selectedLun->sectorCount <= MAX_DEVICE_SIZE_FOR_DIRECT_FORMAT_IN_K * 2);
+  unpartitionnedSpaceInSectors = selectedLun->sectorCount;
+  recalculateAutoPartitionSize(true);
+}
+
+void printTargetInfo() {
+  locate(0, 3);
+  printf(selectedDriverName);
+  printf(currentDevice->deviceName);
+  printDeviceInfoWithIndex();
+  newLine();
+  printf("Logical unit %d, size: ", selectedLunIndex + 1);
+  printSize(selectedLun->sectorCount / 2);
+  newLine();
+}
+
+uint8_t getDiskPartitionsInfo() {
+  uint8_t        primaryIndex = 1;
+  uint8_t        extendedIndex = 0;
+  uint8_t        error;
+  partitionInfo *currentPartition = &partitions[0];
+  GPartInfo      result;
+
+  partitionsCount = 0;
+
+  do {
+    error = msxdosGpart(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex, primaryIndex, extendedIndex, false, &result);
+
+    if (error == 0) {
+      if (result.typeCode == PARTYPE_EXTENDED) {
+        extendedIndex = 1;
+      } else {
+        currentPartition->primaryIndex = primaryIndex;
+        currentPartition->extendedIndex = extendedIndex;
+        currentPartition->partitionType = result.typeCode;
+        currentPartition->status = result.status;
+        currentPartition->sizeInK = result.sectorCount / 2;
+        partitionsCount++;
+        currentPartition++;
+        extendedIndex++;
+      }
+    } else if (error == _IPART) {
+      primaryIndex++;
+      extendedIndex = 0;
+    } else {
+      return error;
+    }
+  } while (primaryIndex <= 4 && partitionsCount < MAX_PARTITIONS_TO_HANDLE);
+
+  return 0;
+}
+
+bool getYesOrNo() {
+  char key;
+
+  displayCursor();
+  key = waitKey() | 32;
+  hideCursor();
+  return key == 'y';
+}
+
+void printDosErrorMessage(byte code, char *header) {
+  locate(0, MESSAGE_ROW);
+  printCentered(header);
+  newLine();
+
+  msxdosExplain(code, buffer);
+  if (strlen(buffer) > currentScreenConfig.screenWidth) {
+    printf(buffer);
+  } else {
+    printCentered(buffer);
+  }
+
+  printStateMessage("Press any key to return...");
+}
+
+void goPartitioningMainMenuScreen() {
+  char    key;
+  uint8_t error;
+  bool    canAddPartitionsNow;
+  bool    mustRetrievePartitionInfo = true;
+
+  while (true) {
+    if (mustRetrievePartitionInfo) {
+      clearInformationArea();
+      printTargetInfo();
+
+      if (canCreatePartitions) {
+        locate(0, MESSAGE_ROW);
+        printCentered("Searching partitions...");
+        printStateMessage("Please wait...");
+        error = getDiskPartitionsInfo();
+        if (error != 0) {
+          printDosErrorMessage(error, "Error when searching partitions:");
+          printStateMessage("Manage device anyway? (y/n) ");
+          if (!getYesOrNo()) {
+            return;
+          }
+        }
+        partitionsExistInDisk = (partitionsCount > 0);
+      }
+      mustRetrievePartitionInfo = false;
+    }
+
+    clearInformationArea();
+    printTargetInfo();
+    if (!partitionsExistInDisk) {
+      printf("Unpartitionned space available: ");
+      printSize(unpartitionnedSpaceInSectors / 2);
+      newLine();
+    }
+    newLine();
+
+    printf("Changes are not committed until W is pressed.\r\n\r\n");
+
+    if (partitionsCount > 0) {
+      printf("S. Show partitions (%d %s)\r\n"
+             "D. Delete all partitions\r\n",
+             partitionsCount, partitionsExistInDisk ? "found" : "defined");
+    } else if (canCreatePartitions) {
+      printf("(No partitions found or defined)\r\n");
+    }
+    canAddPartitionsNow = !partitionsExistInDisk && canCreatePartitions && unpartitionnedSpaceInSectors >= (MIN_REMAINING_SIZE_FOR_NEW_PARTITIONS_IN_K * 2) + (EXTRA_PARTITION_SECTORS) && partitionsCount < MAX_PARTITIONS_TO_HANDLE;
+    if (canAddPartitionsNow) {
+      printf("A. Add one ");
+      printSize(autoPartitionSizeInK);
+      printf(" partition\r\n");
+      printf("P. Add partition...\r\n");
+    }
+    if (!partitionsExistInDisk && partitionsCount > 0) {
+      printf("U. Undo add ");
+      printSize(partitions[partitionsCount - 1].sizeInK);
+      printf(" partition\r\n");
+    }
+    newLine();
+    if (canDoDirectFormat) {
+      printf("F. Format device without partitions\r\n\r\n");
+    }
+    if (!partitionsExistInDisk && partitionsCount > 0) {
+      printf("W. Write partitions to disk\r\n\r\n");
+    }
+    printf("T. Test device access\r\n");
+
+    printStateMessage("Select an option or press ESC to return");
+
+    while ((key = waitKey()) == 0)
+      ;
+    if (key == ESC) {
+      if (partitionsExistInDisk || partitionsCount == 0) {
+        return;
+      }
+      printStateMessage("Discard changes and return? (y/n) ");
+      if (getYesOrNo()) {
+        return;
+      } else {
+        continue;
+      }
+    }
+    key |= 32;
+    // if(key == 's' && partitionsCount > 0) {
+    // 	ShowPartitions();
+    // } else if(key == 'd' && partitionsCount > 0) {
+    // 	DeleteAllPartitions();
+    // } else if(key == 'p' && canAddPartitionsNow > 0) {
+    // 	AddPartition();
+    // } else if(key == 'a' && canAddPartitionsNow > 0) {
+    // 	AddAutoPartition();
+    // } else if(key == 'u' && !partitionsExistInDisk && partitionsCount > 0) {
+    // 	UndoAddPartition();
+    // }else if(key == 't') {
+    // 	TestDeviceAccess();
+    // } else if(key == 'f' && canDoDirectFormat) {
+    // 	if(FormatWithoutPartitions()) {
+    // 		mustRetrievePartitionInfo = true;
+    // 	}
+    // }else if(key == 'w' && !partitionsExistInDisk && partitionsCount > 0) {
+    // 	if(WritePartitionTable()) {
+    // 		mustRetrievePartitionInfo = true;
+    // 	}
+    // }
+  }
+}
+
 void goLunSelectionScreen(uint8_t deviceIndex) {
   uint8_t key;
 
@@ -454,17 +623,15 @@ void goLunSelectionScreen(uint8_t deviceIndex) {
 
     while (true) {
       key = waitKey();
-      if (key == ESC) {
+      if (key == ESC)
         return;
+
+      key -= '0';
+      if (key >= 1 && key <= MAX_LUNS_PER_DEVICE && luns[key - 1].suitableForPartitioning) {
+        initializePartitioningVariables(key);
+        goPartitioningMainMenuScreen();
+        break;
       }
-      /*else {
-          key -= '0';
-          if(key >= 1 && key <= MAX_LUNS_PER_DEVICE && luns[key - 1].suitableForPartitioning) {
-                                  InitializePartitioningVariables(key);
-              GoPartitioningMainMenuScreen();
-              break;
-          }
-      }*/
     }
   }
 }
@@ -488,14 +655,13 @@ void goDeviceSelectionScreen(uint8_t driverIndex) {
 
     while (true) {
       key = waitKey();
-      if (key == ESC) {
+      if (key == ESC)
         return;
-      } else {
-        key -= '0';
-        if (key >= 1 && key <= MAX_DEVICES_PER_DRIVER && devices[key - 1].lunCount != 0) {
-          goLunSelectionScreen(key);
-          break;
-        }
+
+      key -= '0';
+      if (key >= 1 && key <= MAX_DEVICES_PER_DRIVER && devices[key - 1].lunCount != 0) {
+        goLunSelectionScreen(key);
+        break;
       }
     }
   }
@@ -512,14 +678,13 @@ void goDriverSelectionScreen() {
 
     while (true) {
       key = waitKey();
-      if (key == ESC) {
+      if (key == ESC)
         return;
-      } else {
-        key -= '0';
-        if (key >= 1 && key <= installedDriversCount) {
-          goDeviceSelectionScreen(key);
-          break;
-        }
+
+      key -= '0';
+      if (key >= 1 && key <= installedDriversCount) {
+        goDeviceSelectionScreen(key);
+        break;
       }
     }
   }
