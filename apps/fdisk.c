@@ -556,7 +556,7 @@ void togglePartitionActive(uint8_t partitionIndex) {
   primaryIndex = partition->primaryIndex;
   extendedIndex = partition->extendedIndex;
 
-  sprintf(buffer, "%set active bit of partition %i? (y/n) ", status & 0x80 ? "Res" : "S", partitionIndex + 1);
+  sprintf(buffer, "%set active bit of partition %d? (y/n) ", status & 0x80 ? "Res" : "S", partitionIndex + 1);
   printStateMessage(buffer);
   if (!getYesOrNo()) {
     return;
@@ -574,7 +574,7 @@ void togglePartitionActive(uint8_t partitionIndex) {
   if (error == 0) {
     partition->status ^= 0x80;
   } else {
-    sprintf(buffer, "Error when accessing device: %i", error);
+    sprintf(buffer, "Error when accessing device: %d", error);
     clearInformationArea();
     locate(0, 7);
     printCentered(buffer);
@@ -823,6 +823,71 @@ abortTest:
   waitKey();
 }
 
+bool confirmDataDestroy(char *action) {
+  printStateMessage("");
+  clearInformationArea();
+  printTargetInfo();
+  locate(0, MESSAGE_ROW);
+
+  printf("%s\r\n"
+         "\r\n"
+         "THIS WILL DESTROY ALL DATA ON THE DEVICE!!\r\n"
+         "This action can't be cancelled and can't be undone\r\n"
+         "\r\n"
+         "Are you sure? (y/n) ",
+         action);
+
+  return getYesOrNo();
+}
+
+void printDone() {
+  printCentered("Done!");
+  printf("\x0A\x0D\x0A\x0A\x0A");
+  printCentered("If this device had drives mapped,");
+  newLine();
+  printCentered("please reset the computer.");
+}
+
+bool writePartitionTable() {
+  uint8_t i;
+  uint8_t error = 0;
+
+  sprintf(buffer, "Create %d partitions on device", partitionsCount);
+
+  if (!confirmDataDestroy(buffer))
+    return false;
+
+  clearInformationArea();
+  printTargetInfo();
+  printStateMessage("Please wait...");
+
+  locate(0, MESSAGE_ROW);
+  printCentered("Preparing partitioning process...");
+
+  // PreparePartitioningProcess();
+
+  for (i = 0; i < partitionsCount; i++) {
+    locate(0, MESSAGE_ROW);
+    sprintf(buffer, "Creating partition %d of %d ...", i + 1, partitionsCount);
+    printCentered(buffer);
+
+    // error = CreatePartition(i);
+    if (error != 0) {
+      sprintf(buffer, "Error when creating partition %d :", i + 1);
+      printDosErrorMessage(error, buffer);
+      waitKey();
+      return false;
+    }
+  }
+
+  locate(0, MESSAGE_ROW + 2);
+  printDone();
+  printStateMessage("Press any key to return...");
+  waitKey();
+
+  return true;
+}
+
 void goPartitioningMainMenuScreen() {
   char    key;
   uint8_t error;
@@ -842,9 +907,8 @@ void goPartitioningMainMenuScreen() {
         if (error != 0) {
           printDosErrorMessage(error, "Error when searching partitions:");
           printStateMessage("Manage device anyway? (y/n) ");
-          if (!getYesOrNo()) {
+          if (!getYesOrNo())
             return;
-          }
         }
         partitionsExistInDisk = (partitionsCount > 0);
       }
@@ -936,9 +1000,9 @@ void goPartitioningMainMenuScreen() {
     // 	if(FormatWithoutPartitions()) {
     // 		mustRetrievePartitionInfo = true;
     // 	}
-    // if(key == 'w' && !partitionsExistInDisk && partitionsCount > 0)
-    // 	if(WritePartitionTable())
-    // 		mustRetrievePartitionInfo = true;
+    if (key == 'w' && !partitionsExistInDisk && partitionsCount > 0)
+      if (writePartitionTable())
+        mustRetrievePartitionInfo = true;
   }
 }
 
