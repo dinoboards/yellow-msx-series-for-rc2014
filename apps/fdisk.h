@@ -5,6 +5,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define TRUE  1
+#define FALSE 0
+
 #define MESSAGE_ROW         9
 #define PARTITIONS_PER_PAGE 15
 

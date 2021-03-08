@@ -33,7 +33,7 @@ static bool                canCreatePartitions;
 static bool                canDoDirectFormat;
 static uint32_t            unpartitionnedSpaceInSectors;
 static uint32_t            autoPartitionSizeInK;
-static char                buffer[MAX_ERROR_EXPLAIN_LENGTH];
+static char                buffer[1024];
 
 void terminateRightPaddedStringWithZero(char *string, uint8_t length) {
   char *pointer = string + length - 1;
@@ -701,7 +701,7 @@ void testDeviceAccess() {
     printf(buffer);
     printf(" ...\x1BK");
 
-    error = msxdosDevRw(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, 0, buffer);
+    error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, buffer);
 
     if (error != 0) {
       strcpy(buffer, errorMessageHeader);
@@ -720,6 +720,101 @@ void testDeviceAccess() {
       sectorNumber = 0;
     }
   }
+}
+
+void initializeScreenForTestDeviceWriteAccess(const char *message) {
+  clearInformationArea();
+  printTargetInfo();
+  locate(0, MESSAGE_ROW);
+  printf(message);
+  printStateMessage("Press any key to return...");
+}
+
+bool readSector(uint32_t targetSector) {
+  uint16_t error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
+  if (error != 0) {
+    printDosErrorMessage(error, "Driver Error:");
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+bool writeSector(uint32_t targetSector) {
+  uint16_t error = msxdosDevWrite(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
+  if (error != 0) {
+    printDosErrorMessage(error, "Driver Error:");
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+void testDeviceWriteAccess() {
+
+#define FOR_BUFFER(f)       \
+  for (i = 0; i < 512; i++) \
+  f
+#define CHECK_BUFFER(c, f) \
+  FOR_BUFFER(if (c) {      \
+    f;                     \
+    break;                 \
+  })
+
+  uint16_t error;
+  uint16_t i;
+
+  initializeScreenForTestDeviceWriteAccess("Checking write access on last sector");
+  locate(0, MESSAGE_ROW + 4);
+
+  const uint32_t targetSector = selectedLun->sectorCount - 1;
+
+  printf("Target sector %ld\r\n", targetSector);
+
+  printf("Reading\r\n");
+  if (!readSector(targetSector))
+    goto abortTest;
+
+  FOR_BUFFER(buffer[i] = 0);
+
+  printf("Writing zeros\r\n");
+  if (!writeSector(targetSector))
+    goto abortTest;
+
+  printf("Verifiying\r\n");
+  if (!readSector(targetSector))
+    goto abortTest;
+
+  error = FALSE;
+  CHECK_BUFFER(buffer[i] != 0, error = TRUE);
+
+  if (error) {
+    printf("Comparision failure at byte %d\r\n", i);
+    goto abortTest;
+  }
+
+  FOR_BUFFER(buffer[i] = i);
+
+  printf("Writing sequence\r\n");
+  if (!writeSector(targetSector))
+    goto abortTest;
+
+  printf("Verifiying\r\n");
+  if (!readSector(targetSector))
+    goto abortTest;
+
+  error = FALSE;
+  CHECK_BUFFER(buffer[i] != (uint8_t)i, error = TRUE);
+
+  if (error) {
+    printf("Comparision failure at byte %d\r\n", i);
+    goto abortTest;
+  }
+
+  printf("Success.");
+
+abortTest:
+  waitKey();
 }
 
 void goPartitioningMainMenuScreen() {
@@ -788,6 +883,7 @@ void goPartitioningMainMenuScreen() {
       printf("W. Write partitions to disk\r\n\r\n");
     }
     printf("T. Test device access\r\n");
+    printf("C: Test write for last sector\r\n");
 
     printStateMessage("Select an option or press ESC to return");
 
@@ -805,28 +901,38 @@ void goPartitioningMainMenuScreen() {
       }
     }
     key |= 32;
-    if (key == 's' && partitionsCount > 0)
+    if (key == 's' && partitionsCount > 0) {
       showPartitions();
+      continue;
+    }
     // } else if(key == 'd' && partitionsCount > 0) {
     // 	DeleteAllPartitions();
     // } else if(key == 'p' && canAddPartitionsNow > 0) {
     // 	AddPartition();
     //} else
-    else if (key == 'a' && canAddPartitionsNow > 0)
+    if (key == 'a' && canAddPartitionsNow > 0) {
       addAutoPartition();
+      continue;
+    }
     // } else if(key == 'u' && !partitionsExistInDisk && partitionsCount > 0) {
     // 	UndoAddPartition();
-    else if (key == 't')
+    if (key == 't') {
       testDeviceAccess();
+      continue;
+    }
+
+    if (key == 'c') {
+      testDeviceWriteAccess();
+      continue;
+    }
+
     // } else if(key == 'f' && canDoDirectFormat) {
     // 	if(FormatWithoutPartitions()) {
     // 		mustRetrievePartitionInfo = true;
     // 	}
-    // }else if(key == 'w' && !partitionsExistInDisk && partitionsCount > 0) {
-    // 	if(WritePartitionTable()) {
+    // if(key == 'w' && !partitionsExistInDisk && partitionsCount > 0)
+    // 	if(WritePartitionTable())
     // 		mustRetrievePartitionInfo = true;
-    // 	}
-    // }
   }
 }
 
