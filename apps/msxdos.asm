@@ -15,6 +15,7 @@ BDOS	EQU	0x0005
 ; DRIVER FUNCTION ENTRY POINTS
 DEV_INFO	EQU 	0x4163
 LUN_INFO 	EQU	0x4169
+DEV_RW	EQU	0x4160
 
 	SECTION	CODE
 
@@ -231,6 +232,42 @@ _msxdosDrvLunInfo:
 	LD	C, _CDRVR
 	LD	B, 255
 	LD	DE, LUN_INFO
+	LD	HL, CDRVR_REGS
+	CALL	BDOS
+	LD	H, A
+	PUSH	IX
+	POP	AF
+	LD	L, A
+	POP	IX
+	RET
+
+
+; extern uint16_t msxdosDevRw(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t write, uint8_t* buffer);
+	PUBLIC	_msxdosDevRw
+_msxdosDevRw:
+	PUSH	IX
+	LD	IX, 0
+	ADD	IX, SP
+
+	LD	A, (IX+5)
+	LD	(CDRVR_REGS_A), A		; driverIndex
+	LD	A, (IX+6)
+	LD	(CDRVR_REGS_C), A		; lunIndex
+	LD	A, (IX+7)
+	LD	(CDRVR_REGS_E), A		; firstDeviceSector
+	LD	A, (IX+8)
+	LD	(CDRVR_REGS_D), A
+	LD	A, (IX+9)
+	LD	(CDRVR_REGS_F), A		; WRITE FLAG TO CY FLAG
+	LD	A, (IX+10)
+	LD	(CDRVR_REGS_L), A		; firstDeviceSector
+	LD	A, (IX+11)
+	LD	(CDRVR_REGS_H), A
+
+	LD	A, (IX+4) 			; slotNumber
+	LD	C, _CDRVR
+	LD	B, 255
+	LD	DE, DEV_RW
 	LD	HL, CDRVR_REGS
 	CALL	BDOS
 	LD	H, A

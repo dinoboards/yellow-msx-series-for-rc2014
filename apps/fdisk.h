@@ -5,7 +5,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define MESSAGE_ROW 9
+#define MESSAGE_ROW         9
+#define PARTITIONS_PER_PAGE 15
 
 typedef struct {
   uint8_t lunCount;
@@ -26,6 +27,9 @@ typedef struct {
   bool    functionKeysVisible;
 } screenConfiguration;
 
-#define ESC 27
+#define ESC          27
+#define CURSOR_RIGHT 28
+#define CURSOR_LEFT  29
+#define KEY_1        49
 
 #endif
