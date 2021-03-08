@@ -39,4 +39,6 @@ typedef struct {
   bool    functionKeysVisible;
 } screenConfiguration;
 
+#define ESC 27
+
 #endif
