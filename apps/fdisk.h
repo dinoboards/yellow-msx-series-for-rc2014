@@ -6,9 +6,12 @@
 #include <stdlib.h>
 
 struct _partitionState {
-  bool     canCreate;
-  bool     canDoDirectFormat;
-  bool     unpartitionnedSpaceInSectors;
+  bool canCreate;
+  bool canDoDirectFormat;
+  bool unpartitionnedSpaceInSectors;
+  bool partitionsExistInDisk;
+  bool canAddNow;
+
   uint32_t autoSizeInK;
 
   uint8_t partitionsCount;

@@ -81,7 +81,7 @@ uint8_t retrieveLunInfors() {
 
       pLunInfo->number = count;
 
-      printf("\x1B  %d: Capacity: ", count);
+      printf(" %d: Total Sectors %ld, Capacity: ", count, pLunInfo->sectorCount);
       printSize(pLunInfo->sectorCount / 2);
       if (pLunInfo->suitableForPartitioning)
         printf(" [SELECTABLE]\r\n");
@@ -119,12 +119,56 @@ void main() {
   printf("Enter logical unit number: ");
   fgets(input, sizeof(input), stdin);
   uint8_t selectedLun = atoi(input);
-  pSelectedLunInfo = &luns[selectedLun];
+  pSelectedLunInfo = &luns[selectedLun - 1];
 
   preparePartitionAnalysis();
   uint8_t error = getDiskPartitionsInfo();
 
-  printf("error: %d, %s\r\n", error, getDosErrorMessage(error));
+  printf("Error '%d: %s' when searching for patitions.\r\nProceed to manage (y/n)\r\n", error, getDosErrorMessage(error));
+  fgets(input, sizeof(input), stdin);
+  if (input[0] != 'y')
+    exit(0);
+
+  printf("Proceeding\r\n");
+
+  partitionState.partitionsExistInDisk = partitionState.partitionsCount > 0;
+
+  if (!partitionState.partitionsExistInDisk) {
+    printf("Unpartitionned space available: ");
+    printSize(partitionState.unpartitionnedSpaceInSectors / 2);
+    printf("\r\n");
+  }
+
+  if (partitionState.partitionsCount > 0)
+    printf("S. Show partitions (%d %s)\r\nD. Delete all partitions\r\n", partitionState.partitionsCount, partitionState.partitionsExistInDisk ? "found" : "defined");
+  else if (partitionState.canCreate) {
+    printf("(No partitions found or defined)\r\n");
+  }
+
+  partitionState.canAddNow = !partitionState.partitionsExistInDisk && partitionState.canCreate && partitionState.unpartitionnedSpaceInSectors >= (MIN_REMAINING_SIZE_FOR_NEW_PARTITIONS_IN_K * 2) + (EXTRA_PARTITION_SECTORS) &&
+                             partitionState.partitionsCount < MAX_PARTITIONS_TO_HANDLE;
+
+  if (partitionState.canAddNow) {
+    printf("A. Add one ");
+    printSize(partitionState.autoSizeInK);
+    printf(" partition\r\n");
+    printf("P. Add partition...\r\n");
+  }
+
+  if (!partitionState.partitionsExistInDisk && partitionState.partitionsCount > 0) {
+    printf("U. Undo add ");
+    printSize(partitions[partitionState.partitionsCount - 1].sizeInK);
+    printf(" partition\r\n");
+  }
+  printf("\r\n");
+
+  if (partitionState.canDoDirectFormat)
+    printf("F. Format device without partitions\r\n\r\n");
+
+  if (!partitionState.partitionsExistInDisk && partitionState.partitionsCount > 0)
+    printf("W. Write partitions to disk\r\n\r\n");
+
+  printf("T. Test device access\r\n");
 }
 
 void recalculateAutoPartitionSize(bool setToAllSpaceAvailable) {
@@ -150,6 +194,7 @@ void preparePartitionAnalysis() {
   partitionState.pLunInfo = pSelectedLunInfo;
   partitionState.canCreate = (pSelectedLunInfo->sectorCount >= (MIN_DEVICE_SIZE_FOR_PARTITIONS_IN_K * 2));
   partitionState.canDoDirectFormat = (pSelectedLunInfo->sectorCount <= MAX_DEVICE_SIZE_FOR_DIRECT_FORMAT_IN_K * 2);
+  printf("\r\n???? %ld, %ld, %d\r\n", pSelectedLunInfo->sectorCount, MAX_DEVICE_SIZE_FOR_DIRECT_FORMAT_IN_K * 2, partitionState.canDoDirectFormat);
   partitionState.unpartitionnedSpaceInSectors = pSelectedLunInfo->sectorCount;
   recalculateAutoPartitionSize(true);
 }

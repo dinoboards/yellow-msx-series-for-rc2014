@@ -8,11 +8,11 @@
 #define MIN_DEVICE_SIZE_FOR_PARTITIONS_IN_K        1024
 #define MIN_REMAINING_SIZE_FOR_NEW_PARTITIONS_IN_K 100
 #define MIN_PARTITION_SIZE_IN_K                    100
-#define MAX_DEVICE_SIZE_FOR_DIRECT_FORMAT_IN_K     32768
+#define MAX_DEVICE_SIZE_FOR_DIRECT_FORMAT_IN_K     ((uint32_t)32768)
 #define MAX_FAT16_PARTITION_SIZE_IN_M              4096
 #define MAX_FAT16_PARTITION_SIZE_IN_K              ((uint32_t)MAX_FAT16_PARTITION_SIZE_IN_M * (uint32_t)1024)
-#define MAX_FAT12_PARTITION_SIZE_IN_K              32768
-#define MAX_SECTORS_PER_TRACK                      63
+#define MAX_FAT12_PARTITION_SIZE_IN_K              (((uint32_t)32768)
+#define MAX_SECTORS_PER_TRACK 63
 // Each partition has 1 extra sector for MBR
 #define EXTRA_PARTITION_SECTORS 1
 
