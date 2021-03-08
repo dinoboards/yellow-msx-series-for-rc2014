@@ -701,7 +701,7 @@ void testDeviceAccess() {
     printf(buffer);
     printf(" ...\x1BK");
 
-    error = msxdosDevRw(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 0, buffer);
+    error = msxdosDevRw(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, 0, buffer);
 
     if (error != 0) {
       strcpy(buffer, errorMessageHeader);

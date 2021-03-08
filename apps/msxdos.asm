@@ -242,7 +242,7 @@ _msxdosDrvLunInfo:
 	RET
 
 
-; extern uint16_t msxdosDevRw(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t write, uint8_t* buffer);
+; extern uint16_t msxdosDevRw(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t write, uint8_t *buffer);
 	PUBLIC	_msxdosDevRw
 _msxdosDevRw:
 	PUSH	IX
@@ -251,17 +251,24 @@ _msxdosDevRw:
 
 	LD	A, (IX+5)
 	LD	(CDRVR_REGS_A), A		; driverIndex
+
 	LD	A, (IX+6)
 	LD	(CDRVR_REGS_C), A		; lunIndex
-	LD	A, (IX+7)
-	LD	(CDRVR_REGS_E), A		; firstDeviceSector
-	LD	A, (IX+8)
-	LD	(CDRVR_REGS_D), A
-	LD	A, (IX+9)
+
+	PUSH	IX
+	POP	HL
+	ADD	HL, 7
+	LD	(CDRVR_REGS_DE), HL		; address of firstDeviceSector
+
+	LD	A, (IX+11)			; sector count
+	LD	(CDRVR_REGS_B), A
+
+	LD	A, (IX+12)
 	LD	(CDRVR_REGS_F), A		; WRITE FLAG TO CY FLAG
-	LD	A, (IX+10)
-	LD	(CDRVR_REGS_L), A		; firstDeviceSector
-	LD	A, (IX+11)
+
+	LD	A, (IX+13)
+	LD	(CDRVR_REGS_L), A		; write buffer address
+	LD	A, (IX+14)
 	LD	(CDRVR_REGS_H), A
 
 	LD	A, (IX+4) 			; slotNumber

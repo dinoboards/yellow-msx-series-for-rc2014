@@ -17,7 +17,7 @@ static uint8_t        sectorBuffer[512];
 #define readSectorFromDevice(driverSlot, deviceIndex, lunIndex, firstDeviceSector) deviceSectorRW(driverSlot, deviceIndex, lunIndex, firstDeviceSector, 0)
 #define writeSectorToDevice(driverSlot, deviceIndex, lunIndex, firstDeviceSector)  deviceSectorRW(driverSlot, deviceIndex, lunIndex, firstDeviceSector, 1)
 
-uint8_t deviceSectorRW(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t write) { return msxdosDevRw(driverSlot, deviceIndex, lunIndex, firstDeviceSector, write, sectorBuffer); }
+uint8_t deviceSectorRW(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t write) { return msxdosDevRw(driverSlot, deviceIndex, lunIndex, firstDeviceSector, 1, write, sectorBuffer); }
 
 void preparePartitioningProcess(uint8_t _driverSlot, uint8_t _deviceIndex, uint8_t _selectedLunIndex, uint8_t _partitionsCount, partitionInfo *_partitions, uint8_t _sectorsPerTrack) {
   uint8_t        i;
