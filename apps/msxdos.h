@@ -56,7 +56,7 @@ typedef struct {
   uint8_t  sectorsPerTrack;
   bool     suitableForPartitioning;
   uint8_t  number;
-} msxddosLunInfo;
+} msxdosLunInfo;
 
 typedef struct {
   uint8_t typeCode;
@@ -75,7 +75,7 @@ extern uint8_t msxdosDirio(uint8_t code) __z88dk_fastcall;
 
 extern uint16_t msxdosDrvDevLogicalUnitCount(uint8_t slotNumber, uint8_t deviceNumber, msxdosDeviceBasicInfo *pCount);
 extern uint16_t msxdosDrvDevGetName(uint8_t slotNumber, uint8_t deviceNumber, char *pDeviceName);
-extern uint16_t msxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, msxddosLunInfo *pLunInfo);
+extern uint16_t msxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, msxdosLunInfo *pLunInfo);
 
 #define _IPART 0xB4
 #define _NOFIL 0xD7

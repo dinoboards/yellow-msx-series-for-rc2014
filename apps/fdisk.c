@@ -11,7 +11,7 @@
 // CAPUTED ENUMERATED DRIVER/DEVICE/LUN INFO
 msxdosDriverInfo drivers[MAX_INSTALLED_DRIVERS];
 deviceInfo       devices[MAX_DEVICES_PER_DRIVER];
-msxddosLunInfo   luns[MAX_LUNS_PER_DEVICE];
+msxdosLunInfo    luns[MAX_LUNS_PER_DEVICE];
 partitionInfo    partitions[MAX_PARTITIONS_TO_HANDLE];
 
 void terminateRightPaddedStringWithZero(char *string, uint8_t length) {
@@ -135,6 +135,10 @@ uint8_t             installedDriversCount;
 msxdosDriverInfo *  selectedDriver;
 char                selectedDriverName[50];
 bool                availableDevicesCount;
+deviceInfo *        currentDevice;
+uint8_t             selectedDeviceIndex;
+uint8_t             availableLunsCount;
+uint8_t             selectedLunIndex;
 
 void saveOriginalScreenConfiguration() {
   originalScreenConfig.screenMode = *(uint8_t *)SCRMOD;
@@ -294,7 +298,7 @@ void showDriverSelectionScreen() {
 }
 
 void getDevicesInformation() {
-  uint8_t     error = 0;
+  uint16_t    error = 0;
   uint8_t     deviceIndex = 1;
   deviceInfo *currentDevice = &devices[0];
   char *      currentDeviceName;
@@ -362,6 +366,109 @@ void showDeviceSelectionScreen() {
   printStateMessage("Select the device");
 }
 
+void getLunsInformation() {
+  uint16_t       error = 0;
+  uint8_t        lunIndex = 1;
+  msxdosLunInfo *currentLun = &luns[0];
+
+  while (lunIndex <= MAX_LUNS_PER_DEVICE) {
+    error = msxdosDrvLunInfo(selectedDriver->slot, selectedDeviceIndex, lunIndex, currentLun);
+
+    currentLun->suitableForPartitioning =
+        (error == 0) && (currentLun->mediumType == BLOCK_DEVICE) && (currentLun->sectorSize == 512) && (currentLun->sectorCount >= MIN_DEVICE_SIZE_IN_K * 2) && ((currentLun->flags & (READ_ONLY_LUN | FLOPPY_DISK_LUN)) == 0);
+
+    if (currentLun->suitableForPartitioning) {
+      availableLunsCount++;
+    }
+
+    if (currentLun->sectorsPerTrack == 0 || currentLun->sectorsPerTrack > EXTRA_PARTITION_SECTORS) {
+      currentLun->sectorsPerTrack = EXTRA_PARTITION_SECTORS;
+    }
+
+    lunIndex++;
+    currentLun++;
+  }
+}
+
+void printDeviceInfoWithIndex() { printf(" (Id = %d)", selectedDeviceIndex); }
+
+void showLunSelectionScreen() {
+  byte           i;
+  msxdosLunInfo *currentLun;
+
+  clearInformationArea();
+  locate(0, 3);
+  printf(selectedDriverName);
+  printf(currentDevice->deviceName);
+  printDeviceInfoWithIndex();
+  newLine();
+  newLine();
+  newLine();
+
+  if (availableLunsCount == 0) {
+    getLunsInformation();
+  }
+
+  if (availableLunsCount == 0) {
+    locate(0, 9);
+    printCentered("There are no suitable logical units");
+    cursorDown();
+    printCentered("available in the device");
+    printStateMessage("Press any key to go back...");
+    waitKey();
+    return;
+  }
+
+  currentLun = &luns[0];
+  for (i = 0; i < MAX_LUNS_PER_DEVICE; i++) {
+    if (currentLun->suitableForPartitioning) {
+      printf("\x1BK%d. Size: ", i + 1);
+      printSize(currentLun->sectorCount / 2);
+      newLine();
+    }
+
+    i++;
+    currentLun++;
+  }
+
+  newLine();
+  newLine();
+  printf("ESC. Go back to device selection screen");
+
+  printStateMessage("Select the logical unit");
+}
+
+void goLunSelectionScreen(uint8_t deviceIndex) {
+  uint8_t key;
+
+  currentDevice = &devices[deviceIndex - 1];
+  selectedDeviceIndex = deviceIndex;
+
+  availableLunsCount = 0;
+
+  while (true) {
+    showLunSelectionScreen();
+    if (availableLunsCount == 0) {
+      return;
+    }
+
+    while (true) {
+      key = waitKey();
+      if (key == ESC) {
+        return;
+      }
+      /*else {
+          key -= '0';
+          if(key >= 1 && key <= MAX_LUNS_PER_DEVICE && luns[key - 1].suitableForPartitioning) {
+                                  InitializePartitioningVariables(key);
+              GoPartitioningMainMenuScreen();
+              break;
+          }
+      }*/
+    }
+  }
+}
+
 void goDeviceSelectionScreen(uint8_t driverIndex) {
   char    slot[4];
   uint8_t key;
@@ -383,14 +490,13 @@ void goDeviceSelectionScreen(uint8_t driverIndex) {
       key = waitKey();
       if (key == ESC) {
         return;
+      } else {
+        key -= '0';
+        if (key >= 1 && key <= MAX_DEVICES_PER_DRIVER && devices[key - 1].lunCount != 0) {
+          goLunSelectionScreen(key);
+          break;
+        }
       }
-      // else {
-      //     key -= '0';
-      //     if(key >= 1 && key <= MAX_DEVICES_PER_DRIVER && devices[key - 1].lunCount != 0) {
-      //         GoLunSelectionScreen(key);
-      //         break;
-      //     }
-      // }
     }
   }
 }
@@ -420,6 +526,11 @@ void goDriverSelectionScreen() {
 }
 
 void main() {
+  installedDriversCount = 0;
+  selectedDeviceIndex = 0;
+  selectedLunIndex = 0;
+  availableLunsCount = 0;
+
   saveOriginalScreenConfiguration();
 
   composeWorkScreenConfiguration();
