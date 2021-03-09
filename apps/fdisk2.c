@@ -22,8 +22,8 @@ static int  getNewSerialNumber() { return 0; }
 #define readSectorFromDevice(driverSlot, deviceIndex, lunIndex, firstDeviceSector) deviceSectorRead(driverSlot, deviceIndex, lunIndex, firstDeviceSector)
 #define writeSectorToDevice(driverSlot, deviceIndex, lunIndex, firstDeviceSector)  deviceSectorWrite(driverSlot, deviceIndex, lunIndex, firstDeviceSector)
 
-uint8_t deviceSectorRead(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector) { return msxdosDevRead(driverSlot, deviceIndex, lunIndex, firstDeviceSector, 1, sectorBuffer); }
-uint8_t deviceSectorWrite(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector) { return msxdosDevWrite(driverSlot, deviceIndex, lunIndex, firstDeviceSector, 1, sectorBuffer); }
+uint8_t deviceSectorRead(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector) { return safeMsxdosDevRead(driverSlot, deviceIndex, lunIndex, firstDeviceSector, 1, sectorBuffer); }
+uint8_t deviceSectorWrite(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t firstDeviceSector) { return safeMsxdosDevWrite(driverSlot, deviceIndex, lunIndex, firstDeviceSector, 1, sectorBuffer); }
 
 void preparePartitioningProcess(uint8_t _driverSlot, uint8_t _deviceIndex, uint8_t _selectedLunIndex, uint8_t _partitionsCount, partitionInfo *_partitions, uint8_t _sectorsPerTrack) {
   uint8_t        i;

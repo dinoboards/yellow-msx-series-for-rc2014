@@ -704,7 +704,7 @@ void testDeviceAccess() {
     printf(buffer);
     printf(" ...\x1BK");
 
-    error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, buffer);
+    error = safeMsxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, buffer);
 
     if (error != 0) {
       strcpy(buffer, errorMessageHeader);
@@ -734,7 +734,7 @@ void initializeScreenForTestDeviceWriteAccess(const char *message) {
 }
 
 bool readSector(uint32_t targetSector) {
-  uint16_t error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
+  uint16_t error = safeMsxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
   if (error != 0) {
     printDosErrorMessage(error, "Driver Error:");
     return FALSE;
@@ -744,7 +744,7 @@ bool readSector(uint32_t targetSector) {
 }
 
 bool writeSector(uint32_t targetSector) {
-  uint16_t error = msxdosDevWrite(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
+  uint16_t error = safeMsxdosDevWrite(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
   if (error != 0) {
     printDosErrorMessage(error, "Driver Error:");
     return FALSE;

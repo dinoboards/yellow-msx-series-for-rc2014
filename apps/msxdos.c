@@ -36,3 +36,20 @@ uint16_t safeMsxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t 
 
   return 0;
 }
+
+uint16_t safeMsxdosDevRead(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer) {
+  const uint16_t error = msxdosDevRead(slotNumber, deviceNumber, lunIndex, firstDeviceSector, sectorCount, (uint8_t *)pMsxdosSafeWorkingBuffer);
+
+  if (error != 0)
+    return error;
+
+  memcpy(buffer, pMsxdosSafeWorkingBuffer, 512 * sectorCount);
+
+  return 0;
+}
+
+uint16_t safeMsxdosDevWrite(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer) {
+  memcpy(pMsxdosSafeWorkingBuffer, buffer, 512 * sectorCount);
+
+  return msxdosDevWrite(slotNumber, deviceNumber, lunIndex, firstDeviceSector, sectorCount, (uint8_t *)pMsxdosSafeWorkingBuffer);
+}
