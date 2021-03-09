@@ -293,7 +293,7 @@ msxdosDevRw:
 	POP	IX
 	RET
 
-	SECTION	code_crt_init
+	SECTION	BSS
 	PUBLIC	_workingMsxDosBuff
 
 _workingMsxDosBuff:

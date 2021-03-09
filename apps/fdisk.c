@@ -270,10 +270,10 @@ void getDevicesInformation() {
   while (deviceIndex <= MAX_DEVICES_PER_DRIVER) {
 
     currentDeviceName = currentDevice->deviceName;
-    error = safeMsxdosDrvDevLogicalUnitCount(selectedDriver->slot, deviceIndex, (msxdosDeviceBasicInfo *)currentDevice);
+    error = msxdosDrvDevLogicalUnitCount(selectedDriver->slot, deviceIndex, (msxdosDeviceBasicInfo *)currentDevice);
     if (error == 0) {
       availableDevicesCount++;
-      error = safeMsxdosDrvDevGetName(selectedDriver->slot, deviceIndex, currentDeviceName);
+      error = msxdosDrvDevGetName(selectedDriver->slot, deviceIndex, currentDeviceName);
 
       if (error == 0)
         terminateRightPaddedStringWithZero(currentDeviceName, MAX_INFO_LENGTH);
@@ -334,7 +334,7 @@ void getLunsInformation() {
   msxdosLunInfo *currentLun = &luns[0];
 
   while (lunIndex <= MAX_LUNS_PER_DEVICE) {
-    error = safeMsxdosDrvLunInfo(selectedDriver->slot, selectedDeviceIndex, lunIndex, currentLun);
+    error = msxdosDrvLunInfo(selectedDriver->slot, selectedDeviceIndex, lunIndex, currentLun);
 
     currentLun->suitableForPartitioning =
         (error == 0) && (currentLun->mediumType == BLOCK_DEVICE) && (currentLun->sectorSize == 512) && (currentLun->sectorCount >= MIN_DEVICE_SIZE_IN_K * 2) && ((currentLun->flags & (READ_ONLY_LUN | FLOPPY_DISK_LUN)) == 0);
@@ -704,7 +704,7 @@ void testDeviceAccess() {
     printf(buffer);
     printf(" ...\x1BK");
 
-    error = safeMsxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, buffer);
+    error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, buffer);
 
     if (error != 0) {
       strcpy(buffer, errorMessageHeader);
@@ -734,7 +734,7 @@ void initializeScreenForTestDeviceWriteAccess(const char *message) {
 }
 
 bool readSector(uint32_t targetSector) {
-  uint16_t error = safeMsxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
+  uint16_t error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
   if (error != 0) {
     printDosErrorMessage(error, "Driver Error:");
     return FALSE;
@@ -744,7 +744,7 @@ bool readSector(uint32_t targetSector) {
 }
 
 bool writeSector(uint32_t targetSector) {
-  uint16_t error = safeMsxdosDevWrite(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
+  uint16_t error = msxdosDevWrite(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, targetSector, 1, buffer);
   if (error != 0) {
     printDosErrorMessage(error, "Driver Error:");
     return FALSE;
@@ -1093,16 +1093,6 @@ void goDriverSelectionScreen() {
 }
 
 void main() {
-  uint8_t working[512];
-
-  initSafeMsxDos(working);
-
-  printf("Buf addr %p %p\r\n", workingMsxDosBuff, &workingMsxDosBuff);
-  printf("devices addr %p %p\r\n", devices, &devices);
-  printf("working addr %p %p\r\n", working, &working);
-
-  waitKey();
-
   installedDriversCount = 0;
   selectedDeviceIndex = 0;
   selectedLunIndex = 0;
@@ -1115,6 +1105,4 @@ void main() {
   initializeWorkingScreen("Nextor disk partitioning tool");
 
   goDriverSelectionScreen();
-
-  // setScreenConfiguration(&originalScreenConfig);
 }

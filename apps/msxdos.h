@@ -104,13 +104,4 @@ void msxbiosPosit(uint8_t col, uint8_t row);
 #define SCRMOD 0xFCAF
 #define EXPTBL 0xFCC1
 
-extern uint8_t *pMsxdosSafeWorkingBuffer;
-
-#define initSafeMsxDos(pBuffer) (pMsxdosSafeWorkingBuffer = (pBuffer))
-extern uint16_t safeMsxdosDrvDevLogicalUnitCount(uint8_t slotNumber, uint8_t deviceNumber, msxdosDeviceBasicInfo *pCount);
-extern uint16_t safeMsxdosDrvDevGetName(uint8_t slotNumber, uint8_t deviceNumber, char *pDeviceName);
-extern uint16_t safeMsxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, msxdosLunInfo *pLunInfo);
-extern uint16_t safeMsxdosDevRead(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer);
-extern uint16_t safeMsxdosDevWrite(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer);
-
 #endif
