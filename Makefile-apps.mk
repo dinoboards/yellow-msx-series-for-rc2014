@@ -23,7 +23,7 @@ $(BIN)mbrot.com: $(addprefix $(SRC),mbrot.c $(V9958_DEPS))
 $(BIN)spike-fdd.com: $(addprefix $(SRC),spike-fdd.c fdd.asm)
 $(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.asm cfg.inc)
 $(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
-$(BIN)fdisk.com: $(addprefix $(SRC),fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.c msxdos.asm msxdos.h partition.h)
+$(BIN)fdisk.com: $(addprefix $(SRC),spike.asm fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.c msxdos.asm msxdos.h partition.h)
 
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
