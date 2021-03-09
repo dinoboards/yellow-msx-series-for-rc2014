@@ -5,12 +5,13 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 BIN := ./bin/
-ZCC := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
-#--c-code-in-asm
-#-SO1 --max-allocs-per-node200000
 SRC := ./apps/
 APPS := dots lines mbrot spike-fdd ide cpusptst fdisk
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
+
+ZCC := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
+#--c-code-in-asm
+#-SO1 --max-allocs-per-node200000
 
 .PHONY: apps
 apps: $(TARGETS)
@@ -22,7 +23,7 @@ $(BIN)mbrot.com: $(addprefix $(SRC),mbrot.c $(V9958_DEPS))
 $(BIN)spike-fdd.com: $(addprefix $(SRC),spike-fdd.c fdd.asm)
 $(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.asm cfg.inc)
 $(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
-$(BIN)fdisk.com: $(addprefix $(SRC),fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.asm msxdos.h partition.h)
+$(BIN)fdisk.com: $(addprefix $(SRC),fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.c msxdos.asm msxdos.h partition.h)
 
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 

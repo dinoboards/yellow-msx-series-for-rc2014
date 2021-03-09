@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern uint8_t workingMsxDosBuff[];
+uint8_t *      pWorkingBuffer;
+
 // CAPUTED ENUMERATED DRIVER/DEVICE/LUN INFO
 static msxdosDriverInfo drivers[MAX_INSTALLED_DRIVERS];
 static deviceInfo       devices[MAX_DEVICES_PER_DRIVER];
@@ -267,10 +270,10 @@ void getDevicesInformation() {
   while (deviceIndex <= MAX_DEVICES_PER_DRIVER) {
 
     currentDeviceName = currentDevice->deviceName;
-    error = msxdosDrvDevLogicalUnitCount(selectedDriver->slot, deviceIndex, (msxdosDeviceBasicInfo *)currentDevice);
+    error = safeMsxdosDrvDevLogicalUnitCount(selectedDriver->slot, deviceIndex, (msxdosDeviceBasicInfo *)currentDevice);
     if (error == 0) {
       availableDevicesCount++;
-      error = msxdosDrvDevGetName(selectedDriver->slot, deviceIndex, currentDeviceName);
+      error = safeMsxdosDrvDevGetName(selectedDriver->slot, deviceIndex, currentDeviceName);
 
       if (error == 0)
         terminateRightPaddedStringWithZero(currentDeviceName, MAX_INFO_LENGTH);
@@ -331,7 +334,7 @@ void getLunsInformation() {
   msxdosLunInfo *currentLun = &luns[0];
 
   while (lunIndex <= MAX_LUNS_PER_DEVICE) {
-    error = msxdosDrvLunInfo(selectedDriver->slot, selectedDeviceIndex, lunIndex, currentLun);
+    error = safeMsxdosDrvLunInfo(selectedDriver->slot, selectedDeviceIndex, lunIndex, currentLun);
 
     currentLun->suitableForPartitioning =
         (error == 0) && (currentLun->mediumType == BLOCK_DEVICE) && (currentLun->sectorSize == 512) && (currentLun->sectorCount >= MIN_DEVICE_SIZE_IN_K * 2) && ((currentLun->flags & (READ_ONLY_LUN | FLOPPY_DISK_LUN)) == 0);
@@ -864,14 +867,14 @@ bool writePartitionTable() {
   locate(0, MESSAGE_ROW);
   printCentered("Preparing partitioning process...");
 
-  // PreparePartitioningProcess();
+  preparePartitioningProcess(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, partitionsCount, partitions, luns[selectedLunIndex].sectorsPerTrack);
 
   for (i = 0; i < partitionsCount; i++) {
     locate(0, MESSAGE_ROW);
     sprintf(buffer, "Creating partition %d of %d ...", i + 1, partitionsCount);
     printCentered(buffer);
 
-    // error = CreatePartition(i);
+    error = createPartition(i);
     if (error != 0) {
       sprintf(buffer, "Error when creating partition %d :", i + 1);
       printDosErrorMessage(error, buffer);
@@ -1090,6 +1093,16 @@ void goDriverSelectionScreen() {
 }
 
 void main() {
+  uint8_t working[512];
+
+  initSafeMsxDos(working);
+
+  printf("Buf addr %p %p\r\n", workingMsxDosBuff, &workingMsxDosBuff);
+  printf("devices addr %p %p\r\n", devices, &devices);
+  printf("working addr %p %p\r\n", working, &working);
+
+  waitKey();
+
   installedDriversCount = 0;
   selectedDeviceIndex = 0;
   selectedLunIndex = 0;

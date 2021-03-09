@@ -293,6 +293,10 @@ msxdosDevRw:
 	POP	IX
 	RET
 
+	SECTION	code_crt_init
+	PUBLIC	_workingMsxDosBuff
+
+_workingMsxDosBuff:
 GPARTINFO_WRK:
 CDRVR_REGS:
 CDRVR_REGS_F:	DB	0

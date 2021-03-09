@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include <stdarg.h>
 
 #define DRIVER_NAME_LENGTH       32
 #define MAX_INSTALLED_DRIVERS    8
@@ -100,5 +103,12 @@ void msxbiosPosit(uint8_t col, uint8_t row);
 #define DAC    0xF7F6
 #define SCRMOD 0xFCAF
 #define EXPTBL 0xFCC1
+
+extern uint8_t *pMsxdosSafeWorkingBuffer;
+
+#define initSafeMsxDos(pBuffer) (pMsxdosSafeWorkingBuffer = (pBuffer))
+extern uint16_t safeMsxdosDrvDevLogicalUnitCount(uint8_t slotNumber, uint8_t deviceNumber, msxdosDeviceBasicInfo *pCount);
+extern uint16_t safeMsxdosDrvDevGetName(uint8_t slotNumber, uint8_t deviceNumber, char *pDeviceName);
+extern uint16_t safeMsxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, msxdosLunInfo *pLunInfo);
 
 #endif
