@@ -14,7 +14,6 @@ static uint32_t       nextDeviceSector;
 static uint32_t       mainExtendedPartitionSectorCount;
 static uint32_t       mainExtendedPartitionFirstSector;
 static uint8_t        sectorBuffer[512];
-static uint8_t        sectorBufferBackup[512];
 
 static void sectorBootCode() {}
 static int  getNewSerialNumber() { return 0; }
@@ -288,7 +287,6 @@ uint8_t createPartition(uint8_t index) {
   uint32_t             mbrSector;
   uint32_t             firstFileSystemSector;
   partitionTableEntry *tableEntry;
-  uint32_t             x;
 
   mbrSector = nextDeviceSector;
   tableEntry = &(mbr->primaryPartitions[0]);
@@ -324,12 +322,6 @@ uint8_t createPartition(uint8_t index) {
   }
 
   mbr->mbrSignature = 0xAA55;
-
-  //??????????? WAS THIS SOME WEIRD COMPILER BUG?
-  x = tableEntry->firstAbsoluteSector; // Without this, firstAbsoluteSector is written to disk as 0. WTF???
-  tableEntry->firstAbsoluteSector = x;
-
-  memcpy(sectorBufferBackup, sectorBuffer, 512);
 
   if ((error = writeSectorToDevice(driverSlot, deviceIndex, selectedLunIndex, mbrSector)) != 0)
     return error;

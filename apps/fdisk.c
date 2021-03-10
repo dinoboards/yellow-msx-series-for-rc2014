@@ -891,6 +891,19 @@ bool writePartitionTable() {
   return true;
 }
 
+void deleteAllPartitions() {
+  sprintf(buffer, "Discard all %s partitions? (y/n) ", partitionsExistInDisk ? "existing" : "defined");
+  printStateMessage(buffer);
+  if (!getYesOrNo()) {
+    return;
+  }
+
+  partitionsCount = 0;
+  partitionsExistInDisk = false;
+  unpartitionnedSpaceInSectors = selectedLun->sectorCount;
+  recalculateAutoPartitionSize(true);
+}
+
 void goPartitioningMainMenuScreen() {
   char    key;
   uint8_t error;
@@ -978,8 +991,11 @@ void goPartitioningMainMenuScreen() {
       showPartitions();
       continue;
     }
-    // } else if(key == 'd' && partitionsCount > 0) {
-    // 	DeleteAllPartitions();
+
+    if (key == 'd' && partitionsCount > 0) {
+      deleteAllPartitions();
+      continue;
+    }
     // } else if(key == 'p' && canAddPartitionsNow > 0) {
     // 	AddPartition();
     //} else

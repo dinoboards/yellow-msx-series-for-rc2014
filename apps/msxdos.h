@@ -62,13 +62,13 @@ typedef struct {
 } msxdosLunInfo;
 
 typedef struct {
-  uint8_t typeCode;
   uint8_t status;
+  uint8_t typeCode;
+  uint32_t sectorCount;
   union {
     uint32_t startingSector;
     uint32_t partitionSector;
   };
-  uint32_t sectorCount;
 } GPartInfo;
 
 extern uint8_t msxdosGdrvr(int8_t driverIndex, msxdosDriverInfo *data);
