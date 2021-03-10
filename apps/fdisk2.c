@@ -278,8 +278,6 @@ static uint8_t createFatFileSystem(uint8_t driverSlot, uint8_t deviceIndex, uint
   if ((error = writeSectorToDevice(driverSlot, deviceIndex, lunIndex, firstDeviceSector + 1 + parameters.sectorsPerFat)) != 0)
     return error;
 
-  //* Done
-
   return 0;
 }
 

@@ -452,7 +452,7 @@ uint8_t getDiskPartitionsInfo() {
   partitionsCount = 0;
 
   do {
-    error = msxdosGpart(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex, primaryIndex, extendedIndex, false, &result);
+    error = msxdosGpart(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, primaryIndex, extendedIndex, false, &result);
 
     if (error == 0) {
       if (result.typeCode == PARTYPE_EXTENDED) {
