@@ -90,6 +90,7 @@ _msxdosGdrvr:
 	RET
 
 ; extern uint8_t  msxdosGpart(uint8_t slotNumber, uint8_t deviceNumber, uint8_t logicalUnitNumber, uint8_t primaryPartitionNumber, uint8_t extendedPartitionNumber, bool getSectorNumber, GPartInfo* result);
+;                                     IX+4              IX+5                     ix+6                         ix+7                               ix+8                      ix+9               ix+10/11
 	PUBLIC	_msxdosGpart
 
 _msxdosGpart:
@@ -119,8 +120,8 @@ GPARTINFO1:
 
 	LD	(GPARTINFO_WRK+0), A
 	LD	(GPARTINFO_WRK+1), BC
-	LD	(GPARTINFO_WRK+3), IX
-	LD	(GPARTINFO_WRK+5), IY
+	LD	(GPARTINFO_WRK+3), IY
+	LD	(GPARTINFO_WRK+5), IX
 	LD	(GPARTINFO_WRK+7), DE
 	LD	(GPARTINFO_WRK+9), HL
 

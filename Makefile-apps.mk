@@ -21,7 +21,7 @@ $(BIN)dots.com: $(addprefix $(SRC),dots.c $(V9958_DEPS))
 $(BIN)lines.com: $(addprefix $(SRC),lines.c $(V9958_DEPS))
 $(BIN)mbrot.com: $(addprefix $(SRC),mbrot.c $(V9958_DEPS))
 $(BIN)spike-fdd.com: $(addprefix $(SRC),spike-fdd.c fdd.asm)
-$(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.asm cfg.inc)
+$(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.asm cfg.inc msxdos.asm msxdos.h partition.h)
 $(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
 $(BIN)fdisk.com: $(addprefix $(SRC),memmap-override.asm fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.asm msxdos.h partition.h)
 

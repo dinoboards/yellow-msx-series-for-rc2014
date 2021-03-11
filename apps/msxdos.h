@@ -62,8 +62,8 @@ typedef struct {
 } msxdosLunInfo;
 
 typedef struct {
-  uint8_t status;
-  uint8_t typeCode;
+  uint8_t  status;
+  uint8_t  typeCode;
   uint32_t sectorCount;
   union {
     uint32_t startingSector;

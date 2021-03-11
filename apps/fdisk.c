@@ -452,12 +452,13 @@ uint8_t getDiskPartitionsInfo() {
   partitionsCount = 0;
 
   do {
+    result.sectorCount = 0;
     error = msxdosGpart(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, primaryIndex, extendedIndex, false, &result);
 
     if (error == 0) {
-      if (result.typeCode == PARTYPE_EXTENDED) {
+      if (result.typeCode == PARTYPE_EXTENDED)
         extendedIndex = 1;
-      } else {
+      else {
         currentPartition->primaryIndex = primaryIndex;
         currentPartition->extendedIndex = extendedIndex;
         currentPartition->partitionType = result.typeCode;
@@ -470,9 +471,9 @@ uint8_t getDiskPartitionsInfo() {
     } else if (error == _IPART) {
       primaryIndex++;
       extendedIndex = 0;
-    } else {
+    } else
       return error;
-    }
+
   } while (primaryIndex <= 4 && partitionsCount < MAX_PARTITIONS_TO_HANDLE);
 
   return 0;
@@ -904,6 +905,89 @@ void deleteAllPartitions() {
   recalculateAutoPartitionSize(true);
 }
 
+void addPartition() {
+  uint16_t maxPartitionSizeInM;
+  uint16_t maxPartitionSizeInK;
+  uint8_t  lineLength;
+  char *   pointer;
+  char     ch;
+  bool     validNumberEntered = false;
+  uint32_t enteredSizeInK = 0;
+  bool     lessThan1MAvailable;
+  bool     sizeInKSpecified;
+  uint32_t unpartitionnedSpaceExceptAlignmentInK = (unpartitionnedSpaceInSectors - EXTRA_PARTITION_SECTORS) / 2;
+
+  maxPartitionSizeInM = (uint16_t)((unpartitionnedSpaceInSectors / 2) >> 10);
+  maxPartitionSizeInK = unpartitionnedSpaceExceptAlignmentInK > (uint32_t)32767 ? (uint16_t)32767 : unpartitionnedSpaceExceptAlignmentInK;
+
+  lessThan1MAvailable = (maxPartitionSizeInM == 0);
+
+  if (maxPartitionSizeInM > (uint32_t)MAX_FAT16_PARTITION_SIZE_IN_M) {
+    maxPartitionSizeInM = MAX_FAT16_PARTITION_SIZE_IN_M;
+  }
+
+  printStateMessage("Enter size or press ENTER to cancel");
+
+  while (!validNumberEntered) {
+    sizeInKSpecified = true;
+    clearInformationArea();
+    printTargetInfo();
+    newLine();
+    printf("Add new partition\r\n\r\n");
+
+    if (lessThan1MAvailable) {
+      printf("Enter");
+    } else {
+      printf("Enter partition size in MB (1-%d)\r\nor", maxPartitionSizeInM);
+    }
+    printf(" partition size in KB followed by \"K\" (%d-%d): ", MIN_PARTITION_SIZE_IN_K, maxPartitionSizeInK);
+
+    fgets(buffer, 6, stdin);
+    lineLength = strlen(buffer) - 1; // remove CR
+    if (lineLength == 0) {
+      return;
+    }
+
+    pointer = buffer;
+    pointer[lineLength] = '\0';
+    enteredSizeInK = 0;
+
+    while (true) {
+      ch = (*pointer++) | 32;
+      if (ch == 'k') {
+        validNumberEntered = true;
+        break;
+      } else if (ch == '\0' || ch == 13 || ch == 'm') {
+        validNumberEntered = true;
+        enteredSizeInK <<= 10;
+        sizeInKSpecified = false;
+        break;
+      } else if (ch < '0' || ch > '9') {
+        break;
+      }
+
+      enteredSizeInK = (enteredSizeInK * 10) + (ch - '0');
+      lineLength--;
+      if (lineLength == 0) {
+        validNumberEntered = true;
+        enteredSizeInK *= 1024;
+        sizeInKSpecified = false;
+        break;
+      }
+    }
+
+    if (validNumberEntered && (sizeInKSpecified && (enteredSizeInK > maxPartitionSizeInK) || (enteredSizeInK < MIN_PARTITION_SIZE_IN_K)) || (!sizeInKSpecified && (enteredSizeInK > ((uint32_t)maxPartitionSizeInM * 1024)))) {
+      validNumberEntered = false;
+    }
+  }
+
+  autoPartitionSizeInK = enteredSizeInK > unpartitionnedSpaceExceptAlignmentInK ? unpartitionnedSpaceExceptAlignmentInK : enteredSizeInK;
+  addAutoPartition();
+  unpartitionnedSpaceExceptAlignmentInK = (unpartitionnedSpaceInSectors - EXTRA_PARTITION_SECTORS) / 2;
+  autoPartitionSizeInK = enteredSizeInK > unpartitionnedSpaceExceptAlignmentInK ? unpartitionnedSpaceExceptAlignmentInK : enteredSizeInK;
+  recalculateAutoPartitionSize(false);
+}
+
 void goPartitioningMainMenuScreen() {
   char    key;
   uint8_t error;
@@ -996,9 +1080,12 @@ void goPartitioningMainMenuScreen() {
       deleteAllPartitions();
       continue;
     }
-    // } else if(key == 'p' && canAddPartitionsNow > 0) {
-    // 	AddPartition();
-    //} else
+
+    if (key == 'p' && canAddPartitionsNow > 0) {
+      addPartition();
+      continue;
+    }
+
     if (key == 'a' && canAddPartitionsNow > 0) {
       addAutoPartition();
       continue;
