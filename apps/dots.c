@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "msxdos.h"
 
 uint8_t getRandomSeed() __naked __z88dk_fastcall {
   // clang-format off
@@ -24,14 +25,32 @@ RGB palette[16] = {
 void main() {
   srand(getRandomSeed());
   setMode6(212, PAL);
-  setPalette(palette);
+  // setPalette(palette);
   clearScreenBank0(4);
   uint8_t c = rand() & 15;
 
-  for (unsigned int i = 0; i < 40000; i++) {
-    pointSet(rand() % 512, i % 212, rand() & 15, CMD_LOGIC_IMP);
-    // drawLine(rand() % 512, i % 212, rand() % 512, i % 212, rand() & 15,
-    // CMD_LOGIC_IMP);
+  uint16_t x = 0;
+  uint16_t y = 0;
+  uint16_t offset = 0;
+  uint8_t i = 0;
+
+  while(true) {
+    if (msxdosDirio(0xFF) != 0)
+      break;
+
+    pointSet(x, y, i++ & 15, CMD_LOGIC_IMP);
+
+    x++;
+    x %= 512;
+
+    if(x == 0) {
+      y += 4;
+      if ( y >= 212) {
+        offset++;
+        y = offset;
+      }
+      y %= 212;
+    }
   }
 
   cleanexit();
