@@ -74,9 +74,14 @@ clean:
 ## Tools
 
 VPATH = ./tools/xmodem:./bin/:./apps
-PASMO := ~/pasmo-0.5.3/pasmo --public -v -I ./bin/ -I ./tools/xmodem/
+PASMO := ~/pasmo-0.5.3/pasmo --public -v -I ./bin/
 
 bin/xrecv.com: xrecv.asm sio.asm bin/highpage.bin bdos.inc cbios.inc sio.inc ascii.inc cbios/src/hardware.asm cbios/src/hooks.asm
+
+bin/chkspd.com: ./tools/chkspd/chkspd.asm
+	mkdir -p bin
+	$(PASMO) $< $@
+	#$(@:.com=.sym)
 
 nextor/extras/xrecv.com: bin/xrecv.com
 	cp bin/xrecv.com nextor/extras/xrecv.com
@@ -85,11 +90,11 @@ nextor/extras/xrecv.com: bin/xrecv.com
 
 bin/%.com: %.asm
 	@mkdir -p bin
-	@$(PASMO) $< $@ $(@:.com=.sym)
+	@$(PASMO) -I ./tools/xmodem/ $< $@ $(@:.com=.sym)
 
 bin/%.bin: %.asm
 	@mkdir -p bin
-	@$(PASMO) $< $@ $(@:.bin=.sym)
+	@$(PASMO) -I ./tools/xmodem/ $< $@ $(@:.bin=.sym)
 
 
 nextor/extras/lines.com: bin/lines.com
