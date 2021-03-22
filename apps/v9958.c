@@ -107,7 +107,7 @@ void setVideoSignal(uint8_t *pReg, uint8_t lines, uint8_t mode) {
 
 uint8_t mode6Reg[REGISTER_COUNT] = {
     0x0A, // R0 - M5 = 1, M4 = 0, M3 = 1
-    0x60, // R1 - ENABLE SCREEN, ENABLE INTERRUPTS, M1 = 0, M2 = 0
+    0x20, // R1 - DISABLE SCREEN, ENABLE INTERRUPTS, M1 = 0, M2 = 0
     0x1F, // R2 - PATTERN NAME TABLE := 0, A16 = 0
     0x00, // R3 - NO COLOR TABLE
     0x00, // R4 - N/A???
@@ -115,7 +115,7 @@ uint8_t mode6Reg[REGISTER_COUNT] = {
     0x1E, // R6 - SPRITE PATTERN => F000
     0x00, // R7 - a background colour?
     0x8A, // R8 - COLOUR BUS INPUT, DRAM 64K, DISABLE SPRITE
-    0x00, // R9 - LN = 1(212 lines), S1, S0 = 0, IL = 0, EO = 0, NT = 1 (PAL),
+    0x00, // R9 - LN = 1(212 lines), S1, S0 = 0, IL = 0, EO = 0, NT = 1 (PAL)
           // DC = 0
     0x00, // R10 - color table - n/a
     0x01  // R11 - SPRITE ATTRIBUTE TABLE -> FA00

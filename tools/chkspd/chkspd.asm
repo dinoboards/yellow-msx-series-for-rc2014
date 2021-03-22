@@ -383,14 +383,14 @@ InvDev:
 
 DispLine:
 
-	ld	a, 00
-	ld	(SpdCnt), a
-	ld	a, $80
-	ld	(SpdCnt+1), a
-	ld	a, $70
-	ld	(SpdCnt+2), a
-	ld	a, $00
-	ld	(SpdCnt+3), a
+	; ld	a, 00
+	; ld	(SpdCnt), a
+	; ld	a, $80
+	; ld	(SpdCnt+1), a
+	; ld	a, $70
+	; ld	(SpdCnt+2), a
+	; ld	a, $00
+	; ld	(SpdCnt+3), a
 
 
 	; (display number of T-cycles) ?? freq of cpu?
@@ -458,17 +458,17 @@ RTCOk:
 RTCLoop:
 	; (start RTC period calc loop)
 
-	RTCLEN	equ	11+ 4+15+ 4+11+ 4+ 4+12
-	RTCCMD	equ	 1+ 1+ 2+ 1+ 1+ 1+ 1+ 1
+	RTCLEN	equ	11+ 4+15+ 4+11+ 4+ 4+12		; T-STATES in RTCWait loop
+	RTCCMD	equ	 1+ 1+ 2+ 1+ 1+ 1+ 1+ 1		; M1 States in RTCWait loop
 
 	; (initialize variables)
 	xor	a
-	ld	h,a
-	ld	l,a
-CHG3:	ld	de,RTCLEN
+	ld	h,0xFF
+	ld	l,0x00
+CHG3:	ld	de, RTCLEN
 	exx
-	ld	h,a
-	ld	l,a
+	ld	h,0xFF
+	ld	l,0xFF
 	ld	d,a
 	ld	e,a
 	exx
@@ -489,19 +489,19 @@ WaitSec:
 	cp	b
 	jr	nz,WaitSec
 
-	inc	a
-	daa
-	and	c
-	ld	b,a			; next second
+	inc	a		; 4
+	daa			; 4
+	and	c		; 4
+	ld	b, a		; 4 ; next second
 RTCWait:
 	add	hl,de		; 11	(19)
 	exx			; 4	(d9)
 	adc	hl,de		; 15	(ed 5a) - two M1 cycle instruction
 	exx			; 4	(d9)
-	in	a,(0b5h)	; 11	(db b5)
+	in	a, (0b5h)		; 11	(db b5)
 	and	c		; 4	(a1)
 	cp	b		; 4	(b8)
-	jr	nz,RTCWait	; 12(m)	(20 f5)	;7 (not met)
+	jr	nz,RTCWait		; 12(m)	(20 f5)	;7 (not met)
 
 	; (preserve counter)
 	ld	(RTCCnt),hl
@@ -511,9 +511,9 @@ RTCWait:
 
 	; (get and display second ticker)
 	in	a,(0b5h)		; get seconds LOW
-	and	0fh			; reset high nibble
+	and	0fh		; reset high nibble
 	ld	b,a
-	ld	a,1			; seconds HIGH location
+	ld	a,1		; seconds HIGH location
 	out	(0b4h),a
 	nop
 	in	a,(0b5h)		; get seconds HIGH

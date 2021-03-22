@@ -7,6 +7,14 @@
 	SECTION CODE
 
 _cleanexit:
+	CALL	_setTextMode
+
+	JP	0
+
+
+	PUBLIC	_setTextMode
+
+_setTextMode:
 	; Reset V9958 read register back to default of 0
 	XOR	A
 	OUT	(VDP_ADDR), A
@@ -34,9 +42,7 @@ _cleanexit:
 	call	CALSLT
 
 	ld	ix, INIPLT
-	call	CALSUB
-
-	JP	0
+	JP	CALSUB
 
 ; CALSUB
 ;

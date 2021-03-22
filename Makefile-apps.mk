@@ -6,7 +6,7 @@ MAKEFLAGS += --no-builtin-rules
 
 BIN := ./bin/
 SRC := ./apps/
-APPS := dots lines mbrot spike-fdd ide cpusptst fdisk
+APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
 ZCC := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
@@ -18,6 +18,7 @@ apps: $(TARGETS)
 
 V9958_DEPS := v9958.c v9958.h msx.asm v9958.asm msx.inc
 $(BIN)dots.com: $(addprefix $(SRC),dots.c $(V9958_DEPS) msxdos.asm msxdos.h)
+$(BIN)vramtest.com: $(addprefix $(SRC),vramtest.c $(V9958_DEPS))
 $(BIN)lines.com: $(addprefix $(SRC),lines.c $(V9958_DEPS))
 $(BIN)mbrot.com: $(addprefix $(SRC),mbrot.c $(V9958_DEPS))
 $(BIN)spike-fdd.com: $(addprefix $(SRC),spike-fdd.c fdd.asm)
