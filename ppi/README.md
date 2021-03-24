@@ -4,7 +4,7 @@ Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project
 
 The PPI 82C55 board, designed for RC2014 systems, is part of planned series of boards, to provide full MSX2+ compliance.
 
-It provides interface to keyboard and memory slot management to the ROM/RAM board.
+It provides interface to keyboard and memory slot management for the ROM/RAM board.
 
 Key Functions:
 
@@ -59,11 +59,15 @@ For more see [msx.org wiki page](https://www.msx.org/wiki/Programmable_Periphera
 Although the keyboard and PPI board are designed to work under MSX software, it can be used in a stock RC2014 build.
 
 You can write your own software to interface to the keyboard (see the demo app msxkeyb), or you can activate the
-custom driver written for RomWBW's HBIOS.  The drivers code is on my fork of [RomWBW](https://github.com/vipoo/RomWBW/tree/dean/dev-v9958).
-
-(Planning to submit this driver to the main project)
+custom driver written for RomWBW's HBIOS.  The drivers code is on my fork of [RomWBW](https://github.com/vipoo/RomWBW/tree/yellow-msx-boards).
 
 ## Resources
 
 * Schematic: [schematic.pdf](./schematic.pdf "Schematic")
 * [82C55 Datasheet](../datasheets/82c55.pdf)
+
+## Other references
+
+* [Keyboard matrices - Grauw](http://map.grauw.nl/articles/keymatrix.php)
+* [MSX ORG PPI Page](https://www.msx.org/wiki/Programmable_Peripheral_Interface)
+* [MSX Red Book](https://github.com/gseidler/The-MSX-Red-Book/blob/master/the_msx_red_book.md)

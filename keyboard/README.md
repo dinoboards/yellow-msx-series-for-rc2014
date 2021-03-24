@@ -47,3 +47,9 @@ custom driver written for RomWBW's HBIOS.  The drivers code is on my fork of [Ro
 ## Resources
 
 * Schematic: [schematic.pdf](./schematic.pdf "Schematic")
+
+## Other references
+
+* [Keyboard matrices - Grauw](http://map.grauw.nl/articles/keymatrix.php)
+* [MSX ORG PPI Page](https://www.msx.org/wiki/Programmable_Peripheral_Interface)
+* [MSX Red Book](https://github.com/gseidler/The-MSX-Red-Book/blob/master/the_msx_red_book.md)
