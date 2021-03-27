@@ -51,10 +51,10 @@ install-prereq:
 rom-image-pal: nextor cbios
 	@rm -f bin/ymsx-pal.rom
 	dd if=/dev/zero bs=16k count=8 of=bin/yellow-msx-pal-rc2104.rom
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_pal.rom 	of=bin/ymsx-pal.rom bs=16k count=2 seek=0
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/ymsx-pal.rom bs=16k count=1 seek=2
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/ymsx-pal.rom bs=16k count=1 seek=3
-	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.rc2014.rom    of=bin/ymsx-pal.rom bs=16k count=28 seek=4
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_pal.rom 	of=bin/yellow-msx-pal-rc2104.rom bs=16k count=2 seek=0
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=2
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=3
+	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.rc2014.rom    of=bin/yellow-msx-pal-rc2104.rom bs=16k count=28 seek=4
 
 .PHONY: rom-image-nms8250
 rom-image-nms8250: nextor cbios systemroms/nms8250_basic-bios2.rom systemroms/nms8250_msx2sub.rom

@@ -1,6 +1,6 @@
 
 
-	include	"bdos.inc"
+	include "bdos.inc"
 	include "cbios.inc"
 	include "sio.inc"
 	include "ascii.inc"
@@ -21,10 +21,12 @@ PCKT_WAIT_COUNT:	EQU	140
 	LD	BC, HIGHPAGESIZE
 	LDIR
 
+	DI
 	DISABLE_VDP_INTERRUPTS
 	INSTALL_INTERRUPT_HANDLER
 	SIO_INIT	SIO0A_CMD, SIO_RTSOFF
 	SIO_INIT	SIO0B_CMD, SIO_RTSON
+	EI
 
 	; HAS A FILENAME BEEN SUPPLIED?
 	LD	A, (DFCB+1)
@@ -32,7 +34,7 @@ PCKT_WAIT_COUNT:	EQU	140
 	JP	Z, ERR.ARG_NO_FILENAME
 
 	; IF SO, LETS DELETE IT
-	ld  	DE, DFCB		; Delete file first
+	LD  	DE, DFCB		; Delete file first
 	BDOSFN	FDEL
 
 	; AND RECREATE IT
@@ -52,7 +54,7 @@ PCKT_WAIT_COUNT:	EQU	140
 	LD 	(PCKT_NO_CPL), A
 
 	LD 	A, NAK		; REQUEST NEXT PACKET
-	OUT	(DAT_CH), A	; send to port
+	OUT	(DAT_CH), A		; send to port
 
 GET_PCKT:
 	LD	A, PCKT_RETRY_COUNT
@@ -78,8 +80,13 @@ GET_PCKT_GOBBLE:
 	CALL	GET_BYTE
 	JR 	NC, GET_PCKT_GOBBLE
 
+	DI
+	CALL	SIO_INIT_A
+	CALL	SIO_INIT_B
+	EI
+
 	LD 	A, NAK		; SEND NAK AGAIN TO RETRY
-	OUT	(DAT_CH), A	; send to port
+	OUT	(DAT_CH), A		; send to port
 	JR 	GP_LP1
 
 RCV_PCKT:
@@ -90,7 +97,7 @@ RCV_PCKT:
 	JP	Z, CANCEL
 
 	CP	SOH
-	JR	NZ, GP_LP1	; TODO WAIT FOR NO BYTES READY, THEN RESEND NAK
+	JR	NZ, GP_LP1		; TODO WAIT FOR NO BYTES READY, THEN RESEND NAK
 
 	LD	HL, BUFFER
 	LD	(HL), A		; STORE THE SOH????
@@ -157,8 +164,14 @@ RCV_PCKT_BDY2:
 	CPL
 	LD	(HL), A
 
+	DI
+	CALL	SIO_INIT_A
+	CALL	SIO_INIT_B
+	EI
+
 	LD 	A, ACK
 	OUT	(DAT_CH), A	; send to port
+
 	JP	GET_PCKT
 
 ; RETREIVE NEXT BYTE
@@ -273,20 +286,31 @@ FINISH:
 	BDOSFN	STROUT
 
 EXIT:
+	DI
 	DISABLE_SIO_INTERRUPTS
 	REMOVE_INTERRUPT_HANDLER
 	ENABLE_VDP_INTERRUPTS
+	EI
 	JP	TERM0
+
+SIO_INIT_A:
+	SIO_INITXX	SIO0A_CMD, SIO_RTSOFF
+	RET
+
+SIO_INIT_B:
+	SIO_INITXX	SIO0B_CMD, SIO_RTSON
+	RET
+
 
 	include	"sio.asm"
 	; include	"debug.asm"
 
 if DAT_CH = SIO0B_DAT
 MSG_NOTICE:
-	DB	"MSX/RC2014 SIO/2 Xmodem receive v0.3\r\nChannel: B\r\n$"
+	DB	"MSX/RC2014 SIO/2 Xmodem receive v0.4\r\nChannel: B\r\n$"
 else
 MSG_NOTICE:
-	DB	"MSX/RC2014 SIO/2 Xmodem receive v0.3\r\nChannel: A\r\n$"
+	DB	"MSX/RC2014 SIO/2 Xmodem receive v0.4\r\nChannel: A\r\n$"
 endif
 
 MSG.CANCELLED:
@@ -329,7 +353,7 @@ STACKSTART:
 STACK:	EQU	$
 
 HIGHPAGE:
-	include "highpage.sym"
+	include 	"highpage.sym"
 	incbin	"highpage.bin"
 
 HIGHPAGESIZE:	EQU	$ - HIGHPAGE
