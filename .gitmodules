@@ -6,3 +6,6 @@
 	path = nextor
 	url = git@github.com:vipoo/Nextor.git
 	branch = dean/spike
+[submodule "msxsys-build/msxsyssrc"]
+	path = msxsys-build/msxsyssrc
+	url = git://git.code.sf.net/p/msxsyssrc/git
