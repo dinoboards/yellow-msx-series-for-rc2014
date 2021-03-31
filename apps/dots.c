@@ -1,10 +1,10 @@
 #define __Z88DK_R2L_CALLING_CONVENTION
+#include "msxdos.h"
 #include "v9958.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "msxdos.h"
 
 uint8_t getRandomSeed() __naked __z88dk_fastcall {
   // clang-format off
@@ -32,9 +32,9 @@ void main() {
   uint16_t x = 0;
   uint16_t y = 0;
   uint16_t offset = 0;
-  uint8_t i = 0;
+  uint8_t  i = 0;
 
-  while(true) {
+  while (true) {
     if (msxdosDirio(0xFF) != 0)
       break;
 
@@ -43,9 +43,9 @@ void main() {
     x++;
     x %= 512;
 
-    if(x == 0) {
+    if (x == 0) {
       y += 4;
-      if ( y >= 212) {
+      if (y >= 212) {
         offset++;
         y = offset;
       }

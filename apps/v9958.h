@@ -24,11 +24,11 @@ extern void setMode7(uint8_t lines, uint8_t mode);
 extern void clearScreenBank0(uint8_t color) __z88dk_fastcall;
 extern void clearScreenBank1(uint8_t color) __z88dk_fastcall;
 extern void _writeRegister(uint16_t rd) __z88dk_fastcall;
-extern void vramReadFast(uint32_t vramAddress, uint8_t* buffer, uint16_t size);
-extern void vramWriteFast(uint32_t vramAddress, uint8_t* buffer, uint16_t size);
+extern void vramReadFast(uint32_t vramAddress, uint8_t *buffer, uint16_t size);
+extern void vramWriteFast(uint32_t vramAddress, uint8_t *buffer, uint16_t size);
 
-extern void vramReadSlow(uint32_t vramAddress, uint8_t* buffer, uint16_t size);
-extern void vramWriteSlow(uint32_t vramAddress, uint8_t* buffer, uint16_t size);
+extern void vramReadSlow(uint32_t vramAddress, uint8_t *buffer, uint16_t size);
+extern void vramWriteSlow(uint32_t vramAddress, uint8_t *buffer, uint16_t size);
 
 #define writeRegister(a, b) _writeRegister(a * 256 + b)
 

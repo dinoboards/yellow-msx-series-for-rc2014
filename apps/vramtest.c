@@ -1,6 +1,6 @@
-#include <stdio.h>
 #include "v9958.h"
 #include <stdarg.h>
+#include <stdio.h>
 
 #define BUFFER_SIZE 1024
 
@@ -13,7 +13,7 @@ uint8_t conductTest() {
 
   vramReadSlow(vramAddress, buffer, BUFFER_SIZE);
 
-  for(int i = 0; i < BUFFER_SIZE; i++) {
+  for (int i = 0; i < BUFFER_SIZE; i++) {
     buffer2[i] = i;
   }
 
@@ -23,8 +23,8 @@ uint8_t conductTest() {
 
   vramWriteSlow(vramAddress, buffer, BUFFER_SIZE);
 
-  for(int d = 0; d < BUFFER_SIZE; d++)
-    if(buffer3[d] != buffer2[d])
+  for (int d = 0; d < BUFFER_SIZE; d++)
+    if (buffer3[d] != buffer2[d])
       return 1;
 
   return 0;
@@ -35,7 +35,7 @@ void main() {
 
   setMode6(212, NTSC);
 
-  for(uint16_t i = 0; i < 800; i++)
+  for (uint16_t i = 0; i < 800; i++)
     if (conductTest() != 0) {
       setTextMode();
       printf("Failed on %d\r\n", i);

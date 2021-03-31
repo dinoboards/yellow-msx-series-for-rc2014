@@ -6,7 +6,7 @@ MAKEFLAGS += --no-builtin-rules
 
 BIN := ./bin/
 SRC := ./apps/
-APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest
+APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
 ZCC := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
@@ -25,6 +25,7 @@ $(BIN)spike-fdd.com: $(addprefix $(SRC),spike-fdd.c fdd.asm)
 $(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.asm cfg.inc msxdos.asm msxdos.h partition.h)
 $(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
 $(BIN)fdisk.com: $(addprefix $(SRC),memmap-override.asm fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.asm msxdos.h partition.h)
+$(BIN)extbio.com: $(addprefix $(SRC),extbio.c msxdos.h msxdos.asm extbio.asm)
 
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 

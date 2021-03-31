@@ -103,5 +103,12 @@ void msxbiosPosit(uint8_t col, uint8_t row);
 #define DAC    0xF7F6
 #define SCRMOD 0xFCAF
 #define EXPTBL 0xFCC1
+// #define HOKVLD ((uint8_t *)0xFB20)
+// #define EXTBIO 0xFFCA
+
+extern uint8_t HOKVLD;
+extern uint8_t EXTBIO[5];
+
+#define RET_INSTRUCTION 0xC9
 
 #endif
