@@ -1,164 +1,116 @@
 
-	ORG	$8000
-CHPUT           EQU     00A2H
+	ORG	08000H
 
-; +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
-; +2	INIT	Address of the routine to call to initialize a work area or I/O ports, or run a game, etc.
+CHPUT	EQU     000A2H
+; INITXT	EQU	0006CH
+; LINL40	EQU	0F3AEH
+; LINLEN	EQU	0F3B0H
+; CHGET		EQU	0009FH
+; ENASCR	EQU	00044H
+; SETTXT	EQU	00078H
+; LINL32	EQU	0F3AFH
+; INIT32	EQU	0006FH
+; CALSLT	EQU	0001CH
+; SETSCR	EQU	00189H
+
+; +0	ID		Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
+; +2	INIT		Address of the routine to call to initialize a work area or I/O ports, or run a game, etc.
 ; +4	STATEMENT	Runtime address of a program whose purpose is to add instructions to the MSX-Basic using CALL.
-; +6	DEVICE	Execution address of a program used to control a device built into the cartridge. For example, a disk interface.
-; +8	TEXT	Pointer of the tokenizen Basic program contained in ROM.
+; +6	DEVICE		Execution address of a program used to control a device built into the cartridge. For example, a disk interface.
+; +8	TEXT		Pointer of the tokenizen Basic program contained in ROM.
 ; +10	Reserved	6 bytes reserved for future updates.
 
 ROM_HEADER:
-	DB	"  "
-	DW	init
+	DB	"AB"
+	DW	ROM_INIT
 	DW	0
 	DW	0
 	DW	0
-	DS	10
+	DS	6
+
+ROM_INIT:
+	; LD	DE, MSG
+	; CALL	PRINT
+	RET
+; MSG:	DB	"RC2014 Extended Bios Loaded.", 13, 10, 0
 
 	ORG	$8100
-init:
-	LD	DE, MSG
+
+MSXDOS_RC2014_ENTRY:
+	; LD	DE, MSG.CPU_SPEED
+	; CALL	PRINT
+
+	; LD	DE, MSG.MEMORY
+	; CALL	PRINT
+
+	; LD	DE, MSG.VIDEO
+	; CALL	PRINT
+
+	CALL	SIO_PROBE
+	JR	Z, FOUND
+
+	LD	DE, MSG.SIO_NOT_FOUND
+	JR	SKIP1
+
+FOUND:
+	LD	DE, MSG.SIO_FOUND
+SKIP1
 	CALL	PRINT
 
-	ld	hl, 50
-	call	ALLOC
+	; LD	DE, MSG.RTC
+	; CALL	PRINT
 
+	; LD	DE, MSG.GAME
+	; CALL	PRINT
 
+	; LD	DE, MSG.KEYBOARD
+	; CALL	PRINT
 
+	LD	HL, 6
+	CALL	ALLOC
 
+	RET
 
-	ret
+MSG.SIO_NOT_FOUND
+	DB	"SIO/2 Module:        ", 9, "NOT PRESENT", 13, 10, 0
 
-MSG:	DB	"This is a spike", 13, 10, 0
+MSG.SIO_FOUND
+	DB	"SIO/2 Module:        ", 9, "PRESENT", 13, 10, 0
+
+MSG.CPU_SPEED
+	DB	"CPU:                 ", 9, "7Mhz", 13, 10, 0
+
+MSG.MEMORY
+	DB	"Memory Module:       ", 9, "512K, 1024K", 13, 10, 0
+
+MSG.RTC
+	DB	"RTC Module:          ", 9, "PRESENT", 13, 10, 0
+
+MSG.GAME
+	DB	"Game Module:         ", 9, "PRESENT", 13, 10, 0
+
+MSG.VIDEO
+	DB	"Video Module:        ", 9, "V9958", 13, 10, 0
+
+MSG.KEYBOARD
+	DB	"PPI/Keyboard Module: ", 9, "PRESENT", 13, 10, 0
 
 ;-----------------------------------------------------------------------------
 ;
-; Print a zero-terminated string on screen
-; Input: DE = String address
+; PRINT A ZERO-TERMINATED STRING ON SCREEN
+; INPUT: DE = STRING ADDRESS
 
 PRINT:
-	ld	a, (de)
-	or	a
-	ret	z
-	call	CHPUT
-	inc	de
-	jr	PRINT
+	LD	A, (DE)
+	OR	A
+	RET	Z
+	CALL	CHPUT
+	INC	DE
+	JR	PRINT
 
-;-----------------------------------------------------------------------
-;
-;       ALLOC allocates specified amount of memory downward from current
-;       HIMEM
-;
-; Inputs:
-;       HL = memory size to allocate
-; Outputs:
-;       if successful, carry flag reset, HL points to the beginning
-;                      of allocated area
-;       otherwise, carry flag set, allocation not done.
-;
-BOOTAD	equ	0C000h		;Where boot sector is executed
-;
-BOTTOM	equ	0FC48h		;Pointer to bottom of RAM
-HIMEM	equ	0FC4Ah		;Top address of RAM which can be used
-MEMSIZ	equ	0F672h		;Pointer to end of string space
-STKTOP	equ	0F674h		;Pointer to bottom of stack
-SAVSTK	equ	0F6B1h		;Pointer to valid stack bottom
-MAXFIL	equ	0F85Fh		;Maximum file number
-FILTAB	equ	0F860h		;Pointer to file pointer table
-NULBUF	equ	0F862h		;Pointer to buffer #0
-;
 
-ALLOC:
-	ld	a, l		;is requested size 0?
-	or	h
-	ret	z		;yes, allocation always succeeds
-	ex	de, hl		;calculate -size
-	ld	hl, 0
-	sbc	hl, de
-	ld	c, l		;remember specified size
-	ld	b, h
-	add	hl, sp		;[HL] = [SP] - size
-	ccf
-	ret	c		;size too big
-
-	ld	a, h
-	cp	0C2h        	;high(BOOTAD)
-	ret	c		;no room left
-
-	ld	de, (BOTTOM)	;get current RAM bottom
-	sbc	hl, de		;get memory space left after allocation
-	ret	c		;no space left
-	ld	a, h		;do we still have breathing room?
-	cp	2              	;high(512)
-	ret	c		;no,  not enough space left
-;
-;       Now,  requested size is legal,  begin allocation
-;
-	push	bc		;save -size
-	ld	hl, 0
-	add	hl, sp		;get current stack pointer to [HL]
-	ld	e, l		;move source address to [DE]
-	ld	d, h
-	add	hl, bc
-	push	hl		;save destination
-	ld	hl, (STKTOP)
-	or	a
-	sbc	hl, de
-	ld	c, l		;move byte count to move to [BC]
-	ld	b, h
-	inc	bc
-	pop	hl		;restore destination
-	ld	sp, hl		;destination becomes the new SP
-	ex	de, hl
-	ldir			;move stack contents
-	pop	bc		;restore -size
-	ld	hl, (HIMEM)
-	add	hl, bc
-	ld	(HIMEM), hl
-	ld	de, -2*(2+9+256)
-	add	hl, de
-	ld	(FILTAB), hl	;pointer to first FCB
-	ex	de, hl
-	ld	hl, (MEMSIZ)	;update MEMSIZ
-	add	hl, bc
-	ld	(MEMSIZ), hl
-	ld	hl, (NULBUF)	;update NULBUF
-	add	hl, bc
-	ld	(NULBUF), hl
-	ld	hl, (STKTOP)	;update STKTOP
-	add	hl, bc
-;
-;       Re-build BASIC's file structures
-;
-	ld	(STKTOP), hl
-	dec	hl		;and SAVSTK
-	dec	hl
-	ld	(SAVSTK), hl
-	ld	l, e		;get FILTAB in [HL]
-	ld	h, d
-	inc	hl		;point to first FCB
-	inc	hl
-	inc	hl
-	inc	hl
-	ld	a, 2
-DSKFLL:
-	ex	de, hl
-	ld	(hl), e		;set address in FILTAB
-	inc	hl
-	ld	(hl), d
-	inc	hl
-	ex	de, hl
-	ld	bc, 7
-	ld	(hl), b		;make it look closed
-	add	hl, bc
-	ld	(hl), b		;clear flag byte
-	ld	bc, 9+256-7
-	add	hl, bc		;point to next FCB
-	dec	a
-	jr	nz, DSKFLL
-	ret
+	INCLUDE "alloc.asm"
+	INCLUDE "sio.asm"
 
 	DS	$C000 - $
 
