@@ -12,6 +12,7 @@ CHPUT	EQU     000A2H
 ; INIT32	EQU	0006FH
 ; CALSLT	EQU	0001CH
 ; SETSCR	EQU	00189H
+WRSLT 	EQU	00014H
 
 ; +0	ID		Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
 ; +2	INIT		Address of the routine to call to initialize a work area or I/O ports, or run a game, etc.
@@ -36,7 +37,37 @@ ROM_INIT:
 
 	ORG	$8100
 
-MSXDOS_RC2014_ENTRY:
+MSXDOS_RC2014_INIT:
+	JP	PROBE_HARDWARE
+
+	ORG	$8103
+MSXDOS_RC2014_EXTBIO:
+	JP	EXTBIO
+
+
+EXTBIO:
+	LD	A, D
+	OR	E
+	JR	Z, EXTBIO_GET_DEVICE_ID
+
+	RET
+
+EXTBIO_RS232_ID	EQU	8
+
+EXTBIO_GET_DEVICE_ID:
+	PUSH	DE
+
+	LD	E, EXTBIO_RS232_ID
+	LD	A, B
+	CALL	WRSLT
+	INC	HL
+
+	POP	DE
+	RET
+
+MSG	DB	"EXTBIO", 13, 10, 0
+
+PROBE_HARDWARE:
 	; LD	DE, MSG.CPU_SPEED
 	; CALL	PRINT
 
@@ -45,6 +76,7 @@ MSXDOS_RC2014_ENTRY:
 
 	; LD	DE, MSG.VIDEO
 	; CALL	PRINT
+
 
 	CALL	SIO_PROBE
 	JR	Z, FOUND

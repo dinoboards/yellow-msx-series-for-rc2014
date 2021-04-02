@@ -10,22 +10,65 @@ extern void    getdev();
 extern void    getsystem();
 extern uint8_t table[32];
 
+const char *extendedBiosName(uint8_t id) {
+  switch (id) {
+  case 0:
+    return "Broadcase";
+
+  case 4:
+    return "MSX-DOS Memory Mapper";
+
+  case 8:
+    return "MSX-Modem & RS-232C";
+
+  case 10:
+    return "MSX-AUDIO";
+
+  case 16:
+    return "MSX-JE";
+
+  case 17:
+    return "Kanji driver";
+
+  case 34:
+    return "MSX-UNAPI";
+
+  case 77:
+    return "MemMan";
+
+  case 132:
+    return "μ-driver by Yoshikazu Yamamoto";
+
+  case 241:
+    return "MultiMente";
+
+  default:
+    return "Unknown";
+  }
+}
+
 void main() {
   printf("This is a test\r\n");
 
   const bool extendedBiosReady = HOKVLD & 1;
-  printf("extendedBiosReady: %s\r\n", extendedBiosReady ? "Installed" : "Not Installed");
+  if (!extendedBiosReady) {
+    printf("No bios extenstions installed\r\n");
+    return;
+  }
 
   const bool atLeastOneInstalled = EXTBIO[0] != RET_INSTRUCTION;
-  printf(atLeastOneInstalled ? "At least one installed\r\n" : "Null Installation\r\n");
+  if (!atLeastOneInstalled) {
+    printf("No bios extensions installed\r\n");
+    return;
+  }
+
+  printf("\r\nInstalled Extended Bios Systems:\r\n");
+  printf("-----------------------------------\r\n");
 
   getdev();
-  for (int i = 0; i < 32; i++)
-    printf("%02X ", table[i]);
-  printf("\r\n");
 
-  // getsystem();
-  // for(int i = 0; i < 32; i++)
-  //   printf("%02X ", table[i]);
-  // printf("\r\n");
+  for (int i = 0; i < 32 && table[i]; i++)
+    printf("%d: %s (%02X)\r\n", i, extendedBiosName(table[i]), table[i]);
+
+  printf("\r\n");
 }
