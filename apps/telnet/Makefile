@@ -15,10 +15,6 @@ ZCC := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH
 
 $(BIN)telnet.com: $(addprefix $(SRC),print.asm inputchar.asm inputstring.asm io.asm xymodem.c inkey.asm screen.asm width.c msx2ansibuffer.asm print.c fossil_interface.asm fossil_interface.c telnet.c aofossilhelper.c)
 
-
-# $(BIN)/%.com: ./bin/%.com
-# 	@
-
 $(TARGETS):
 	@mkdir -p $(BIN)
 	$(ZCC) $(filter-out %.inc,$(filter-out %.h,$^)) -o $(notdir $@)
@@ -26,3 +22,6 @@ $(TARGETS):
 	rm -f $(basename $(notdir $@)).img
 	rm -f $(basename $(notdir $@))_BSS.bin
 	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
+
+clean:
+	@rm -rf ./bin

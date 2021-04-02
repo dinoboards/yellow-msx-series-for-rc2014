@@ -34,7 +34,7 @@ cbios:
 	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014_pal.rom  derived/bin/cbios_main_rc2014_ntsc.rom derived/bin/cbios_logo_rc2014.rom derived/bin/cbios_sub.rom
 
 .PHONY: nextor
-nextor: nextor/extras/extbio.com nextor/extras/xrecv.com nextor/extras/fdisk.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI nextor/extras/tv.com nextor/extras/tl.com nextor/extras/memman.com nextor/extras/cfgmman.com  nextor/extras/caps.tsr
+nextor: nextor/extras/AUTOEXEC.BAT nextor/extras/extbio.com nextor/extras/xrecv.com nextor/extras/fdisk.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI nextor/extras/tv.com nextor/extras/tl.com nextor/extras/memman.com nextor/extras/cfgmman.com  nextor/extras/caps.tsr
 	@mkdir -p ./bin
 	echo "Requires sudo permission"
 	sudo echo
@@ -80,25 +80,26 @@ rom-image-msxsyssrc: nextor cbios msxsys ./extbio-rc2014/bin/extbio-rc2014.rom
 
 clean:
 	@rm -rf ./bin
+	$(MAKE) -C apps --no-print-directory clean
 	$(MAKE) -C cbios --no-print-directory clean
 	$(MAKE) -C ./extbio-rc2014 --no-print-directory clean
 	cd nextor/source
 	$(MAKE) --no-print-directory clean
-
+	rm ../extras/*
 
 ## Tools
 
-VPATH = ./tools/xmodem:./bin/:./apps
+VPATH = ./tools/xmodem:./bin/
 PASMO := pasmo --public -v -I ./bin/
 
 bin/xrecv.com: xrecv.asm sio.asm bin/highpage.bin bdos.inc cbios.inc sio.inc ascii.inc cbios/src/hardware.asm cbios/src/hooks.asm
 
 bin/chkspd.com: ./tools/chkspd/chkspd.asm
-	mkdir -p bin
+	@mkdir -p bin
 	$(PASMO) $< $@
 
 nextor/extras/xrecv.com: bin/xrecv.com
-	cp bin/xrecv.com nextor/extras/xrecv.com
+	@cp -up bin/xrecv.com nextor/extras/xrecv.com
 
 bin/%.com: %.asm
 	@mkdir -p bin
@@ -109,16 +110,19 @@ bin/%.bin: %.asm
 	@$(PASMO) -I ./tools/xmodem/ $< $@ $(@:.bin=.sym)
 
 nextor/extras/%.com: bin/%.com
-	@cp "$<" "$@"
+	@cp -up "$<" "$@"
 
 nextor/extras/SROM.%: 3rdparty/SROM.%
-	@cp "$<" "$@"
+	@cp -up "$<" "$@"
 
 nextor/extras/%.com: 3rdparty/%.com
-	@cp "$<" "$@"
+	@cp -up "$<" "$@"
 
 nextor/extras/%.tsr: 3rdparty/%.tsr
-	@cp "$<" "$@"
+	@cp -up "$<" "$@"
+
+nextor/extras/AUTOEXEC.BAT:
+	@cp -up ./AUTOEXEC.BAT nextor/extras/AUTOEXEC.BAT
 
 .PHONY: extbio-rc2014/bin/extbio-rc2014.rom
 extbio-rc2014/bin/extbio-rc2014.rom:
@@ -131,8 +135,3 @@ msxsys:
 	@cd msxsys-build
 	$(MAKE) -O -j --no-print-directory
 	cp -up ./working/*.rom ../bin/
-
-.PHONY: bin/telnet.com
-bin/telnet.com:
-	@$(MAKE) --no-print-directory -C apps/telnet
-	cp -up ./apps/telnet/bin/telnet.com ./bin/
