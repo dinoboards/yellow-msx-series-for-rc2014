@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern void    getdev();
+extern void    extbio_get_dev(uint8_t *table) __z88dk_fastcall;
 extern void    getsystem();
 extern uint8_t table[32];
 
@@ -47,9 +47,19 @@ const char *extendedBiosName(uint8_t id) {
   }
 }
 
-void main() {
-  printf("This is a test\r\n");
+uint8_t table[32];
 
+typedef struct {
+  uint8_t slot_id;
+  void *  jump_table;
+  uint8_t reserved;
+} extbio_info;
+
+extbio_info info_table[4];
+
+extern void get_dev_info_table(uint8_t device_id, extbio_info *info_table);
+
+void main() {
   const bool extendedBiosReady = HOKVLD & 1;
   if (!extendedBiosReady) {
     printf("No bios extenstions installed\r\n");
@@ -65,10 +75,16 @@ void main() {
   printf("\r\nInstalled Extended Bios Systems:\r\n");
   printf("-----------------------------------\r\n");
 
-  getdev();
+  extbio_get_dev(table);
 
   for (int i = 0; i < 32 && table[i]; i++)
     printf("%d: %s (%02X)\r\n", i, extendedBiosName(table[i]), table[i]);
 
   printf("\r\n");
+
+  /*** GET RS232 SERIAL SLOT NUMBERS ***/
+
+  get_dev_info_table(8, info_table);
+
+  printf("Slot ID %02X, Address %p\r\n", info_table[0].slot_id, info_table[0].jump_table);
 }
