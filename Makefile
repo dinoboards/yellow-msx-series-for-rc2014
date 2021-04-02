@@ -131,3 +131,8 @@ msxsys:
 	@cd msxsys-build
 	$(MAKE) -O -j --no-print-directory
 	cp -up ./working/*.rom ../bin/
+
+.PHONY: bin/telnet.com
+bin/telnet.com:
+	@$(MAKE) --no-print-directory -C apps/telnet
+	cp -up ./apps/telnet/bin/telnet.com ./bin/
