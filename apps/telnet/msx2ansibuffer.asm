@@ -108,6 +108,8 @@
 ; void AnsiInit()
 	PUBLIC	_AnsiInit
 _AnsiInit:
+	ld b,b
+	jr $+2
 	PUSH	IX					; Interslot call might mess with IX and C expect it to be intact
 	CALL	V9938_Init			; Initialize screen mode, etc
 	CALL	V9938_InitCursor	; Initialize cursor and return

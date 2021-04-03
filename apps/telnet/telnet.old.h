@@ -196,7 +196,7 @@ unsigned char ucRcvData[128];
 // MSX Variables that we will access
 __at 0xF3B0 unsigned char ucLinLen;
 __at 0xFCA9 unsigned char ucCursorDisplayed;
-__at 0xFBEB unsigned char ucMT6;
+__at 0xFBEB unsigned char ucMT6;    // Current state of keyboard matrix for F3 F2 F1 CODE CAP GRAPH CTRL SHIFT
 __at 0xFBEC unsigned char ucMT7;
 __at 0xFC9E unsigned int  uiJiffy;
 

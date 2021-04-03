@@ -13,10 +13,14 @@ ZCC := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH
 #--c-code-in-asm
 #-SO1 --max-allocs-per-node200000
 
-$(BIN)telnet.com: $(addprefix $(SRC),print.asm inputchar.asm inputstring.asm io.asm xymodem.c inkey.asm screen.asm width.c msx2ansibuffer.asm print.c fossil_interface.asm fossil_interface.c telnet.c aofossilhelper.c)
+# $(BIN)telnet.com: $(addprefix $(SRC),fake_connection.c print.asm inputchar.asm inputstring.asm io.asm xymodem.c inkey.asm screen.asm width.c msx2ansibuffer.asm print.c fossil_interface.asm fossil_interface.c telnet.c)
+$(BIN)telnet.com: $(addprefix $(SRC),telnet.c print.asm print.c msx2ansibuffer.asm inkey.asm)
+
+#aofossilhelper.c
 
 $(TARGETS):
 	@mkdir -p $(BIN)
+	# $(ZCC) -a --c-code-in-asm $(filter-out %.inc,$(filter-out %.h,$^)) -o $(notdir $@)
 	$(ZCC) $(filter-out %.inc,$(filter-out %.h,$^)) -o $(notdir $@)
 	mv $(notdir $@) "$@"
 	rm -f $(basename $(notdir $@)).img

@@ -25,6 +25,7 @@ loop:
     jr  loop
 end:
     pop ix
+    ret
 
 
 ; void printChar(char c) __z88dk_fastcall
@@ -38,3 +39,10 @@ _printChar:
     ld  c,2
     call    5
     pop ix
+    ret
+
+	PUBLIC _debugBreak
+_debugBreak:
+	ld b,b
+	jr $+2
+	RET
