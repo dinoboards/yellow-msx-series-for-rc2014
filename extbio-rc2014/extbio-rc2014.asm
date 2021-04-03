@@ -85,9 +85,6 @@ EXTBIO_GET_INFO_TABLE:
 	POP	DE
 	RET
 
-EXTBIO_JUMP_TABLE:
-	JP	0
-
 
 PROBE_HARDWARE:
 	; LD	DE, MSG.CPU_SPEED
@@ -153,6 +150,7 @@ MSG.KEYBOARD
 	INCLUDE "alloc.asm"
 	INCLUDE "sio.asm"
 	INCLUDE	"utils.asm"
+	INCLUDE "rs232.asm"
 
 	DS	$C000 - $
 

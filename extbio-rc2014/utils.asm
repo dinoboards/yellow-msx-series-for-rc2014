@@ -8,7 +8,7 @@ PRINT:
 	LD	A, (DE)
 	OR	A
 	RET	Z
-	CALL	CHPUT
+	BIOS_FN	CHPUT
 	INC	DE
 	JR	PRINT
 
@@ -33,7 +33,7 @@ GETSL10:
         PUSH    HL              ;Save registers
         PUSH    DE
 
-	CALL_BIOS_FN	RSLREG
+	BIOS_FN	RSLREG
         RRCA
         RRCA			; page 1
         RRCA

@@ -3,9 +3,9 @@ RAMAD0	equ	0F341h	; Slot of the Main-Ram on page 0~3FFFh
 EXTBIO	equ	0ffcah	; Call address to an extended Bios
 CALSLT:      EQU    0001Ch
 EXPTBL:      EQU    0FCC1h
+RDSLT	EQU	0000CH
 
 	SECTION	CODE
-	PUBLIC	_getsystem
 
 ;
 ; extern void    extbio_get_dev(uint8_t* table) __z88dk_fastcall;
@@ -17,10 +17,10 @@ _extbio_get_dev:
 	JP	EXTBIO
 
 ;
-; extern void get_dev_info_table(uint8_t device_id, extbio_info* info_table);
+; extern void extbio_get_dev_info_table(uint8_t device_id, extbio_info* info_table);
 ;
-	PUBLIC	_get_dev_info_table
-_get_dev_info_table:
+	PUBLIC	_extbio_get_dev_info_table
+_extbio_get_dev_info_table:
 	PUSH	IX
 	LD	IX, 0
 	ADD	IX, SP
@@ -36,17 +36,43 @@ _get_dev_info_table:
 
 	POP	IX
 	RET
+;
+; extern void rs232_link(extbio_info *p) __z88dk_fastcall;
+;
+	PUBLIC	_rs232_link
+_rs232_link:
+	LD	A, (HL)
+	LD	(rs232_slot_init+1), A
+	LD	(rs232_slot_open+1), A
+	INC	HL
+	LD	A, (HL)
+	INC	HL
+	LD	H, (HL)
+	LD	L, A
 
-_getsystem:
-	ld	hl, _table
-	call	GETSLT	; B = number the slot of the table
-	xor	a
-	ld	d,255	; system????
-	ld	e,0	; Function 'get'
-	jp	EXTBIO
+	INC	HL
+	INC	HL
+	INC	HL
+	LD	(rs232_slot_init+2), HL
 
+	INC	HL
+	INC	HL
+	INC	HL
+	LD	(rs232_slot_open+2), HL
 
+	RET
+;
+; extern void rs232_init(rs232_init_params*) __z88dk_fastcall;
+;
+	PUBLIC	_rs232_init
+_rs232_init:
 
+	CALL	GETSLT			; B = number the slot of the table
+	JP	rs232_slot_init
+
+	PUBLIC	_rs232_open
+_rs232_open:
+	JP	rs232_slot_open
 
 ;----------------------------------------------------------------
 ; ROUTINE GETSLT
@@ -69,32 +95,18 @@ GETSLT:
 	POP	HL
 	RET
 
-; ;
-; GETENT --Get entry address
-; Entry: none
-; Return: carry flag is set if no devices
-; Modify: all
-; ;
-; device equ 8; device # 8 is RS-232C
-; getent:
-;         ld bc, table
-;         call getsit; get slot address of TABLE
-;         ld h, b
-;         ld l, c
-;         ld b, a
-;         ld d, device; set deice number
-;         ld e, 0;'get entry address' command
-;         push hl; save TABLE address
-;         call EXTBIO
-;         pop de; restore TABLE address
-;         or a
-;         sbc hl, de; how many devices?
-;         ret nz; there are some devices
-;         scf; no devices
-;         ret
-; table:
-;         ds 32 * 4; assume maximum 32 devices
 
+rs232_slot_jumps:
 
-_table:
-	ds	32	; Reserve 32 bytes for the table
+rs232_slot_init:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_open:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+

@@ -13,7 +13,7 @@ bin/%.rom: %.asm
 	$(PASMO)  $< $@
 	cp $@ ../bin/
 
-bin/extbio-rc2014.rom: extbio-rc2014.asm sio.asm alloc.asm msx.inc utils.asm
+bin/extbio-rc2014.rom: extbio-rc2014.asm sio.asm alloc.asm msx.inc utils.asm rs232.asm
 
 clean:
 	@rm -rf bin

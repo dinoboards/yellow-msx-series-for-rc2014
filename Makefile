@@ -34,7 +34,7 @@ cbios:
 	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014_pal.rom  derived/bin/cbios_main_rc2014_ntsc.rom derived/bin/cbios_logo_rc2014.rom derived/bin/cbios_sub.rom
 
 .PHONY: nextor
-nextor: nextor/extras/telnet.com nextor/extras/AUTOEXEC.BAT nextor/extras/extbio.com nextor/extras/xrecv.com nextor/extras/fdisk.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI nextor/extras/tv.com nextor/extras/tl.com nextor/extras/memman.com nextor/extras/cfgmman.com  nextor/extras/caps.tsr
+nextor: nextor/extras/extbio.com nextor/extras/telnet.com nextor/extras/AUTOEXEC.BAT nextor/extras/extbio.com nextor/extras/xrecv.com nextor/extras/fdisk.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI nextor/extras/tv.com nextor/extras/tl.com nextor/extras/memman.com nextor/extras/cfgmman.com  nextor/extras/caps.tsr
 	@mkdir -p ./bin
 	echo "Requires sudo permission"
 	sudo echo
