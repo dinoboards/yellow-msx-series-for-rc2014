@@ -40,9 +40,3 @@ _printChar:
     call    5
     pop ix
     ret
-
-	PUBLIC _debugBreak
-_debugBreak:
-	ld b,b
-	jr $+2
-	RET

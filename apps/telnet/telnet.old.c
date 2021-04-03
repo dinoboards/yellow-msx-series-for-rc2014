@@ -309,8 +309,6 @@ unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsign
   return iRet;
 }
 
-extern void debugBreak();
-
 // That is where our program goes
 int main(char **argv, int argc) {
   char           ucTxData = 0;         // where our key inputs go

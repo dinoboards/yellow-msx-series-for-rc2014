@@ -1,33 +1,67 @@
 
 	SECTION	CODE
 
-FOSSIL_JUMP_TABLE	EQU	0F3FEh
-FOSSIL_MARK_1	EQU	0xf3fc
-FOSSIL_MARK_2	EQU	0xf3fd
+FOSSIL_JUMP_TABLE_REF	EQU	0F3FEh
+FOSSIL_JUMP_TABLE_SLOT	EQU	0F400h
+FOSSIL_MARK_1		EQU	0xf3fc
+FOSSIL_MARK_2		EQU	0xf3fd
 
 ; //This routine check whether Fossil Driver is installed in RAM or not
 ; // Returns: 1 -> Driver found in memory
 ; //			0 -> Driver not installed
-;int FossilTest(void)__naked
+; extern void*       fossil_link();
 
 	PUBLIC	_fossil_link
 _fossil_link:
-	LD	A,(FOSSIL_MARK_1)     ; get first mark of fossil
-	LD	HL,0		; HL=0
-	CP	'R'		 ; is it the right one?
-	JR	Z, nxt
-	RET			   ; return if not with NZ flags
-nxt:	LD	A,(FOSSIL_MARK_2)     ; get second mark of fossil
-	CP	'S'		 ; is it the right one?
-	RET	NZ
-	LD	HL,1
+	LD	A, (FOSSIL_MARK_1)		; GET FIRST MARK OF FOSSIL
+	LD	HL, 0				; HL=0
+	CP	'R'				; IS IT THE RIGHT ONE?
+	JR	NZ, NOT_FOUND
+	LD	A, (FOSSIL_MARK_2)		; GET SECOND MARK OF FOSSIL
+	CP	'S'				; IS IT THE RIGHT ONE?
+	JR	NZ, NOT_FOUND
+	LD	HL, 1
 
-	ld	hl,(FOSSIL_JUMP_TABLE)	; get addres of jump table
-	ld	de, _fossil_getversion ; point to my own table
-	ld	bc,21*3	   ; number of entry's at this moment
-	ldir			  ; make a copy of the table
+	LD	HL, (FOSSIL_JUMP_TABLE_REF)	; GET ADDRES OF JUMP TABLE
+	LD	DE, FOSSIL_JUMP_TABLE		; POINT TO MY OWN TABLE
+	LD	BC, 21*3			; NUMBER OF ENTRY'S AT THIS MOMENT
+	LDIR					; MAKE A COPY OF THE TABLE
 
-	XOR	A
+	LD	HL, (FOSSIL_JUMP_TABLE_REF)	; GET ADDRES OF JUMP TABLE
+
+	RET
+
+NOT_FOUND:
+	LD	HL, 0
+	RET
+;
+; extern uint8_t         fossil_ex_link(fossile_jump_table* jtable) __z88dk_fastcall;
+;
+	PUBLIC	_fossil_ex_link
+_fossil_ex_link:
+	LD	A, (FOSSIL_MARK_1)		; GET FIRST MARK OF FOSSIL
+	CP	'R'				; IS IT THE RIGHT ONE?
+	JR	NZ, NOT_FOUND
+	LD	A, (FOSSIL_MARK_2)		; GET SECOND MARK OF FOSSIL
+	CP	'X'				; IS IT THE RIGHT ONE?
+	JR	NZ, NOT_FOUND
+
+	LD	A, (FOSSIL_JUMP_TABLE_SLOT)
+	LD	(HL), A
+	INC	HL
+	LD	DE, (FOSSIL_JUMP_TABLE_REF)
+	LD	(HL), E
+	INC	HL
+	LD	(HL), D
+
+
+	; LD	HL, (FOSSIL_JUMP_TABLE_REF)	; GET ADDRES OF JUMP TABLE
+	; LD	DE, FOSSIL_JUMP_TABLE		; POINT TO MY OWN TABLE
+	; LD	BC, 21*3			; NUMBER OF ENTRY'S AT THIS MOMENT
+	; LDIR					; MAKE A COPY OF THE TABLE
+
+	; LD	HL, (FOSSIL_JUMP_TABLE_REF)	; GET ADDRES OF JUMP TABLE
+
 	RET
 
 ;
@@ -38,6 +72,7 @@ nxt:	LD	A,(FOSSIL_MARK_2)     ; get second mark of fossil
 ;
 
 	PUBLIC	_fossil_getversion, _fossil_init, _fossil_deinit, _fossil_get_info, __fossil_set_baud, _fossil_chars_in_buf
+FOSSIL_JUMP_TABLE:
 
 _fossil_getversion:	JP	0	; 0
 _fossil_init:		JP	0	; 1

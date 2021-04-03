@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "telnet/fossil_interface.h"
 
 extern void    extbio_get_dev(uint8_t *table) __z88dk_fastcall;
 extern void    getsystem();
@@ -115,6 +116,10 @@ extern void extbio_get_dev_info_table(uint8_t device_id, extbio_info *info_table
 extern void rs232_link(extbio_info *p) __z88dk_fastcall;
 extern void rs232_init(rs232_init_params*) __z88dk_fastcall;
 extern void rs232_open();
+extern void rs232_close();
+extern uint8_t rs232_sndchr(const char ch) __z88dk_fastcall;
+extern uint16_t rs232_getchr();
+extern uint16_t rs232_loc();
 
 void main() {
   const bool extendedBiosReady = HOKVLD & 1;
@@ -151,4 +156,20 @@ void main() {
 
   rs232_open(/*RS232_RAW_MODE, buffer_size, &buffer*/);
 
+  rs232_sndchr('A');
+
+  uint16_t count = rs232_loc();
+  printf("\r\nLOC: %d\r\n", count);
+
+  uint8_t ch = rs232_getchr();
+
+  printf("\r\nRead ch: %c\r\n", ch);
+
+  rs232_close();
+
+  // //lets try for a fossil implementation
+  // fossile_jump_table jtable;
+  // fossil_ex_link(&jtable);
+
+  // printf("Fossil Extended System found? %02X, %p\r\n", jtable.slot_id, jtable.jump_table);
 }

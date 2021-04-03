@@ -5,6 +5,8 @@ CALSLT:      EQU    0001Ch
 EXPTBL:      EQU    0FCC1h
 RDSLT	EQU	0000CH
 
+RS232_FN_COUNT:	EQU	13	; EXTENDED BIOS RS232 HAS 13 JUMP INSTRUCTIONS
+
 	SECTION	CODE
 
 ;
@@ -25,7 +27,7 @@ _extbio_get_dev_info_table:
 	LD	IX, 0
 	ADD	IX, SP
 
-	CALL	GETSLT	; B = number the slot of the table
+	CALL	GETSLT		; B = number the slot of the table
 
 	LD	D, (IX+4) 	; DEVICE_ID
 	LD	L, (IX+5)  	; INFO_TABLE
@@ -41,24 +43,44 @@ _extbio_get_dev_info_table:
 ;
 	PUBLIC	_rs232_link
 _rs232_link:
-	LD	A, (HL)
-	LD	(rs232_slot_init+1), A
-	LD	(rs232_slot_open+1), A
-	INC	HL
-	LD	A, (HL)
-	INC	HL
-	LD	H, (HL)
-	LD	L, A
+	LD	A, (HL)				; RETRIEVE SLOT ID
+	ld	de, rs232_slot_init+1		; WRITE IT TO THE LINK FUNCTIONS
+	ld	b,  RS232_FN_COUNT
+loop1:
+	ld	(de), a
+	inc	de
+	inc	de
+	inc	de
+	inc	de
+	inc	de
+	djnz	loop1
 
+	INC	HL				; RETRIEVE THE JUMP TABLE ADDRESS
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-	INC	HL
-	LD	(rs232_slot_init+2), HL
+	LD	D, (HL)				; DE IS JUMP TABLE ADDR - FIRST 3 ARE IGNORED, FOLLOWED BY JUMPS
+	INC	DE
+	INC	DE
+	INC	DE
 
-	INC	HL
-	INC	HL
-	INC	HL
-	LD	(rs232_slot_open+2), HL
+
+	LD	HL, rs232_slot_init+2		; WRITE THE JUMP ADDRESSES
+	LD	B, RS232_FN_COUNT
+LOOP:
+	ld	(hl), e				; WRITE JUMP TABLE REF TO LINK FUNCTION
+	inc	hl
+	ld	(hl), d
+	inc	hl
+
+	inc	hl
+	inc	hl
+	inc	hl				; HL REFERENCES NEXT LOCAL LINK FUNCTION
+
+	INC	DE
+	INC	DE
+	INC	DE				; DE NOW PTS TO NEXT JUMP INSTRUCTION
+
+	DJNZ	LOOP
 
 	RET
 ;
@@ -73,6 +95,32 @@ _rs232_init:
 	PUBLIC	_rs232_open
 _rs232_open:
 	JP	rs232_slot_open
+
+	PUBLIC	_rs232_close
+_rs232_close:
+	JP	rs232_slot_close
+
+;extern uint8_t rs232_sndchr(const char ch) __z88dk_fastcall;
+	PUBLIC	_rs232_sndchr
+_rs232_sndchr:
+	LD	A, L
+	CALL	rs232_slot_sndchr
+	LD	L, 0
+	RET	Z
+	LD	L, 1
+	RET
+
+;
+; extern uint16_t rs232_getchr();
+;
+	PUBLIC	_rs232_getchr
+_rs232_getchr:
+	CALL	rs232_slot_getchr
+	LD	H, 0
+	LD	L, A
+	RET	Z
+	LD	H, 1
+	RET
 
 ;----------------------------------------------------------------
 ; ROUTINE GETSLT
@@ -97,7 +145,6 @@ GETSLT:
 
 
 rs232_slot_jumps:
-
 rs232_slot_init:
 	RST	30H
 	DB	0
@@ -109,4 +156,77 @@ rs232_slot_open:
 	DB	0
 	DW	0
 	RET
+
+rs232_slot_stat:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_getchr:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_sndchr:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_close:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_eof:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+;
+; extern uint16_t rs232_loc();
+;
+	PUBLIC	_rs232_loc
+_rs232_loc:
+rs232_slot_loc:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_lof:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_backup:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_sndbrk:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_dtr:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+rs232_slot_setchn:
+	RST	30H
+	DB	0
+	DW	0
+	RET
+
+
 

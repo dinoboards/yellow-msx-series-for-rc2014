@@ -50,7 +50,14 @@ typedef struct fossil_info_struct {
   uint8_t  hardware;
 } fossile_info;
 
-extern uint8_t       fossil_link();
+
+typedef struct {
+  uint8_t slot_id;
+  void *  jump_table;
+} fossile_jump_table;
+
+extern void*         fossil_link();
+extern uint8_t       fossil_ex_link(fossile_jump_table* jtable) __z88dk_fastcall;
 extern int           fossil_getversion();
 extern void          fossil_init();
 extern void          fossil_deinit();
