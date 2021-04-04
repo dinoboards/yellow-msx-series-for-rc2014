@@ -1,0 +1,15 @@
+
+Custom bus lines:
+
+* USER1 <-> CODE_LED
+* USER2 <-> SLT_HIGH
+* USER3 <-> SLT_SLT3_1
+* USER4 <-> CASS_MOTOR
+* USER5 <-> CASS_IN
+* USER6 <-> SLT_LOW
+* USER7 <-> ...
+* USER8 <-> CASS_OUT
+* D13 <-> SND_KEY_CLICK
+* D14 <-> SL1_SOUND
+* D15 <-> SL2_SOUND
+

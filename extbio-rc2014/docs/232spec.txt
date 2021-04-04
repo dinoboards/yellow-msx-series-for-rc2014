@@ -1,0 +1,421 @@
+
+
+                        RS232C Extended BIOS Call specification
+
+                                September 18th, 1984
+                                December  24th, 1985
+
+
+
+1.0  GENERAL DESCRIPTION
+
+        The  RS232C  driver  can be  used by  application programs  using the
+        "EXTENDED BIOS CALL" mechanism. Such user can access each function in
+        the  RS232C driver  through the entry jump table with inter-slot call
+        funtion provided  in the  BIOS. The user is able to know the location
+        of  this table  by EXTENDED  BIOS CALL 0 and 1. Refer to the document
+        "Specification of the EXTENDED BIOS CALL" for details.
+
+
+
+
+1.1  EXTENDED BIOS CALL ENTRY TABLE
+
+        The RS232C  driver has  entries as  follows. A application program is
+        able to use RS232C driver by 'inter-slot call' to those entries.
+
+For I/O port only type of RS-232C interface.
+
+EXBTBL: DEFB    DVINFB          ; device information
+        DEFB    0               ; reserved for future expansion
+        DEFB    0
+        JP      INIT            ; initialize RS232C port
+        JP      OPEN            ; Open RS232C port
+        JP      STAT            ; ReaD STATus
+        JP      GETCHR          ; receive data
+        JP      SNDCHR          ; send data
+        JP      CLOSE           ; close RS232C port
+        JP      EOF             ; tell EOF code received
+        JP      LOC             ; reports number of characters in the
+                                ; receiver buffer
+        JP      LOF             ; reports number of free space left in
+                                ; receiver buffer
+        JP      BACKUP          ; back up a character
+        JP      SNDBRK          ; send a break character
+        JP      DTR             ; turn on/off DTR line
+        NOENT
+        NOENT
+        NOENT
+
+
+
+Multi channel type RS-232C cartridge
+
+EXBTBL:
+        DEFB    DVINFB
+        DEFB    1               ; version number
+        DEFB    0               ; reserved for future expansion
+        JP      INIT            ; initialize RS232C port
+        JP      OPEN            ; open RS232C port
+        JP      STAT            ; ReaD STATus
+        JP      GETCHR          ; reveive data
+        JP      SNDCHR          ; send data
+        JP      CLOSE           ; close RS232C port
+        JP      EOF             ; tell EOF code received
+        JP      LOC             ; reports number of characters in the
+                                ; receiver buffer
+        JP      LOF             ; reports number of free space left in the
+                                ; receiver buffer
+        JP      BACKUP          ; back up a character
+        JP      SNDBRK          ; send break character
+        JP      DTR             ; turn on/off DTR line
+        JP      SETCHN          ; set channel number
+        NOENT
+        NOENT
+
+
+
+                                NOTE
+
+                The  RS232C  receiver  is  driven  by the
+                interrupt  generated  by  receiver ready.
+                However,   the  inter-slot  call  handler
+                disables  interrupt   automatically.  So,
+                when  control returns to  the application
+                program,  it has  to enable  interrupt as
+                soon  as   possible.   Otherwise,  RS232C
+                receiver    routine    loses     incoming
+                characters.
+
+
+
+2.0  DESCRIPTION OF EACH EXTENDED BIOS CALL
+
+2.1  Initialize RS232C Port (INIT)
+
+
+        Entry:  [HL]= address of the parameter table
+                [B] = slot address of the parameter table
+        Return: carry flag is set if illegal parameters are contained
+        Modify: [AF]
+
+        Description:
+         To initialize  the RS232C  port with specified parameter. This entry
+         must  be  called  before  any  other  function  calls are  made. The
+         parameters  are  similar  to  _COMINI  expanded statement  of BASIC.
+         However,  note that  all the ascii parameters must be specified with
+         upper case characters only.
+
+        BAUD RATE
+         It  is  possible  to  set different  baud rate  for transmitter  and
+         receiver. The possible value for the baud rate are as follows:
+
+         50, 75, 110, 300, 600, 1200, 1800, 2000, 2400, 3600, 4800,
+         7200, 9600, 19200
+
+         When negative  value is  specified, its absolute value is written to
+         i8253 timer/counter directly.
+
+
+        TIME OUT
+         The  RS232C  driver waits  till the  CTS (Clear  To Send)  signal is
+         turned  on and/or  XON is received when the character is to be sent.
+         The driver  will generates time out error when it waits for them, if
+         specified  time passed.  Its time is specified this value at second.
+         If 0  specified then  the driver doesn't generate time out error and
+         waits forever.
+
+
+
+                +-------------------------------+
+    [B]:[HL]--> | Character length '5'-'8'      |\
+                +-------------------------------+ \
+                | Parity 'E','O','I','N'        |  |
+                +-------------------------------+  |
+                | Stop bits '1','2','3'         |  |
+                +-------------------------------+   >-- ASCII
+                | XON/XOFF controll 'X','N'     |  |   character
+                +-------------------------------+  |
+                | CTR-RTS hand shake 'H','N'    |  |
+                +-------------------------------+  |
+                | Auto LF for receive 'A','N'   |  |
+                +-------------------------------+  |
+                | Auto LF for send 'A','N'      |  |
+                +-------------------------------+ /
+                | SI/SO control 'S','N'         |/
+                +-------------------------------+
+                | Receiver baud rate    (low)   |\
+                +---                        ----+ \
+                | 50-19200              (high)  |  |
+                +-------------------------------+  |
+                | Transmitter baud rate (low)   |   >-- Binary
+                +---                        ----+  |
+                | 50-19200              (high)  |  |
+                +-------------------------------+ /
+                | Time out counter 0-255        |/
+                +-------------------------------+
+
+
+
+2.2  Open RS232C Port (OPEN)
+
+        Entry:  [HL]= address of FCB (must be located higher address
+                      than 8000H)
+                [C] = buffer length ( 32-254 )
+                [E] = open mode, one of following:
+                 +----------+------------------------------+
+                 |open mode |   meanings                   |
+                 +----------+------------------------------+
+                 |    1     | <input> mode                 |
+                 |    2     | <output> mode                |
+                 |    4     | <raw> and <input/output> mode|
+                 +----------+------------------------------+
+        Return: carry flag is set if any error occured.
+        Modify: [AF]
+
+        Description:
+         Opens  RS232C port  with specified  FCB (File  Control Block). Opens
+         must be  made before  any I/O  operations take  place. Each received
+         character  occupies  two  bytes  in  the  buffer.  One  is  received
+         character  code itself  and another  is error status of the received
+         character. And  extra 9 bytes are necessary as a working storage for
+         the  file  control.  Note  that  the  buffer  length  passed  by [C]
+         specifies  number of  characters, so  the actual length of buffer is
+         [C] x 2 + 9 bytes. And this buffer area can be accessed without slot
+         handling whenever  the RS232C driver is called (including the timing
+         when the interrupt from the the receiver generated).
+
+                |                               |
+                +-------------------------------+
+                | 9 bytes for file control      |
+                |                               |
+                +-------------------------------+
+                | [C] x 2 bytes receiver buffer |
+                |                               |
+                +-------------------------------+
+                |                               |
+
+
+
+2.3  Read Status (STAT)
+
+        Entry:  None
+        Return: [HL]= status data.
+        Modify: None
+
+        Description:
+         Returns  various status  information and error code of the character
+         just read from the buffer (not the character just received).
+    +---------+-------------------------------------------------+
+    | BIT NO. |       Description                               |
+    +---------+-------------------------------------------------+
+    |   15    | Buffer over flow error                          |
+    |         |   0 - no buffer over flow                       |
+    |         |   1 - buffer over flow                          |
+    |   14    | Time out error                                  |
+    |         |   0 - no time out error occured                 |
+    |         |   1 - time out error occured                    |
+    |   13    | Framing error                                   |
+    |         |   0 - no framing error occured                  |
+    |         |   1 - framing error occured                     |
+    |   12    | Over run error                                  |
+    |         |   0 - no over run error occured                 |
+    |         |   1 - over run error occured                    |
+    |   11    | Parity error                                    |
+    |         |   0 - the character hasn't parity error         |
+    |         |   1 - the character has parity error            |
+    |   10    | Control break key was pressed                   |
+    |         |   0 - control break key wasn't pressed          |
+    |         |   1 - control break key was pressed             |
+    |    9    | Not used, reserved                              |
+    |    8    | Not used, reserved                              |
+    |    7    | Clear To Send                                   |
+    |         |   0 - false                                     |
+    |         |   1 - true                                      |
+    |    6    | Timer/counter output-2                          |
+    |         |   0 - timer/counter output-2 is negated         |
+    |         |   1 - timer/counter output-2 is asserted        |
+    |    5    | Not used, reserved                              |
+    |    4    | Not used, reserved                              |
+    |    3    | Data Set Ready                                  |
+    |         |   0 - false                                     |
+    |         |   1 - true                                      |
+    |    2    | break detect                                    |
+    |         |   0 - not yet detect                            |
+    |         |   1 - detect                                    |
+    |    1    | Ring Indicator                                  |
+    |         |   0 - false                                     |
+    |         |   1 - true                                      |
+    |    0    | Carrier Detect                                  |
+    |         |   0 - false                                     |
+    |         |   1 - true                                      |
+    +---------+-------------------------------------------------+
+
+
+
+2.4  Get A Character From The Receive Buffer (GETCHR)
+
+        Entry:  None
+        Return: [A] = character received
+                sign flag is set if any error occured.
+                carry flag  is set  if the character is an EOF code when port
+                is opened for input mode.
+        Modify: [F]
+
+        Description:
+         Get  a  character  from  the  receiver  buffer.  Returns  backed  up
+         character if any.
+
+
+
+
+2.5  Send A Character To The RS232C Port (SNDCHR)
+
+        Entry:  [A] = character to send
+        Return: carry flag is set if control break key was pressed
+                zero flag is set if time out error occured during waiting for
+                XON or/and CTS signal.
+        Modify: [F]
+
+        Description:
+         Send  specified character to RS232C port. The character flow control
+         by XON/XOFF  characters and/or  CTS (Clear  To Send)  line signal is
+         handled  if initialized  so. Time  out error  will be generated when
+         specified time passed during waiting for permision for transmission,
+         and the character will not be sent.
+
+
+
+
+2.6  Close The RS232C Port (CLOSE)
+
+        Entry:  None
+        Return: carry is set if any error occured
+        Modify: [AF]
+
+        Description:
+         Closes the  RS232C port.  The buffer  is released, and a EOF code is
+         sent  if the port was opened for <output> mode. RTS signal is turned
+         to inactive state.
+
+
+2.7  Check For The EOF Code (EOF)
+
+        Entry:  None
+        Return: [HL]= -1, carry flag is set, if the next character is EOF
+                      code.
+                    =  0, carry flag is reset, if the next character is not
+                      EOF code.
+        Modify: [AF]
+
+        Description:
+         Tests whether the next character is EOF code or not. Returns 0 if no
+         character.
+
+
+
+2.8  Returns A Number Of Character In The Receive Buffer (LOC)
+
+        Entry:  None
+        Return: [HL] = number of character in the receiver buffer
+        Modify: [AF]
+
+        Description:
+         Returns  number of valid character in the receive buffer. This value
+         includes number  of backed  up character.  Characters after EOF code
+         are  ignored if  opened in  <input> mode,  but occupies buffer space
+         although.
+
+
+
+2.9  Returns Number Of Free Space In The Receive Buffer (LOF)
+
+        Entry:  None
+        Return: [HL] = number of free space
+        Modify: [AF]
+
+        Description:
+         Returns a number of free space in character in the receiver buffer.
+
+
+
+2.10  Back Up A Character (BACKUP)
+
+        Entry:  [C] = character to back up
+        Return: None
+        Modify: [F]
+
+        Description:
+         Backs up a character in the special buffer. Last backed up character
+         will be lost if any.
+
+
+
+2.11  Send Break Character (SNDBRK)
+
+        Entry:  [DE] = number of break character to send
+        Return: carry flag is set if control break key was pressed
+        Modify: [AF], [DE]
+
+        Description:
+         Transmit   specified   number   of   break  characters.   Aborts  if
+         Control-Break key  is pressed  during the  transmission and  returns
+         with carry flag set.
+
+
+
+2.12  Turn On/off DTR Line (DTR)
+
+        Entry:  [A] = 0 if turn off
+                [A] = not 0 if turn on
+        Return: None
+        Modify: [F]
+
+        Description:
+         DTR  (Data Terminal  Ready) line  is turned  on when  power-on/reset
+         initializing or INIT routine is called.
+
+
+
+3.0  MULTIPLE CHANNEL TYPE RS-232C CARTRIDGE
+
+3.1  Set Channel Number (SETCHN)
+
+        Entry:  [A] = channel number.
+        Return: Carry  flag is  set if  the channel  is not in the cartridge.
+                Otherwise the channel is in the cartridge.
+        Modify: [AF], [BC]
+
+        Description:
+         The channel number is set with 0 when power-on/reset initializing.
+
+
+                                APPENDIX A
+
+                        MISCELLANEOUS INFORMATIONS
+
+
+A.1  THE BEHAVIOR OF CONTROL SIGNALS
+
+                RESET        COMINI       OPEN        CLOSE
+        ---------------------------------------------------------
+         RTS - inactive    no effect     active      inactive
+         DTR - active        active     no effect   no effect
+
+RTS signal is affected in following cases:
+
+  1. OPEN statement is executed - activated.
+  2. CLOSE statement is executed - inactivated.
+  3. The  rest  of the  communication buffer is less than 16 byte and CTS-RTS
+     handshake is enabled - inactivated.
+  4. When  it is  inactive and  the rest  of the communication buffer becomes
+     more than byte and CTS-RTS handshake is enabled - activated.
+
+DTR signal is affected by CALL COMDTR and CALL COMINI statements.
+
+
+
+A.2  HANDLING OF EOF
+
+EOF is transmitted when close is executed when the open mode was output.
+

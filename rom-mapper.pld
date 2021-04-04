@@ -1,0 +1,169 @@
+Name     rom-mapper ;
+PartNo   00 ;
+Date     15/12/2020 ;
+Revision 01 ;
+Designer Dean Netherton ;
+Company  Dino ;
+Assembly None ;
+Location  ;
+Device   g22v10;
+
+
+/************* INPUT PINS *********************/
+PIN  1 = !SLT_WR3_3_CLK;  // SLOT 3,3 IS SELECTED AND WR IS ACTIVE
+PIN  2 = D0;
+PIN  3 = D1;
+PIN  4 = D2;
+PIN  5 = D3;
+PIN  6 = D4;
+PIN  7 = A12;
+PIN  8 = SLT_Y;
+PIN  9 = SLT_X;
+PIN 10 = A13;
+PIN 11 = A14;
+PIN 12 = GND;
+PIN 13 = A15;
+
+/**************** OUTPUT PINS *********************/
+PIN 14 = ROA14;
+PIN 15 = ROA15;
+PIN 16 = ROA16;
+PIN 17 = ROA17;
+PIN 18 = ROA18;
+PIN 19 = RD0;
+PIN 20 = RD1;
+PIN 21 = RD2;
+PIN 22 = RD3;
+PIN 23 = RD4;
+PIN 24 = VCC;
+
+// ACTIVE FOR SLOT ADDRESS
+SLT0__      = !SLT_X & !SLT_Y;
+SLT3_0      = !SLT_X & SLT_Y;
+SLT3_3      = SLT_X & !SLT_Y;
+
+SLT_ROMMAPPER     = !A15 & A14 & A13;
+
+RD0.D = (D0 & SLT_ROMMAPPER) # (RD0 & !SLT_ROMMAPPER);
+RD1.D = (D1 & SLT_ROMMAPPER) # (RD1 & !SLT_ROMMAPPER);
+RD2.D = (D2 & SLT_ROMMAPPER) # (RD2 & !SLT_ROMMAPPER);
+RD3.D = (D3 & SLT_ROMMAPPER) # (RD3 & !SLT_ROMMAPPER);
+RD4.D = (D4 & SLT_ROMMAPPER) # (RD4 & !SLT_ROMMAPPER);
+
+SLT3_BNK1 = SLT3_3 & !A15 & A14;
+SLT3_BNK2 = SLT3_3 & A15 & !A14;
+
+RRD0 = !RD4 & !RD3 & !RD2 & !RD1 & !RD0;
+RRD1 = !RD4 & !RD3 & !RD2 & !RD1 & RD0;
+RRD2 = !RD4 & !RD3 & !RD2 & RD1 & !RD0;
+RRD3 = !RD4 & !RD3 & !RD2 & RD1 & RD0;
+RRD4 = !RD4 & !RD3 & RD2 & !RD1 & !RD0;
+RRD5 = !RD4 & !RD3 & RD2 & !RD1 & RD0;
+RRD6 = !RD4 & !RD3 & RD2 & RD1 & !RD0;
+RRD7 = !RD4 & !RD3 & RD2 & RD1 & RD0;
+RRD8 = !RD4 & RD3 & !RD2 & !RD1 & !RD0;
+RRD9 = !RD4 & RD3 & !RD2 & !RD1 & RD0;
+RRD10 = !RD4 & RD3 & !RD2 & RD1 & !RD0;
+RRD11 = !RD4 & RD3 & !RD2 & RD1 & RD0;
+RRD12 = !RD4 & RD3 & RD2 & !RD1 & !RD0;
+RRD13 = !RD4 & RD3 & RD2 & !RD1 & RD0;
+RRD14 = !RD4 & RD3 & RD2 & RD1 & !RD0;
+RRD15 = !RD4 & RD3 & RD2 & RD1 & RD0;
+RRD16 = RD4 & !RD3 & !RD2 & !RD1 & !RD0;
+RRD17 = RD4 & !RD3 & !RD2 & !RD1 & RD0;
+RRD18 = RD4 & !RD3 & !RD2 & RD1 & !RD0;
+RRD19 = RD4 & !RD3 & !RD2 & RD1 & RD0;
+RRD20 = RD4 & !RD3 & RD2 & !RD1 & !RD0;
+RRD21 = RD4 & !RD3 & RD2 & !RD1 & RD0;
+RRD22 = RD4 & !RD3 & RD2 & RD1 & !RD0;
+RRD23 = RD4 & !RD3 & RD2 & RD1 & RD0;
+RRD24 = RD4 & RD3 & !RD2 & !RD1 & !RD0;
+RRD25 = RD4 & RD3 & !RD2 & !RD1 & RD0;
+RRD26 = RD4 & RD3 & !RD2 & RD1 & !RD0;
+
+ROA14 = (SLT0__ & !A15 & A14) # (SLT3_0 & !A15 & !A14) #
+        (SLT3_BNK1 & (RRD1 # RRD3 # RRD5 # RRD7 # RRD9 # RRD11 # RRD13 # RRD15 # RRD17 # RRD19 # RRD21 # RRD23 # RRD25)) #
+        SLT3_BNK2;
+
+ROA15 = (SLT0__ & A15 & !A14) # (SLT3_0 & !A15 & !A14) #
+        (SLT3_BNK1 & (RRD2 # RRD3 # RRD6 # RRD7 # RRD10 # RRD11 # RRD14 # RRD15 # RRD18 # RRD19 # RRD22 # RRD23 # RRD26)) #
+        SLT3_BNK2;
+
+ROA16 = (SLT3_BNK1 & (RRD0 # RRD1 # RRD2 # RRD3 # RRD8 # RRD9 # RRD10 # RRD11 # RRD16 # RRD17 # RRD18 # RRD19 # RRD24 # RRD25 # RRD26)) #
+        SLT3_BNK2;
+
+ROA17 = (SLT3_BNK1 & (RRD4 # RRD5 # RRD6 # RRD7 # RRD8 # RRD9 # RRD10 # RRD11 # RRD20 # RRD21 # RRD22 # RRD23 # RRD24 # RRD25 # RRD26)) #
+        SLT3_BNK2;
+
+ROA18 = (SLT3_BNK1 & (RRD12 # RRD13 # RRD14 # RRD15 # RRD16 # RRD17 # RRD18 # RRD19 # RRD20 # RRD21 # RRD22 # RRD23 # RRD24 # RRD25 # RRD26)) #
+        SLT3_BNK2;
+
+/*
+
+SLT_X | SLT_Y || SLOT_SEL |
+  0   |   0   ||  0, -    |
+  0   |   1   ||  3, 0    |
+  1   |   0   ||  3, 3    |
+  1   |   1   ||  OTHER   |
+
+Support managing an internal bank rom in slot 3-3
+SLOT MAP
+
+SLOT       |     CPU ADDRESS    |     DESC              |     FLASH ADDR      |
+     0     | 0x0000 to 0xBFFF   | MAIN ROM (48K)        | 0x00000 to 0x0BFFF  |
+     1     | ----               | CARTRIDGE 1           |                     |
+     2     | ----               | CARTRIDGE 2           |                     |
+     3-0   | 0x0000 to 0x3FFF   | SUB ROM (16K)         | 0x0C000 to 0x0FFFF  |
+     3-1   | ----               | EXTERNAL EXPAN. ROM   |                     |
+     3-2   | 0x0000 to 0xFFFF   | MEMORY MAPPED RAM     |                     |
+     3-3   | 0x4000 to 0x7FFF   | INTERNAL EXPAN. ROM   | 0x10000 to 0x7FFFF  |
+
+
+ROM ADDRESS LINE TRUTH TABLE:
+
+SLOT_SEL || A14-A15 | RD4 | RD3 | RD2 | RD1 | RD0 || ROA18 | ROA17 | ROA16 | ROA15 | ROA14 |    |
+  0, -   ||   00    |  -  |  -  |  -  |  -  |  -  ||   0   |   0   |   0   |   0   |   0   | 0  |
+  0, -   ||   01    |  -  |  -  |  -  |  -  |  -  ||   0   |   0   |   0   |   0   |   1   | 1  |
+  0, -   ||   10    |  -  |  -  |  -  |  -  |  -  ||   0   |   0   |   0   |   1   |   0   | 2  |
+  0, -   ||   11    |  -  |  -  |  -  |  -  |  -  ||   -   |   0   |   -   |   -   |   -   |
+
+  3, 0   ||   00    |  -  |  -  |  -  |  -  |  -  ||   0   |   0   |   0   |   1   |   1   | 3  |
+  3, 0   ||   01    |  -  |  -  |  -  |  -  |  -  ||   -   |   -   |   -   |   -   |   -   |    |
+  3, 0   ||   10    |  -  |  -  |  -  |  -  |  -  ||   -   |   -   |   -   |   -   |   -   |    |
+  3, 0   ||   11    |  -  |  -  |  -  |  -  |  -  ||   -   |   -   |   -   |   -   |   -   |    |
+
+  3, 3   ||   00    |  -  |  -  |  -  |  -  |  -  ||   -   |   -   |   -   |   -   |   -   |    |
+  3, 3   ||   11    |  -  |  -  |  -  |  -  |  -  ||   -   |   -   |   -   |   -   |   -   |    |
+
+  3, 3   ||   01    |  0  |  0  |  0  |  0  |  0  ||   0   |   0   |   1   |   0   |   0   | 4  | 0
+  3, 3   ||   01    |  0  |  0  |  0  |  0  |  1  ||   0   |   0   |   1   |   0   |   1   | 5  | 1
+  3, 3   ||   01    |  0  |  0  |  0  |  1  |  0  ||   0   |   0   |   1   |   1   |   0   | 6  | 2
+  3, 3   ||   01    |  0  |  0  |  0  |  1  |  1  ||   0   |   0   |   1   |   1   |   1   | 7  | 3
+  3, 3   ||   01    |  0  |  0  |  1  |  0  |  0  ||   0   |   1   |   0   |   0   |   0   | 8  | 4
+  3, 3   ||   01    |  0  |  0  |  1  |  0  |  1  ||   0   |   1   |   0   |   0   |   1   | 9  | 5
+  3, 3   ||   01    |  0  |  0  |  1  |  1  |  0  ||   0   |   1   |   0   |   1   |   0   | 10 | 6
+  3, 3   ||   01    |  0  |  0  |  1  |  1  |  1  ||   0   |   1   |   0   |   1   |   1   | 11 | 7
+  3, 3   ||   01    |  0  |  1  |  0  |  0  |  0  ||   0   |   1   |   1   |   0   |   0   | 12 | 8
+  3, 3   ||   01    |  0  |  1  |  0  |  0  |  1  ||   0   |   1   |   1   |   0   |   1   | 13 | 9
+  3, 3   ||   01    |  0  |  1  |  0  |  1  |  0  ||   0   |   1   |   1   |   1   |   0   | 14 | 10
+  3, 3   ||   01    |  0  |  1  |  0  |  1  |  1  ||   0   |   1   |   1   |   1   |   1   | 15 | 11
+  3, 3   ||   01    |  0  |  1  |  1  |  0  |  0  ||   1   |   0   |   0   |   0   |   0   | 16 | 12
+  3, 3   ||   01    |  0  |  1  |  1  |  0  |  1  ||   1   |   0   |   0   |   0   |   1   | 17 | 13
+  3, 3   ||   01    |  0  |  1  |  1  |  1  |  0  ||   1   |   0   |   0   |   1   |   0   | 18 | 14
+  3, 3   ||   01    |  0  |  1  |  1  |  1  |  1  ||   1   |   0   |   0   |   1   |   1   | 19 | 15
+  3, 3   ||   01    |  1  |  0  |  0  |  0  |  0  ||   1   |   0   |   1   |   0   |   0   | 20 | 16
+  3, 3   ||   01    |  1  |  0  |  0  |  0  |  1  ||   1   |   0   |   1   |   0   |   1   | 21 | 17
+  3, 3   ||   01    |  1  |  0  |  0  |  1  |  0  ||   1   |   0   |   1   |   1   |   0   | 22 | 18
+  3, 3   ||   01    |  1  |  0  |  0  |  1  |  1  ||   1   |   0   |   1   |   1   |   1   | 23 | 19
+  3, 3   ||   01    |  1  |  0  |  1  |  0  |  0  ||   1   |   1   |   0   |   0   |   0   | 24 | 20
+  3, 3   ||   01    |  1  |  0  |  1  |  0  |  1  ||   1   |   1   |   0   |   0   |   1   | 25 | 21
+  3, 3   ||   01    |  1  |  0  |  1  |  1  |  0  ||   1   |   1   |   0   |   1   |   0   | 26 | 22
+  3, 3   ||   01    |  1  |  0  |  1  |  1  |  1  ||   1   |   1   |   0   |   1   |   1   | 27 | 23
+  3, 3   ||   01    |  1  |  1  |  0  |  0  |  0  ||   1   |   1   |   1   |   0   |   0   | 28 | 24
+  3, 3   ||   01    |  1  |  1  |  0  |  0  |  1  ||   1   |   1   |   1   |   0   |   1   | 29 | 25
+  3, 3   ||   01    |  1  |  1  |  0  |  1  |  0  ||   1   |   1   |   1   |   1   |   0   | 30 | 26
+  3, 3   ||   01    |  1  |  1  |  0  |  1  |  1  ||   1   |   1   |   1   |   1   |   1   |    |
+
+  3, 3   ||   10    |  -  |  -  |  -  |  -  |  -  ||   1   |   1   |   1   |   1   |   1   | 31 |
+
+*/

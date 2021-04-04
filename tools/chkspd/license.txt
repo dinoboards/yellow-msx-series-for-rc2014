@@ -1,0 +1,24 @@
+LICENSE.TXT
+License statement for "CHKSPD: CPU speed estimation and RTC calibration program"
+Release date: October 02, 2012
+License type: Copyleft
+
+LICENSE
+You can use and modify this software's source and executable, given two
+conditions are met: (a) you keep this Copyleft statement in the source code,
+and you do not distribute software and resulting executables on the commercial
+basis and for the purposes, not related to GR8BIT platform and/or MSX standard,
+without written permission of Eugeny Brychkov (eugeny_brychkov@hotmail.com)
+
+DISCLAIMER: For any GR8BOX and/or GR8BIT license obtained and/or GR8BIT-related
+product obtained or downloaded, there're no warranties made for future updates
+or documentation, or support and service, expressed or implied, unless specified
+otherwise. All the products and services are provided "as is", and AGE Labs and
+its constituents are not liable for any adverse effect, adverse outcome or loss,
+material or non-material, including data loss and/or damages to the health, due to
+using or misusing the products or services. Licenser cannot be held accountable
+for any misuse of the product, intellectual property or any of their components.
+In case of breaching licensing agreement by the licensee, licenser reserves the
+right to cancel one license, or all the licenses owned by the individual or
+organization, and seek reinforcement of the protection of its intellectual
+property rights. 

@@ -1,0 +1,80 @@
+Name     mem-selector ;
+PartNo   00 ;
+Date     15/12/2020 ;
+Revision 01 ;
+Designer Dean Netherton ;
+Company  Dino ;
+Assembly None ;
+Location  ;
+Device   g22v10;
+
+/************* INPUT PINS *********************/
+PIN  1 = SLTLOW;
+PIN  2 = SLTHIGH;
+PIN  3 = !MREQ;
+PIN  4 = !FCFF;
+PIN  5 = SUBSLTL;
+PIN  6 = SUBSLTH;
+PIN  7 = A0;
+PIN  8 = A1;
+PIN  9 = !FFXX;
+PIN 10 = !RD;
+PIN 11 = !WR;
+PIN 12 = GND;
+PIN 13 = !IORQ;
+
+/**************** OUTPUT PINS *********************/
+PIN 14 = !ROMCS;
+PIN 15 = NC;
+PIN 16 = !SLTSL31;
+PIN 17 = !RAMCS;
+PIN 18 = SLT_Y;
+PIN 19 = !PAGEWR;
+PIN 20 = SLT_X;
+PIN 21 = !SLTWR;
+PIN 22 = !SLTRD;
+PIN 23 = SLT_WR3_3_CLK;
+
+SLT0	= !SLTHIGH & !SLTLOW;
+SLT1	= !SLTHIGH & SLTLOW;
+SLT2	= SLTHIGH & !SLTLOW;
+SLT3	= SLTHIGH & SLTLOW;
+SUBSLT0 = !SUBSLTH & !SUBSLTL;
+SUBSLT1 = !SUBSLTH & SUBSLTL;
+SUBSLT2 = SUBSLTH & !SUBSLTL;
+SUBSLT3 = SUBSLTH & SUBSLTL;
+FFFF	= FCFF & FFXX & A0 & A1;
+
+SLTSL31	= SLT3 & SUBSLT1 & MREQ;		// SLOT 3-1 (EXTERNAL EXPANSION ROM)
+RAMCS	= SLT3 & SUBSLT2 & MREQ;		// SLOT 3-0 (INTERNAL RAM)
+SLTWR 	= FFFF & SLT3 & MREQ & WR;		// SLT3 SUB-SLOT REGISTER WRITE
+SLTRD 	= FFFF & SLT3 & MREQ & RD;		// SLT3 SUB-SLOT REGISTER READ
+
+
+PAGEWR	= FCFF & WR & IORQ;			// RAM MAPPER REGISTERS WRITE
+
+ROMCS	= (MREQ & SLT0) #
+	  (MREQ & SLT3 & SUBSLT0) #
+	  (MREQ & SLT3 & SUBSLT3);
+
+
+SLT_WR3_3_CLK = SLT3 & SUBSLT3 & WR & MREQ & !FFFF;	// WRITE SELECTOR FOR ROM MAPPER
+
+SLT_X	= SLT1 # SLT2 #
+	  (SLT3 & SUBSLT1) #
+	  (SLT3 & SUBSLT2) #
+	  (SLT3 & SUBSLT3);
+SLT_Y	= (SLT3 & SUBSLT0) #
+	  (SLT3 & SUBSLT1) #
+	  (SLT3 & SUBSLT2);
+
+
+/*
+
+SLT_X | SLT_Y || SLOT_SEL |
+  0   |   0   ||  0, -    |
+  0   |   1   ||  3, 0    |
+  1   |   0   ||  3, 3    |
+  1   |   1   ||  OTHER   |
+
+*/
