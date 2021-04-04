@@ -35,7 +35,7 @@ The design of the boards has borrowed a lot from pre-existing solutions out ther
 
 ## Building
 
-to build the code:
+to build the RomWBW test applications:
 
 ```
 cd apps-rc2014
@@ -84,6 +84,12 @@ Comming Soon.
 * Cassette Interface
 * Cartridge slots
 * Others....
+
+## MSX BIOS/MSX-DOS
+
+The directory ./msx contains source and build scripts for building the ROM images the *MSX Memory Board Designed for RC2014*
+
+See its [./msx/README.md](./msx/README.md) for more information.
 
 ## License
 Copyright 2021 Dean Netherton

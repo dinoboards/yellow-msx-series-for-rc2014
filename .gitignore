@@ -1,4 +1,4 @@
 bin
 .vscode*
-systemroms/
-msxsys-build/working/*
+mx/systemroms/
+msx/msxsys-build/working/*
