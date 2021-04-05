@@ -5,7 +5,7 @@
 [submodule "nextor"]
 	path = msx/nextor
 	url = git@github.com:vipoo/Nextor.git
-	branch = dean/1/v2.1
+	branch = dean/sio2
 [submodule "msxsys-build/msxsyssrc"]
 	path = msx/msxsys-build/msxsyssrc
 	url = git@github.com:vipoo/msxsrcsrc.git

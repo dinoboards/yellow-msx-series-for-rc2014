@@ -121,6 +121,8 @@ extern uint8_t rs232_sndchr(const char ch) __z88dk_fastcall;
 extern uint16_t rs232_getchr();
 extern uint16_t rs232_loc();
 
+extern uint16_t alloc(uint16_t s) __z88dk_fastcall;
+
 void main() {
   const bool extendedBiosReady = HOKVLD & 1;
   if (!extendedBiosReady) {
@@ -170,6 +172,7 @@ void main() {
   // //lets try for a fossil implementation
   // fossile_jump_table jtable;
   // fossil_ex_link(&jtable);
+
 
   // printf("Fossil Extended System found? %02X, %p\r\n", jtable.slot_id, jtable.jump_table);
 }
