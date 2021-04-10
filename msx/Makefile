@@ -35,7 +35,7 @@ cbios:
 	cp -u ./cbios/derived/bin/*.rom ./bin
 
 .PHONY: nextor
-nextor: nextor/extras/pt3play.com nextor/extras/iteratn.pt3 nextor/extras/extbio.com nextor/extras/telnet.com nextor/extras/AUTOEXEC.BAT nextor/extras/extbio.com nextor/extras/xrecv.com nextor/extras/fdisk.com nextor/extras/lines.com nextor/extras/dots.com nextor/extras/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI nextor/extras/tv.com nextor/extras/tl.com nextor/extras/memman.com nextor/extras/cfgmman.com  nextor/extras/caps.tsr
+nextor: nextor/extras/apps/pt3play.com nextor/extras/apps/iteratn.pt3 nextor/extras/AUTOEXEC.BAT nextor/extras/system/xrecv.com nextor/extras/system/fdisk.com nextor/extras/apps/lines.com nextor/extras/apps/dots.com nextor/extras/apps/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI nextor/extras/roms/pacman.rom
 	@mkdir -p ./bin
 	echo "Requires sudo permission"
 	sudo echo
@@ -101,9 +101,9 @@ bin/chkspd.com: ./tools/chkspd/chkspd.asm
 	@mkdir -p bin
 	$(PASMO) $< $@
 
-nextor/extras/xrecv.com: bin/xrecv.com
-	@mkdir -p nextor/extras
-	@cp -up bin/xrecv.com nextor/extras/xrecv.com
+nextor/extras/system/xrecv.com: bin/xrecv.com
+	@mkdir -p nextor/extras/system
+	@cp -up bin/xrecv.com nextor/extras/system/xrecv.com
 
 bin/%.com: %.asm
 	@mkdir -p bin
@@ -114,24 +114,32 @@ bin/%.bin: %.asm
 	@mkdir -p bin
 	@$(PASMO) -I ./tools/xmodem/ $< $@ $(@:.bin=.sym)
 
-nextor/extras/%.com: bin/%.com
-	@mkdir -p nextor/extras
+nextor/extras/apps/%.com: bin/%.com
+	@mkdir -p nextor/extras/apps
+	@cp -up "$<" "$@"
+
+nextor/extras/system/%.com: bin/%.com
+	@mkdir -p nextor/extras/system
 	@cp -up "$<" "$@"
 
 nextor/extras/SROM.%: 3rdparty/SROM.%
 	@mkdir -p nextor/extras
 	@cp -up "$<" "$@"
 
-nextor/extras/iteratn.pt3: 3rdparty/iteratn.pt3
-	@mkdir -p nextor/extras
+nextor/extras/apps/iteratn.pt3: 3rdparty/iteratn.pt3
+	@mkdir -p nextor/extras/apps
 	@cp -up "$<" "$@"
 
-nextor/extras/%.com: 3rdparty/%.com
-	@mkdir -p nextor/extras
+nextor/extras/apps/%.com: 3rdparty/%.com
+	@mkdir -p nextor/extras/apps
 	@cp -up "$<" "$@"
 
-nextor/extras/%.tsr: 3rdparty/%.tsr
-	@mkdir -p nextor/extras
+nextor/extras/apps/%.tsr: 3rdparty/%.tsr
+	@mkdir -p nextor/extras/apps
+	@cp -up "$<" "$@"
+
+nextor/extras/roms/%.rom: systemroms/%.rom
+	@mkdir -p nextor/extras/roms
 	@cp -up "$<" "$@"
 
 nextor/extras/AUTOEXEC.BAT: ./AUTOEXEC.BAT
