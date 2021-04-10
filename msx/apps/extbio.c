@@ -112,16 +112,25 @@ rs232_init_params init_params = {
   '8', 'N', '1', 'N', 'H', 'N', 'N', 'N', 19200, 19200, 0
 };
 
+typedef struct {
+  uint8_t reserved[9];
+  uint16_t buffer[];
+} rs232_fcb;
+
+typedef enum { RS232_RAW_MODE = 2 } rs232_io_mode;
+
 extern void extbio_get_dev_info_table(uint8_t device_id, extbio_info *info_table);
 extern void rs232_link(extbio_info *p) __z88dk_fastcall;
 extern void rs232_init(rs232_init_params*) __z88dk_fastcall;
-extern void rs232_open();
+extern void rs232_open(uint8_t mode, uint8_t buffer_size, rs232_fcb* fcb);
 extern void rs232_close();
 extern uint8_t rs232_sndchr(const char ch) __z88dk_fastcall;
 extern uint16_t rs232_getchr();
 extern uint16_t rs232_loc();
 
-extern uint16_t alloc(uint16_t s) __z88dk_fastcall;
+
+#define BUFFER_SIZE 32
+uint8_t buffer[sizeof(rs232_fcb)+BUFFER_SIZE*2];
 
 void main() {
   const bool extendedBiosReady = HOKVLD & 1;
@@ -156,7 +165,7 @@ void main() {
 
   rs232_init(&init_params);
 
-  rs232_open(/*RS232_RAW_MODE, buffer_size, &buffer*/);
+  rs232_open(RS232_RAW_MODE, BUFFER_SIZE, (rs232_fcb*)buffer);
 
   rs232_sndchr('A');
 

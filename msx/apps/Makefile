@@ -26,7 +26,7 @@ $(BIN)spike-fdd.com: $(addprefix $(SRC),spike-fdd.c fdd.asm)
 $(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.asm cfg.inc msxdos.asm msxdos.h partition.h)
 $(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
 $(BIN)fdisk.com: $(addprefix $(SRC),memmap-override.asm fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.asm msxdos.h partition.h)
-$(BIN)extbio.com: $(addprefix $(SRC),extbio.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm)
+$(BIN)extbio.com: $(addprefix $(SRC),memmap-override.asm extbio.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm)
 
 $(TARGETS):
 	@mkdir -p $(BIN)
