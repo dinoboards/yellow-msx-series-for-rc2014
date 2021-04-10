@@ -39,6 +39,7 @@ $(WRK_DIR)bios.mac: $(addprefix $(WRK_DIR), msx.inc keyint.mac chrint.mac)
 $(WRK_DIR)basic1.mac: $(addprefix $(WRK_DIR), msx.inc)
 $(WRK_DIR)basic2.mac: $(addprefix $(WRK_DIR), msx.inc)
 $(WRK_DIR)optrom.mac: $(addprefix $(WRK_DIR), msx.inc)
+$(WRK_DIR)subrom.mac: $(addprefix $(WRK_DIR), msx.inc)
 
 $(WRK_DIR)%.rom: $(addprefix $(WRK_DIR), %.hex)
 	@hex2bin $<

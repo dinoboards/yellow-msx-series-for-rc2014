@@ -7,13 +7,19 @@ OPTENT_ALT	EQU	08010H			; SUBROM WILL LOAD OPTROM AT THIS ADDRESS IN IN MODE 1
 
 MSXVER	EQU	2			; MSX version
 
+
 OPTENT	EQU	07A00H			; optrom entrypoint - for building optrom
 
-;	RESDIS	use reset hardware
-;		not defined  = Use reset hardware
-;		defined      = do not use reset hardware
+;	RTCENA	use RP-501
+;		not defined  = Do not use RP-501
+;		defined      = Use RP-501
 
-RESDIS	EQU	1
+; RTCENA	EQU	0
+
+;	RESENA	use reset hardware
+;		not defined  = Do not use reset hardware
+;		defined      = Use reset hardware
+
 
 ;	OPTM	Optimized code
 ;		0 = Use orginal code

@@ -19,10 +19,7 @@ ROM_HEADER:
 	DS	6
 
 ROM_INIT:
-	; LD	DE, MSG
-	; CALL	PRINT
 	RET
-; MSG:	DB	"RC2014 Extended Bios Loaded.", 13, 10, 0
 
 	ORG	08100H
 
@@ -106,16 +103,30 @@ PROBE_HARDWARE:
 	; LD	DE, MSG.VIDEO
 	; CALL	PRINT
 
+	LD	DE, MSG.SIO
+	CALL	PRINT
 
 	CALL	SIO_PROBE
-	JR	Z, FOUND
+	JR	Z, SIO_FOUND
 
-	LD	DE, MSG.SIO_NOT_FOUND
-	JR	SKIP1
+	LD	DE, MSG.NOT
+	CALL	PRINT
 
-FOUND:
-	LD	DE, MSG.SIO_FOUND
-SKIP1
+SIO_FOUND:
+	LD	DE, MSG.PRESENT
+	CALL	PRINT
+
+	LD	DE, MSG.RTC
+	CALL	PRINT
+
+	CALL	RP5RTC_PROBE
+	JR	Z, RTC_FOUND
+
+	LD	DE, MSG.NOT
+	CALL	PRINT
+
+RTC_FOUND:
+	LD	DE, MSG.PRESENT
 	CALL	PRINT
 
 	; LD	DE, MSG.RTC
@@ -132,11 +143,8 @@ SKIP1
 
 	RET
 
-MSG.SIO_NOT_FOUND
-	DB	"SIO/2 Module:        ", 9, "NOT PRESENT", 13, 10, 0
-
-MSG.SIO_FOUND
-	DB	"SIO/2 Module:        ", 9, "PRESENT", 13, 10, 0
+MSG.SIO
+	DB	"SIO/2 Module:        ", 9, 0
 
 MSG.CPU_SPEED
 	DB	"CPU:                 ", 9, "7Mhz", 13, 10, 0
@@ -145,7 +153,7 @@ MSG.MEMORY
 	DB	"Memory Module:       ", 9, "512K, 1024K", 13, 10, 0
 
 MSG.RTC
-	DB	"RTC Module:          ", 9, "PRESENT", 13, 10, 0
+	DB	"RTC Module:          ", 9, 0
 
 MSG.GAME
 	DB	"Game Module:         ", 9, "PRESENT", 13, 10, 0
@@ -156,11 +164,97 @@ MSG.VIDEO
 MSG.KEYBOARD
 	DB	"PPI/Keyboard Module: ", 9, "PRESENT", 13, 10, 0
 
+MSG.PRESENT
+	DB	"PRESENT", 13, 10, 0
+
+MSG.NOT
+	DB	"NOT ", 0
 
 	INCLUDE "alloc.asm"
 	INCLUDE "sio.asm"
 	INCLUDE	"utils.asm"
 	INCLUDE "rs232.asm"
+
+;
+; DETECT RTC HARDWARE PRESENCE
+; RTC HARDWARE IS NORMALL MANAGED BY THE BIOS
+; SO WE ONLY NEED TO TEST IF PRESENT.
+;
+RP5RTC_PROBE:
+	LD	C, 00100000b
+	LD	IX, REDCLK
+	CALL	CALSUB
+	AND	0Fh
+	CP	0Ah
+	RET
+
+; CALSUB
+;
+; In: IX = address of routine in MSX2 SUBROM
+;     AF, HL, DE, BC = parameters for the routine
+;
+; Out: AF, HL, DE, BC = depending on the routine
+;
+; Changes: IX, IY, AF', BC', DE', HL'
+;
+; Call MSX2 subrom from MSXDOS. Should work with all versions of MSXDOS.
+;
+; Notice: NMI hook will be changed. This should pose no problem as NMI is
+; not supported on the MSX at all.
+;
+
+
+;
+CALSUB:	EXX
+	EX	AF, AF'			; STORE ALL REGISTERS
+	LD	HL, EXTROM
+	PUSH	HL
+	LD	HL, 0C300h
+	PUSH	HL			; PUSH NOP ; JP EXTROM
+	PUSH	IX
+	LD	HL, 021DDh
+	PUSH	HL			; PUSH LD IX, <ENTRY>
+	LD	HL, 03333h
+	PUSH	HL			; PUSH INC SP; INC SP
+	LD	HL, 0
+	ADD	HL, SP			; HL = OFFSET OF ROUTINE
+	LD	A, 0C3h
+	LD	(H_NMI), A
+	LD	(H_NMI+1), HL		; JP <ROUTINE> IN NMI HOOK
+	EX	AF, AF'
+	EXX				; RESTORE ALL REGISTERS
+	LD	IX, NMI
+	LD	IY, (EXPTBL-1)
+	CALL	CALSLT			; CALL NMI-HOOK VIA NMI ENTRY IN ROMBIOS
+					; NMI-HOOK WILL CALL SUBROM
+	EXX
+	EX	AF, AF'	  		; STORE ALL RETURNED REGISTERS
+	LD	HL, 10
+	ADD	HL, SP
+	LD	SP, HL	  		; REMOVE ROUTINE FROM STACK
+	EX	AF, AF'
+	EXX				; RESTORE ALL RETURNED REGISTERS
+	RET
+
+
+; REDCLK
+; Address  : #01F5
+; Function : Read clock-RAM
+; Input    : C  - clock-RAM address
+;                 xxBBAAAA
+;                   ||++++-- address
+;                   ++------ Block-number
+; Output   : A  - Read value in lowest four bits
+; Registers: F
+; WRTCLK
+; Address  : #01F9
+; Function : Write clock-RAM
+; Input    : C  - clock-RAM address
+;                 xxBBAAAA
+;                   ||++++-- address  :
+;                   ++------ Block-number
+;            A  - Value to write
+; Registers: F
 
 	DS	$C000 - $
 
