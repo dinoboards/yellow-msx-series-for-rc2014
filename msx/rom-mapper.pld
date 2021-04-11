@@ -5,7 +5,7 @@ Revision 01 ;
 Designer Dean Netherton ;
 Company  Dino ;
 Assembly None ;
-Location  ;
+Location Ignored;
 Device   g22v10;
 
 

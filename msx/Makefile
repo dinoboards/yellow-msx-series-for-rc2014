@@ -11,7 +11,7 @@ all: rom-image-pal rom-image-ntsc rom-image-msxsyssrc #rom-image-nms8250
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed
 
-bin/mem-selector.jed:
+bin/mem-selector.jed: mem-selector.pld
 	@cd $$(wslpath "$$(wslvar USERPROFILE)")
 	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
 		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
@@ -22,7 +22,7 @@ bin/mem-selector.jed:
 	fi
 	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat mem-selector"
 
-bin/rom-mapper.jed:
+bin/rom-mapper.jed: rom-mapper.pld
 	@cd $$(wslpath "$$(wslvar USERPROFILE)")
 	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
 		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
@@ -33,7 +33,7 @@ bin/rom-mapper.jed:
 	fi
 	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat rom-mapper"
 
-bin/cpu-clk-selector.jed:
+bin/cpu-clk-selector.jed: cpu-clk-selector.pld
 	@cd $$(wslpath "$$(wslvar USERPROFILE)")
 	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
 		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
