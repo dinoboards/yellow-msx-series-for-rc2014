@@ -45,6 +45,7 @@ This should procduce the following artifacts in the `./msx/bin` directory
 |          File               | Description                                                  | Address   | Emulator Slot | RC2014 Slot |
 |-----------------------------|--------------------------------------------------------------|-----------|---------------|-------------|
 | cbios_main_rc2014_pal.rom*  | Main 32K CBIOS ROM                                           | 0000-7FFF |       0       |      0      |
+| cbios_main_rc2014_ntsc.rom* | Main 32K CBIOS ROM                                           | 0000-7FFF |       0       |      0      |
 | cbios_logo_rc2014.rom*      | RC2014 Custom' 16K Logo ROM                                  | 8000-9FFF |       0       |      0      |
 | cbios_sub.rom*              | Sub CBIOS ROM                                                | 0000-3FFF |      3-0      |     3-0     |
 | yellow-msx-pal-rc2104.rom** | CBIOS and Nextor 512K ROM for flashing onto Memory Board     |           |               |             |

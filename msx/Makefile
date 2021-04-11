@@ -5,7 +5,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
 
-all: rom-image-pal rom-image-msxsyssrc #rom-image-nms8250
+all: rom-image-pal rom-image-ntsc rom-image-msxsyssrc #rom-image-nms8250
 
 jeds: mem-selector.jed rom-mapper.jed
 
@@ -57,6 +57,17 @@ rom-image-pal: nextor cbios ./extbio-rc2014/bin/extbio-rc2014.rom
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/yellow-msx-pal-rc2104.rom bs=16k count=27 seek=4
 	dd conv=notrunc status=none if=./extbio-rc2014/bin/extbio-rc2014.rom		 			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=31
 	printf 'Built bin/yellow-msx-pal-rc2104.rom\r\n\n'
+
+.PHONY: rom-image-ntsc
+rom-image-ntsc: nextor cbios ./extbio-rc2014/bin/extbio-rc2014.rom
+	@rm -f bin/ymsx-ntsc.rom
+	dd if=/dev/zero bs=16k count=8 of=bin/yellow-msx-ntsc-rc2104.rom
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_ntsc.rom 	of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=2 seek=0
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=2
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=3
+	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=27 seek=4
+	dd conv=notrunc status=none if=./extbio-rc2014/bin/extbio-rc2014.rom		 			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=31
+	printf 'Built bin/yellow-msx-ntsc-rc2104.rom\r\n\n'
 
 .PHONY: rom-image-nms8250
 rom-image-nms8250: nextor cbios systemroms/nms8250_basic-bios2.rom systemroms/nms8250_msx2sub.rom ./extbio-rc2014/bin/extbio-rc2014.rom
