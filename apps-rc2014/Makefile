@@ -30,6 +30,13 @@ $(TARGETS):
 	rm *.bin
 	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
 
+release:
+	@version=$$(date +%y-%m)
+	mkdir -p ../release
+	rm -f ../release/romwbw-apps-$${version}.zip
+	zip -j ../release/romwbw-apps-$${version}.zip ../bin/*
+	cd ../bin && tar -czvf ../release/romwbw-apps-$${version}.tar.gz *
+
 .PHONY: format
 format: SHELL:=/bin/bash
 format:

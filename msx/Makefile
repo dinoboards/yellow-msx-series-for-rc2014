@@ -185,3 +185,9 @@ msxsys:
 	$(MAKE) -O -j --no-print-directory
 	cp -up ./working/*.rom ../bin/
 
+release:
+	@version=$$(date +%y-%m)
+	mkdir -p ../release
+	rm -f ../release/msx-rc2014-$${version}.zip
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*
+	cd ./bin && tar -czvf ../../release/msx-rc2014-$${version}.tar.gz *
