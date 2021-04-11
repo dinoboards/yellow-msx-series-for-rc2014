@@ -3,30 +3,46 @@ SHELL := /bin/bash
 .ONESHELL:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
-CDWINDOWS := u: && cd \\home\\dean\\retro\\msxrc2014 &&
+
+# Example of MSX_JED_CDWIN environment variable
+# MSX_JED_CDWIN := u: && cd \\home\\jane\\<path to project>\msx &&
 
 all: rom-image-pal rom-image-ntsc rom-image-msxsyssrc #rom-image-nms8250
 
-jeds: mem-selector.jed rom-mapper.jed
-
-.PHONY: mem-selector.jed
-mem-selector.jed: bin/mem-selector.jed
+jeds: bin/mem-selector.jed bin/rom-mapper.jed
 
 bin/mem-selector.jed:
-	@cmd.exe /C "$(CDWINDOWS) build-jed.bat mem-selector"
-
-.PHONY: rom-mapper.jed
-rom-mapper.jed: bin/rom-mapper.jed
+	@cd $$(wslpath "$$(wslvar USERPROFILE)")
+	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
+		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
+		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
+		fi
+		exit 1
+	fi
+	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat mem-selector"
 
 bin/rom-mapper.jed:
-	@cmd.exe /C "$(CDWINDOWS) build-jed.bat rom-mapper"
-
-
-.PHONY: cpu-clk-selector.jed
-cpu-clk-selector.jed: bin/cpu-clk-selector.jed
+	@cd $$(wslpath "$$(wslvar USERPROFILE)")
+	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
+		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
+		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
+		fi
+		exit 1
+	fi
+	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat rom-mapper"
 
 bin/cpu-clk-selector.jed:
-	@cmd.exe /C "$(CDWINDOWS) build-jed.bat cpu-clk-selector"
+	@cd $$(wslpath "$$(wslvar USERPROFILE)")
+	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
+		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
+		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
+		fi
+		exit 1
+	fi
+	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat cpu-clk-selector"
 
 .PHONY: cbios
 cbios:
