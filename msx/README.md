@@ -3,7 +3,7 @@
 
 ### MSX BIOS AND MSX-DOS
 
-This sections contains the software required for the Yellow MSX Series of boards under the MSX BIOS/MSX-DOS systems
+This sections contains the software required for the Yellow MSX Series of boards allowing for MSX BIOS bootup.
 
 ## Cloning this repo
 
@@ -17,6 +17,47 @@ If you had already cloned it, without the `--recursive` switch:
 
 > If using Windows Subsystem for Linux, make sure you are using the linux file system (not the mnt/c/... ntfs images)
 
+
+## Subsections of this repo
+
+### C-BIOS
+
+This submodule contains a fork of the C-BIOS open source alternative to MSX BIOS.  It does not contain MSX BASIC, but does provide enough capability to allow the RC2014 to boot into MSX-DOS.
+
+But due to the lack of MSX-BASIC, some applications may not work.
+
+[README](./cbios/README.md)
+
+http://cbios.sourceforge.net/
+
+### NEXTOR
+
+This submodule contains a fork of the NEXTOR disk operating system for MSX system.  NEXTOR can trace is source code history to the original and official MSX-DOS systems.
+
+This local fork, also includes drivers specifically for RC2014, including:
+
+* An embedded floppy boot image, allowing the RC2014 to be booted diskless, without the need for any external storage
+* A driver for the [RC2014 Compact Flash module](https://www.tindie.com/products/semachthemonkey/compact-flash-module-for-cpm-rc2014-computer/)
+
+There are plans to add additional RC2014 hardware support, including Floppy drives, Serial and others.
+
+[README](./nextor/README.md)
+
+### MSXSYSSRC
+
+Although MSX-DOS has effectively been opened source thru the NEXTOR system, and Microsoft open sourcing GW-BASIC and early versions of MS-DOS - its a dissapointment to many that the MSX-BIOS/BASIC has not also been opened source.
+
+Given this environment, the MSXSYSSRC project is an attempt to reverse engineer the various MSX offical ROMS, so that the retro community can understand and educate themselves as to how it was all done back then.
+
+https://sourceforge.net/projects/msxsyssrc/
+
+
+## Building the binaries
+
+The Makefile in this directory can orchestrate the building of all binary units required for the RC2014 MSX system.
+
+After installing and configuring the prerequisites, simply run `make` in the msx directory.
+
 ## Installing Prerequisites
 
 Before attempting to build any of the artifacts, you need to ensure you have the correct depdendencies ready:
@@ -24,8 +65,8 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 * Linux (tested on ubuntu under WSL)
 * (For the JED files, you will need a windows environment)
 * [z88dk](https://github.com/z88dk/z88dk/wiki/installation)
-* Bash 4.4
-* make 4.1
+* Bash 4.4 or greater
+* make 4.1 or greater
 * gcc
 * Nextor support tools, see below
 * [pasmo z80 assembler](https://pasmo.speccy.org/)
@@ -34,7 +75,7 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 
 `make install-prereq`
 
-## Building
+## Compiling/Assembling
 
 Once all the prerequisites are done, you can build the entire system with just:
 
@@ -66,6 +107,25 @@ This should procduce the following artifacts in the `./msx/bin` directory
 > \* used only by emulator
 
 > \*\* For flashing on SST39SF040 ROM of the Memory board
+
+## Building your own custom image
+
+This section describes how you can create your own custom MSX Rom image that includes MSX BASIC.
+
+After verifying you have been able to build as per the instruction above, you can follow these steps for your custom build:
+
+1. Update the file [msx/msxsys-build/base300.inc](./msxsys-build/base300.inc) to enable or disable language, refresh rates, etc, for your specific requirements.
+
+2. If you would like to include any files in the embedded floppy image, simply copy them to `nextor/extras` directory*
+
+2. run `make` and ensure no assembly errors are raised.
+
+3. Flash the msxsyssrc-rc2014.rom file onto your ROM.
+
+4. Boot up your new system.
+
+\* Free space is limited on the embedded floppy image, you may need to update the Makefile to avoid copying additional files into the extras directory.
+
 ## Building the JED files:
 
 The PLD logic required for the [ATF22V10](https://ww1.microchip.com/downloads/en/DeviceDoc/doc0735.pdf) chip.

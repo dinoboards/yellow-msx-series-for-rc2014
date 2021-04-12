@@ -18,8 +18,8 @@ Key Features:
 
 ## Bill of Materials
 
-|Count   | Name                 |  Designator |
-|:------:|-------------------------|-------------|
+|Count   | Name                |  Designator |
+|:------:|---------------------|-------------|
 | 2	     | 0.1uF               | C1,C2 |
 | 81     | 1N4148	             | D1-D81 |
 | 3      | 3mm LEDS            |
