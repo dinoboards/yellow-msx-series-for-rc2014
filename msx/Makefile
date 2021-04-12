@@ -187,7 +187,7 @@ msxsys:
 	cp -up ./working/*.rom ../bin/
 
 release:
-	@version=$$(date +%y-%m)
+	@version=$$(date +%y-%m-%d)
 	mkdir -p ../release
 	rm -f ../release/msx-rc2014-$${version}.zip
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*
