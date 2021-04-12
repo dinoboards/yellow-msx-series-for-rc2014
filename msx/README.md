@@ -26,7 +26,7 @@ This submodule contains a fork of the C-BIOS open source alternative to MSX BIOS
 
 But due to the lack of MSX-BASIC, some applications may not work.
 
-[README](./cbios/README.md)
+[README](https://github.com/vipoo/cbios/tree/main)
 
 http://cbios.sourceforge.net/
 
@@ -41,7 +41,7 @@ This local fork, also includes drivers specifically for RC2014, including:
 
 There are plans to add additional RC2014 hardware support, including Floppy drives, Serial and others.
 
-[README](./nextor/README.md)
+[README](https://github.com/vipoo/Nextor/blob/dean/1/v2.1/README.md)
 
 ### MSXSYSSRC
 
@@ -51,7 +51,9 @@ Given this environment, the MSXSYSSRC project is an attempt to reverse engineer 
 
 https://sourceforge.net/projects/msxsyssrc/
 
+## Updating your ROM
 
+You can assembly a new ROM image by following the instructions below, or download one of the pre-assembled [released packages](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
 ## Building the binaries
 
 The Makefile in this directory can orchestrate the building of all binary units required for the RC2014 MSX system.
