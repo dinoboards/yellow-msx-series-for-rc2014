@@ -1,0 +1,170 @@
+-----------------------------------------------------
+          Documentation de MEMTEST.COM
+
+  1995.5.16 Masatoshi Fujimoto (NIFTY-ID: MCN00585)
+-----------------------------------------------------
+
+1. Contenu
+
+    MEMTEST.ENG ------ Manuel en anglais
+    MEMTEST.FR  ------ Ce manuel (texte au format ANSI / Windows Latin 1)
+    MEMTEST.JPN ------ Manuel en japonais (texte au format Shift-JIS)
+    MEMTEST.COM ------ Commande pour tester la mémoire vive
+
+2. Sommaire
+
+ MEMTEST sert à tester la mémoire vive sous MSX-DOS. Il est compatible Memory
+ Mapper. C'est une version améliorée du programme auparavant développé en BASIC.
+
+ Environnement:
+  - MSX2, MSX2+ ou MSX turbo R.
+  - MSX-DOS1. (Ne peut pas tester toutes les pages sous MSX-DOS2 sur Turbo R)
+
+ Caractéristiques :
+ (1) Pour que le test soit possible même là ou le programme est chargés, la
+     mémoire est testée sans modifier le contenu. Le test lit une mémoire,
+     inverse les bits et l'écrit puis relit, ré-inverse les bits, compare avec
+     la valeur initiale lue qui est ré-écrit si le test est valide, et ainsi de
+     suite pour toute la mémoire.
+ (2) La somme de contrôle est calculée deux fois par page pour vérifier si des
+     données sont corrompues ou pas. Ceci n'est pas en mesure de détecter
+     toutes sortes d'erreur mais il peut trouver des erreurs qui ne peuvent pas
+     être détectées par le test de lecture et d'écriture.
+ (3) Comme il est possible de spécifier le Slot de test, vous pouvez tester le
+     Memory Mapper de votre choix.
+ (4) Teste aussi si la page (de 16Ko) correspond bien au numéro inscrit dans le
+     registre du Memory Mapper.
+
+3. Utilisation
+
+   A>MEMTEST[ #p[e]][ /H]
+
+     Paramètres:
+     #p: Spécifie le Slot primaire à tester (p est le numéro de slot primaire)
+     #pe: Spécifie le Slot étendu à tester (e est le numéro de slot étendu)
+     /H: Affiche les options utilisables.
+
+ Exemple 1 : A> MEMTEST #1
+             Effectue le test de la mémoire du slot primaire 1.
+
+ Exemple 2 : A> MEMTEST #30
+             Effectue le test de la mémoire du slot 3-0.
+
+ Exemple 3 : A>MEMTEST
+              Effectue le test de la mémoire principale.
+
+ Exemple 4 : A> MEMTEST /H
+             Affiche les options utilisables.
+
+4. Messages affichés
+
+ MEMTEST affiche des messages lors d'un test. Cela peut vous aider en
+ cas de problème.
+
+ (1) Lorsque la mémoire est bonne
+
+    Memory Test Start.
+    Test Memory slot #1               <- Numéro de Slot de test
+    Memory Mapper Segment 00 - 3F     <- Pages disponibles en hexadécimal
+    ................................  <- Barre de progression du test
+    Memory Test Completed. Memory OK! <- Test fini sans erreur trouvées
+
+ (2) Lorsqu'il y a eu une erreur de lecture ou d'écriture
+
+    Memory Test Start.
+    Test Memory slot #1               <- Numéro de Slot de test
+    Memory Mapper Segment 00 - 3F     <- Pages disponibles en hexadécimal
+    .............                     <- Barre de progression du test
+    Memory Read/Write Error           <- Erreur de lecture ou d'écriture
+    > segment 04  offset 10FF         <- Numéro de page et endroit de l'erreur
+    ........
+    Memory Test End.                  <- Le test est fini
+
+   Cela veut dire qu'une partie de la mémoire ne fonctionne pas correctement en
+   lecture ou en écriture. Une puce est probablement défectueuse.
+
+ (3) Lorsque la mémoire est corrompue
+
+    Memory Test Start.
+    Test Memory slot #1               <- Numéro de Slot de test
+    Memory Mapper Segment 00 - 3F     <- Pages disponibles en hexadécimal
+    ..............                    <- Barre de progression du test
+    Memory Checksum Error             <- La somme de contrôle diffèrent
+    > segment 04                      <- Numéro de page où il y a eu l'erreur
+
+    Memory Test End.                  <- Le test est fini
+
+   La somme de contrôle a été calculée deux fois, ils ne correspondent pas.
+   Le circuit de rafraîchissement dynamique est probablement défectueux.
+
+ (4) Lorsque le Memory Mapper ne fonctionne pas conformément au standard
+
+    Memory Test Start.
+    Test Memory slot #1               <- Numéro de Slot de test
+    Memory Mapper Segment 00 - 07     <- Pages disponibles en hexadécimal
+    ..............                    <- Barre de progression du test
+
+   Si vous avez un Memory Mapper de 1024KB et que 00 - 07 est affiché (128Ko
+   seulement de valide). C'est qu'il n'y a que 3bit (parmi les 8 bits du 
+   registre du Memory Mapper de fonctionnel. Veuillez vérifier le câblage en
+   rapport avec les registres du Mapper.
+
+ (5) Lorsque la mémoire n'est pas compatible Memory Mapper
+
+    Memory Test Start.
+    Test Memory slot #1               <- Numéro de Slot de test
+    Not Mapper RAM !!                 <- La RAM présente n'est pas un Memory
+                                         Mapper
+    Memory Test End.                  <- Le test est fini
+
+ (6) Lorsqu'il n'est pas en RAM
+
+    Memory Test Start.
+    Test Memory slot #1               <- Numéro de Slot de test
+    Not RAM !!                        <- Il y a pas de RAM dans ce Slot  
+    Memory Test End.                  <- Le test est fini
+
+ (7) Lorsque l'otion /H est spécifié ou lors d'une erreur de paramètre
+
+    USAGE : MEMTEST [#pe | #p | /H]
+      #pe : slot#(primary,expanded)
+      #p  : slot#(primary)
+      /H  : display usage
+
+5. A propos du Memory Mapper
+
+ Un Memory Mapper est une extension de mémoire vive au standard MSX2. Cette
+ mémoire est divisée en pages de 16Ko dont 4 sont réparties chacune sur 4
+ plages de la mémoire principale. Chaque plage est géré par un registre
+ 8 bits accessible en écriture via les ports E/S : 0FCh, 0FDh, 0FEh et 0FFh.
+ Ce qui permet de gérer de jusqu'à 4Mo (16KB × 256) de mémoire sur un Slot.
+ Si un Mapper fait 512Ko, le calcul 512/16 donnera le nombre de pages (32).
+ La valeur à écrire dans un des registres sera entre 0 et 31. Ne jamais lire
+ ces registres pour déterminer la taille d'un Memory Mapper ! Au mieux, vous
+ n'obtiendrez que la taille du Memory Mapper interne.
+
+ Port E/S  Ecriture du numéro de page du Mapper à mettre sur la plage mémoire
+   0FCH     Registre pour la plage 0 (0000H ~ 3FFFH) (page 3 par défaut)
+   0FDH     Registre pour la plage 1 (4000H ~ 7FFFH) (page 2 par défaut)
+   0FEH     Registre pour la plage 2 (8000H ~ BFFFH) (page 1 par défaut)
+   0FFH     Registre pour la plage 3 (C000H ~ FFFEH) (page 0 par défaut)
+
+6. Distribution
+
+  MEMTEST est un logiciel libre. Les droits d'auteur n'ont pas été abandonnés,
+  L'utilisation est libre dans les limites indiquées ci-dessous.
+
+ (1) Pas de garantie
+     L'auteur décline toute responsabilité en cas de dommages dues à
+     l'utilisation de ce logiciel. Cependant, s'il vous plait, vous pouvez
+     faire parvenir vos remarques ou vos problèmes rencontrés avec autant de
+     détails que possible, cela permettra d'améliorer le logiciel.
+
+ (2) Droits de distribution
+     Vous pouvez distribuer et utiliser MEMTEST librement à titre personnel
+     mais en aucun cas le vendre.
+
+ (3) Autre condition
+     Ne modifiez pas le contenu original.
+
+    5-14-1995 NIFTY-ID: MCN00585 Fujimoto Masatoshi

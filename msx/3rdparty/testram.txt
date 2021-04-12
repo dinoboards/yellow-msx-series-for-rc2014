@@ -1,0 +1,82 @@
+---------------------------------------
+TestRAM 1.0
+for the MSX system
+(c) 1998 A&L Software
+---------------------------------------
+
+* Contents
+
+  1.Purpose
+  2.Using
+  3.Registering
+  4.The author
+
+* Purpose
+
+  TestRAM is an utility for testing
+all memory devices of your MSX, byte
+by byte, and report you if any error
+was found.
+
+* Using
+
+  - MSX-DOS EXECUTABLE
+
+  Execute TestRAM by typing at the
+MSX-DOS (1 or 2) prompt:
+
+  TESTRAM
+
+  - ROM FILE
+
+  Burn an EPROM with the 16K code and
+simply boot your MSX with the EPROM cart
+inserted.
+
+  - USING IT
+
+  TestRAM is capable of testing three
+memory devices: RAM (base/mapper),
+VRAM and MegaRAM.
+  After executed, TestRAM will identify
+these three devices in your MSX and
+will show you the resulting.
+  Using the cursor keys and the space
+bar you can select a device to test or
+test all devices. The options are:
+
+  Test MSX base RAM
+  Test MSX Video RAM
+  Test MSX Memory Mapper
+  Test MSX MegaRAM
+  Do all test above
+  Restart program
+  Reset program
+
+* Registering the program
+
+  TestRAM is not free. TestRAM is
+"programware". What does it means? It
+means that if you like TestRAM and
+use it, you must register it by sending
+me a MSX program (freeware or 
+shareware). It can be any program,
+including one made by yourself (but,
+please, not a BASIC "Hello world!").
+  By doing it you will receive the last
+version of TestRAM and will have all
+the support on it.
+
+* The author
+
+  TestRAM is copyright (c) 1998 by A&L
+Software.
+  To contact us for critics, comments,
+sugestions and (of course!) registering
+write to:
+
+  alsoftware@alsoftware.com.br
+  
+  Or visit our MSX page at:
+
+  www.alsoftware.com.br/adrianpage

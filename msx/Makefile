@@ -50,8 +50,13 @@ cbios:
 	$(MAKE) -C cbios --no-print-directory derived/bin/cbios_main_rc2014_pal.rom  derived/bin/cbios_main_rc2014_ntsc.rom derived/bin/cbios_logo_rc2014.rom derived/bin/cbios_sub.rom
 	cp -u ./cbios/derived/bin/*.rom ./bin
 
+
+INCLUDED_APPS 	:= testram.com testram.txt memtest.com  memtest.eng memtest.fr memtest.jpn pt3play.com iteratn.pt3 lines.com dots.com mbrot.com
+INCLUDED_SYSTEM := xrecv.com fdisk.com
+INCLUDED_ROOT 	:=  AUTOEXEC.BAT  SROM.COM SROM.TXT SROM.INI
+
 .PHONY: nextor
-nextor: nextor/extras/apps/pt3play.com nextor/extras/apps/iteratn.pt3 nextor/extras/AUTOEXEC.BAT nextor/extras/system/xrecv.com nextor/extras/system/fdisk.com nextor/extras/apps/lines.com nextor/extras/apps/dots.com nextor/extras/apps/mbrot.com nextor/extras/SROM.COM nextor/extras/SROM.TXT nextor/extras/SROM.INI nextor/extras/roms/pacman.rom
+nextor: $(addprefix nextor/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor/extras/system/,$(INCLUDED_SYSTEM))  $(addprefix nextor/extras/,$(INCLUDED_ROOT)) nextor/extras/roms/pacman.rom
 	@mkdir -p ./bin
 	echo "Requires sudo permission"
 	sudo echo
@@ -141,7 +146,7 @@ bin/%.bin: %.asm
 	@mkdir -p bin
 	@$(PASMO) -I ./tools/xmodem/ $< $@ $(@:.bin=.sym)
 
-nextor/extras/apps/%.com: bin/%.com
+nextor/extras/apps/%: bin/%
 	@mkdir -p nextor/extras/apps
 	@cp -up "$<" "$@"
 
@@ -153,11 +158,7 @@ nextor/extras/SROM.%: 3rdparty/SROM.%
 	@mkdir -p nextor/extras
 	@cp -up "$<" "$@"
 
-nextor/extras/apps/iteratn.pt3: 3rdparty/iteratn.pt3
-	@mkdir -p nextor/extras/apps
-	@cp -up "$<" "$@"
-
-nextor/extras/apps/%.com: 3rdparty/%.com
+nextor/extras/apps/%: 3rdparty/%
 	@mkdir -p nextor/extras/apps
 	@cp -up "$<" "$@"
 
