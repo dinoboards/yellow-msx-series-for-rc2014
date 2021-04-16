@@ -61,6 +61,12 @@ Although the keyboard and PPI board are designed to work under MSX software, it 
 You can write your own software to interface to the keyboard (see the demo app msxkeyb), or you can activate the
 custom driver written for RomWBW's HBIOS.  The drivers code is on my fork of [RomWBW](https://github.com/vipoo/RomWBW/tree/yellow-msx-boards).
 
+## Images
+
+![Assembled](../keyboard/image3.jpg)
+![PCB](../keyboard/PXL_20210416_125808387.jpg)
+
+
 ## Resources
 
 * Schematic: [schematic.pdf](./schematic.pdf "Schematic")

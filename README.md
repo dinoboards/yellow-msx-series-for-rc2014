@@ -60,23 +60,28 @@ See the [README file here](./rtc/README.md)
 
 Comming Soon.
 
-## PPI Board Designed for RC2014
+## PPI Board Designed for RC2014 & Keyboard
 
-See the [README file here](./ppi/README.md)
+See the [PPI README file here](./ppi/README.md)
 
-Comming Soon.
+Kit available at: https://www.tindie.com/products/dinotron/msx-keyboard-designed-for-rc2014/
 
-## Full size keyboard for RC2014
+See the [Keyboard README file here](./keyboard/README.md)
 
-See the [README file here](./keyboard/README.md)
-
-Comming Soon.
+Switches & Caps: at https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard/
 
 ## MSX Memory Board Designed for RC2014
 
 See the [README file here](./memory/README.md)
 
-Comming Soon.
+Kit available at: https://www.tindie.com/products/dinotron/msx-memory-board-for-rc2014/
+
+### MSX BIOS/MSX-DOS
+
+The directory ./msx contains source and build scripts for building the ROM images.
+
+See its [./msx/README.md](./msx/README.md) for more information.
+
 
 ## Other Board ideas
 
@@ -84,13 +89,6 @@ Comming Soon.
 * Cassette Interface
 * Cartridge slots
 * Others....
-
-## MSX BIOS/MSX-DOS
-
-The directory ./msx contains source and build scripts for building the ROM images the *MSX Memory Board Designed for RC2014*
-
-See its [./msx/README.md](./msx/README.md) for more information.
-
 ## License
 Copyright 2021 Dean Netherton
 

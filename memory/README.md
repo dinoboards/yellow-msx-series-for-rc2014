@@ -98,8 +98,16 @@ SROM PACMAN.ROM
 
 ### Partitioning the Compact Flash Module
 
+TBD - use the fdisk.com tool
+
 ### Xmodem for SIO/2
 
+TBD - use the xrecv.com tool
+
+### Images
+
+![Assembled](./PXL_20210410_071727624.jpg)
+![PCB](./PXL_20210416_125150502.jpg)
 
 ## Wiring Requirements
 
