@@ -10,25 +10,25 @@ Data Area Used By RS-232C
 | FB03h   | TOCNT  |  1     | Counter used by the RS-232C interface                  |
 | FB04h   | RSFCB  |  2     | FCB ("File Control Block") address of the RS-232C      |
 | FB06h   | RSIQLN |  1     | Byte DATA used by the RS-232C interface                |
-| FB07h   | MEXBIh |  5     | Hook called by the RS-232C                             |
+| FB07h   | MEXBIh |  5     | Extended Bios Hook called by the RS-232C               |
 |         |        |        | MEXBIh = RST 30h (0F7h)                                |
 |         |        |        | MEXBIh+1 = Slot ID                                     |
 |         |        |        | MEXBIh+2 = Address                                     |
 |         |        |        | MEXBIh+4 = RET (0C9h)                                  |
-| FB0Ch   | OLDSTT |  5     | Hook called by the RS-232C                             |
+| FB0Ch   | OLDSTT |  5     | BASIC Statements Hook called by the RS-232C            |
 |         |        |        | OLDSTT = RST 30h (0F7h)                                |
 |         |        |        | OLDSTT+1 = Slot ID                                     |
 |         |        |        | OLDSTT+2 = Address                                     |
 |         |        |        | OLDSTT+4 = RET (0C9h)                                  |
-| FB0Ch   | OLDINT |  5     | Hook called by the RS-232C                             |
+| FB0Ch   | OLDINT |  5     | Interrupt Hook called by the RS-232C                   |
 |         |        |        | OLDINT = RST 30h (0F7h)                                |
 |         |        |        | OLDINT+1 = Slot ID                                     |
 |         |        |        | OLDINT+2 = Address                                     |
 |         |        |        | OLDINT+4 = RET (0C9h)                                  |
 | FB16h   | DEVNUM |  1     | Byte offset. (RS-232C)                                 |
 | FB17h   | DATCNT |  3     | DATA area. (RS-232C)                                   |
-|         |        |        | DATCNT = Slot ID                                       |
-|         |        |        | DATCNT+1 = Address                                     |
+|         |        |        |                                                        |
+|         |        |        |                                                        |
 | FB1Ah   | ERRORS |  1     | RS-232C error code                                     |
 | FB1Bh   | FLAGS  |  1     | RS-232C flags                                          |
 | FB1Ch   | ESTBLS |  1     | Bit boolean. (RS-232C)                                 |

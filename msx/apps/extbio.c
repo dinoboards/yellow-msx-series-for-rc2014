@@ -128,6 +128,15 @@ extern uint8_t rs232_sndchr(const char ch) __z88dk_fastcall;
 extern uint16_t rs232_getchr();
 extern uint16_t rs232_loc();
 
+__at 0xFB07 uint16_t RS232WRK;	 //
+
+#define SLOT_3_1 0x87; // 10000111;
+
+extern void DRV_INIT_SIO();
+extern void* RS232_JUMP_TABLE;
+extern void initSpike();
+
+extern uint8_t rs232_slot_init[];
 
 #define BUFFER_SIZE 32
 uint8_t buffer[sizeof(rs232_fcb)+BUFFER_SIZE*2];
@@ -161,20 +170,30 @@ void main() {
 
   printf("Slot ID %02X, Address %p\r\n", info_table[0].slot_id, info_table[0].jump_table);
 
+  printf("Work Address area: %p\r\n", RS232WRK);
+
+  // Override
+  // DRV_INIT_SIO();
+  info_table[0].slot_id = SLOT_3_1;
+  info_table[0].jump_table = &RS232_JUMP_TABLE;
+
+  printf("Linking...\r\n");
   rs232_link(&info_table[0]);
 
+  printf("Initing...\r\n");
   rs232_init(&init_params);
 
   rs232_open(RS232_RAW_MODE, BUFFER_SIZE, (rs232_fcb*)buffer);
 
+  printf("Sending A\r\n");
   rs232_sndchr('A');
 
-  uint16_t count = rs232_loc();
-  printf("\r\nLOC: %d\r\n", count);
+  // // uint16_t count = rs232_loc();
+  // // printf("\r\nLOC: %d\r\n", count);
 
-  uint8_t ch = rs232_getchr();
+  // // uint8_t ch = rs232_getchr();
 
-  printf("\r\nRead ch: %c\r\n", ch);
+  // // printf("\r\nRead ch: %c\r\n", ch);
 
   rs232_close();
 

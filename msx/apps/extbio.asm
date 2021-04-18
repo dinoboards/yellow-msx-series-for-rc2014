@@ -88,8 +88,6 @@ LOOP:
 ;
 	PUBLIC	_rs232_init
 _rs232_init:
-	ld b,b
-	jr $+2
 	CALL	GETSLT			; B = number the slot of the table
 	JP	rs232_slot_init
 
@@ -144,7 +142,8 @@ GETSLT:
 	POP	HL
 	RET
 
-
+	PUBLIC	_rs232_slot_init
+_rs232_slot_init:
 rs232_slot_jumps:
 rs232_slot_init:
 	RST	30H
@@ -240,3 +239,266 @@ SAVSTK	EQU	0F6B1H		;POINTER TO VALID STACK BOTTOM
 
 ; call_bios:   ld     iy,(EXPTBL-1)       ;BIOS slot in iyh
 ;              jp   CALSLT              ;interslot call
+
+
+
+;-----------------------------------------------------------------------------------------
+; BELOW THIS MARK IS A DUPLICATION OF THE RS232 DRIVER - FOR DRIVER DEVELOPMENT PURPOSE ONLY
+
+; MSX VARIABLES
+MEXBIH		EQU	0FB07h  ; EXTENDED BIOS HOOK CALLED BY THE RS-232C
+RS232WRK	EQU	MEXBIH	; REPORPOSE VARIABLE
+
+; SIO SETTINGS
+SIO0BASE	EQU	080h		; SIO BASE PORT
+SIO0A_DAT	EQU	SIO0BASE + 1	; DATA PORT
+SIO0A_CMD	EQU	SIO0BASE + 0	; CONTROL/STATUS PORT
+SIO0B_CMD	EQU	SIO0BASE + 2	; DATA PORT
+SIO0B_DAT	EQU	SIO0BASE + 3    ; CONTROL/STATUS PORT
+DAT_CH		EQU	SIO0B_DAT	; DRIVER CURRENTLY ONLY SUPPORTS CHANNEL B OF THE SIO/2
+CMD_CH		EQU	SIO0B_CMD
+SIO_WR1VAL	EQU	018h		; WR1 VALUE FOR INT ON RECEIVED CHARS
+SIO_RTSON	EQU	0EAh
+SIO_RTSOFF	EQU	0E8h
+SIO_RTS:	DB	0FFh		; 0 => RTS OFF, $FF => RTS ON
+
+
+	PUBLIC	_DRV_INIT_SIO
+_DRV_INIT_SIO:
+DRV_INIT_SIO:
+	LD	HL, (RS232WRK)		; RETRIEVE INT_HANDLER ADDRESS
+
+	; EX	DE, HL			; COPY INTERRUPT HANDLER INTO WORK ARA
+	; LD	HL, SIO_INT
+	; LD	BC, SIO_INT_LEN
+	; LDIR
+
+	LD	DE, MSG_SIO
+	CALL	PRINT
+
+	CALL	SIO_PROBE
+	JR	Z, SIO_FOUND
+
+	LD	DE, MSG_NOT
+	CALL	PRINT
+
+SIO_FOUND:
+	LD	DE, MSG_PRESENT
+	JP	PRINT
+
+MSG_SIO:
+	DB	"SIO/2 Module:        ", 9, 0
+
+MSG_PRESENT:
+	DB	"PRESENT", 13, 10, 0
+
+MSG_NOT:
+	DB	"NOT ", 0
+
+	PUBLIC	_RS232_JUMP_TABLE
+_RS232_JUMP_TABLE:
+RS232_JUMP_TABLE:
+	DEFB	0		; MSX serial features (no TxReady INT, No Sync detect, No Timer INT, No CD, No RI)
+	DEFB	1		; version number
+	DEFB	0		; reserved for future expansion
+	JP	INIT		; initialize RS232C port
+	JP	OPEN		; open RS232C port
+	JP	STAT		; ReaD STATus
+	JP	GETCHR		; reveive data
+	JP	SNDCHR		; send data
+	JP	CLOSE		; close RS232C port
+	JP	EOF		; tell EOF code received
+	JP	LOC		; reports number of characters in the
+				; receiver buffer
+	JP	LOF		; reports number of free space left in the
+				; receiver buffer
+	JP	BACKUP		; back up a character
+	JP	SNDBRK		; send break character
+	JP	DTR		; turn on/off DTR line
+	JP	SETCHN		; set channel number
+
+
+INIT:				; initialize RS232C port
+	CALL	SIO_INIT
+	RET
+
+OPEN:		; open RS232C port
+	CALL	RS232_ENA_INTERRUPTS
+	RET
+STAT:		; Read Status
+	RET
+GETCHR:		; reveive data
+
+	RET
+
+;---------------------------------------------------------------------------------
+;        Entry:  [A] = character to send
+;        Return: carry flag is set if control break key was pressed
+;                zero flag is set if time out error occured during waiting for
+;                XON or/and CTS signal.
+;        Modify: [F]
+;
+;        Description:
+;         Send  specified character to RS232C port. The character flow control
+;         by XON/XOFF  characters and/or  CTS (Clear  To Send)  line signal is
+;         handled  if initialized  so. Time  out error  will be generated when
+;         specified time passed during waiting for permision for transmission,
+;         and the character will not be sent.
+;
+; DOES NOT SUPPORT FLOW CONTROL
+; CURRENT ONLY SUPPORT CHANNEL B
+SNDCHR:
+	OUT	(DAT_CH), A		; send to port
+	XOR	A			; SIGNAL SUCCESS
+	RET
+
+CLOSE:		; close RS232C port
+	; CALL	RS232_DIS_INTERRUPTS
+	RET
+EOF:		; tell EOF code received
+	RET
+
+LOC:
+	LD	HL, 16 		; reports number of characters in the
+	RET			; receiver buffer
+
+LOF:		; reports number of free space left in the
+;: receiver buffer
+	RET
+BACKUP:		; back up a character
+	RET
+SNDBRK:		; send break character
+	RET
+DTR:		; turn on/off DTR line
+	RET
+SETCHN:		; set channel number
+	RET
+
+
+
+;---------------------------------------------------
+; SIO FUNCTIONS
+
+
+; -----------------------------------
+;
+; INITIALISE BOTH CHANNELS OF SIO/2 CHIP
+;
+SIO_INIT:
+	LD	BC, SIO_RTSOFF*256 + SIO0A_CMD
+	CALL	SIOINIT
+	LD	BC, SIO_RTSON*256 + SIO0B_CMD
+	JP	SIOINIT
+
+; -----------------------------------------------------------------------------
+;
+; INITIALISE SIO CHANNEL
+; INPUTS:
+;	B - RTS PORT STATE
+;	C - SIO CHANNEL PORT
+SIOINIT:
+	LD	A, 0
+	OUT	(C), A
+	LD	A, 018H
+	OUT	(C), A
+
+	; WR4: CLK BAUD PARITY STOP BIT
+	LD	A, 4
+	OUT	(C), A
+	LD	A, 0C4H
+	OUT	(C), A
+
+	; WR1: INTERRUPT OFF
+	XOR	A
+
+	; ; WR1: INTERRUPT ON
+	; LD	A, 1
+	OUT	(C), A
+	LD	A, SIO_WR1VAL
+	OUT	(C), A
+
+	; WR2: IM2 VEC OFFSET
+	LD	A, 2
+	OUT	(C), A
+	LD	A, 00H
+	OUT	(C),A
+
+	; WR3: 8 BIT RCV, CTS/DCD AUTO, RX ENABLE
+	LD	A, 3
+	OUT	(C), A
+	LD	A, 0E1H
+	OUT	(C), A
+
+	; WR5: DTR, 8
+	LD	A, 5
+	OUT	(C), A
+	OUT	(C), B
+	RET
+
+
+; SIO CHIP PROBE
+; CHECK FOR PRESENCE OF SIO CHIPS AND POPULATE THE
+; SIO_MAP BITMAP (ONE BIT PER CHIP).  THIS DETECTS
+; CHIPS, NOT CHANNELS.  EACH CHIP HAS 2 CHANNELS.
+; MAX OF TWO CHIPS CURRENTLY.  INT VEC VALUE IS TRASHED!
+;
+	PUBLIC	SIO_PROBE
+SIO_PROBE:
+	; INIT THE INT VEC REGISTER OF ALL POSSIBLE CHIPS
+	; TO ZERO.
+	XOR	A
+	LD	B, 2			; WR2 REGISTER (INT VEC)
+	LD	C, SIO0B_CMD		; FIRST CHIP
+	CALL	SIO_WR			; WRITE ZERO TO CHIP REG
+
+	; FIRST POSSIBLE CHIP
+	LD	C, SIO0B_CMD		; FIRST CHIP CMD/STAT PORT
+	CALL	SIO_PROBECHIP		; PROBE IT
+	RET
+;
+SIO_PROBECHIP:
+	; READ WR2 TO ENSURE IT IS ZERO (AVOID PHANTOM PORTS)
+	CALL	SIO_RD			; GET VALUE
+	AND	0F0h			; ONLY TOP NIBBLE
+	RET	NZ			; ABORT IF NOT ZERO
+	; WRITE INT VEC VALUE TO WR2
+	LD	A, 0FFh			; TEST VALUE
+	CALL	SIO_WR			; WRITE IT
+	; READ WR2 TO CONFIRM VALUE WRITTEN
+	CALL	SIO_RD			; REREAD VALUE
+	AND	0F0h			; ONLY TOP NIBBLE
+	CP	0F0h			; COMPARE
+	RET
+
+SIO_WR:
+	OUT	(C), B			; SELECT CHIP REGISTER
+	OUT	(C), A			; WRITE VALUE
+	RET
+;
+SIO_RD:
+	OUT	(C), B			; SELECT CHIP REGISTER
+	IN	A, (C)			; GET VALUE
+	RET
+
+;-----------------------------------------------------------------------------
+;
+; PRINT A ZERO-TERMINATED STRING ON SCREEN
+; INPUT: DE = STRING ADDRESS
+BDOS	EQU	$0005
+PRINT:
+	PUSH	HL
+	EX	DE, HL
+PRINTLP:
+	LD	A, (HL)
+	OR	A
+	LD	E, A
+	JR	Z, PRINTEND
+	LD	C, 2
+	push	hl
+	CALL	BDOS
+	pop	hl
+	INC	HL
+	JR	PRINTLP
+PRINTEND:
+	POP	HL
+	RET
