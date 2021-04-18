@@ -51,7 +51,7 @@ cbios:
 	cp -u ./cbios/derived/bin/*.rom ./bin
 
 
-INCLUDED_APPS 	:= testram.com testram.txt memtest.com  memtest.eng memtest.fr memtest.jpn pt3play.com iteratn.pt3 lines.com dots.com mbrot.com
+INCLUDED_APPS 	:= testram.com testram.txt memtest.com  memtest.eng memtest.fr memtest.jpn pt3play.com iteratn.pt3 lines.com dots.com mbrot.com extbio.com
 INCLUDED_SYSTEM := xrecv.com fdisk.com
 INCLUDED_ROOT 	:=  AUTOEXEC.BAT  SROM.COM SROM.TXT SROM.INI
 
