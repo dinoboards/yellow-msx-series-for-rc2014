@@ -107,7 +107,7 @@ void setVideoSignal(uint8_t *pReg, uint8_t lines, uint8_t mode) {
 
 uint8_t mode6Reg[REGISTER_COUNT] = {
     0x0A, // R0 - M5 = 1, M4 = 0, M3 = 1
-    0x20, // R1 - DISABLE SCREEN, ENABLE INTERRUPTS, M1 = 0, M2 = 0
+    0x60, // R1 - ENABLE SCREEN, ENABLE INTERRUPTS, M1 = 0, M2 = 0
     0x1F, // R2 - PATTERN NAME TABLE := 0, A16 = 0
     0x00, // R3 - NO COLOR TABLE
     0x00, // R4 - N/A???
