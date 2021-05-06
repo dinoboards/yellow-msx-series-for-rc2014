@@ -61,6 +61,12 @@ Although the keyboard and PPI board are designed to work under MSX software, it 
 You can write your own software to interface to the keyboard (see the demo app msxkeyb), or you can activate the
 custom driver written for RomWBW's HBIOS.  The drivers code is on my fork of [RomWBW](https://github.com/vipoo/RomWBW/tree/yellow-msx-boards).
 
+## Jumper Configuration
+
+J1 maps the extended bus lines.  The pins can be shorted to direct the signals to the extended bus lanes if the backplane supports these lines.  Alternatively wire jumpers as required between boards.
+
+J2 enables the onboard wait generator.  For MSX compatibility, a WAIT state needs to be generated during M1 cycles for memory access.  Short this jumper to enable the wait states.
+
 ## Images
 
 ![Assembled](../keyboard/image3.jpg)
