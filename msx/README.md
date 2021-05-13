@@ -73,6 +73,10 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 * Nextor support tools, see below
 * [pasmo z80 assembler](https://pasmo.speccy.org/)
 
+### **Manual patch required to z88dk**
+
+At this time, I have had to manually patch my local copy of z88dk to be able to compile MSX C applications.  I have submitted a patch to the z88dk team, but until thats accepted, you will need to manually tweak your local copy of the `msx.h` file.  See [https://github.com/z88dk/z88dk/pull/1787/files](https://github.com/z88dk/z88dk/pull/1787/files).  You dont need to compile z88dk - just change the header file on your local system.  If the patch or other fix has since been applied, this can be ignored.
+
 ### Installing Nextor Support Tools
 
 `make install-prereq`
@@ -134,7 +138,9 @@ The PLD logic required for the [ATF22V10](https://ww1.microchip.com/downloads/en
 
 For building the `memory.jed` files, you need to have [Wincupl](https://www.microchip.com/en-us/products/fpgas-and-plds/spld-cplds/pld-design-resources) to compile the PLD logic (Windows or wine).
 
-You will also need a programmer to code the chip -- I have used the [TL866II Plus from XGecu](http://www.xgecu.com/en/)
+You will also need a programmer to code the chip -- I have used the [TL866II Plus from XGecu](http://www.xgecu.com/en/).  Make sure you select the IC type of `ATF22V10C(UES)` to ensure all fuses are applied.
+
+> I found out the hard way that other ATF22V10C types listed will for the most part work - but a few fuses will not be applied, and your CPLD will be slightly wrong
 
 `build-jed.bat <filename without extension>`
 

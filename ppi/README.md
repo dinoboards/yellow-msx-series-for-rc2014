@@ -67,6 +67,8 @@ J1 maps the extended bus lines.  The pins can be shorted to direct the signals t
 
 J2 enables the onboard wait generator.  For MSX compatibility, a WAIT state needs to be generated during M1 cycles for memory access.  Short this jumper to enable the wait states.
 
+> In the olden days, memory was slow, so MSX induced a wait state during M1 cycles for instruction reading. Some software assume, for timing purposes, that this always happens - if the wait state is not there, some software will glitch or fail.
+
 ## Images
 
 ![Assembled](../keyboard/image3.jpg)

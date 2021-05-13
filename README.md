@@ -33,6 +33,24 @@ The design of the boards has borrowed a lot from pre-existing solutions out ther
 
 *Standing on the sholders of giants.  Many thanks to all who share their knowledge and passions*
 
+## Cloning this repo
+
+This repo contains submodules.  So to clone the repo's submodules, you may need to do the following:
+
+`git clone --recursive git@github.com:vipoo/yellow-msx-series-for-rc2014.git`
+
+If you had already cloned it, without the `--recursive` switch:
+
+`git submodule update --init`
+
+> If using Windows Subsystem for Linux, make sure you are using the linux file system (not the mnt/c/... ntfs images)
+
+**Please note: github submodule configuration assumes you are using ssh to access the repos**
+
+If you get a permission denied error when attempting to clone the submodules, it may be due to your github access method.  The submodules are referenced using git ssh paths (eg:  git@github.com:vipoo/Nextor.git), as such if you attempt to clone these submodules using only https access, you may get a permission denied error.
+
+To setup github access using ssl - follow the instruction on github at: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh)
+
 ## Building
 
 to build the RomWBW test applications:
@@ -41,6 +59,11 @@ to build the RomWBW test applications:
 cd apps-rc2014
 make
 ```
+
+### Building the MSX ROMS and MSX applications:
+
+For more details see the [MSX README](./msx/README)
+
 
 ## V9958 Video Board Designed for RC2014
 
