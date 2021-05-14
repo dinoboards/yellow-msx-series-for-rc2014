@@ -56,7 +56,7 @@ INCLUDED_SYSTEM := xrecv.com fdisk.com
 INCLUDED_ROOT 	:=  AUTOEXEC.BAT  SROM.COM SROM.TXT SROM.INI
 
 .PHONY: nextor
-nextor: $(addprefix nextor/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor/extras/system/,$(INCLUDED_SYSTEM))  $(addprefix nextor/extras/,$(INCLUDED_ROOT)) nextor/extras/roms/pacman.rom
+nextor: $(addprefix nextor/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor/extras/system/,$(INCLUDED_SYSTEM))  $(addprefix nextor/extras/,$(INCLUDED_ROOT)) #nextor/extras/roms/pacman.rom
 	@mkdir -p ./bin
 	echo "Requires sudo permission"
 	sudo echo

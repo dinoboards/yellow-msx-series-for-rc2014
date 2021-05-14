@@ -73,6 +73,8 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 * Nextor support tools, see below
 * [pasmo z80 assembler](https://pasmo.speccy.org/)
 
+> PASMO: For debian based linux, just run `sudo apt install pasmo`
+
 ### **Manual patch required to z88dk**
 
 At this time, I have had to manually patch my local copy of z88dk to be able to compile MSX C applications.  I have submitted a patch to the z88dk team, but until thats accepted, you will need to manually tweak your local copy of the `msx.h` file.  See [https://github.com/z88dk/z88dk/pull/1787/files](https://github.com/z88dk/z88dk/pull/1787/files).  You dont need to compile z88dk - just change the header file on your local system.  If the patch or other fix has since been applied, this can be ignored.
