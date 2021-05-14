@@ -62,7 +62,7 @@ make
 
 ### Building the MSX ROMS and MSX applications:
 
-For more details see the [MSX README](./msx/README)
+For more details see the [MSX README](./msx/README.md)
 
 
 ## V9958 Video Board Designed for RC2014
