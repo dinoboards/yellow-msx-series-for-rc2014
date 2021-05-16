@@ -1,0 +1,506 @@
+                         EXTENDED
+                   TEXT 2-WINDOW EDITOR
+                       (10-BUFFERS)
+
+                          XTOR
+
+                         Version 2
+
+                         MSX/MSX2
+
+                       Users' Guide
+
+
+                       Leonid BARAZ
+
+
+                      We use following denotations  in  this
+                      document:  angle  brackets  <  and   >
+                      enclose  special  keys;   consequently
+                      pressed keys are  separated  by  blank
+                      while simultaneously pressed ones - by
+                      plus.
+
+
+     TOR is a screen text editor. It runs on MSX2 or MSX per-
+sonal computers with  VDP 9938  under the  operating  system
+MSX-DOS.
+
+     Getting started:
+      A> XTor[/V][/d[nnn]][/S[macro]][/Xpassword] [files...]
+
+     Flag /V allows to expand text buffer by whole equipped
+Video RAM except the lowest 16K (for VRAM 128K total buffer
+size 136K, for VRAM 64K - 72K). NOTE:  DON'T  use  flag  /V
+when RAM-disk installed, because RAM-disk usually  involves
+all equipped VRAM.
+     Flag /d[nnn] allows  to  use  file  XTOR.$$$,  created
+authomatically on the drive d:  (file size  nnn+4 K  bytes,
+total buffer size nnn+24 K; if nnn is absent  or  if  there
+are no sufficient  space  on  the  disk,  editor  allocates
+maximum available  space  to  the  file  XTOR.$$$).  It  is
+recomended to use RAM-disk. Once you use floppy  disk,  any
+permanent  I/O  error   in   buffer   file   causes   fatal
+IMPOSSIBILITY to continue edition;  you  cannot  even  save
+modified text. Error message and request to insert diskette
+for drive d: are placed at  the  top  left  corner  of  the
+screen.
+     Flag /S allows to load authomatically macrodefinitions,
+stored previously to file 'macro' or 'TOR.TOR' (if /S  only
+present).
+     Flag /Xpassword defines password for loading and saving
+texts.
+
+     Samples:
+      A> XTor/V *.DOC B:*.TXT
+            The  most  common  configuration  allows  total
+            buffer size 136K for VRAM 128K MSX2.
+      á> XTor/B200
+            Text buffer uses 200K on drive B:.
+
+     Features and functions:
+- type in, save and edit texts  with arbitrary  line lengths
+  and all possible symbols (including graphs and controls);
+- edit  1 to 10 texts  simultaneously  (each text  is loaded
+  into separate text buffer);  sum of text sizes  is limited
+  by available memory size;
+- use variety of editing means:  move  cursor  by character/
+  word/line/page, delete character/word/line, yank character
+  string and paste it at any point, slice and join the lines,
+  and others;
+- involve  simplest text formatting  (paragraphs  with equal
+  right edge, centrified titles)  when  you type in new text
+  and when text is already present; 
+- search character target and context replace  (confirmed or
+  no);
+- establish two text windows, each of which bound to separa-
+  te part of one or different buffers (texts);
+- fix up the group of lines and then delete, copy or move it
+  inside one buffer  or from one buffer to another  (you may
+  copy or move contents of background window as well);
+- edit in 40- or 80-character mode,  independently from ope-
+  rating system (BIOS) mode;
+- load additional files into buffers (entirely or partly);
+- save  the text  from each buffer  (entirely or partly)  to
+  disk either as new file, or appending to existing;
+- look through (type)  any files,  print them or contents of
+  text buffers;
+- define, use and modify 10 editing macros;
+- set current date and time (if Clock-chip is present);
+- adjust foreground and background colors of text and of me-
+  ssage and information lines;
+- obtain brief instant help (<ctrl>+?).
+
+
+        1. Text Editing
+
+     You may type symbols in insert or replace mode.  Insert
+mode is turned on initially.  To  turn  insert  mode  on/off
+press <ins> key.
+
+     The cursor in replace mode is represented by high rect-
+angle, while in insert mode - by low one.  Inside the physi-
+cal text line rectangle is filled, while outside it - empty.
+Once  you key in  new symbols  outside the line,  additional
+blanks are inserted authomatically.
+
+     You use  both special keys  (arrows,  carriage  return,
+etc.)  and  control keys (with <ctrl> key pressed)  to edit.
+Usual key layout  is not supported:  for instance,  all keys
+further are different editor  controls:<ret>,  <ctrl>+<ret>,
+<ctrl>+M  É  <shift>+<ctrl>+M.  You  may  use   <ctrl>+<esc>
+instead of <shift>+<ctrl>.
+
+
+        1.1. Control Keys for Cursor Movements
+
+<left>,
+<right>          - move cursor one character left/reght.
+<ctrl>+<left>,
+<ctrl>+<right>   - move cursor one word left/reght.
+<shift>+<ctrl>+<left>,
+<shift>+<ctrl>+<right>
+                 - scroll left/right  (move cursor moves one
+                   character  left/right,  while  the window
+                   rolls in opposite direction;  thus cursor
+                   preserves its screen position).
+<up>,
+<down>           - move cursor one line up/down.
+<ctrl>+<up>,
+<ctrl>+<down>    - move cursor one page up/down  (page  size
+                   is the size of current window).
+<shift>+<ctrl>+<up>,
+<shift>+<ctrl>+<down>
+                 - scroll up/down; cursor moves one line up/
+                   down,  while the window rolls in opposite
+                   direction;   thus  cursor  preserves  its
+                   screen position.
+
+<ret>            - line feed (independent from insert mode).
+
+<ctrl>+<tab>     - tab step right (text does not change).
+<shift>+<ctrl>+<tab>
+                 - tab step left (text does not change).
+
+<ctrl>+M         - locate line with desired number.
+<shift>+<ctrl>+M - locate top line  of the block  (marked by
+                   <ctrl>+B).
+<ctrl>+V         - locate first line of the text.
+<shift>+<ctrl>+V - locate last line of the text.
+
+<ctrl>+F         - locate physical end of line.
+<shift>+<ctrl>+F - locate the beginning of line.
+
+<shift>+<ctrl>+U - store current cursor position.
+<ctrl>+U         - retrieve  stored  cursor position  (store
+                   current position in turn; you may restore
+                   it by pressing <ctrl>+U again).
+
+
+        1.2. Control Keys for Screen Editing
+
+<ret>            - line feed (independent from insert mode).
+<ctrl>+<ret>     - slice line  and  line  feed  (independent
+                   from insert mode as well).
+
+<ins>            - turn insert mode on/off.
+<ctrl>+<blank>   - insert blank (cursor remains in place).
+
+<tab>            - store tab symbol (tab step you may adjust
+                   by <ctrl>+| key).
+<stop>           - store next control symbol rather than exe-
+                   cute   (for  instance,  <stop> <ret>   or
+                   <stop> <ctrl>+M   would   store   control
+                   character with 0D code).
+<ctrl>+=         - store character with desired code.
+
+<ctrl>+[         - convert letters to lower case.
+<shift>+<ctrl>+[ - convert letters to upper case.
+<ctrl>+]         - convert Russian letters to Latin.
+<shift>+<ctrl>+] - convert Latin letters to Russian.
+
+<del>            - delete character right.
+<ctrl>+<del>     - delete word after right.
+<bs>             - delete character left.
+<ctrl>+<bs>      - delete word left.
+
+<ctrl>+E         - erase characters right to the end of line.
+<shift>+<ctrl>+E - erase characters left  from the beginning
+                   of line.
+
+<ctrl>+<ins>     - insert empty line.
+<ctrl>+K         - delete line.
+<ctrl>+N         - slice line.
+<ctrl>+J         - join lines.
+
+<ctrl>+Y         - yank character string, starting from cur-
+                   sor position  (to yank  all symbols  upto
+                   end of line,  just press <ret>; otherwise
+                   adjust yanked string by cursor keys  and/
+                   or edit keys and then press <ret>).
+<ctrl>+P         - paste character string of <ctrl>+Y.
+
+<ctrl>+C         - reset line:  if line was deleted,  it re-
+                   turns into text;  if it  was altered, its
+                   initial contents  is included  before it.
+                   Press <ctrl>+C once more  to delete reset
+                   line. Note, that line resets properly, if
+                   it is not longer than 511 characters.
+
+
+        1.3. Control Keys for Text Formatting
+
+<ctrl>+L         - format paragraph  (consisting of the cur-
+                   rent line and consequent ones having left
+                   offset being not equal to the left offset
+                   of current line).
+<shift>+<ctrl>+L - format  group  of  lines  (between  lines
+                   <ctrl>+B  to  <shift>+<ctrl>+B paragraphs
+                   are selected and formatted).
+
+<shift>+<ctrl>+Z - centrify title.
+
+<ctrl>+I         - turn authomatical input formatting on/off.
+                   If 80-character mode is set,  bottom line
+                   of the screen displays whether authomati-
+                   cal formatting is turned on.
+<shift>+<ctrl>+I - set formatting parameters: left and right
+                   edge positions,  left offset for the beg-
+                   inning of paragraph.  You may alter para-
+                   meters  using formatting line in  80-cha-
+                   racter mode.  To alter parameter,  marked
+                   by cursor, use arrows;  to skip  from one
+                   parameter  to another use  <ctrl>+arrows;
+                   to turn  automatical  hyphenation  on/off
+                   use "minus" key.
+<ctrl>+<         - set left edge by cursor position.
+<ctrl>+>         - set right edge by cursor position.
+<ctrl>+\         - set paragraph offset by cursor position.
+<ctrl>+-         - turn automatical hyphenation on/off.
+
+     When authomatical input formatting is turned on:
+- once  you type in  to the right  from  current  right edge
+  position, extra characters are transferred to the new line
+  (line is transferred at blank position  or  by word hyphe-
+  nation; right edge is authomatically equalized).
+- once you type in  carriage return <ret>, current paragraph
+  terminates,  i.e. current line is not equalized and cursor
+  locates left offset position of the next line.
+
+
+        1.4. Control Keys for Search and Replace
+
+<ctrl>+S         - ask target and search forward.
+<ctrl>+T         - ask target and search backwards.
+<ctrl>+Q         - continue search.
+
+<ctrl>+X         - ask target, replacement and confirm mode,
+                   execute context replace.
+
+<shift>+<ctrl>+S,
+<shift>+<ctrl>+T,
+<shift>+<ctrl>+Q,
+<shift>+<ctrl>+X - same as previous, but the target is reco-
+                   gnised  at the beginning of the word only.
+
+     If you want to "expand"  action onto all buffers,  just
+press the same key once more.
+
+     Enter target (and replacement), then press <ret>.
+
+     When you type in target  or  replace,  you  may  key in
+<ctrl>+? ("arbitrary character"). It conforms to any charac-
+ter during the search  and preserves target character during
+replace.
+
+     You  may  key  in  end-of-line  indicator  by  pressing
+<ctrl>+<ret>.
+
+     You may also key in <ctrl>+P  to paste yanked character
+string (see <ctrl>+Y) to target or replace.
+
+     Once search or context replace passes through the first
+(last) line of the text, the message appears at message line.
+
+     To interrupt search or replace, press <ctrl>+<stop>.
+
+
+        1.5. Control Keys for Groups of Lines
+
+<ctrl>+B         - mark the top line of the group.
+<shift>+<ctrl>+B - mark the bottom line of the group.
+                   While screen is in 80-character mode, li-
+                   nes of group are marked by color.
+
+<shift>+<ctrl>+M - locate top line  of the block  (marked by
+                   <ctrl>+B).
+
+<ctrl>+G         - copy group of lines (top and bottom lines
+                   are marked by <ctrl>+B,<shift>+<ctrl>+B).
+                   Current line may lay inside copied group.
+<shift>+<ctrl>+G - copy the lines of background window (same
+                   as <ctrl>+G,  but  the group of lines  is
+                   set to the window).
+
+<ctrl>+H         - move group of lines (same as <ctrl>+G,but
+                   group of lines is deleted at former place
+                   when copied).
+<shift>+<ctrl>+H - move the lines of background window (same
+                   as <ctrl>+H,  but  the group of lines  is
+                   set to the window).
+
+<shift>+<ctrl>+K - delete group of lines if confirmed.
+
+
+        2. Text Buffers
+
+     Each text  is loaded into  one of  10 buffers  numbered
+0 to 9. Buffer control keys are listed below.
+
+<ctrl>+U         - change current buffer to desired.
+
+<ctrl>+R         - change current buffer  to next  (increase
+                   buffer number).
+
+<shift>+<ctrl>+R - change current buffer  to  previous  (de-
+                   crease buffer number).
+
+<ctrl>+D         - get information on all buffers; each buf-
+                   fer message displays current line number,
+                   last line number,  current  position  and
+                   the default  file name;  first  and  last
+                   lines of the group are displayed with ap-
+                   propriate buffer.
+                   To enter some buffer, press corresponding
+                   key 0-9.
+
+
+        3. Windows
+
+     There are  two text windows  with information lines and
+message line  on the screen.  Window control keys are listed
+below.
+
+     Cursor locates  at one  of the windows;  it  is  called
+"foreground", while the other one - "background".
+
+     Information line of each window displayes buffer, defa-
+ult file name, current and last line numbers, current positi-
+on  and  the number of first line in the window. Information
+line of foreground window displayes  also the size of unused
+buffers' memory, code character, pointed out by cursor,  and
+buffer, first and last lines of the group, if any.
+
+     Message line displayes current date and,  if Clock-chip
+presents, current time. All messages and requests are placed
+at this line.
+
+     Information lines and message line are enhanced  by co-
+lor in 80-character mode.  You may adjust all colors (chara-
+cters and background of text and lines).  The default values
+of the colors are taken from COLOR statement (the first  and
+the second ones  determine colors for text,  the third - the
+color of information and message lines).
+
+     If one of the windows contains no lines, its informati-
+on line is not displayed. Once editor gets started,  its up-
+per window does contain no lines and thus is not displayed.
+
+<ctrl>+O         - move window boundary up.
+<ctrl>+<shift>+O - move window boundary down.
+
+<ctrl>+A         - skip to background window.
+
+<ctrl>+W         - centrify current window (window moves  so
+                   that cursor position is as near to window
+                   center as possible).
+
+<ctrl>+A         - conform  windows  (set  the first line of
+                   background  window  to the first  line of
+                   foreground window).
+
+<home>           - locate first line of the window.
+<cls> (i.e.<ctrl>+<home>)
+                 - locate last line of the window.
+
+<shift>+<ctrl>+G - copy the lines of background window (same
+                   as <ctrl>+G,  but  the group of lines  is
+                   set to the window).
+
+<shift>+<ctrl>+H - move the lines of background window (same
+                   as <ctrl>+H,  but  the group of lines  is
+                   set to the window).
+
+
+        3. Settings
+
+<esc>            - enter files mode.
+
+<select>         - switch 40- or 80-character mode.
+
+<ctrl>+<stop>    - turn control characters blinknig on/off.
+
+<ctrl>+|         - change tab step to required value; initial
+                   value is 8.
+
+<ctrl>+*         - change  date,  time  and  colors;  choose
+                   field by left and right arrows, change va-
+                   lue by up and down arrows.
+
+
+        5. Macros
+
+     Key sequence  may form the macro.  There are  10 macros
+numbered 0 to 9.
+
+     To define macro you press <shift>+<ctrl>+digit, then key
+in all edit actions, and then press <ctrl>+@. The process  of
+execution is displayed at the screen,  as  usually,  but  all
+keys are  also  stored  as  macrodefinition.  The  number  of
+actions in macrodefinition cannot be more than 64.
+
+     <ctrl>+@ not only terminates macrodefinition,  but  also
+displayes the definitions of all macros. Once all  macrodefi-
+nitions are displayed, you may key in any digit 0-9 and  edit
+the corresponding macrodefinition. Use the same keys  as  for
+target string after <ctrl>+S. To store some control key press
+<stop> before it.
+
+     To execute macro you press  <ctrl>+digit,  and all keys
+of macrodefinition are executed in turn,  as if you key them
+in now again.
+
+     You may save macrodefinitions to disk and load them la-
+ter.
+
+
+        6. Files
+
+     Once you press <esc> key,  you get command menu of file
+mode:
+      L - Load file into current buffer
+<esc> L - Load files  into empty buffers  (this command  is
+          involved authomatically when editor starts)
+      S - Save text from current buffer to file
+<esc> S - Save all modified texts to file
+      A - Append  text  from current buffer  to their default
+           files
+
+      T - Type file(s) onto screen
+      P - Print file(s) or buffer(s)
+
+      D - Look through disk directory
+      K - Delete file(s)
+      R - Rename file(s)
+      N - Alter default file name of current buffer
+
+      X - Set password for loading and saving texts
+
+      I - Load macrodefinitions
+      J - Save macrodefinitions
+
+      C - Clear current buffer
+<esc> C - Clear all buffers
+      Q - Quit the editor
+
+     Each cammand proposes  some default specification  (file
+name or wild card). You may accept it (press <ret>) or  type
+in any file name, wild card or several names.
+
+     Once you load text into empty buffer,  its file name  is
+stored as default one.  This name is always proposed  as  de-
+fault when you save text (S, <esc> S, C, <esc> C, Q). The de-
+fault file name may be altered by S or N commands only,  and
+erased by C or <esc> C commands.
+
+     The initial default names for all buffers are taken from
+start command of editor. All files are loaded into consequent
+buffers during  the initialisation.  You may  type  in 0 to 9
+file names.
+
+     C and <esc> C commands  cancel  default name,  and after
+that file name from the first L command  becomes new default.
+The default name may be altered by N command. It also changes
+when you save whole text to some file.
+
+     Q, C  and  <esc> C  commands  before  appropriate action
+first check up,  if loaded texts  were modified.  If so,  you
+must answer, whether you want to save text or no.
+
+     <esc> L, <esc> S, <esc> C, Q, T, P, K and R commands may
+ask confirmation for any file or text. You may answer Y(yes),
+N(no), G(go). To interrupt processing press <ctrl>+<stop>.
+
+     Once T or P command is executed,  you may interrupt type
+or print process, pressing <ctrl>+<stop>.  To force temporary
+pause, just press any other key  (press any key  once more to
+continue execution).
+
+     Texts being loaded and saved may be coded  by  password.
+In order to  set  this  mode  you  must  simply  define  this
+password using X command.
+
+     Some useful  key sequences  for files  are attributed to
+functional keys.  The sense of this keys is listed after com-
+mand menu when <esc> key is pressed.
+
