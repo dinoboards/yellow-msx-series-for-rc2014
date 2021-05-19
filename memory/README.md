@@ -104,10 +104,24 @@ TBD - use the fdisk.com tool
 
 TBD - use the xrecv.com tool
 
+### Revisions
+
+Revision v1.4
+* The extended bus mapping pins have been rotated and moved to the edge. Allows right angle header, enabling board to be mounted adjacented to other nearby boards.
+
 ### Images
 
-![Assembled](./PXL_20210410_071727624.jpg)
-![PCB](./PXL_20210416_125150502.jpg)
+Assembled
+---------
+<img src="PXL_20210410_071727624.jpg" alt="Assembled" width="40%"/>
+
+Revision v1.4
+-------------
+<img src="PXL_20210519_084919929.jpg" alt="PCB 1.4" width="40%"/>
+
+Revision v1.3
+-------------
+<img src="PXL_20210416_125150502.jpg" alt="PCB 1.3" width="40%"/>
 
 ## Wiring Requirements
 
@@ -115,7 +129,11 @@ The memory board needs to have the slot selection signals mapped from the MSX PP
 
 You need to ensure the bus map signals for SLT_LOW and SLT_HIGH are connected between the two boards.  Use a standard jumper wire if you backplane does not map these lines.
 
-![Image showing external wiring mapping the 2 boards](./PXL_20210410_072253452.jpg)
+<img src="PXL_20210519_084208805.jpg" alt="Image showing external wiring mapping the 2 boards (Latest revision)" width="40%"/>
+
+Previous Revision
+--------------------
+<img src="PXL_20210410_072253452.jpg" alt="Image showing external wiring mapping the 2 boards (Old revision)" width="40%"/>
 
 As the slot selection signals are produced by the PPI interface board,
 The Memory board requires a wiring to the PPI Interface board.
