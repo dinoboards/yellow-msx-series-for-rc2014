@@ -104,7 +104,7 @@ TBD - use the fdisk.com tool
 
 TBD - use the xrecv.com tool
 
-### Revisions
+## Revisions
 
 Revision v1.4
 * The extended bus mapping pins have been rotated and moved to the edge. Allows right angle header, enabling board to be mounted adjacented to other nearby boards.

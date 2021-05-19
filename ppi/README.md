@@ -69,10 +69,25 @@ J2 enables the onboard wait generator.  For MSX compatibility, a WAIT state need
 
 > In the olden days, memory was slow, so MSX induced a wait state during M1 cycles for instruction reading. Some software assume, for timing purposes, that this always happens - if the wait state is not there, some software will glitch or fail.
 
+
+## Revisions
+
+Revision v1.5
+* The extended bus mapping pins have been rotated and moved to the edge. Allows right angle header, enabling board to be mounted adjacented to other nearby boards.
+
 ## Images
 
-![Assembled](../keyboard/image3.jpg)
-![PCB](../keyboard/PXL_20210416_125808387.jpg)
+Assembled
+---------
+<img src="../keyboard/image3.jpg" alt="Assembled" width="40%"/>
+
+Revision v1.5
+-------------
+<img src="../keyboard/PXL_20210519_084851698.jpg" alt="PCB v1.5" width="40%"/>
+
+Revision v1.4
+-------------
+<img src="../keyboard/PXL_20210416_125808387.jpg" alt="PCB v1.4" width="40%"/>
 
 
 ## Resources
