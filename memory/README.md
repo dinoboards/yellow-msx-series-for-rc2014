@@ -111,7 +111,7 @@ Revision v1.4
 
 ### Images
 
-Assembled
+Assembled (v1.3)
 ---------
 <img src="PXL_20210410_071727624.jpg" alt="Assembled" width="40%"/>
 

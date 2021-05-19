@@ -77,7 +77,7 @@ Revision v1.5
 
 ## Images
 
-Assembled
+Assembled (v1.4)
 ---------
 <img src="../keyboard/image3.jpg" alt="Assembled" width="40%"/>
 
