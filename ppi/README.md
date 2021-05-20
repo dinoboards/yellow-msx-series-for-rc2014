@@ -63,7 +63,7 @@ custom driver written for RomWBW's HBIOS.  The drivers code is on my fork of [Ro
 
 ## Jumper Configuration
 
-J1 maps the extended bus lines.  The pins can be shorted to direct the signals to the extended bus lanes if the backplane supports these lines.  Alternatively wire jumpers as required between boards.
+J1 maps the extended bus lines.  The pins can be shorted to direct the signals to the extended bus lanes if the back-plane supports these lines.  Alternatively wire jumpers as required between boards.
 
 J2 enables the onboard wait generator.  For MSX compatibility, a WAIT state needs to be generated during M1 cycles for memory access.  Short this jumper to enable the wait states.
 
@@ -73,21 +73,21 @@ J2 enables the onboard wait generator.  For MSX compatibility, a WAIT state need
 ## Revisions
 
 Revision v1.5
-* The extended bus mapping pins have been rotated and moved to the edge. Allows right angle header, enabling board to be mounted adjacented to other nearby boards.
+* The extended bus mapping pins have been rotated and moved to the edge. Allows right angle header, enabling board to be mounted adjacent to other nearby boards.
 
 ## Images
 
 Assembled (v1.4)
 ---------
-<img src="../keyboard/image3.jpg" alt="Assembled" width="40%"/>
+<img src="../keyboard/images/image3.jpg" alt="Assembled" width="40%"/>
 
 Revision v1.5
 -------------
-<img src="../keyboard/PXL_20210519_084851698.jpg" alt="PCB v1.5" width="40%"/>
+<img src="../keyboard/images/PXL_20210519_084851698.jpg" alt="PCB v1.5" width="40%"/>
 
 Revision v1.4
 -------------
-<img src="../keyboard/PXL_20210416_125808387.jpg" alt="PCB v1.4" width="40%"/>
+<img src="../keyboard/images/PXL_20210416_125808387.jpg" alt="PCB v1.4" width="40%"/>
 
 
 ## Resources
