@@ -4,7 +4,7 @@ bin/telnet.com:
 	@$(MAKE) bin/telnet.com --no-print-directory -C apps
 	cp -up ./apps/bin/telnet.com ./bin/
 
-APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio
+APPS := hello dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio
 APP_TARGETS := $(addsuffix .com,$(addprefix ./bin/,$(APPS)))
 
 .PHONY: apps

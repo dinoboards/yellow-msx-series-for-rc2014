@@ -16,9 +16,6 @@ all: $(TARGETS) bin/telnet.com
 
 V9958_DEPS := v9958.c v9958.h msx.asm v9958.asm msx.inc
 $(BIN)dots.com: $(addprefix $(SRC),dots.c $(V9958_DEPS) msxdos.asm msxdos.h)
-
-V9958_DEPS := v9958.c v9958.h msx.asm v9958.asm msx.inc
-$(BIN)dots.com: $(addprefix $(SRC),dots.c $(V9958_DEPS) msxdos.asm msxdos.h)
 $(BIN)vramtest.com: $(addprefix $(SRC),vramtest.c $(V9958_DEPS))
 $(BIN)lines.com: $(addprefix $(SRC),lines.c $(V9958_DEPS))
 $(BIN)mbrot.com: $(addprefix $(SRC),mbrot.c $(V9958_DEPS))
@@ -27,6 +24,15 @@ $(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.as
 $(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
 $(BIN)fdisk.com: $(addprefix $(SRC),memmap-override.asm fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.asm msxdos.h partition.h)
 $(BIN)extbio.com: $(addprefix $(SRC),extbio.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm)
+$(BIN)hello.com: $(addprefix $(SRC),hello.asm hello.c)
+	@mkdir -p $(BIN)
+	$(ZCC) -zorg 256 $(filter-out %.inc,$(filter-out %.h,$^)) -o $(BIN)base100.bin
+	$(ZCC) -zorg 512 $(filter-out %.inc,$(filter-out %.h,$^)) -o $(BIN)base200.bin
+	node ./extract-relocation-map.js
+	z80asm -r=256 -o"hello.com" -b "loader.asm"
+	rm loader.o
+	mv $(notdir $@) "$@"
+	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
 
 $(TARGETS):
 	@mkdir -p $(BIN)
