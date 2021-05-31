@@ -104,10 +104,14 @@ The following images show the space bar and other stabilizers mounted onto the P
 
 ## Fully Assembled
 
-<img src="./images/image1.jpg" alt="Assembled" width="60%"/>
+<img src="./images/PXL_20210531_095140870.jpg" alt="Assembled" width="60%"/>
+
+(with V1.6 of PPI)
 
 ## PCB
 <img src="./images/image2.jpg" alt="Assembled" width="60%"/>
+
+(with V1.4 of PPI)
 
 
 ## Resources
