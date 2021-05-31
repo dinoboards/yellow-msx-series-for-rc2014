@@ -23,9 +23,7 @@ This board also has outputs for Cassette Audio out and Cassette Motor control, b
 | 1      | 1N4148                  | D1 |
 | 1      | EXT-BUS                 | J1 |
 | 1      | M1-WAIT                 | J2 |
-| 1      | ACTIVE                  | LED1 |
 | 1      | MSX-KYB                 | P1 |
-| 1      | 330 Ω                   | R1 |
 | 1      | 82C55                   | U1 |
 | 1      | 74HC138                 | U2 |
 | 1      | 74HC00                  | U3 |
@@ -33,7 +31,7 @@ This board also has outputs for Cassette Audio out and Cassette Motor control, b
 | 1      | 74HC74                  | U5 |
 | 1      | Right Angle 20x2 Header | B1 |
 | 1      | Right Angle header 1x20 | B1 |
-| 1      | 14                      | POS IC SOCKET |
+| 2      | 14                      | POS IC SOCKET |
 | 2      | 16                      | POS IC SOCKET |
 | 1      | 40                      | POS IC SOCKET |
 
