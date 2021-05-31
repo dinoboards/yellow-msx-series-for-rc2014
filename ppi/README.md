@@ -75,11 +75,23 @@ J2 enables the onboard wait generator.  For MSX compatibility, a WAIT state need
 Revision v1.5
 * The extended bus mapping pins have been rotated and moved to the edge. Allows right angle header, enabling board to be mounted adjacent to other nearby boards.
 
+Revision v1.6
+* Minor routing changes and removed the power LED.
+
+
 ## Images
+
+Assembled (v1.6)
+---------
+<img src="../keyboard/images/PXL_20210531_093549436.jpg" alt="Assembled" width="40%"/>
 
 Assembled (v1.4)
 ---------
 <img src="../keyboard/images/image3.jpg" alt="Assembled" width="40%"/>
+
+Revision v1.6
+-------------
+<img src="../keyboard/images/PXL_20210531_093935283.jpg" alt="PCB v1.5" width="40%"/>
 
 Revision v1.5
 -------------
