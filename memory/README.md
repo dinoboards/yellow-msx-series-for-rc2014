@@ -89,20 +89,62 @@ Some things to try out and get a feel for your MSX on RC2014 system.
 | `HELP`                  | Show the embedded commands available in at the MSX-DOS prompt |
 | `BASIC`                   | If your ROM contains basic, jumps to the BASIC interpreter |
 
-But for real fun, try this:
 
-```
-CD ROMS
-SROM PACMAN.ROM
-```
+> This page can not provide a full description of using MSX-DOS - that would be a whole book.  I suggest the [starting guide here](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20Getting%20Started%20Guide.md), [MSX-DOS User Manual](../msx/docs/command.txt), and [Nextor's User Manual](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20User%20Manual.md)
+
+> And if you would like a bit of history of the OS - where is started - https://www.msx.org/wiki/The_History_of_MSX-DOS
 
 ### Partitioning the Compact Flash Module
 
-TBD - use the fdisk.com tool
+When booted up without a formatted Compact flash image, the system will boot from an embedded disk image within the ROM.
+
+This disk image includes MSX-DOS system files and some handy utilities, including `FDISK`.
+
+`FDISK` can be used to partition and format the Compact Flash card.
+
+When you first boot up, the embedded disk image will be mounted as drive A.
+
+#### Setup procedure
+
+1. At the prompt, start the `FDISK` utility.  The program should have detected the CF module to allow you to proceed.
+
+2. Follow its menu system, to create a partition - I suggest a smallish size 8 to 20 Megs -- MSX-DOS may have performance issue with large FAT32 images.
+
+3. Save the partition structure you want - the partitions will also be formatted to FAT12 or FAT32 as required.
+
+4. Reboot.
+
+5. You should now have 2 drives mounted (`A:` and `B:`).  B: is the embedded rom disk image - the current boot/system disk.  A: will be blank.
+
+6. Using the `COPY` command, copy over the system files (`COMMAND2.COM`, `NEXTOR.SYS`).
+
+7. Reboot
+
+8. The system should have booted off the CF card, mounted as drive A:
+
+9. At this point, you can create your own `AUTOEXEC.BAT` file to customise your environments.
+
+If you created more than one parition, you may need to use the [MAPDRV](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20User%20Manual.md#341-mapdrv-the-drive-mapping-tool) command to mount them.
+
 
 ### Xmodem for SIO/2
 
 TBD - use the xrecv.com tool
+
+### Playing ROM game images
+
+Although this kit does not have a MSX cartridge slot, you can still play most games by using the utility `SROM`.  See the Author's page for more details https://www.louthrax.net/mgr/
+
+The `SROM` utility will load a ROM image and patch it as required, to allow it to run directly from RAM.
+
+For example, search the internet and find the pacman.rom image file, and then upload it to your CF image or the RAMDISK.
+
+Once you have done that, to play the game, simply run this at the MSX-DOS prompt:
+
+```
+SROM PACMAN.ROM
+```
+
 
 ## Revisions
 
