@@ -153,7 +153,7 @@ MSG.MEMORY
 	DB	"Memory Module:       ", 9, "512K, 1024K", 13, 10, 0
 
 MSG.RTC
-	DB	"RTC Module:          ", 9, 0
+	DB	"RTC/F4 Module:       ", 9, 0
 
 MSG.GAME
 	DB	"Game Module:         ", 9, "PRESENT", 13, 10, 0

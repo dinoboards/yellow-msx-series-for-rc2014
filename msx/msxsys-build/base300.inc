@@ -20,6 +20,7 @@ OPTENT	EQU	07A00H			; optrom entrypoint - for building optrom
 ;		not defined  = Do not use reset hardware
 ;		defined      = Use reset hardware
 
+; RESENA	EQU	0
 
 ;	OPTM	Optimized code
 ;		0 = Use orginal code
@@ -48,7 +49,7 @@ CNTRY	EQU	11
 ;		0 = not inverted
 ;		1 = inverted
 
-F4INV	EQU	0
+F4INV	EQU	1
 
 
 
