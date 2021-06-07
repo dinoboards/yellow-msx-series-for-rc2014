@@ -1,0 +1,76 @@
+Name     turbo-cpu ;
+PartNo   00 ;
+Date     15/12/2020 ;
+Revision 01 ;
+Designer Dean Netherton ;
+Company  Dino ;
+Assembly None ;
+Location Ignored ;
+Device   g22v10 ;
+
+
+/************* INPUT PINS *********************/
+PIN  1 = CLK;
+PIN  2 = !M1;
+PIN  3 = BWAIT;
+PIN  4 = !IORQ;
+PIN  5 = !MREQ;
+PIN  6 = SLOWMODE;
+//PIN  7 = ;
+//PIN  8 = ;
+//PIN  9 = ;
+//PIN 10 = ;
+//PIN 11 = ;
+PIN 12 = GND;
+//PIN 13 = ;
+//PIN 14 = ;
+
+/**************** OUTPUT PINS *********************/
+PIN 15 = MEM_SLOW;
+PIN 16 = C0;
+PIN 17 = C1;
+PIN 18 = C2;
+PIN 19 = C3;
+PIN 20 = !BRAKE;
+PIN 21 = C4;
+PIN 22 = C5;
+PIN 23 = C6;
+PIN 24 = VCC;
+
+field WAITCOUNT = [C6, C5, C4, C3, C2, C1, C0];
+
+BRAKE = SLOWMODE # ((IORQ # BRAKE) & (BRAKE & ((MEM_SLOW & !WAITCOUNT:3) # (!MEM_SLOW & WAITCOUNT:127))));
+
+sequence WAITCOUNT {
+	$repeat i = [0..2]
+
+	present {i}
+		if BRAKE next {i+1};
+		if MREQ next 0;
+		if IORQ next 0;
+		default next 0;
+
+  $repend
+
+	present 3
+		if BRAKE & MEM_SLOW next 3;
+		if IORQ next 0;
+		if MREQ next 0;
+		default next 0;
+
+	$repeat i = [4..126]
+
+	present {i}
+		if BRAKE next {i+1};
+		if IORQ next 0;
+		if MREQ next 0;
+		default next 0;
+
+  $repend
+
+	present 127
+		if BRAKE next 127;
+		default next 0;
+}
+
+MEM_SLOW.D = (MEM_SLOW # MREQ) & (MEM_SLOW & !IORQ);

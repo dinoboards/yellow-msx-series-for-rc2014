@@ -5,7 +5,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 # Example of MSX_JED_CDWIN environment variable
-# MSX_JED_CDWIN := u: && cd \\home\\jane\\<path to project>\msx &&
+# MSX_JED_CDWIN := u: && cd \\home\\jane\\<path to project>\\msx &&
 
 all: rom-image-pal rom-image-ntsc rom-image-msxsyssrc #rom-image-nms8250
 
@@ -33,7 +33,7 @@ bin/rom-mapper.jed: rom-mapper.pld
 	fi
 	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat rom-mapper"
 
-bin/cpu-clk-selector.jed: cpu-clk-selector.pld
+bin/turbo-cpu.jed: turbo-cpu.pld
 	@cd $$(wslpath "$$(wslvar USERPROFILE)")
 	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
 		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
@@ -42,7 +42,7 @@ bin/cpu-clk-selector.jed: cpu-clk-selector.pld
 		fi
 		exit 1
 	fi
-	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat cpu-clk-selector"
+	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat turbo-cpu"
 
 .PHONY: cbios
 cbios:
