@@ -1,0 +1,45 @@
+Name     slot-backplane-driver ;
+PartNo   00 ;
+Date     15/12/2020 ;
+Revision 01 ;
+Designer Dean Netherton ;
+Company  Dino ;
+Assembly None ;
+Location Ignored ;
+Device   g16v8a ;
+
+
+/************* INPUT PINS *********************/
+//PIN  1 = NC;
+PIN  2 = A14;
+PIN  3 = A15;
+PIN  4 = SLT_HIGH;
+PIN  5 = SLT_LOW;
+PIN  6 = !IORQ;
+PIN  7 = !RD;
+PIN  8 = !MREQ;
+PIN  9 = !M1;
+PIN 10 = GND;
+//PIN 11 = ;
+
+/**************** OUTPUT PINS *********************/
+PIN 12 = SLT1_BUSDIR;
+PIN 13 = SLT2_BUSDIR;
+PIN 14 = DATADIR;
+PIN 15 = !SLT_SL2;
+PIN 16 = !SLT_SL1;
+PIN 17 = !CS12;
+PIN 18 = !CS2;
+PIN 19 = !CS1;
+PIN 20 = VCC;
+
+SLT_SL1 = SLT_HIGH & !SLT_LOW;
+SLT_SL2 = !SLT_HIGH & SLT_LOW;
+
+CS1 = !A15 & A14;
+CS2 = A15 & !A14;
+CS12 = (!A15 & A14) # (A15 & !A14);
+
+DATADIR = RD;
+
+

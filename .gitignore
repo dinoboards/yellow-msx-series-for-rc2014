@@ -3,3 +3,4 @@ bin
 msx/systemroms/
 msx/msxsys-build/working/*
 release/
+.env
