@@ -49,8 +49,8 @@ nextor: $(addprefix nextor/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor/ext
 	cp -u ../bin/nextor-2.1.1.rc2014.rom ../../bin
 
 install-prereq:
-	@cd nextor/source
-	$(MAKE) install-prereq --no-print-directory
+	@(cd nextor/source && $(MAKE) install-prereq --no-print-directory)
+	(cd extbio-rc2014 && $(MAKE) install-prereq --no-print-directory)
 
 .PHONY: rom-image-pal
 rom-image-pal: nextor cbios ./extbio-rc2014/bin/extbio-rc2014.rom
