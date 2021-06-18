@@ -10,13 +10,18 @@ RS232_FN_COUNT:	EQU	13	; EXTENDED BIOS RS232 HAS 13 JUMP INSTRUCTIONS
 	SECTION	CODE
 
 ;
-; extern void    extbio_get_dev(uint8_t* table) __z88dk_fastcall;
+; extern uint8_t extbio_get_dev(uint8_t* table) __z88dk_fastcall;
 ;
 	PUBLIC	_extbio_get_dev
 _extbio_get_dev:
 	CALL	GETSLT		; B = NUMBER THE SLOT OF THE TABLE
 	LD	DE, 0		; BROAD-CAST, FUNCTION: 'GET DEVICE NUMBER'
-	JP	EXTBIO
+	CALL	EXTBIO
+	; POP	DE
+	; EX	DE, HL
+	; OR	A
+	; SBC	HL, DE
+	RET
 
 ;
 ; extern void extbio_get_dev_info_table(uint8_t device_id, extbio_info* info_table);

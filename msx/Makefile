@@ -50,57 +50,57 @@ nextor: $(addprefix nextor/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor/ext
 
 install-prereq:
 	@(cd nextor/source && $(MAKE) install-prereq --no-print-directory)
-	(cd extbio-rc2014 && $(MAKE) install-prereq --no-print-directory)
+	(cd rc2014-extended && $(MAKE) install-prereq --no-print-directory)
 
 .PHONY: rom-image-pal
-rom-image-pal: nextor cbios ./extbio-rc2014/bin/extbio-rc2014.rom
+rom-image-pal: nextor cbios ./rc2014-extended/bin/rc2014-extended.rom
 	@rm -f bin/ymsx-pal.rom
 	dd if=/dev/zero bs=16k count=8 of=bin/yellow-msx-pal-rc2104.rom
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_pal.rom 	of=bin/yellow-msx-pal-rc2104.rom bs=16k count=2 seek=0
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/yellow-msx-pal-rc2104.rom bs=16k count=27 seek=4
-	dd conv=notrunc status=none if=./extbio-rc2014/bin/extbio-rc2014.rom		 			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=31
+	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=31
 	printf 'Built bin/yellow-msx-pal-rc2104.rom\r\n\n'
 
 .PHONY: rom-image-ntsc
-rom-image-ntsc: nextor cbios ./extbio-rc2014/bin/extbio-rc2014.rom
+rom-image-ntsc: nextor cbios ./rc2014-extended/bin/rc2014-extended.rom
 	@rm -f bin/ymsx-ntsc.rom
 	dd if=/dev/zero bs=16k count=8 of=bin/yellow-msx-ntsc-rc2104.rom
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_ntsc.rom 	of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=2 seek=0
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=27 seek=4
-	dd conv=notrunc status=none if=./extbio-rc2014/bin/extbio-rc2014.rom		 			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=31
+	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=31
 	printf 'Built bin/yellow-msx-ntsc-rc2104.rom\r\n\n'
 
 .PHONY: rom-image-nms8250
-rom-image-nms8250: nextor cbios systemroms/nms8250_basic-bios2.rom systemroms/nms8250_msx2sub.rom ./extbio-rc2014/bin/extbio-rc2014.rom
+rom-image-nms8250: nextor cbios systemroms/nms8250_basic-bios2.rom systemroms/nms8250_msx2sub.rom ./rc2014-extended/bin/rc2014-extended.rom
 	@rm -f bin/msxrc2014.rom
 	dd if=/dev/zero bs=16k count=8 of=bin/nms8250-rc2014.rom
 	dd conv=notrunc status=none if=./systemroms/nms8250_basic-bios2.rom					 	of=bin/nms8250-rc2014.rom bs=16k count=2 seek=0
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./systemroms/nms8250_msx2sub.rom				   			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/nms8250-rc2014.rom bs=16k count=27 seek=4
-	dd conv=notrunc status=none if=./extbio-rc2014/bin/extbio-rc2014.rom		 			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=31
+	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=31
 	printf 'Built bin/msxrc2014.rom\r\n\n'
 
 .PHONY: rom-image-msxsyssrc
-rom-image-msxsyssrc: nextor cbios msxsys ./extbio-rc2014/bin/extbio-rc2014.rom
+rom-image-msxsyssrc: nextor cbios msxsys ./rc2014-extended/bin/rc2014-extended.rom
 	@rm -f bin/msxrc2014.rom
 	dd if=/dev/zero bs=16k count=8 of=bin/msxsyssrc-rc2014.rom
 	dd conv=notrunc status=none if=./bin/main.rom							 										of=bin/msxsyssrc-rc2014.rom bs=16k count=2 seek=0
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/msxsyssrc-rc2014.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./bin/subrom.rom				   											of=bin/msxsyssrc-rc2014.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/msxsyssrc-rc2014.rom bs=16k count=27 seek=4
-	dd conv=notrunc status=none if=./extbio-rc2014/bin/extbio-rc2014.rom		 			of=bin/msxsyssrc-rc2014.rom bs=16k count=1 seek=31
+	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/msxsyssrc-rc2014.rom bs=16k count=1 seek=31
 	printf 'Built bin/msxrc2014.rom\r\n\n'
 
 clean:
 	@rm -rf ./bin
 	$(MAKE) -C apps --no-print-directory clean
 	$(MAKE) -C cbios --no-print-directory clean
-	$(MAKE) -C ./extbio-rc2014 --no-print-directory clean
+	$(MAKE) -C ./rc2014-extended --no-print-directory clean
 	cd nextor/source
 	$(MAKE) --no-print-directory clean
 	rm ../extras/*
@@ -158,9 +158,10 @@ nextor/extras/AUTOEXEC.BAT: ./AUTOEXEC.BAT
 	@mkdir -p nextor/extras
 	@cp -up ./AUTOEXEC.BAT nextor/extras/AUTOEXEC.BAT
 
-.PHONY: extbio-rc2014/bin/extbio-rc2014.rom
-extbio-rc2014/bin/extbio-rc2014.rom:
-	@$(MAKE) -C ./extbio-rc2014 --no-print-directory bin/extbio-rc2014.rom
+.PHONY: rc2014-extended/bin/rc2014-extended.rom
+rc2014-extended/bin/rc2014-extended.rom:
+	$(MAKE) -C ./rc2014-extended --no-print-directory bin/rc2014-extended.rom
+	cp rc2014-extended/bin/rc2014-extended.rom ./bin/
 
 include Makefile-apps.mk
 

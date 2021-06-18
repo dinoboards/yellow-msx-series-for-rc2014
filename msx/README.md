@@ -103,7 +103,7 @@ This should procduce the following artifacts in the `./msx/bin` directory
 | subrom.rom*                 | MSXSRCSYS SUB ROM                                            | 0000-3FFF |      3-0      |     3-0     |
 | msxsyssrc-rc2014.rom**      | MSXSRCSYS and Nextor 512K ROM for flashing onto Memory Board |           |               |             |
 | nextor-2.1.1.rc2014.rom*    | Nextor ROM Image                                             | 4000-7FFF |       2       |     3-3     |
-| extbio-rc2014.rom*          | Custom Extended BIOS implementation for RC2014 platform      | 8000-CFFF |      3-3      |     3-3     |
+| rc2014-extended.rom*        | Custom Extended BIOS implementation for RC2014 platform      | 8000-CFFF |      3-3      |     3-3     |
 | chkspd. com                 | Testing tool                                                 |           |               |             |
 | dots. com                   | Testing tool                                                 |           |               |             |
 | extbio. com                 | Testing tool                                                 |           |               |             |
