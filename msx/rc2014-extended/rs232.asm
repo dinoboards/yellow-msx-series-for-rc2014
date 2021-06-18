@@ -4,8 +4,9 @@ FOSSIL_JUMP_TABLE_SLOT	EQU	0F400h
 FOSSIL_MARK_1		EQU	0xf3fc
 FOSSIL_MARK_2		EQU	0xf3fd
 
+	; include	"msx.inc"
 
-EXTBIO_JUMP_TABLE:
+EXTBIO_RS2_JUMP_TABLE:
 	DEFB	0		; MSX serial features (no TxReady INT, No Sync detect, No Timer INT, No CD, No RI)
 	DEFB	1		; version number
 	DEFB	0		; reserved for future expansion
@@ -33,20 +34,6 @@ EXTBIO_JUMP_TABLE:
         ; Modify: [AF]
 
 INIT:				; initialize RS232C port
-	; Install fossil driver as well???
-
-	; LD	A, 'R'
-	; LD	(FOSSIL_MARK_1), A
-	; LD	A, 'X'
-	; LD	(FOSSIL_MARK_2), A
-
-
-	; ; LD	HL, 21*3
-	; ; CALL	ALLOC
-	; LD	Hl, FOSSIL_JUMP_TABLE
-	; LD	(FOSSIL_JUMP_TABLE_REF), HL
-	; CALL	GETSL10
-	; LD	(FOSSIL_JUMP_TABLE_SLOT), A
 
 	LD	DE, MSG
 	CALL	PRINT
@@ -59,14 +46,14 @@ MSG:	DB	"Are we inited yet.\r\n", 0
 
 ; ------------------------------------------------
 OPEN:				; open RS232C port
-	LD	DE, MSG2
-	CALL	PRINT
+	; LD	DE, MSG2
+	; CALL	PRINT
 	;CALL	INSTALL_INTERRUPT_HANDLER
 	RET
 
-MSG2:	DB	"Are we opened yet.\r\n", 0
+; MSG2:	DB	"Are we opened yet.\r\n", 0
 
-	RET
+; 	RET
 
 STAT:				; Read Status
 	RET
@@ -81,13 +68,13 @@ SNDCHR:				; send data
 	RET
 
 CLOSE:		 		; close RS232C port
-	LD	DE, MSG3
-	CALL	PRINT
+	; LD	DE, MSG3
+	; CALL	PRINT
 
 	;CALL	REMOVE_INTERRUPT_HANDLER
 	RET
 
-MSG3:	DB	"Are we closed yet.\r\n", 0
+; MSG3:	DB	"Are we closed yet.\r\n", 0
 
 
 EOF:			 	; tell EOF code received
