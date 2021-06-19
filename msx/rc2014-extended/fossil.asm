@@ -103,6 +103,10 @@ getversion:
 	RET
 
 init:
+	; find or assume slot 3-3
+	; find RS232 INIT function
+	; call it?
+
 deinit
 setbaud
 protocol:
@@ -122,4 +126,8 @@ hook38stat:
 chput_hook:
 keyb_hook:
 get_info:
+	RET
+
+	PUBLIC	SIO_INT
+SIO_INT:
 	RET
