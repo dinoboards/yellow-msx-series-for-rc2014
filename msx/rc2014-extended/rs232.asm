@@ -4,7 +4,6 @@ FOSSIL_JUMP_TABLE_SLOT	EQU	0F400h
 FOSSIL_MARK_1		EQU	0xf3fc
 FOSSIL_MARK_2		EQU	0xf3fd
 
-	; include	"msx.inc"
 
 EXTBIO_RS2_JUMP_TABLE:
 	DEFB	0		; MSX serial features (no TxReady INT, No Sync detect, No Timer INT, No CD, No RI)
@@ -34,7 +33,10 @@ EXTBIO_RS2_JUMP_TABLE:
         ; Modify: [AF]
 
 INIT:				; initialize RS232C port
-
+	DI
+	SIO_INIT	SIO0A_CMD, SIO_RTSOFF
+	SIO_INIT	SIO0B_CMD, SIO_RTSON
+	EI
 	LD	DE, MSG
 	CALL	PRINT
 
@@ -42,18 +44,15 @@ INIT:				; initialize RS232C port
 	RET
 
 
-MSG:	DB	"Are we inited yet.\r\n", 0
+MSG:	DB	"Inited.", 13, 10, 0
 
 ; ------------------------------------------------
 OPEN:				; open RS232C port
-	; LD	DE, MSG2
-	; CALL	PRINT
-	;CALL	INSTALL_INTERRUPT_HANDLER
+	LD	DE, MSG2
+	CALL	PRINT
 	RET
 
-; MSG2:	DB	"Are we opened yet.\r\n", 0
-
-; 	RET
+MSG2:	DB	"Opened", 13, 10, 0
 
 STAT:				; Read Status
 	RET
@@ -64,6 +63,9 @@ GETCHR:				; reveive data
 	RET
 
 SNDCHR:				; send data
+	push	af
+	SIO_OUT_A
+	pop	af
 	BIOS_FN	CHPUT
 	RET
 
@@ -120,3 +122,4 @@ FOSSIL_JUMP_TABLE:
 ; fossil_hookstat:	JP	0	; 17
 ; _fossil_chput_hook:	JP	0	; 18
 ; _fossil_keyb_hook:	JP	0	; 19
+

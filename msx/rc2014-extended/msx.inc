@@ -70,3 +70,8 @@ BIOS_FN	.MACRO	ADDR
 		CALL	CALSLT			; INTERSLOT CALL
 	.ENDM
 
+
+
+; ; SLTWRK+124 = Work area for slot 3-3, page 2
+; WORK   EQU     SLTWRK+124
+WORK   EQU     SLTWRK+(3*32+3*8+2*2)

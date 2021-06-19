@@ -54,9 +54,9 @@ void main() {
 
   rs232_init(&init_params);
 
-  // rs232_open(/*RS232_RAW_MODE, buffer_size, &buffer*/);
+  rs232_open(/*RS232_RAW_MODE, buffer_size, &buffer*/);
 
-  // rs232_sndchr('A');
+  rs232_sndchr('A');
 
   // uint16_t count = rs232_loc();
   // printf("\r\nLOC: %d\r\n", count);

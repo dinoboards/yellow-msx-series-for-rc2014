@@ -73,3 +73,116 @@ GTSL1NOEXP:
         LD      A,E             ;[A] = 000000PP
         JR      GTSL1END
 
+;--------------------------------------------------------
+;
+;	ASLW1	Get address of slot work
+;	Entry	None
+;	Return	HL	address of slot work
+;	Modify	DE
+;
+ASLW10:
+	CALL	GETSL10		;[A] = F000SSPP, SS = 00 if not expanded
+	AND	00001111B	;[A] = 0000SSPP
+	LD	L,A		;[A] = 0000SSPP
+	RLCA
+	RLCA
+	RLCA
+	RLCA			;[A] = SSPP0000
+	AND	00110000B	;[A] = 00PP0000
+	OR	L		;[A] = 00PPSSPP
+	AND	00111100B	;[A] = 00PPSS00
+	OR	10B		;[A] = 00PPSSBB
+;
+;	Now, we have the sequence number for this cartridge
+;	as follows.
+;
+;	00PPSSBB
+;	  ||||||
+;	  ||||++-- higher 2 bits of memory address (1)
+;	  ||++---- seconday slot # (0..3)
+;	  ++------ primary slot # (0..3)
+;
+	RLCA			;*=2
+	LD	E,A
+	LD	D,0		;[DE] = 0PPSSBB0
+	LD	HL,SLTWRK
+	ADD	HL,DE
+	RET
+
+
+;--------------------------------------------------------
+;
+;	RSLW1	Read slot work
+;	Entry	None
+;	Return	HL	Content of slot work
+;	Modify	DE
+;
+RSLW10:
+	CALL	ASLW10		;[HL] = address of slot work
+	LD	A,(HL)
+	INC	HL
+	LD	H,(HL)		;[HL] = (slot work)
+	LD	L, A
+	RET
+
+
+;--------------------------------------------------------
+;
+;	WSLW1	Write slot work
+;	Entry	HL	Data to write
+;	Return	None
+;	Modify	DE
+;
+WSLW10:
+	PUSH	HL
+	CALL	ASLW10		;[HL] = address of slot work
+	POP	DE
+	LD	(HL),E
+	INC	HL
+	LD	(HL),D
+	RET
+;
+; CALSUB
+;
+; In: IX = address of routine in MSX2 SUBROM
+;     AF, HL, DE, BC = parameters for the routine
+;
+; Out: AF, HL, DE, BC = depending on the routine
+;
+; Changes: IX, IY, AF', BC', DE', HL'
+;
+; Call MSX2 subrom from MSXDOS. Should work with all versions of MSXDOS.
+;
+; Notice: NMI hook will be changed. This should pose no problem as NMI is
+; not supported on the MSX at all.
+;
+CALSUB:	EXX
+	EX	AF, AF'			; STORE ALL REGISTERS
+	LD	HL, EXTROM
+	PUSH	HL
+	LD	HL, 0C300h
+	PUSH	HL			; PUSH NOP ; JP EXTROM
+	PUSH	IX
+	LD	HL, 021DDh
+	PUSH	HL			; PUSH LD IX, <ENTRY>
+	LD	HL, 03333h
+	PUSH	HL			; PUSH INC SP; INC SP
+	LD	HL, 0
+	ADD	HL, SP			; HL = OFFSET OF ROUTINE
+	LD	A, 0C3h
+	LD	(H_NMI), A
+	LD	(H_NMI+1), HL		; JP <ROUTINE> IN NMI HOOK
+	EX	AF, AF'
+	EXX				; RESTORE ALL REGISTERS
+	LD	IX, NMI
+	LD	IY, (EXPTBL-1)
+	CALL	CALSLT			; CALL NMI-HOOK VIA NMI ENTRY IN ROMBIOS
+					; NMI-HOOK WILL CALL SUBROM
+	EXX
+	EX	AF, AF'	  		; STORE ALL RETURNED REGISTERS
+	LD	HL, 10
+	ADD	HL, SP
+	LD	SP, HL	  		; REMOVE ROUTINE FROM STACK
+	EX	AF, AF'
+	EXX				; RESTORE ALL RETURNED REGISTERS
+	RET
