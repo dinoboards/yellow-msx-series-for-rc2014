@@ -97,9 +97,21 @@ _rs232_init:
 	CALL	GETSLT			; B = number the slot of the table
 	JP	rs232_slot_init
 
+; extern void rs232_open(uint8_t mode, uint8_t buffer_length, uint8_t* buffer);
 	PUBLIC	_rs232_open
 _rs232_open:
-	JP	rs232_slot_open
+	PUSH	IX
+	LD	IX, 0
+	ADD	IX, SP
+
+	LD	E, (IX+4)
+	LD	C, (IX+5)
+	LD	L, (IX+6)
+	LD	H, (IX+7)
+	CALL	rs232_slot_open
+
+	POP	IX
+	RET
 
 	PUBLIC	_rs232_close
 _rs232_close:

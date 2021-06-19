@@ -35,6 +35,12 @@ RSLREG		EQU	$0138
 ; Remark   : Variables can never be given in alternative registers or IX and IY
 CALSLT		EQU	$001C
 
+; Function : Tests status of CTRL-STOP
+; Output   : Carry flag set when pressed
+; Registers: AF
+; Remark   : In this routine, interrupts are inhibited
+BREAKX		EQU	$00B7
+
 ; MSX 2 BIOS Entries
 ; --------------------------------------------------
 ; Function : Calls a routine in SUB-ROM. Most common way
@@ -62,15 +68,16 @@ REDCLK		EQU	$01F5
 OLDINT:		EQU	$FB0C		; ORIGINAL IKEYI HOOK HANDLER
 MEXBIH:		equ	$FB07		; ORIGINAL EXTBIO HOOK JUMP FUNCTION
 HOKVLD:		EQU	$FB20		; BIT 0 - EXTENDED BIOS INSTALLED
-
+DATCNT:		EQU	$FB17		; CURRENT BUFFER COUNT
+RSFCB:		EQU	$FB04		; FCB ("File Control Block") address of the RS-232C
+RSIQLN:		EQU	$FB06		; Byte DATA used by the RS-232C interface - SIZE OF BUFFER
+FLAGS:		EQU	$FB1B		; RS-232C flags (BIT 3 - SET IF OPENED)
 
 BIOS_FN	.MACRO	ADDR
 	LD	IX, &ADDR
 	LD	IY, (EXPTBL-1)		; BIOS SLOT IN IYH
 		CALL	CALSLT			; INTERSLOT CALL
 	.ENDM
-
-
 
 ; ; SLTWRK+124 = Work area for slot 3-3, page 2
 ; WORK   EQU     SLTWRK+124

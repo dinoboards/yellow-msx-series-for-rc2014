@@ -3,6 +3,13 @@ INITXT	EQU	0x6C
 INIT32	EQU	0x6F
 POSIT	EQU	0xC6
 
+; Function : Tests status of CTRL-STOP
+; Output   : Carry flag set when pressed
+; Registers: AF
+; Remark   : In this routine, interrupts are inhibited
+BREAKX		EQU	$00B7
+
+
 CALSLT	EQU	0x001C
 EXPTBL	EQU	0xFCC1
 _EXPLAIN	EQU	0x66
@@ -62,6 +69,16 @@ _msxbiosPosit:
 	POP	IX
 	RET
 
+; extern bool msxbiosBreakX();
+	PUBLIC	_msxbiosBreakX
+_msxbiosBreakX:
+	LD	IY, (EXPTBL-1)
+	LD	IX, BREAKX
+	CALL	CALSLT
+	LD	L, 0
+	RET	NC
+	LD	L, 1
+	RET
 
 ; extern uint8_t msxdosDirio(uint8_t code) __z88dk_fastcall;
 	PUBLIC	_msxdosDirio
