@@ -17,10 +17,6 @@ _extbio_get_dev:
 	CALL	GETSLT		; B = NUMBER THE SLOT OF THE TABLE
 	LD	DE, 0		; BROAD-CAST, FUNCTION: 'GET DEVICE NUMBER'
 	CALL	EXTBIO
-	; POP	DE
-	; EX	DE, HL
-	; OR	A
-	; SBC	HL, DE
 	RET
 
 ;
@@ -43,6 +39,15 @@ _extbio_get_dev_info_table:
 
 	POP	IX
 	RET
+;
+; extern void* extbio_fossil_install()
+;
+	PUBLIC	_extbio_fossil_install
+_extbio_fossil_install:
+	LD	D, 214		; RC2014 EXTENDED DRIVER
+	LD	E, 1		; FUNCTION INSTALL
+	JP	EXTBIO
+
 ;
 ; extern void rs232_link(extbio_info *p) __z88dk_fastcall;
 ;
