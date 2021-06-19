@@ -73,11 +73,11 @@ RSFCB:		EQU	$FB04		; FCB ("File Control Block") address of the RS-232C
 RSIQLN:		EQU	$FB06		; Byte DATA used by the RS-232C interface - SIZE OF BUFFER
 FLAGS:		EQU	$FB1B		; RS-232C flags (BIT 3 - SET IF OPENED)
 
-BIOS_FN	.MACRO	ADDR
-	LD	IX, &ADDR
+BIOS_FN	MACRO	ADDR
+	LD	IX, ADDR
 	LD	IY, (EXPTBL-1)		; BIOS SLOT IN IYH
 		CALL	CALSLT			; INTERSLOT CALL
-	.ENDM
+	ENDM
 
 ; ; SLTWRK+124 = Work area for slot 3-3, page 2
 ; WORK   EQU     SLTWRK+124
