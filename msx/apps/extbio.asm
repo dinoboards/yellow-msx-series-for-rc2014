@@ -268,8 +268,8 @@ FOSSIL_JUMP_TABLE:	DW	0
 ;
 	PUBLIC	_fossil_get_version
 _fossil_get_version:
-	ld b,b
-	jr $+2
 marker:
 	JP	0
 	RET
+
+

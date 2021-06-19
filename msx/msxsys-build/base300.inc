@@ -14,13 +14,13 @@ OPTENT	EQU	07A00H			; optrom entrypoint - for building optrom
 ;		not defined  = Do not use RP-501
 ;		defined      = Use RP-501
 
-; RTCENA	EQU	0
+RTCENA	EQU	0
 
 ;	RESENA	use reset hardware
 ;		not defined  = Do not use reset hardware
 ;		defined      = Use reset hardware
 
-; RESENA	EQU	0
+RESENA	EQU	0
 
 ;	OPTM	Optimized code
 ;		0 = Use orginal code
