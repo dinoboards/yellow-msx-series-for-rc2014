@@ -31,6 +31,11 @@ typedef struct {
 extern void extbio_get_dev_info_table(uint8_t device_id, extbio_info *info_table);
 extern extbio_device_table* extbio_get_dev(extbio_device_table *table) __z88dk_fastcall;
 
+// RC2014 DRIVER
+
+extern void* extbio_fossil_install();
+
+// RS232 DRIVER
 #define RS232_RAW_MODE 4
 
 extern void rs232_link(extbio_info *p) __z88dk_fastcall;

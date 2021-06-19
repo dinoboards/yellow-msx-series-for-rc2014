@@ -6,7 +6,7 @@ MAKEFLAGS += --no-builtin-rules
 
 BIN := ./bin/
 SRC := ./
-APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio rs232tst
+APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio rs232tst fosiltst
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
 ZCC := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
@@ -27,7 +27,8 @@ $(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.as
 $(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
 $(BIN)fdisk.com: $(addprefix $(SRC),memmap-override.asm fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.asm msxdos.h partition.h)
 $(BIN)extbio.com: $(addprefix $(SRC),extbio.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm)
-$(BIN)rs232tst.com: $(addprefix $(SRC),rs232tst.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm)
+$(BIN)rs232tst.com: $(addprefix $(SRC),rs232tst.c msxdos.h msxdos.asm extbio.asm)
+$(BIN)fosiltst.com: $(addprefix $(SRC),fosiltst.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm)
 
 $(TARGETS):
 	@mkdir -p $(BIN)

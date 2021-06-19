@@ -8,27 +8,27 @@ BIN := ./bin/
 
 all: bin/rc2014-extended.rom
 
-# $(BIN)rs232_100.bin $(BIN)rs232-map.bin
-bin/rc2014-extended.rom: rc2014-extended.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm
+bin/rc2014-extended.rom: rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm $(BIN)fossil_100.bin $(BIN)fossil-map.bin
 	@mkdir -p bin
 	./tools/zasm -v2 --labels -i rc2014-extended.asm -o ./bin/rc2014-extended.rom
 
-# bin/rs232_100.bin: rs232.asm
-# 	@mkdir -p bin
-# 	echo "  ORG 0x100" > ./rs232_100.asm.tmp
-# 	cat rs232.asm >> ./rs232_100.asm.tmp
-# 	./tools/zasm  -v2 ./rs232_100.asm.tmp -o ./bin/rs232_100.bin -l ./bin/rs232_100.lst
-# 	rm ./rs232_100.asm.tmp
 
-# bin/rs232_200.bin: rs232.asm
-# 	@mkdir -p bin
-# 	echo "  ORG 0x100" > ./rs232_200.asm.tmp
-# 	cat rs232.asm >> ./rs232_200.asm.tmp
-# 	./tools/zasm  -v2 ./rs232_200.asm.tmp -o ./bin/rs232_200.bin -l ./bin/rs232_200.lst
-# 	rm ./rs232_200.asm.tmp
+bin/fossil_100.bin: fossil.asm
+	@mkdir -p bin
+	echo "  ORG 0x100" > ./fossil_100.asm.tmp
+	cat fossil.asm >> ./fossil_100.asm.tmp
+	./tools/zasm  -v2 ./fossil_100.asm.tmp -o ./bin/fossil_100.bin -l ./bin/fossil_100.lst
+	rm ./fossil_100.asm.tmp
 
-# $(BIN)rs232-map.bin: $(addprefix $(BIN),rs232_100.bin rs232_200.bin)
-# 	@node ./extract-relocation-map.js $^ $(BIN)rs232-map.bin
+bin/fossil_200.bin: fossil.asm
+	@mkdir -p bin
+	echo "  ORG 0x100" > ./fossil_200.asm.tmp
+	cat fossil.asm >> ./fossil_200.asm.tmp
+	./tools/zasm  -v2 ./fossil_200.asm.tmp -o ./bin/fossil_200.bin -l ./bin/fossil_200.lst
+	rm ./fossil_200.asm.tmp
+
+$(BIN)fossil-map.bin: $(addprefix $(BIN),fossil_100.bin fossil_200.bin)
+	@node ./extract-relocation-map.js $^ $(BIN)fossil-map.bin
 
 clean:
 	@rm -rf bin

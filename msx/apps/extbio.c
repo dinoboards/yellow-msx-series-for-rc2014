@@ -37,6 +37,9 @@ const char *extendedBiosName(uint8_t id) {
   case 132:
     return "μ-driver by Yoshikazu Yamamoto";
 
+  case 214:
+    return "RC2014 Extensions";
+
   case 241:
     return "MultiMente";
 
@@ -66,7 +69,7 @@ void main() {
   const uint8_t count = extbio_get_dev(table) - table;
 
   for (int i = 0; i < count; i++)
-    printf("%d: %s (%02X)\r\n", i, extendedBiosName(table[i].deviceId), table[i].deviceId);
+    printf("%d: %s (%02X) (%02X)\r\n", i, extendedBiosName(table[i].deviceId), table[i].deviceId, table[i]._reserved);
 
   printf("\r\n");
 }
