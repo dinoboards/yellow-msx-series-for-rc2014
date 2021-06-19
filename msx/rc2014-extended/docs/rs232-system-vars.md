@@ -27,7 +27,7 @@ Data Area Used By RS-232C
 |         |        |        | OLDINT+4 = RET (0C9h)                                  |
 | FB16h   | DEVNUM |  1     | Byte offset. (RS-232C)                                 |
 | FB17h   | DATCNT |  3     | DATA area. (RS-232C)                                   |
-|         |        |        | DATCNT = Slot ID                                       |
+|         |        |        | DATCNT = Slot ID ???? (buffer count)                   |
 |         |        |        | DATCNT+1 = Address                                     |
 | FB1Ah   | ERRORS |  1     | RS-232C error code                                     |
 | FB1Bh   | FLAGS  |  1     | RS-232C flags                                          |

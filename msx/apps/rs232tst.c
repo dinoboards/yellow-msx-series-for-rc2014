@@ -1,5 +1,6 @@
 
 #include "extbio.h"
+#include "msxdos.h"
 #include <stdio.h>
 
 extbio_info info_table[4];
@@ -43,6 +44,8 @@ rs232_init_params init_params = {
 //   slot_jump_instruction init;
 // } rs232_slot_jumps;
 
+#define buffer_size 64
+uint8_t __at 0xC000 buffer[128+9];    // needs to be in page 3
 
 void main() {
 
@@ -54,12 +57,43 @@ void main() {
 
   rs232_init(&init_params);
 
-  rs232_open(/*RS232_RAW_MODE, buffer_size, &buffer*/);
+  printf("buffersize: %d at %p\r\n", buffer_size, buffer);
+  rs232_open(RS232_RAW_MODE, buffer_size, buffer);
 
   rs232_sndchr('A');
 
-  // uint16_t count = rs232_loc();
-  // printf("\r\nLOC: %d\r\n", count);
+  while(1) {
+    int16_t timeout = 32000;
+
+    int16_t count;
+
+    if (msxbiosBreakX())
+      exit(0);
+
+    count = rs232_loc();
+
+    // printf("1 -- %ld\r\n", timeout);
+    while(count == 0 && timeout-- > 0) {
+      if (timeout % 1000 == 0)
+        printf(".");
+
+      if (msxbiosBreakX())
+        exit(0);
+
+      count = rs232_loc();
+    }
+    // printf("2 -- %ld\r\n", timeout);
+
+    // printf("\r\nLOC: %d -- %d\r\n", count, timeout);
+
+    if (count > 0) {
+      uint8_t ch = rs232_getchr();
+
+      printf("%c", ch);
+    } else {
+      printf("-");
+    }
+  }
 
   // uint8_t ch = rs232_getchr();
 

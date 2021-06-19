@@ -86,9 +86,10 @@ extern uint16_t msxdosDevWrite(uint8_t slotNumber, uint8_t deviceNumber, uint8_t
 #define _NOFIL 0xD7
 
 // MSX BIOS functions
-void msxbiosInit32();
-void msxbiosInitxt();
-void msxbiosPosit(uint8_t col, uint8_t row);
+extern void msxbiosInit32();
+extern void msxbiosInitxt();
+extern void msxbiosPosit(uint8_t col, uint8_t row);
+extern bool msxbiosBreakX();
 
 /* MSX work area variables */
 

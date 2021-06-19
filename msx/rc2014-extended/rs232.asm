@@ -4,6 +4,17 @@ FOSSIL_JUMP_TABLE_SLOT	EQU	0F400h
 FOSSIL_MARK_1		EQU	0xf3fc
 FOSSIL_MARK_2		EQU	0xf3fd
 
+; TODO
+; [ ] INIT FUNCTION SHOULD ATTEMPT TO SET STOP BITS/PARITY/ETC, SPEED
+; [ ] OPEN - ERROR UNLESS RAW MODE, ERROR IF ALREADY OPENED, ENABLE RTS
+; [ ] STAT - IMPLEMENT
+; [ ] SNDCHR XON/XOFF FLOW CONTROL
+; [ ] CLOSE - DISABLE RTS
+; [ ] EOF - ALWAYS FALSE
+; [ ] LOF - IMPLEMENT
+; [ ] SNDBRK - RESEARCH AND IMPLEMENT
+; [ ] DTR - IMPLEMENT
+; [ ] SETCHN - IMPLEMENT (SIO PORTS)
 
 EXTBIO_RS2_JUMP_TABLE:
 	DEFB	0		; MSX serial features (no TxReady INT, No Sync detect, No Timer INT, No CD, No RI)
@@ -37,29 +48,44 @@ INIT:				; initialize RS232C port
 	SIO_INIT	SIO0A_CMD, SIO_RTSOFF
 	SIO_INIT	SIO0B_CMD, SIO_RTSON
 	EI
-	LD	DE, MSG
-	CALL	PRINT
-
 	XOR	A
 	RET
 
-
-MSG:	DB	"Inited.", 13, 10, 0
-
 ; ------------------------------------------------
 OPEN:				; open RS232C port
-	LD	DE, MSG2
-	CALL	PRINT
-	RET
+	XOR	A
+	LD	(DATCNT), A
 
-MSG2:	DB	"Opened", 13, 10, 0
+	LD	(RSFCB), HL
+        LD      A, C
+        LD      (RSIQLN),A
+
+	LD	D, H		; FIRST 2 WORDS OF BUFFER AT THE HEAD AND TAIL PTRS
+	LD	E, L		; THEY NEED TO BE INITIALISED TO START OF ACTUAL DATA BUFFER
+	EX	DE, HL		; WHICH IS JUST AFTER THESE 4 BYTES
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	LD	(HL), E		; LOAD FIRST 2 WORDS IN BUFFER TO POINT TO ADDRESS
+	INC	HL		; AFTER FIRST 2 WORDS
+	LD	(HL), D
+	INC	HL
+	LD	(HL), E
+	INC	HL
+	LD	(HL), D
+	INC	HL
+
+	LD      HL, FLAGS		; ENSURE RS232 IS MARKED AS OPENED
+	SET     3, (HL)
+	RET
 
 STAT:				; Read Status
 	RET
 
 GETCHR:				; reveive data
-	XOR	A
-	LD	A, 'x'
+	CALL	SIO_RCBBYT
+	OR	A		; CLEAR CARRY FLAG (NEVER HAVE EOF)
 	RET
 
 SNDCHR:				; send data
@@ -70,20 +96,16 @@ SNDCHR:				; send data
 	RET
 
 CLOSE:		 		; close RS232C port
-	; LD	DE, MSG3
-	; CALL	PRINT
-
-	;CALL	REMOVE_INTERRUPT_HANDLER
 	RET
-
-; MSG3:	DB	"Are we closed yet.\r\n", 0
 
 
 EOF:			 	; tell EOF code received
 	RET
 
 LOC:
-	LD	HL, 16 		; reports number of characters in the
+	LD	A, (DATCNT)	; BUFFER UTILIZATION COUNT
+	ld	L, A
+	ld	H, 0
 	RET			; receiver buffer
 
 LOF:			 	; reports number of free space left in the
