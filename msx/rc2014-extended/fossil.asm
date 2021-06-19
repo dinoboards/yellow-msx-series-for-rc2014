@@ -97,6 +97,8 @@ FOSSIL_JUMP_TABLE:
 				; the current situation about the driver.
 
 getversion:
+	ld b,b
+	jr $+2
 	LD	HL, 0x0101
 	RET
 

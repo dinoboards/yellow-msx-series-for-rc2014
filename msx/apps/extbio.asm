@@ -252,3 +252,24 @@ rs232_slot_setchn:
 
 
 
+; FOSSILE STUFF
+
+; extern void fossil_link(void* jumpTable) __z88dk_fastcall
+;
+	PUBLIC	_fossil_link
+
+_fossil_link:
+	LD	(FOSSIL_JUMP_TABLE), HL
+	LD	(marker+1), HL
+	RET
+
+FOSSIL_JUMP_TABLE:	DW	0
+; extern uint16_t fossil_get_version()
+;
+	PUBLIC	_fossil_get_version
+_fossil_get_version:
+	ld b,b
+	jr $+2
+marker:
+	JP	0
+	RET

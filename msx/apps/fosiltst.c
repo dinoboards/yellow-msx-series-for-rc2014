@@ -40,10 +40,27 @@
 // } rs232_slot_jumps;
 
 
+char __at 0xF3F3  FSMARK[2];
+void* __at 0xF400 FSTABL;
+
+extern void fossil_link(void* jumpTable) __z88dk_fastcall;
+extern uint16_t fossil_get_version();
+
 void main() {
+
+  printf("FSMARK %c%c\r\n", FSMARK[0], FSMARK[1]);
+  printf("FSTABL %p\r\n", FSTABL);
 
   void *p = extbio_fossil_install();
 
   printf("Address %p\r\n", p);
 
+  printf("FSMARK %c%c\r\n", FSMARK[0], FSMARK[1]);
+  printf("FSTABL %p\r\n", FSTABL);
+
+  fossil_link(p);
+
+  uint16_t version = fossil_get_version();
+
+  printf("Version %04X\r\n", version);
 }

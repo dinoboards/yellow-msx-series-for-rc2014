@@ -40,7 +40,7 @@ async function main(fileAt100, fileAt200, relocationFileName) {
   const hits = []
   for(let i=0; i < data1.length; i++) {
     if (data1[i] !== data2[i])
-      hits.push(i)
+      hits.push(i-1)    // assume 16 bit address - high byte is offset, low byte will not be
   }
 
   const data = convertToBitmap(hits, data2.length)
