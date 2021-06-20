@@ -7,6 +7,7 @@
 #include <string.h>
 #include "extbio.h"
 #include "telnet/fossil_interface.h"
+#include "xstdio.h"
 
 const char *extendedBiosName(uint8_t id) {
   switch (id) {
@@ -50,26 +51,32 @@ const char *extendedBiosName(uint8_t id) {
 
 extbio_device_table table[32];
 
+extern uint8_t getSlotPage0(void*) __z88dk_fastcall;
+
 void main() {
   const bool extendedBiosReady = HOKVLD & 1;
   if (!extendedBiosReady) {
-    printf("No bios extenstions installed\r\n");
+    xprintf("No bios extenstions installed\r\n");
     return;
   }
 
   const bool atLeastOneInstalled = EXTBIO[0] != RET_INSTRUCTION;
   if (!atLeastOneInstalled) {
-    printf("No bios extensions installed\r\n");
+    xprintf("No bios extensions installed\r\n");
     return;
   }
 
-  printf("\r\nInstalled Extended Bios Systems:\r\n");
-  printf("-----------------------------------\r\n");
+  xprintf("\r\nInstalled Extended Bios Systems:\r\n");
+  xprintf("-----------------------------------\r\n");
+
+  const uint8_t slt = getSlotPage0(table);
+
+  xprintf("SLOT %02X for address %p\r\n", slt, table);
 
   const uint8_t count = extbio_get_dev(table) - table;
 
   for (int i = 0; i < count; i++)
-    printf("%d: %s (%02X) (%02X)\r\n", i, extendedBiosName(table[i].deviceId), table[i].deviceId, table[i]._reserved);
+    xprintf("%d: %s (%02X) (%02X)\r\n", i, extendedBiosName(table[i].deviceId), table[i].deviceId, table[i]._reserved);
 
-  printf("\r\n");
+  xprintf("\r\n");
 }

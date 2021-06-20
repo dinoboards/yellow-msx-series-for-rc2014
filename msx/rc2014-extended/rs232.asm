@@ -11,6 +11,8 @@
 ; [ ] DTR - IMPLEMENT
 ; [ ] SETCHN - IMPLEMENT (SIO PORTS)
 
+	include	"sio.inc"
+
 EXTBIO_RS2_JUMP_TABLE:
 	DEFB	0		; MSX serial features (no TxReady INT, No Sync detect, No Timer INT, No CD, No RI)
 	DEFB	1		; version number
@@ -40,6 +42,10 @@ EXTBIO_RS2_JUMP_TABLE:
 
 INIT:				; initialize RS232C port
 	DI
+
+	LD	A, 255
+	LD	(SIO_RTS), A
+
 	SIO_INIT	SIO0A_CMD, SIO_RTSOFF
 	SIO_INIT	SIO0B_CMD, SIO_RTSON
 	EI

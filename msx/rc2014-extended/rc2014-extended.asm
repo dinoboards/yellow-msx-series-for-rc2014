@@ -2,6 +2,7 @@
 	ORG	08000H
 
 	include "msx.inc"
+	INCLUDE	"fossil.sym"
 
 ; +0	ID		Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
 ; +2	INIT		Address of the routine to call to initialize a work area or I/O ports, or run a game, etc.
@@ -26,6 +27,15 @@ ROM_HEADER:
 	INCLUDE "rs232.asm"
 	include "probing.asm"
 	include	"extended-bios.asm"
+
+	PUBLIC	spike
+spike:
+	LD	DE, spikemsg
+	CALL	PRINT
+	RET
+
+spikemsg:
+	DB	"Did we init?", 13, 10, 0
 
 	DS	$C000 - $
 
