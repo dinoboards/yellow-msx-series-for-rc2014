@@ -14,9 +14,11 @@ RS232_FN_COUNT:	EQU	13	; EXTENDED BIOS RS232 HAS 13 JUMP INSTRUCTIONS
 ;
 	PUBLIC	_extbio_get_dev
 _extbio_get_dev:
+	PUSH	IX
 	CALL	GETSLT		; B = NUMBER THE SLOT OF THE TABLE
 	LD	DE, 0		; BROAD-CAST, FUNCTION: 'GET DEVICE NUMBER'
 	CALL	EXTBIO
+	POP	IX
 	RET
 
 ;
@@ -44,10 +46,12 @@ _extbio_get_dev_info_table:
 ;
 	PUBLIC	_extbio_fossil_install
 _extbio_fossil_install:
+	PUSH	IX
 	LD	D, 214		; RC2014 EXTENDED DRIVER
 	LD	E, 1		; FUNCTION INSTALL
-	JP	EXTBIO
-
+	CALL	EXTBIO
+	POP	IX
+	RET
 ;
 ; extern void rs232_link(extbio_info *p) __z88dk_fastcall;
 ;
@@ -98,7 +102,6 @@ LOOP:
 ;
 	PUBLIC	_rs232_init
 _rs232_init:
-
 	CALL	GETSLT			; B = number the slot of the table
 	JP	rs232_slot_init
 
@@ -165,6 +168,13 @@ GETSLT:
 	POP	HL
 	RET
 
+; extern uint8_t getSlotPage0(void* p) __z88dk_fastcall;
+	PUBLIC	_getSlotPage0
+_getSlotPage0:
+	CALL	GETSLT
+	LD	L, B
+	LD	H, 0
+	RET
 
 rs232_slot_jumps:
 rs232_slot_init:
@@ -261,6 +271,10 @@ rs232_slot_setchn:
 _fossil_link:
 	LD	(FOSSIL_JUMP_TABLE), HL
 	LD	(marker+1), HL
+	INC	HL
+	INC	HL
+	INC	HL
+	ld	(marker2+1), HL
 	RET
 
 FOSSIL_JUMP_TABLE:	DW	0
@@ -268,8 +282,17 @@ FOSSIL_JUMP_TABLE:	DW	0
 ;
 	PUBLIC	_fossil_get_version
 _fossil_get_version:
+	PUSH	IX
 marker:
-	JP	0
+	CALL	0
+	POP	IX
 	RET
 
-
+;
+; extern void fossil_init();
+;
+	PUBLIC	_fossil_init
+_fossil_init:
+marker2:
+	JP	0
+	RET

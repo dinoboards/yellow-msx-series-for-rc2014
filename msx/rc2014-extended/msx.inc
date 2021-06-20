@@ -72,6 +72,7 @@ DATCNT:		EQU	$FB17		; CURRENT BUFFER COUNT
 RSFCB:		EQU	$FB04		; FCB ("File Control Block") address of the RS-232C
 RSIQLN:		EQU	$FB06		; Byte DATA used by the RS-232C interface - SIZE OF BUFFER
 FLAGS:		EQU	$FB1B		; RS-232C flags (BIT 3 - SET IF OPENED)
+ESTBLS:		EQU	$FB1C		; Bit boolean. (RS-232C)                                 |
 
 BIOS_FN	MACRO	ADDR
 	LD	IX, ADDR
