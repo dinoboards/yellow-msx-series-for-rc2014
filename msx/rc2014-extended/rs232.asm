@@ -40,14 +40,16 @@ EXTBIO_RS2_JUMP_TABLE:
         ; Return: carry flag is set if illegal parameters are contained
         ; Modify: [AF]
 
+	PUBLIC	SIO_INIT
 INIT:				; initialize RS232C port
+SIO_INIT:
 	DI
 
 	LD	A, 255
 	LD	(SIO_RTS), A
 
-	SIO_INIT	SIO0A_CMD, SIO_RTSOFF
-	SIO_INIT	SIO0B_CMD, SIO_RTSON
+	SIO_CHIP_INIT	SIO0A_CMD, SIO_RTSOFF
+	SIO_CHIP_INIT	SIO0B_CMD, SIO_RTSON
 	EI
 	XOR	A
 	RET
@@ -90,10 +92,7 @@ GETCHR:				; reveive data
 	RET
 
 SNDCHR:				; send data
-	push	af
 	SIO_OUT_A
-	pop	af
-	BIOS_FN	CHPUT
 	RET
 
 CLOSE:		 		; close RS232C port
