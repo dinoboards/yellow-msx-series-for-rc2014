@@ -269,112 +269,151 @@ rs232_slot_setchn:
 	PUBLIC	_fossil_link
 
 _fossil_link:
-	inc	hl
-	ld	e, (hl)
-	inc	hl
-	ld	d, (hl)
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
 	LD	(fossil_get_version_prt+1), de
 	INC	HL
 
-	LD	(fossil_init_ptr+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_deinit+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(fossil_init_ptr+1), DE
 	INC	HL
 
-	LD	(_fossil_setbaud+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_protocol+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_deinit+1), DE
 	INC	HL
 
-	LD	(_fossil_channel+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_rs_in+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_setbaud+1), DE
 	INC	HL
 
-	LD	(rs_out_ptr+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_rs_in_stat+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_protocol+1), DE
 	INC	HL
 
-	LD	(_fossil_rs_out_stat+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_dtr+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_channel+1), DE
 	INC	HL
 
-	LD	(_fossil_rts+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_carrier+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_rs_in+1), DE
 	INC	HL
 
-	LD	(_fossil_chars_in_buf+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_size_of_buf+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(rs_out_ptr+1), DE
 	INC	HL
 
-	LD	(_fossil_flushbuf+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_fastint+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_rs_in_stat+1), DE
 	INC	HL
 
-	LD	(_fossil_hook38stat+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
-	INC	HL
-
-	LD	(_fossil_chput_hook+1), HL
-	INC	HL
-	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_rs_out_stat+1), DE
 	INC	HL
 
-	LD	(_fossil_keyb_hook+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_dtr+1), DE
 	INC	HL
 
-	LD	(_fossil_get_info+1), HL
 	INC	HL
+	LD	E, (HL)
 	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_rts+1), DE
 	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_carrier+1), DE
+	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_chars_in_buf+1), DE
+	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_size_of_buf+1), DE
+	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_flushbuf+1), DE
+	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_fastint+1), DE
+	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_hook38stat+1), DE
+	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_chput_hook+1), DE
+	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_keyb_hook+1), DE
+	INC	HL
+
+	INC	HL
+	LD	E, (HL)
+	INC	HL
+	LD	D, (HL)
+	LD	(_fossil_get_info+1), DE
 
 	RET
 
