@@ -71,10 +71,12 @@ INST_HOOK:
 	ld	de, (WORK)	; DE' => amount required to be added to
 	exx
 
+LOOP:
 	PUSH	BC
 
 	LD	B, 8
 	LD	A, (HL)
+	INC	HL
 NEXT:
 	RLCA
 	JR	NC, SKIP
@@ -95,6 +97,11 @@ SKIP:
 	JR	NZ, NEXT
 
 	POP	BC
+	DEC	BC
+	LD	A, C
+	OR	B
+	JR	NZ, LOOP
+
 	RET
 
 ALLOC_FAILED:

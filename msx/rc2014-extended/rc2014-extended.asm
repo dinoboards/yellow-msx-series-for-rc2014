@@ -28,14 +28,5 @@ ROM_HEADER:
 	include "probing.asm"
 	include	"extended-bios.asm"
 
-	PUBLIC	spike
-spike:
-	LD	DE, spikemsg
-	CALL	PRINT
-	RET
-
-spikemsg:
-	DB	"Did we init?", 13, 10, 0
-
 	DS	$C000 - $
 

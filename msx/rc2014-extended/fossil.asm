@@ -2,6 +2,8 @@
 	include	"sio.inc"
 	include	"msx.inc"
 
+SIO_BUFSZ	EQU	32
+
 FOSSIL_JUMP_TABLE:
 	jp	getversion	; Version H.L (H,L packed BCD)
 	jp	init		; initialises RS232
@@ -104,21 +106,41 @@ getversion:
 	RET
 
 init:
+	LD      HL, FLAGS		; CLAIM SERIAL PORT
+	SET     3, (HL)
+
 	RST	30H
 	DB	$8F		; SLOT 3-3
-	DW	spike
+	DW	SIO_INIT
+
+	XOR	A
+	LD	(DATCNT), A
+
+	LD	HL, SIO_RCVBUF
+	LD	(RSFCB), HL
+        LD      A, SIO_BUFSZ
+        LD      (RSIQLN), A
+
 	RET
 
-	; find or assume slot 3-3
-	; find RS232 INIT function
-	; call it?
-
-deinit
+deinit:
 setbaud
 protocol:
 channel:
+	RET
+
 rs_in:
+	PUSH	IX
+	RST	$30
+	DB	$8F
+	DW	SIO_RCBBYT
+	POP	IX
+	RET
+
 rs_out:
+	SIO_OUT_A()
+	RET
+
 rs_in_stat:
 rs_out_stat:
 dtr:
@@ -246,5 +268,7 @@ SIO_INTRCV4:
 	OUT	(SIO0A_CMD), A
 	RET
 
-
-
+SIO_RCVBUF:
+SIO_HD:		DW	SIO_BUF		; BUFFER HEAD POINTER
+SIO_TL:		DW	SIO_BUF		; BUFFER TAIL POINTER
+SIO_BUF:	DS	SIO_BUFSZ, $00	; RECEIVE RING BUFFER

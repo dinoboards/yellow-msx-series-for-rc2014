@@ -15,3 +15,51 @@ SIO_RTSOFF	EQU	$E8
 
 ; TODO Move this to a bit field in FLAGS or something
 SIO_RTS:	EQU	ESTBLS		; 0 => RTS OFF, $FF => RTS ON
+
+
+SIO_CHIP_INIT:	macro	CMD, RTS
+	; WR0: CHANNEL RESET CMD
+	LD	A, 0
+	OUT	(CMD), A
+	LD	A, 018H
+	OUT	(CMD), A
+
+	; WR4: CLK BAUD PARITY STOP BIT
+	LD	A, 4
+	OUT	(CMD), A
+	LD	A, 0C4H
+	OUT	(CMD), A
+
+	; WR1: INTERRUPT ON
+	LD	A, 1
+	OUT	(CMD), A
+	LD	A, SIO_WR1VAL
+	OUT	(CMD), A
+
+	; WR2: IM2 VEC OFFSET
+	LD	A, 2
+	OUT	(CMD), A
+	LD	A, 00H
+	OUT	(CMD),A
+
+	; WR3: 8 BIT RCV, CTS/DCD AUTO, RX ENABLE
+	LD	A, 3
+	OUT	(CMD), A
+	LD	A, 0E1H
+	OUT	(CMD), A
+
+	; WR5: DTR, 8
+	LD	A, 5
+	OUT	(CMD), A
+	LD	A, RTS
+	OUT	(CMD), A
+	ENDM
+
+SIO_OUT_CHR:	macro	chr
+	LD 	A, chr		; REQUEST NEXT PACKET
+	OUT	(DAT_CH), A	; send to port
+	endm
+
+SIO_OUT_A:	macro
+	OUT	(DAT_CH), A	; send to port
+	endm
