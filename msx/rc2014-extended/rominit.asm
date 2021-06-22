@@ -113,9 +113,16 @@ MSG.ALLOC_FAILED:
 	DB	"RC2014 Driver: Insufficient page 3 memory available", 13, 10, 0
 
 FOSSIL_DRV_START:
+if SYMBOL_ONLY=1
+	INCBIN	"bin/fossil_xxx.bin"
+else
 	INCBIN	"bin/fossil_000.bin"
+endif
 FOSSIL_DRV_LENGTH	EQU	$-FOSSIL_DRV_START
 
 FOSSILE_DRV_MAP:
+if SYMBOL_ONLY=1
+	INCBIN	"bin/fossil-map-xxx.bin"
+else
 	INCBIN	"bin/fossil-map.bin"
-
+endif
