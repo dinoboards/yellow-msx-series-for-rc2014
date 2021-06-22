@@ -12,11 +12,11 @@ all: $(BIN)rc2014-extended.rom
 
 $(BIN)rc2014-extended.rom: rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm probing.asm $(BIN)fossil_000.bin $(BIN)fossil-map.bin $(BIN)fossil.sym
 	@mkdir -p bin
-	$(PASMO) $< $@
+	$(PASMO) --equ SYMBOL_ONLY=0 $< $@
 
 $(BIN)rc2014-extended.rom.sym: rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm probing.asm $(BIN)fossil_xxx.bin $(BIN)fossil-map-xxx.bin $(BIN)fossil.sym
 	@mkdir -p bin
-	$(PASMO) $< $(BIN)ignored $@
+	$(PASMO) --equ SYMBOL_ONLY=1 $< $(BIN)ignored $@
 
 $(BIN)fossil_xxx.bin $(BIN)fossil.sym: fossil.asm
 	@mkdir -p bin
