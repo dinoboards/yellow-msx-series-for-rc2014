@@ -102,6 +102,16 @@ SKIP:
 	OR	B
 	JR	NZ, LOOP
 
+	LD	A, $C3                  ; JUMP
+	DI
+	LD	(H_KEYI), A             ; SET JMP INSTRUCTION
+	EXX
+	LD	HL, SIO_INT             ; SET TO JUMP TO SIO_INIT IN PAGE 3 RAM
+	ADD	HL, DE
+	LD	(H_KEYI+1), HL          ; SET NEW INTERRUPT ENTRY POINT
+	EXX
+	EI
+
 	RET
 
 ALLOC_FAILED:
