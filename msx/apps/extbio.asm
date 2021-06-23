@@ -67,6 +67,7 @@ loop1:
 	inc	de
 	inc	de
 	inc	de
+	inc	de
 	djnz	loop1
 
 	INC	HL				; RETRIEVE THE JUMP TABLE ADDRESS
@@ -86,6 +87,7 @@ LOOP:
 	ld	(hl), d
 	inc	hl
 
+	inc	hl
 	inc	hl
 	inc	hl
 	inc	hl				; HL REFERENCES NEXT LOCAL LINK FUNCTION
@@ -108,6 +110,8 @@ _rs232_init:
 ; extern void rs232_open(uint8_t mode, uint8_t buffer_length, uint8_t* buffer);
 	PUBLIC	_rs232_open
 _rs232_open:
+	ld b,b
+	jr $+2
 	PUSH	IX
 	LD	IX, 0
 	ADD	IX, SP
@@ -128,6 +132,8 @@ _rs232_close:
 ;extern uint8_t rs232_sndchr(const char ch) __z88dk_fastcall;
 	PUBLIC	_rs232_sndchr
 _rs232_sndchr:
+	ld b,b
+	jr $+2
 	LD	A, L
 	CALL	rs232_slot_sndchr
 	LD	L, 0
@@ -181,42 +187,49 @@ rs232_slot_init:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_open:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_stat:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_getchr:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_sndchr:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_close:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_eof:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 ;
@@ -228,36 +241,42 @@ rs232_slot_loc:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_lof:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_backup:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_sndbrk:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_dtr:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 rs232_slot_setchn:
 	RST	30H
 	DB	0
 	DW	0
+	EI
 	RET
 
 
@@ -508,3 +527,36 @@ _fossil_get_info:
 	JP	0
 
 
+
+
+RG1SAV:         equ     $F3E0
+VDP_INTEN:     EQU     5
+VDP_ADDR:       equ     $99             ; VDP address (write only)
+
+       PUBLIC  _disableVdpInterrupts
+_disableVdpInterrupts:
+       DI
+       LD      A, (RG1SAV)
+       RES     VDP_INTEN, A            ; RESET INTERRUPT ENABLE BIT
+       LD      (RG1SAV), A
+       OUT     (VDP_ADDR), A
+       NOP
+       NOP
+       LD      A, $81                  ; SELECT REGISTER 1
+       OUT     (VDP_ADDR), A
+       EI
+       RET
+
+       PUBLIC  _enableVdpInterrupts
+_enableVdpInterrupts:
+       DI
+       LD      A, (RG1SAV)
+       SET     VDP_INTEN, A            ; RESET INTERRUPT ENABLE BIT
+       LD      (RG1SAV), A
+       OUT     (VDP_ADDR), A
+       NOP
+       NOP
+       LD      A, $81                  ; SELECT REGISTER 1
+       OUT     (VDP_ADDR), A
+       EI
+       RET

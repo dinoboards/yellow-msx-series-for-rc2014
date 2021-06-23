@@ -20,7 +20,7 @@ Data Area Used By RS-232C
 |         |        |        | OLDSTT+1 = Slot ID                                     |
 |         |        |        | OLDSTT+2 = Address                                     |
 |         |        |        | OLDSTT+4 = RET (0C9h)                                  |
-| FB0Ch   | OLDINT |  5     | Hook called by the RS-232C                             |
+| FB11h   | OLDINT |  5     | Hook called by the RS-232C                             |
 |         |        |        | OLDINT = RST 30h (0F7h)                                |
 |         |        |        | OLDINT+1 = Slot ID                                     |
 |         |        |        | OLDINT+2 = Address                                     |

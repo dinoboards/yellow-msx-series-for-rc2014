@@ -43,18 +43,31 @@ typedef struct {
 //   slot_jump_instruction init;
 // } rs232_slot_jumps;
 
+// +typedef struct {
+// │+  char* head;
+// │+  char* tail;
+// │+  char  buffer[];
+// │+} serial_buffer;
 
 char __at 0xF3F3  FSMARK[2];
 fossil_jump_table* __at 0xF400 FSTABL;
+// +uint8_t __at 0xFB1C SIO_RTS;   //ESTBLS                ; 0 => RTS OFF, $FF => RTS ON
+//                                                                                                                               │+uint8_t __at 0xFB17 DATCNT;
+//                                                                                                                               │+uint8_t __at 0xFB03 RSTMP;  //Temporary data storage for RS232 Driver
+//                                                                                                                               │+serial_buffer * __at 0xFB04 RSFCB;
 
 extern void fossil_link(void* jumpTable) __z88dk_fastcall;
 extern uint16_t fossil_get_version();
 extern void fossil_init();
 extern void fossil_rs_out(char c) __z88dk_fastcall;
+// +extern bool fossil_rs_in_stat();
+// +extern char fossil_rs_in();
 
 uint16_t __at 0xFD09 sltwork[64];
 
 void main() {
+
+  // RSTMP = 0;
 
   void *p = extbio_fossil_install();
 
@@ -68,5 +81,37 @@ void main() {
 
   fossil_init();
 
+// xprintf("BUF AT %p, head: %p, tail: %p\r\n", RSFCB, RSFCB->head, RSFCB->tail);
   fossil_rs_out('A');
+
+// while(1) {
+// │+    int16_t timeout = 32000;
+// │+
+// │+    bool stat;
+// │+
+// │+    if (msxbiosBreakX())
+// │+      exit(0);
+// │+
+// │+    stat = fossil_rs_in_stat();
+// │+
+// │+    while(!stat && timeout-- > 0) {
+// │+      if (timeout % 1000 == 0)
+// │+        xprintf("%d.%d.%d %p %p\r\n", SIO_RTS, DATCNT, RSTMP, RSFCB->head, RSFCB->tail);
+// │+
+// │+      if (msxbiosBreakX())
+// │+        exit(0);
+// │+
+// │+      stat = fossil_rs_in_stat();
+// │+    }
+// │+
+// │+    if (stat) {
+// │+      uint8_t ch = fossil_rs_in();
+// │+
+// │+      xprintf("'%02X' %d.%d.%d", ch, SIO_RTS, DATCNT, RSTMP);
+// │+      xprintf(" %p ", RSFCB->head);
+// │+      xprintf("%p\r\n", RSFCB->tail);
+// │+    } else {
+// │+      xprintf("-");
+// │+    }
+// │+  }
 }

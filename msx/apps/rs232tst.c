@@ -44,10 +44,27 @@ rs232_init_params init_params = {
 //   slot_jump_instruction init;
 // } rs232_slot_jumps;
 
+typedef struct {
+  uint8_t* pHead;
+  uint8_t pTail;
+  uint8_t data[];
+} rs232Buffer;
+
 #define buffer_size 64
-uint8_t __at 0xC000 buffer[128+9];    // needs to be in page 3
+// uint8_t __at 0xC000 buffer[128+9];    // needs to be in page 3
+rs232Buffer __at 0xC000 buffer; //[128+9];    // needs to be in page 3
+uint8_t __at 0xFB03 RSTMP;
+uint8_t __at 0xFB1A RS_ERRORS;
+uint8_t __at 0x0FB17 DATCNT;
+
+extern void disableVdpInterrupts();
+extern void enableVdpInterrupts();
+
+char print_buffer[256];
 
 void main() {
+
+  // disableVdpInterrupts();
 
   extbio_get_dev_info_table(8, info_table);
 
@@ -57,47 +74,59 @@ void main() {
 
   rs232_init(&init_params);
 
-  printf("buffersize: %d at %p\r\n", buffer_size, buffer);
-  rs232_open(RS232_RAW_MODE, buffer_size, buffer);
+  printf("buffersize: %d at %p\r\n", buffer_size, &buffer);
+  rs232_open(RS232_RAW_MODE, buffer_size, (uint8_t*)&buffer);
 
   rs232_sndchr('A');
 
   while(1) {
-    int16_t timeout = 32000;
+    int16_t timeout = 16000;
 
     int16_t count;
 
-    if (msxbiosBreakX())
-      exit(0);
+    if (msxbiosBreakX()) {
+      enableVdpInterrupts();
+        exit(0);
+    }
 
     count = rs232_loc();
 
     // printf("1 -- %ld\r\n", timeout);
     while(count == 0 && timeout-- > 0) {
-      if (timeout % 1000 == 0)
+      if (timeout % 2000 == 0) {
         printf(".");
+      }
 
-      if (msxbiosBreakX())
-        exit(0);
+      if (msxbiosBreakX()) {
+        enableVdpInterrupts();
+         exit(0);
+      }
 
       count = rs232_loc();
     }
-    // printf("2 -- %ld\r\n", timeout);
 
-    // printf("\r\nLOC: %d -- %d\r\n", count, timeout);
+    if (count == 0) {
+      printf("t");
+      rs232_sndchr('T');
+    }
 
     if (count > 0) {
-      uint8_t ch = rs232_getchr();
+      uint8_t index = 0;
+      while(count > 0 && index < 250) {
+        uint8_t ch = rs232_getchr();
+        print_buffer[index++] = ch;
+        print_buffer[index] = 0;
 
-      printf("%c", ch);
-    } else {
-      printf("-");
+        printf("%c", ch);
+
+        count = rs232_loc();
+      }
+
+      printf("\r\n--");
+      printf(print_buffer);
+      printf("--\r\n");
     }
   }
-
-  // uint8_t ch = rs232_getchr();
-
-  // printf("\r\nRead ch: %c\r\n", ch);
 
   // rs232_close();
 
