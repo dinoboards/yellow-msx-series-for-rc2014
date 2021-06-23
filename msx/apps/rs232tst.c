@@ -56,6 +56,7 @@ rs232Buffer __at 0xC000 buffer; //[128+9];    // needs to be in page 3
 uint8_t __at 0xFB03 RSTMP;
 uint8_t __at 0xFB1A RS_ERRORS;
 uint8_t __at 0x0FB17 DATCNT;
+uint8_t __at 0xFB1C ESTBLS;     // RTSON:		EQU	$		; Bit boolean. (RS-232C)
 
 extern void disableVdpInterrupts();
 extern void enableVdpInterrupts();
@@ -93,8 +94,9 @@ void main() {
 
     // printf("1 -- %ld\r\n", timeout);
     while(count == 0 && timeout-- > 0) {
+
       if (timeout % 2000 == 0) {
-        printf(".");
+        printf(".%d-%d.", ESTBLS, DATCNT);
       }
 
       if (msxbiosBreakX()) {
@@ -114,6 +116,7 @@ void main() {
       uint8_t index = 0;
       while(count > 0 && index < 250) {
         uint8_t ch = rs232_getchr();
+
         print_buffer[index++] = ch;
         print_buffer[index] = 0;
 

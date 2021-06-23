@@ -110,8 +110,6 @@ _rs232_init:
 ; extern void rs232_open(uint8_t mode, uint8_t buffer_length, uint8_t* buffer);
 	PUBLIC	_rs232_open
 _rs232_open:
-	ld b,b
-	jr $+2
 	PUSH	IX
 	LD	IX, 0
 	ADD	IX, SP
@@ -132,8 +130,6 @@ _rs232_close:
 ;extern uint8_t rs232_sndchr(const char ch) __z88dk_fastcall;
 	PUBLIC	_rs232_sndchr
 _rs232_sndchr:
-	ld b,b
-	jr $+2
 	LD	A, L
 	CALL	rs232_slot_sndchr
 	LD	L, 0
