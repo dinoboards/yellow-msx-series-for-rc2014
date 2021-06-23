@@ -163,27 +163,20 @@ get_info:
 SIO_INT:
 	DI				; INTERRUPTS WILL BE RE-ENABLED BY MSX BIOS
 
-	ld b,b
-	jr $+2
-
-	ld      a, (RS_ERRORS)
-	inc     a
-	ld      (RS_ERRORS), a
-
 	; CHECK TO SEE IF SOMETHING IS ACTUALLY THERE
 	XOR	A			; READ REGISTER 0
 	OUT	(CMD_CH), A
 	IN	A, (CMD_CH)
 	AND	$01			; ISOLATE RECEIVE READY BIT
-	JP	Z, OLDINT			; NOTHING AVAILABLE ON CURRENT CHANNEL
+	JP	Z, OLDINT		; NOTHING AVAILABLE ON CURRENT CHANNEL
+
+	LD	A, (RSIQLN)
+	LD	C, A			; BUFFER FULL COUNT IN C
+
 
 	; RECEIVE CHARACTER INTO BUFFER
 SIO_INTRCV1:
-	LD	A, (RSTMP)
-	INC	A
-	LD	(RSTMP), A
-
-	IN	A, (DAT_CH)			; READ PORT
+	IN	A, (DAT_CH)		; READ PORT
 
 	LD      HL, FLAGS		; IS OPENED?
 	BIT     3, (HL)			; FLAG PORT OPEN?
@@ -194,13 +187,14 @@ SIO_INTRCV1:
 	OUT	(CMD_CH), A
 	LD	A, SIO_RTSOFF
 	OUT	(CMD_CH), A
+
+	LD	A, 1			; TODO STORE THIS AS A BIT FIELD
+	LD	(SIO_RTS), A
+
 	JR	SIO_INTRCV4
 
 SIO_INGEST_BYTE
 	LD	B, A			; SAVE BYTE READ
-
-	LD	A, (RSIQLN)
-	LD	C, A
 
 	LD	HL, DATCNT
 	LD	A, (HL)			; GET COUNT
@@ -211,22 +205,18 @@ SIO_INGEST_BYTE
 	LD	(HL), A			; AND SAVE IT
 
 	LD	HL, (RSFCB)
+	ld	D, C
+	SRL	D			; ARE WE AT HALF FULL?
+	CP	D
+	JR	NZ, SIO_INTRCV2		; IF NOT, BYPASS CLEARING RTS
 
-	; CP	SIO_BUF_HI		; BUFFER GETTING FULL?
-	; JR	NZ, SIO_INTRCV2		; IF NOT, BYPASS CLEARING RTS
+	LD	A, 5			; SELECTED REGISTER WRITE 5
+	OUT	(CMD_CH), A
+	LD	A, SIO_RTSOFF
+	OUT	(CMD_CH), A
 
-	; LD	A, 5			; SELECTED REGISTER WRITE 5
-	; OUT	(CMD_CH), A
-	; LD	A, SIO_RTSOFF
-	; OUT	(CMD_CH), A
-
-	; XOR	A
-	; LD	(SIO_RTS), A
-
-	INC	C
-	INC	C
-	INC	C
-	INC	C
+	LD	A, 2			; TODO STORE THIS AS A BIT FIELD
+	LD	(SIO_RTS), A
 
 SIO_INTRCV2:
 	PUSH	HL			; SAVE ADR OF HEAD PTR
@@ -291,25 +281,6 @@ SIO_INTRCV4:
 	OUT	(SIO0A_CMD), A
 	LD	A, COMMAND_3
 	OUT	(SIO0A_CMD), A
-
-	; pop	af	; return address to bios!
-
-int_end:
-	; pop     ix
-	; pop     iy
-	; pop     af
-	; pop     bc
-	; pop     de
-	; pop     hl
-	; exx
-	; ex      af,af'
-	; pop     af
-	; pop     bc
-	; pop     de
-	; pop     hl
-	; ei
-	; ret
-
 	JP	OLDINT
 
 SIO_RCVBUF:
