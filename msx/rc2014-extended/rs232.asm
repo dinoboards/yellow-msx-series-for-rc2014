@@ -49,13 +49,18 @@ SIO_INIT:
 	LD	(SIO_RTS), A
 
 	SIO_CHIP_INIT	SIO0A_CMD, SIO_RTSOFF
-	SIO_CHIP_INIT	SIO0B_CMD, SIO_RTSON
+	SIO_CHIP_INIT	SIO0B_CMD, SIO_RTSOFF
 	EI
 	XOR	A
+	ld      (RSTMP), A
+	ld      (RS_ERRORS), A
 	RET
 
 ; ------------------------------------------------
 OPEN:				; open RS232C port
+	ld b,b
+	jr $+2
+	EI
 	XOR	A
 	LD	(DATCNT), A
 
@@ -79,8 +84,12 @@ OPEN:				; open RS232C port
 	LD	(HL), D
 	INC	HL
 
+	PUBLIC	SIO_OPEN
+SIO_OPEN:
 	LD      HL, FLAGS		; ENSURE RS232 IS MARKED AS OPENED
 	SET     3, (HL)
+
+	SIO_CHIP_INIT        SIO0B_CMD, SIO_RTSON
 	RET
 
 STAT:				; Read Status
@@ -92,6 +101,8 @@ GETCHR:				; reveive data
 	RET
 
 SNDCHR:				; send data
+	ld b,b
+	jr $+2
 	SIO_OUT_A
 	RET
 
