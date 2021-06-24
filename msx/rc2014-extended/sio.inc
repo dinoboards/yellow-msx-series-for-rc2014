@@ -14,8 +14,8 @@ SIO_RTSOFF	EQU	$E8
 ; SIO_BUFSZ	EQU	245
 ; SIO_BUF_HI	EQU	132
 
-; TODO Move this to a bit field in FLAGS or something
-SIO_RTS:	EQU	ESTBLS		; 0 => RTS OFF, $FF => RTS ON
+; TODO Move this to a bit field in RS_FLAGS or something
+SIO_RTS:	EQU	RS_ESTBLS		; 0 => RTS OFF, $FF => RTS ON
 
 
 SIO_CHIP_INIT:	macro	CMD, RTS

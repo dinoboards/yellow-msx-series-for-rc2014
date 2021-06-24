@@ -1,7 +1,7 @@
 
 
 PROBE_HARDWARE:
-	; LD	(RSFCB), HL
+	; LD	(RS_FCB), HL
 
 	; LD	DE, MSG.CPU_SPEED
 	; CALL	PRINT

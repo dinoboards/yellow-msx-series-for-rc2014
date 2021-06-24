@@ -4,11 +4,11 @@ This document describes how to use the RS232C fossil driver created by Erik Maas
 
 First some nice things to know about this driver:
 
-* It automaticly tries to detect the RS232C interface
+* It automatically tries to detect the RS232C interface
 * It can receive data up to a rate of 115200 baud
 * To do the highest possible rates, the driver can install itself at
   hook &h0038, if there is RAM at this location. (e.g. DOS)
-* If you write software for one type of interface, it should automaticly work
+* If you write software for one type of interface, it should automatically work
   on the other interfaces too!
 
 
