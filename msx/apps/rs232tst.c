@@ -20,6 +20,7 @@ uint8_t __at 0xFB03 RSTMP;
 uint8_t __at 0xFB1A RS_ERRORS;
 uint8_t __at 0x0FB17 DATCNT;
 uint8_t __at 0xFB1C ESTBLS;     // RTSON:		EQU	$		; Bit boolean. (RS-232C)
+uint8_t __at 0xFB1B FLAGS;      // RS-232C flags
 
 void main2();
 
@@ -40,20 +41,19 @@ void main() {
 
     int16_t count;
 
-    if (msxbiosBreakX()) {
-      exit(0);
-    }
+    if (msxbiosBreakX())
+      goto exitApp;
+
 
     count = rs232_loc();
 
     while(count == 0 && timeout != 0) {
       if (timeout % 2048 == 0) {
-        printf(".%d.%d.%p.", DATCNT, count, buffer.pHead);
+        printf(".");
       }
 
-      if (msxbiosBreakX()) {
-        exit(0);
-      }
+      if (msxbiosBreakX())
+        goto exitApp;
 
       count = rs232_loc();
 
@@ -64,19 +64,20 @@ void main() {
     }
 
     if (timeout == 0) {
-      printf("t");
-      rs232_sndchr('T');
+      printf("\r\n");
     }
 
     while(count > 0) {
+      printf(">> H: %p, T: %p, CNT: %d,\r\n", buffer.pHead, buffer.pTail, count);
       uint8_t ch = rs232_getchr();
-
-      printf("%c", ch);
+      printf(">> H: %p, T: %p, CNT: %d, ch: %c\r\n", buffer.pHead, buffer.pTail, count, ch);
 
       count = rs232_loc();
     }
   }
 
-  // rs232_close();
-
+exitApp:
+  printf("FLAGS: %02X\r\nClosing...\r\n", FLAGS);
+  rs232_close();
+  printf("FLAGS: %02X\r\nClosed\r\n", FLAGS);
 }

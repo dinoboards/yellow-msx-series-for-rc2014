@@ -64,3 +64,10 @@ SIO_OUT_CHR:	macro	chr
 SIO_OUT_A:	macro
 	OUT	(DAT_CH), A	; send to port
 	endm
+
+SIO_CHIP_RTS:	macro	CMD, RTS
+	LD	A, 5
+	OUT	(CMD), A
+	LD	A, RTS
+	OUT	(CMD), A
+	endm
