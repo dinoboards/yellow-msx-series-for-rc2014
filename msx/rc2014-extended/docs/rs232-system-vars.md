@@ -26,9 +26,10 @@ Data Area Used By RS-232C
 |         |           |        | RS_OLDINT+2 = Address                                  |
 |         |           |        | RS_OLDINT+4 = RET (0C9h)                               |
 | FB16h   | RS_DEVNUM |  1     | Byte offset. (RS-232C)                                 |
-| FB17h   | RS_DATCNT |  3     | RS_DATCNT = (buffer count)                             |
+| FB17h   | RS_DATCNT |  1     | RS_DATCNT = (buffer count)                             |
+| FB18h   | RS_BUFEND |  2     | RS_BUFEND = (buffer end ptr)                           |
 | FB1Ah   | RS_ERRORS |  1     | RS-232C error code                                     |
-| FB1Bh   | RS_FLAGS  |  1     | RS-232C RS_FLAGS                                          |
+| FB1Bh   | RS_FLAGS  |  1     | RS-232C RS_FLAGS                                       |
 | FB1Ch   | RS_ESTBLS |  1     | Bit boolean. (RS-232C)                                 |
 | FB1Dh   | RS_COMMSK |  1     | RS-232C mask                                           |
 | FB1Eh   | RS_LSTCOM |  1     | Byte Data. (RS-232C)                                   |

@@ -16,11 +16,12 @@ typedef struct {
 
 #define buffer_size 64
 rs232Buffer __at 0xC000 buffer;     // needs to be in page 3
-uint8_t __at 0xFB03 RSTMP;
+uint8_t __at 0xFB03 RS_TMP;
 uint8_t __at 0xFB1A RS_ERRORS;
-uint8_t __at 0x0FB17 DATCNT;
-uint8_t __at 0xFB1C ESTBLS;     // RTSON:		EQU	$		; Bit boolean. (RS-232C)
-uint8_t __at 0xFB1B FLAGS;      // RS-232C flags
+uint8_t __at 0xFB17 RS_DATCNT;
+uint8_t __at 0xFB1C RS_ESTBLS;     // RTSON:		EQU	$		; Bit boolean. (RS-232C)
+uint8_t __at 0xFB1B RS_FLAGS;      // RS-232C bit flags
+uint8_t* __at 0xFB18 RS_BUFEND;
 
 void main2();
 
@@ -35,6 +36,8 @@ void main() {
 
   printf("buffersize: %d at %p\r\n", buffer_size, &buffer);
   rs232_open(RS232_RAW_MODE, buffer_size, (uint8_t*)&buffer);
+
+  printf("BUFFER END: %p\r\n", RS_BUFEND);
 
   while(1) {
     uint16_t timeout = 32000;
@@ -77,7 +80,7 @@ void main() {
   }
 
 exitApp:
-  printf("FLAGS: %02X\r\nClosing...\r\n", FLAGS);
+  printf("RS_FLAGS: %02X\r\nClosing...\r\n", RS_FLAGS);
   rs232_close();
-  printf("FLAGS: %02X\r\nClosed\r\n", FLAGS);
+  printf("RS_FLAGS: %02X\r\nClosed\r\n", RS_FLAGS);
 }
