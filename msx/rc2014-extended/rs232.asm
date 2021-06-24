@@ -11,8 +11,6 @@
 ; [ ] DTR - IMPLEMENT
 ; [ ] SETCHN - IMPLEMENT (SIO PORTS)
 
-	include	"sio.inc"
-
 EXTBIO_RS2_JUMP_TABLE:
 	DEFB	0		; MSX serial features (no TxReady INT, No Sync detect, No Timer INT, No CD, No RI)
 	DEFB	1		; version number
@@ -44,7 +42,7 @@ SIO_INIT:
 	DI
 
 	XOR	A
-	LD	(SIO_RTS), A
+	LD	(RS_FLAGS), A
 
 	SIO_CHIP_INIT	SIO0A_CMD, SIO_RTSOFF
 	SIO_CHIP_INIT	SIO0B_CMD, SIO_RTSOFF
@@ -57,6 +55,7 @@ OPEN:				; open RS232C port
 	EI
 	XOR	A
 	LD	(RS_DATCNT), A
+	LD	(RS_FLAGS), A
 
 	LD	(RS_FCB), HL
 	LD      A, C
@@ -85,12 +84,10 @@ OPEN:				; open RS232C port
 
 	PUBLIC	SIO_OPEN
 SIO_OPEN:
-	LD      HL, RS_FLAGS		; ENSURE RS232 IS MARKED AS OPENED
-	SET     3, (HL)
-
-	LD	A, 254
-	LD	(SIO_RTS), A
-	SIO_CHIP_RTS	SIO0B_CMD, SIO_RTSON
+	LD      HL, RS_FLAGS
+	SET     3, (HL)			; SET RS232 OPEN FLAG
+	SET	1, (HL)			; SET RTS ON FLAG
+	SIO_CHIP_RTS	CMD_CH, SIO_RTSON
 	RET
 
 STAT:				; Read Status
@@ -106,12 +103,9 @@ SNDCHR:				; send data
 	RET
 
 CLOSE:		 		; close RS232C port
-	LD      HL, RS_FLAGS	; ENSURE RS232 IS MARKED AS CLOSED
-	RES     3, (HL)
-
-	XOR	A
-	LD	(SIO_RTS), A
-	SIO_CHIP_RTS	SIO0B_CMD, SIO_RTSOFF
+	XOR	A		; MARK AS CLOSED AND RTS OFF
+	LD	(RS_FLAGS), A
+	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
 	RET
 
 
