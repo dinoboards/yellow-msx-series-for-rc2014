@@ -4,7 +4,7 @@
 ; [ ] OPEN - ERROR UNLESS RAW MODE, ERROR IF ALREADY OPENED, ENABLE RTS
 ; [ ] STAT - IMPLEMENT
 ; [ ] SNDCHR XON/XOFF FLOW CONTROL
-; [ ] CLOSE - DISABLE RTS
+; [x] CLOSE - DISABLE RTS
 ; [ ] EOF - ALWAYS FALSE
 ; [ ] LOF - IMPLEMENT
 ; [ ] SNDBRK - RESEARCH AND IMPLEMENT
@@ -24,10 +24,8 @@ EXTBIO_RS2_JUMP_TABLE:
 	JP	SNDCHR		; send data
 	JP	CLOSE		; close RS232C port
 	JP	EOF		; tell EOF code received
-	JP	LOC		; reports number of characters in the
-				; receiver buffer
-	JP	LOF		; reports number of free space left in the
-				; receiver buffer
+	JP	LOC		; reports number of characters in the receiver buffer
+	JP	LOF		; reports number of free space left in the receiver buffer
 	JP	BACKUP		; back up a character
 	JP	SNDBRK		; send break character
 	JP	DTR		; turn on/off DTR line
@@ -35,10 +33,10 @@ EXTBIO_RS2_JUMP_TABLE:
 
 
 ;------------------------------------
-        ; Entry:  [HL]= address of the parameter table
-        ;         [B] = slot address of the parameter table
-        ; Return: carry flag is set if illegal parameters are contained
-        ; Modify: [AF]
+	; Entry:  [HL]= address of the parameter table
+	;	 [B] = slot address of the parameter table
+	; Return: carry flag is set if illegal parameters are contained
+	; Modify: [AF]
 
 	PUBLIC	SIO_INIT
 INIT:				; initialize RS232C port
@@ -61,8 +59,8 @@ OPEN:				; open RS232C port
 	LD	(RS_DATCNT), A
 
 	LD	(RS_FCB), HL
-        LD      A, C
-        LD      (RS_IQLN),A
+	LD      A, C
+	LD      (RS_IQLN),A
 
 	LD	D, H		; FIRST 2 WORDS OF BUFFER AT THE HEAD AND TAIL PTRS
 	LD	E, L		; THEY NEED TO BE INITIALISED TO START OF ACTUAL DATA BUFFER
@@ -80,6 +78,11 @@ OPEN:				; open RS232C port
 	LD	(HL), D
 	INC	HL
 
+	EX	DE, HL
+	LD	B, 0
+	ADD	HL, BC
+	LD	(RS_BUFEND), HL
+
 	PUBLIC	SIO_OPEN
 SIO_OPEN:
 	LD      HL, RS_FLAGS		; ENSURE RS232 IS MARKED AS OPENED
@@ -87,7 +90,7 @@ SIO_OPEN:
 
 	LD	A, 254
 	LD	(SIO_RTS), A
-	SIO_CHIP_RTS        SIO0B_CMD, SIO_RTSON
+	SIO_CHIP_RTS	SIO0B_CMD, SIO_RTSON
 	RET
 
 STAT:				; Read Status
@@ -108,7 +111,7 @@ CLOSE:		 		; close RS232C port
 
 	XOR	A
 	LD	(SIO_RTS), A
-	SIO_CHIP_RTS        SIO0B_CMD, SIO_RTSOFF
+	SIO_CHIP_RTS	SIO0B_CMD, SIO_RTSOFF
 	RET
 
 
