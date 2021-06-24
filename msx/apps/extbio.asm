@@ -58,16 +58,20 @@ _extbio_fossil_install:
 	PUBLIC	_rs232_link
 _rs232_link:
 	LD	A, (HL)				; RETRIEVE SLOT ID
-	ld	de, rs232_slot_init+1		; WRITE IT TO THE LINK FUNCTIONS
+	ld	de, rs232_slot_init+3		; WRITE IT TO THE LINK FUNCTIONS
 	ld	b,  RS232_FN_COUNT
 loop1:
-	ld	(de), a
-	inc	de
-	inc	de
-	inc	de
-	inc	de
-	inc	de
-	inc	de
+	LD	(DE), A
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
 	djnz	loop1
 
 	INC	HL				; RETRIEVE THE JUMP TABLE ADDRESS
@@ -79,7 +83,7 @@ loop1:
 	INC	DE
 
 
-	LD	HL, rs232_slot_init+2		; WRITE THE JUMP ADDRESSES
+	LD	HL, rs232_slot_init+4		; WRITE THE JUMP ADDRESSES
 	LD	B, RS232_FN_COUNT
 LOOP:
 	ld	(hl), e				; WRITE JUMP TABLE REF TO LINK FUNCTION
@@ -87,6 +91,10 @@ LOOP:
 	ld	(hl), d
 	inc	hl
 
+	inc	hl
+	inc	hl
+	inc	hl
+	inc	hl
 	inc	hl
 	inc	hl
 	inc	hl
@@ -180,52 +188,66 @@ _getSlotPage0:
 
 rs232_slot_jumps:
 rs232_slot_init:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_open:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_stat:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_getchr:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_sndchr:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_close:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_eof:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 ;
@@ -234,45 +256,57 @@ rs232_slot_eof:
 	PUBLIC	_rs232_loc
 _rs232_loc:
 rs232_slot_loc:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_lof:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_backup:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_sndbrk:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_dtr:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 rs232_slot_setchn:
+	PUSH	IX
 	RST	30H
 	DB	0
 	DW	0
 	EI
+	POP	IX
 	RET
 
 
@@ -556,3 +590,10 @@ _enableVdpInterrupts:
        OUT     (VDP_ADDR), A
        EI
        RET
+
+
+	PUBLIC	_debugBreak
+_debugBreak:
+	ld b,b
+	jr $+2
+	RET
