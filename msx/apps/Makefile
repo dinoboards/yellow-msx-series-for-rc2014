@@ -9,7 +9,8 @@ SRC := ./
 APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio rs232tst fosiltst
 TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
-ZCC := zcc +msx -create-app -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
+ZCC := zcc +msx -create-app  -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
+# ZCC := zcc +msx -create-app  -subtype=msxdos2 -compiler=sdcc --assemble-only --c-code-in-asm -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
 
 .PHONY: all
 all: $(TARGETS) bin/telnet.com
