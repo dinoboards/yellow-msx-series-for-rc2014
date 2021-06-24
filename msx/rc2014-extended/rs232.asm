@@ -87,8 +87,7 @@ SIO_OPEN:
 
 	LD	A, 254
 	LD	(SIO_RTS), A
-
-	SIO_CHIP_INIT        SIO0B_CMD, SIO_RTSON
+	SIO_CHIP_RTS        SIO0B_CMD, SIO_RTSON
 	RET
 
 STAT:				; Read Status
@@ -104,6 +103,12 @@ SNDCHR:				; send data
 	RET
 
 CLOSE:		 		; close RS232C port
+	LD      HL, FLAGS	; ENSURE RS232 IS MARKED AS CLOSED
+	RES     3, (HL)
+
+	XOR	A
+	LD	(SIO_RTS), A
+	SIO_CHIP_RTS        SIO0B_CMD, SIO_RTSOFF
 	RET
 
 
