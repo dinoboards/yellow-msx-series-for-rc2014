@@ -35,6 +35,23 @@ Data Area Used By RS-232C
 | FB1Eh   | RS_LSTCOM |  1     | Byte Data. (RS-232C)                                   |
 | FB1Fh   | RS_LSTMOD |  1     | Byte Data. (RS-232C)                                   |
 
+RS_FLAGS:
+| BIT |   SET   |   RES   |
+|-----|---------|---------|
+|  0  | SI/SO ??          |
+|  1  | RTS ON | RTS OFF  |
+|  2  | XOFF    | XON     |
+|  4  | ERROR?            |
+|  7  | SHIFT OUT??       |
+
+RS_ESTBLS
+| BIT |   Description       |
+|-----|---------------------|
+|  0  | XON/XOFF            |
+|  1  | SET -> USE RTS/CTS  |
+|  3  | AUTO LF??           |
+|  4  | SI/SO ??            |
+
 FOSSIL DATA VARIABLES:
 | Address | Name   | Length | Description                                            |
 |---------|--------|--------| -------------------------------------------------------|
