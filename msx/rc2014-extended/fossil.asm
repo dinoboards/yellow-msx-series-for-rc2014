@@ -109,26 +109,31 @@ getversion:
 	RET
 
 init:
+	PUSH	IX
+	PUSH	IY
 	RST	30H
 	DB	$8F		; SLOT 3-3
-	DW	SIO_INIT
+	DW	RS_INIT
 	EI
-
-	XOR	A
-	LD	(RS_DATCNT), A
 
 	LD	HL, SIO_RCVBUF
-	LD	(RS_FCB), HL
-	LD	A, SIO_BUFSZ
-	LD	(RS_IQLN), A
+	LD	C, SIO_BUFSZ
+	LD	E, 4
 
 	RST	30H
 	DB	$8F		; SLOT 3-3
-	DW	SIO_OPEN
+	DW	RS_OPEN
 	EI
+	POP	IY
+	POP	IX
 	RET
 
 deinit:
+	XOR	A		; MARK AS CLOSED AND RTS OFF
+	LD	(RS_FLAGS), A
+	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
+	RET
+
 setbaud
 protocol:
 channel:
@@ -136,10 +141,12 @@ channel:
 
 rs_in:
 	PUSH	IX
+	PUSH	IY
 	RST	$30
 	DB	$8F
 	DW	SIO_RCBBYT
 	EI
+	POP	IY
 	POP	IX
 	RET
 
@@ -148,6 +155,10 @@ rs_out:
 	RET
 
 rs_in_stat:
+	LD	A, (RS_DATCNT)
+	OR	A
+	RET
+
 rs_out_stat:
 dtr:
 rts:
