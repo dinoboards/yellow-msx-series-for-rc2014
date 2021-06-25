@@ -151,7 +151,14 @@ rs_in:
 	RET
 
 rs_out:
-	SIO_OUT_A()
+	PUSH	IX
+	PUSH	IY
+	RST	$30
+	DB	$8F
+	DW	RS_SNDCHR
+	EI
+	POP	IY
+	POP	IX
 	RET
 
 rs_in_stat:
