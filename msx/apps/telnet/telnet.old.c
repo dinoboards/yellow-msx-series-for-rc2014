@@ -37,7 +37,7 @@
 */
 #include "aofossilhelper.h"
 #include "print.h"
-#include "telnet.h"
+#include "telnet.old.h"
 #include "xymodem.h"
 
 /*
