@@ -19,7 +19,7 @@ EXTBIO_RS2_JUMP_TABLE:
 	JP	RS_OPEN		; open RS232C port
 	JP	STAT		; ReaD STATus
 	JP	GETCHR		; reveive data
-	JP	SNDCHR		; send data
+	JP	RS_SNDCHR		; send data
 	JP	CLOSE		; close RS232C port
 	JP	EOF		; tell EOF code received
 	JP	LOC		; reports number of characters in the receiver buffer
@@ -96,8 +96,18 @@ GETCHR:				; reveive data
 	OR	A		; CLEAR CARRY FLAG (NEVER HAVE EOF)
 	RET
 
-SNDCHR:				; send data
-	SIO_OUT_A
+	PUBLIC	RS_SNDCHR
+RS_TRANSMIT_PENDING_MASK	EQU	$40	; BIT 2 OF SIO REGISTER 0
+RS_SNDCHR:						; SEND CHARACTER OUT
+RS_SNDCHR_WAIT:
+	LD	B, A
+	XOR	A				; SELECT READ REGISTER 0
+	OUT	(CMD_CH), A
+	IN	A, (C)				; GET REGISTER 0 VALUE
+	AND	RS_TRANSMIT_PENDING_MASK	; IS TRANSMIT PENDING?
+	JR	Z, RS_SNDCHR_WAIT		; YES, THEN WAIT UNTIL TRANSMIT COMPLETED
+	LD	A, B
+	SIO_OUT_A				; LOAD BYTE TO TRANSMIT
 	RET
 
 CLOSE:		 		; close RS232C port
