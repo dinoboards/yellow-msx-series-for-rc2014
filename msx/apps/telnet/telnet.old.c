@@ -35,9 +35,9 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --
 */
+#include "telnet.old.h"
 #include "aofossilhelper.h"
 #include "print.h"
-#include "telnet.old.h"
 #include "xymodem.h"
 
 /*
