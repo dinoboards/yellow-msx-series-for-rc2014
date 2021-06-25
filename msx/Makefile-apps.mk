@@ -4,17 +4,17 @@ bin/telnet.com:
 	@$(MAKE) bin/telnet.com --no-print-directory -C apps
 	cp -up ./apps/bin/telnet.com ./bin/
 
-APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio rs232tst fosiltst
+APPS := dots lines mbrot cpusptst fdisk vramtest extbio rs232tst fosiltst
 APP_TARGETS := $(addsuffix .com,$(addprefix ./bin/,$(APPS)))
 
 .PHONY: apps
-apps: $(APP_TARGETS) bin/telnet.com
+apps: $(APP_TARGETS)
 
 .PHONY: $(APP_TARGETS)
 $(APP_TARGETS):
 	@mkdir -p bin
 	$(MAKE) "$@" --no-print-directory -C apps
-	cp -up ./apps/"$@" ./bin/
+	cp -up ./apps/$@ ./bin/
 
 .PHONY: format
 format: SHELL:=/bin/bash
