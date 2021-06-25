@@ -41,13 +41,13 @@ $(BIN)vramtest.com: $(addprefix $(BIN),$(vramtest_files))
 cpusptst_files = $(call app_files,cpusptst,)
 $(BIN)cpusptst.com: $(addprefix $(BIN),$(cpusptst_files))
 
-extbio_files = $(call app_files,extbio,extbio.asm msxdos.asm xstdio.asm)
+extbio_files = $(call app_files,extbio,extbio.asm msxdos.asm xstdio.asm getslt.asm)
 $(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files))
 
-rs232tst_files = $(call app_files,rs232tst,extbio.asm msxdos.asm)
+rs232tst_files = $(call app_files,rs232tst,extbio.asm msxdos.asm getslt.asm rs232.asm)
 $(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files))
 
-fosiltst_files = $(call app_files,fosiltst,extbio.asm msxdos.asm xstdio.asm)
+fosiltst_files = $(call app_files,fosiltst,extbio.asm msxdos.asm xstdio.asm getslt.asm fossil.asm)
 $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 
 # telnet_files = $(call app_files,telnet,extbio.asm msxdos.asm xstdio.asm)

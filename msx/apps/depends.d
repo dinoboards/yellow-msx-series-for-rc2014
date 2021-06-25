@@ -42,6 +42,8 @@
 ./bin/telnet/screen.o: ./telnet/screen.asm
 ./bin/fdisk/fdisk.o: ./fdisk/fdisk.asm
 ./bin/fdisk/memmap-override.o: ./fdisk/memmap-override.asm
-./bin/extbio.o: ./extbio.asm
+./bin/fossil.o: ./fossil.asm ./msx.inc
+./bin/extbio.o: ./extbio.asm ./msx.inc
 ./bin/v9958.o: ./v9958.asm ./msx.inc
 ./bin/utils.o: ./utils.asm 
+./bin/rs232.o: ./rs232.asm ./msx.inc
