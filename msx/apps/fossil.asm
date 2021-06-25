@@ -2,11 +2,12 @@
 	include	"msx.inc"
 
 	SECTION	CODE
-; extern void fossil_link(void* jumpTable) __z88dk_fastcall
+; extern void fossil_link() __z88dk_fastcall
 ;
 	PUBLIC	_fossil_link
 
 _fossil_link:
+	LD	HL, (FSTABL)
 	INC	HL
 	LD	E, (HL)
 	INC	HL
@@ -32,14 +33,14 @@ _fossil_link:
 	LD	E, (HL)
 	INC	HL
 	LD	D, (HL)
-	LD	(_fossil_setbaud+1), DE
+	LD	(_fossil_set_baud+1), DE
 	INC	HL
 
 	INC	HL
 	LD	E, (HL)
 	INC	HL
 	LD	D, (HL)
-	LD	(_fossil_protocol+1), DE
+	LD	(_fossil_set_protocol+1), DE
 	INC	HL
 
 	INC	HL
@@ -158,7 +159,8 @@ _fossil_link:
 	PUBLIC	_fossil_get_version
 	PUBLIC	_fossil_init
 	PUBLIC	_fossil_deinit
-	PUBLIC	_fossil_setbaud
+	PUBLIC	_fossil_set_baud
+	PUBLIC	_fossil_set_protocol
 	PUBLIC	_fossil_channel
 	PUBLIC	_fossil_rs_in
 	PUBLIC	_fossil_rs_out
@@ -187,10 +189,10 @@ fossil_init_ptr:
 _fossil_deinit:
 	JP	0
 
-_fossil_setbaud:
+_fossil_set_baud:
 	JP	0
 
-_fossil_protocol:
+_fossil_set_protocol:
 	JP	0
 
 _fossil_channel:

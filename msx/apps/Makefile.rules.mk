@@ -36,7 +36,7 @@ $(BIN)%.m4.o: %.asm.m4; $(assemble)
 $(BIN)%.com:
 	@mkdir -p $(dir $@)
 	$(ZCC) $^ -o $@
-	echo "Compiled $(notdir $@) from $(notdir $^)"
+	echo "Linked $(notdir $@) from $(notdir $^)"
 
 
 ZSDCPP_FLAGS=-iquote"." -isystem"${ZCCCFG}/../../include/_DEVELOPMENT/sdcc" -I./fdisk/ -I./telnet/

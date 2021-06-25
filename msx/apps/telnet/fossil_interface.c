@@ -35,7 +35,7 @@
 --
 */
 
-#include "fossil_interface.h"
+#include "fossil.h"
 #include "msx_fusion.h"
 #include <stdbool.h>
 #include <stdio.h>
