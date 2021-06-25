@@ -4,7 +4,7 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-ZCCRELFLAGS=
+ZCCRELFLAGS=-SO0 --max-allocs-per-node0
 ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 -Cs"--opt-code-speed" --allow-unsafe-read --opt-code-speed
 endif
@@ -50,8 +50,8 @@ $(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files))
 fosiltst_files = $(call app_files,fosiltst,extbio.asm msxdos.asm xstdio.asm getslt.asm fossil.asm)
 $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 
-# telnet_files = $(call app_files,telnet,extbio.asm msxdos.asm xstdio.asm)
-# $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
+telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm)
+$(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
 # .PHONY: bin/telnet.com
 # bin/telnet.com:

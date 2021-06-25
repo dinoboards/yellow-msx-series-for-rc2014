@@ -1,7 +1,7 @@
 #define __Z88DK_R2L_CALLING_CONVENTION
 #include "extbio.h"
 #include "msxdos.h"
-#include "telnet/fossil_interface.h"
+#include "fossil.h"
 #include "xstdio.h"
 #include <stdarg.h>
 #include <stdbool.h>

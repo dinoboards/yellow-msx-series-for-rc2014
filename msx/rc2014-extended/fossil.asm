@@ -12,7 +12,7 @@ FOSSIL_JUMP_TABLE:
 	jp	init		; initialises RS232
 	jp	deinit		; deinitialises the RS232
 
-	jp	setbaud		; H=Tx baud rate, L=Rx baud rate
+	jp	set_baud	; H=Tx baud rate, L=Rx baud rate
 				; 0  = 75	 1  = 300	  2  = 600
 				; 3  = 1200	 4  = 2400	  5  = 4800
 				; 6  = 9600	 7  = 19200	  8  = 38400
@@ -24,7 +24,7 @@ FOSSIL_JUMP_TABLE:
 ;	rate. If the driver does not support the selected rate, it selects
 ;	the highest possible rate below the selected.
 
-	jp	protocol	; H 0-1 data bits
+	jp	set_protocol	; H 0-1 data bits
 				;	00 5 bits or less
 				;	01 6 bits
 				;	10 7 bits

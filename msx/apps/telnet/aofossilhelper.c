@@ -34,7 +34,7 @@
 --
 */
 #include "aofossilhelper.h"
-#include "fossil_interface.h"
+#include "fossil.h"
 #include "msx_fusion.h"
 #include "print.h"
 #include <stdio.h>
@@ -51,17 +51,12 @@ unsigned char cmdline[134];
 void Breath() { return; }
 
 unsigned char InitializeTCPIP() {
-  unsigned char uchRet = 0;
-  if (fossil_link()) {
-    fossile_set_baud(9, 9);
-    fossil_set_protocol(7); // 8N1
-    // Fossil_FastInt(0);
-    fossil_init();
-    TxData(0x50, modem_atz, 5);
-    uchRet = 1;
-  }
-
-  return uchRet;
+  fossil_link();
+  fossil_set_baud(9, 9);
+  fossil_set_protocol(7); // 8N1
+  fossil_init();
+  TxData(0x50, modem_atz, 5);
+  return 1;
 }
 
 unsigned char OpenSingleConnection(unsigned char *uchHost, unsigned char *uchPort, unsigned char *uchConn) {

@@ -23,3 +23,5 @@ INIPLT	equ	$00141
 RAMAD0	equ	0F341h	; Slot of the Main-Ram on page 0~3FFFh
 EXTBIO	equ	0ffcah	; Call address to an extended Bios
 RDSLT	EQU	0000CH
+
+FSTABL	EQU	$F400		; FOSSIL JUMP TABLE ADDRESS

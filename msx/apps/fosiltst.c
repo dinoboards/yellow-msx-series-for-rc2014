@@ -3,6 +3,7 @@
 #include "msxdos.h"
 #include "xstdio.h"
 #include <stdio.h>
+#include "fossil.h"
 
 typedef struct {
   uint8_t *pHead;
@@ -17,13 +18,6 @@ uint8_t  __at 0xFB1C RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
 uint8_t  __at 0xFB1B RS_FLAGS;  // RS-232C bit flags
 uint8_t *__at 0xFB18 RS_BUFEND;
 
-extern void     fossil_link(void *jumpTable) __z88dk_fastcall;
-extern uint16_t fossil_get_version();
-extern void     fossil_init();
-extern void     fossil_deinit();
-extern void     fossil_rs_out(char c) __z88dk_fastcall;
-extern bool     fossil_rs_in_stat();
-extern char     fossil_rs_in();
 
 rs232Buff *__at 0xFB04 RS_FCB;
 
@@ -36,7 +30,7 @@ void main() {
 
   xprintf("Address %p\r\n", p);
 
-  fossil_link(p);
+  fossil_link();
 
   uint16_t version = fossil_get_version();
 
