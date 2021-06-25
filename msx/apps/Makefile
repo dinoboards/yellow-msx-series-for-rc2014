@@ -4,46 +4,65 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
+ZCCRELFLAGS=
+ifdef RELEASE
+ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 -Cs"--opt-code-speed" --allow-unsafe-read --opt-code-speed
+endif
+
+ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 $(ZCCRELFLAGS)
+
+telnet_sources = $(wildcard telnet/*.c) $(wildcard telnet/*.asm)
+
 BIN := ./bin/
 SRC := ./
-APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio rs232tst fosiltst
-TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
 
-ZCC := zcc +msx -create-app  -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
-# ZCC := zcc +msx -create-app  -subtype=msxdos2 -compiler=sdcc --assemble-only --c-code-in-asm -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
+include	Makefile.rules.mk
 
-.PHONY: all
-all: $(TARGETS) bin/telnet.com
 
-V9958_DEPS := v9958.c v9958.h msx.asm v9958.asm msx.inc
-$(BIN)dots.com: $(addprefix $(SRC),dots.c $(V9958_DEPS) msxdos.asm msxdos.h)
+fdisk_files = $(call app_files,fdisk,fdisk/memmap-override.asm msxdos.asm)
+$(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
 
-V9958_DEPS := v9958.c v9958.h msx.asm v9958.asm msx.inc
-$(BIN)dots.com: $(addprefix $(SRC),dots.c $(V9958_DEPS) msxdos.asm msxdos.h)
-$(BIN)vramtest.com: $(addprefix $(SRC),vramtest.c $(V9958_DEPS))
-$(BIN)lines.com: $(addprefix $(SRC),lines.c $(V9958_DEPS))
-$(BIN)mbrot.com: $(addprefix $(SRC),mbrot.c $(V9958_DEPS))
-$(BIN)spike-fdd.com: $(addprefix $(SRC),spike-fdd.c fdd.asm)
-$(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.asm cfg.inc msxdos.asm msxdos.h partition.h)
-$(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
-$(BIN)fdisk.com: $(addprefix $(SRC),memmap-override.asm fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.asm msxdos.h partition.h)
-$(BIN)extbio.com: $(addprefix $(SRC),extbio.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm xstdio.asm xstdio.h)
-$(BIN)rs232tst.com: $(addprefix $(SRC),rs232tst.c msxdos.h msxdos.asm extbio.asm)
-$(BIN)fosiltst.com: $(addprefix $(SRC),fosiltst.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm  xstdio.asm xstdio.h)
 
-$(TARGETS):
-	@mkdir -p $(BIN)
-	$(ZCC) $(filter-out %.inc,$(filter-out %.h,$^)) -o $(notdir $@)
-	mv $(notdir $@) "$@"
-	rm -f $(basename $(notdir $@)).img
-	rm -f $(basename $(notdir $@))_BSS.bin
-	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
+dots_files = $(call app_files,dots,v9958.c msx.asm v9958.asm msx.inc)
+$(BIN)dots.com: $(addprefix $(BIN),$(dots_files))
 
-.PHONY: bin/telnet.com
-bin/telnet.com:
-	@$(MAKE) --no-print-directory -C ./telnet
-	cp -up ./telnet/bin/telnet.com ./bin/
+# APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio rs232tst fosiltst
+# TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
+
+# ZCC := zcc +msx -create-app  -subtype=msxdos2 -compiler=sdcc -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
+# # ZCC := zcc +msx -create-app  -subtype=msxdos2 -compiler=sdcc --assemble-only --c-code-in-asm -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1
+
+# .PHONY: all
+# all: $(TARGETS) bin/telnet.com
+
+# V9958_DEPS := v9958.c v9958.h msx.asm v9958.asm msx.inc
+# $(BIN)dots.com: $(addprefix $(SRC),dots.c $(V9958_DEPS) msxdos.asm msxdos.h)
+
+# V9958_DEPS := v9958.c v9958.h msx.asm v9958.asm msx.inc
+# $(BIN)dots.com: $(addprefix $(SRC),dots.c $(V9958_DEPS) msxdos.asm msxdos.h)
+# $(BIN)vramtest.com: $(addprefix $(SRC),vramtest.c $(V9958_DEPS))
+# $(BIN)lines.com: $(addprefix $(SRC),lines.c $(V9958_DEPS))
+# $(BIN)mbrot.com: $(addprefix $(SRC),mbrot.c $(V9958_DEPS))
+# $(BIN)spike-fdd.com: $(addprefix $(SRC),spike-fdd.c fdd.asm)
+# $(BIN)ide.com: $(addprefix $(SRC),spike-ide.c spike-ide.asm spike-ide.h utils.asm cfg.inc msxdos.asm msxdos.h partition.h)
+# $(BIN)cpusptst.com: $(addprefix $(SRC),cpusptst.c cpusptst.asm)
+# $(BIN)fdisk.com: $(addprefix $(SRC),memmap-override.asm fdisk.c fdisk.h fdisk2.c fdisk2.h datatypes.h msxdos.asm msxdos.h partition.h)
+# $(BIN)extbio.com: $(addprefix $(SRC),extbio.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm xstdio.asm xstdio.h)
+# $(BIN)rs232tst.com: $(addprefix $(SRC),rs232tst.c msxdos.h msxdos.asm extbio.asm)
+# $(BIN)fosiltst.com: $(addprefix $(SRC),fosiltst.c msxdos.h msxdos.asm extbio.asm telnet/fossil_interface.asm  xstdio.asm xstdio.h)
+
+# $(TARGETS):
+# 	@mkdir -p $(BIN)
+# 	$(ZCC) $(filter-out %.inc,$(filter-out %.h,$^)) -o $(notdir $@)
+# 	mv $(notdir $@) "$@"
+# 	rm -f $(basename $(notdir $@)).img
+# 	rm -f $(basename $(notdir $@))_BSS.bin
+# 	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
+
+# .PHONY: bin/telnet.com
+# bin/telnet.com:
+# 	@$(MAKE) --no-print-directory -C ./telnet
+# 	cp -up ./telnet/bin/telnet.com ./bin/
 
 clean:
 	@rm -rf ./bin
-	$(MAKE) -C telnet --no-print-directory clean
