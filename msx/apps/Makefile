@@ -16,17 +16,21 @@ telnet_sources = $(wildcard telnet/*.c) $(wildcard telnet/*.asm)
 BIN := ./bin/
 SRC := ./
 
-include	Makefile.rules.mk
-
 .PHONY: all
-all: $(addprefix $(BIN),fdisk.com dots.com)
+all: $(addprefix $(BIN),fdisk.com dots.com vramtest.com)
+
+include	Makefile.rules.mk
 
 fdisk_files = $(call app_files,fdisk,fdisk/memmap-override.asm msxdos.asm)
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
 
+V9958_DEPS := v9958.c msx.asm v9958.asm
 
-dots_files = $(call app_files,dots,v9958.c msx.asm v9958.asm msxdos.asm)
+dots_files = $(call app_files,dots,$(V9958_DEPS) msxdos.asm)
 $(BIN)dots.com: $(addprefix $(BIN),$(dots_files))
+
+vramtest_files = $(call app_files,vramtest,$(V9958_DEPS))
+$(BIN)vramtest.com: $(addprefix $(BIN),$(vramtest_files))
 
 # APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio rs232tst fosiltst
 # TARGETS := $(addsuffix .com,$(addprefix $(BIN),$(APPS)))
