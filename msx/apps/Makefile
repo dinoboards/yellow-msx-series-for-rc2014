@@ -50,6 +50,9 @@ $(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files))
 fosiltst_files = $(call app_files,fosiltst,extbio.asm msxdos.asm xstdio.asm)
 $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 
+# telnet_files = $(call app_files,telnet,extbio.asm msxdos.asm xstdio.asm)
+# $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
+
 # .PHONY: bin/telnet.com
 # bin/telnet.com:
 # 	@$(MAKE) --no-print-directory -C ./telnet
