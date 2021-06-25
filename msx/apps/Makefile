@@ -18,12 +18,14 @@ SRC := ./
 
 include	Makefile.rules.mk
 
+.PHONY: all
+all: $(addprefix $(BIN),fdisk.com dots.com)
 
 fdisk_files = $(call app_files,fdisk,fdisk/memmap-override.asm msxdos.asm)
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
 
 
-dots_files = $(call app_files,dots,v9958.c msx.asm v9958.asm msx.inc)
+dots_files = $(call app_files,dots,v9958.c msx.asm v9958.asm msxdos.asm)
 $(BIN)dots.com: $(addprefix $(BIN),$(dots_files))
 
 # APPS := dots lines mbrot spike-fdd ide cpusptst fdisk vramtest extbio rs232tst fosiltst
