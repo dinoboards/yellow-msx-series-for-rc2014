@@ -5,7 +5,7 @@
  * https://gist.github.com/RabaDabaDoba/145049536f815903c79944599c6f952a
  */
 
-//Regular text
+// Regular text
 #define BLK "\x1b[0;30m"
 #define RED "\x1b[0;31m"
 #define GRN "\x1b[0;32m"
@@ -14,7 +14,7 @@
 #define MAG "\x1b[0;35m"
 #define CYN "\x1b[0;36m"
 #define WHT "\x1b[0;37m"
-//Regular bold text
+// Regular bold text
 #define BBLK "\x1b[1;30m"
 #define BRED "\x1b[1;31m"
 #define BGRN "\x1b[1;32m"
@@ -24,7 +24,7 @@
 #define BCYN "\x1b[1;36m"
 #define BWHT "\x1b[1;37m"
 
-//Regular underline text
+// Regular underline text
 #define UBLK "\x1b[4;30m"
 #define URED "\x1b[4;31m"
 #define UGRN "\x1b[4;32m"
@@ -34,7 +34,7 @@
 #define UCYN "\x1b[4;36m"
 #define UWHT "\x1b[4;37m"
 
-//Regular background
+// Regular background
 #define BLKB "\x1b[40m"
 #define REDB "\x1b[41m"
 #define GRNB "\x1b[42m"
@@ -44,7 +44,7 @@
 #define CYNB "\x1b[46m"
 #define WHTB "\x1b[47m"
 
-//High intensty background
+// High intensty background
 #define BLKHB "\x1b[0;100m"
 #define REDHB "\x1b[0;101m"
 #define GRNHB "\x1b[0;102m"
@@ -54,7 +54,7 @@
 #define CYNHB "\x1b[0;106m"
 #define WHTHB "\x1b[0;107m"
 
-//High intensty text
+// High intensty text
 #define HBLK "\x1b[0;90m"
 #define HRED "\x1b[0;91m"
 #define HGRN "\x1b[0;92m"
@@ -64,7 +64,7 @@
 #define HCYN "\x1b[0;96m"
 #define HWHT "\x1b[0;97m"
 
-//Bold high intensity text
+// Bold high intensity text
 #define BHBLK "\x1b[1;90m"
 #define BHRED "\x1b[1;91m"
 #define BHGRN "\x1b[1;92m"
@@ -74,5 +74,5 @@
 #define BHCYN "\x1b[1;96m"
 #define BHWHT "\x1b[1;97m"
 
-//Reset
+// Reset
 #define reset "\x1b[0m"

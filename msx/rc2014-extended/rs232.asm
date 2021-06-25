@@ -15,8 +15,8 @@ EXTBIO_RS2_JUMP_TABLE:
 	DEFB	0		; MSX serial features (no TxReady INT, No Sync detect, No Timer INT, No CD, No RI)
 	DEFB	1		; version number
 	DEFB	0		; reserved for future expansion
-	JP	INIT		; initialize RS232C port
-	JP	OPEN		; open RS232C port
+	JP	RS_INIT		; initialize RS232C port
+	JP	RS_OPEN		; open RS232C port
 	JP	STAT		; ReaD STATus
 	JP	GETCHR		; reveive data
 	JP	SNDCHR		; send data
@@ -36,9 +36,8 @@ EXTBIO_RS2_JUMP_TABLE:
 	; Return: carry flag is set if illegal parameters are contained
 	; Modify: [AF]
 
-	PUBLIC	SIO_INIT
-INIT:				; initialize RS232C port
-SIO_INIT:
+	PUBLIC	RS_INIT
+RS_INIT:				; initialize RS232C port
 	DI
 
 	XOR	A
@@ -50,8 +49,9 @@ SIO_INIT:
 	XOR	A
 	RET
 
+	PUBLIC	RS_OPEN
 ; ------------------------------------------------
-OPEN:				; open RS232C port
+RS_OPEN:				; open RS232C port
 	EI
 	XOR	A
 	LD	(RS_DATCNT), A
@@ -82,8 +82,6 @@ OPEN:				; open RS232C port
 	ADD	HL, BC
 	LD	(RS_BUFEND), HL
 
-	PUBLIC	SIO_OPEN
-SIO_OPEN:
 	LD      HL, RS_FLAGS
 	SET     3, (HL)			; SET RS232 OPEN FLAG
 	SET	1, (HL)			; SET RTS ON FLAG

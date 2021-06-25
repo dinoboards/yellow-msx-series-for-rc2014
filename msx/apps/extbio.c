@@ -1,13 +1,13 @@
 #define __Z88DK_R2L_CALLING_CONVENTION
+#include "extbio.h"
 #include "msxdos.h"
+#include "telnet/fossil_interface.h"
+#include "xstdio.h"
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "extbio.h"
-#include "telnet/fossil_interface.h"
-#include "xstdio.h"
 
 const char *extendedBiosName(uint8_t id) {
   switch (id) {
@@ -51,7 +51,7 @@ const char *extendedBiosName(uint8_t id) {
 
 extbio_device_table table[32];
 
-extern uint8_t getSlotPage0(void*) __z88dk_fastcall;
+extern uint8_t getSlotPage0(void *) __z88dk_fastcall;
 
 void main() {
   const bool extendedBiosReady = HOKVLD & 1;

@@ -8,16 +8,13 @@
 
 void Breath() { return; }
 
-unsigned char InitializeTCPIP() {
-  return 1;
-}
+unsigned char InitializeTCPIP() { return 1; }
 
 unsigned char OpenSingleConnection(unsigned char *uchHost, unsigned char *uchPort, unsigned char *uchConn) {
   (void)uchHost;
   (void)uchPort;
   (void)uchConn;
   return ERR_OK;
-
 }
 
 unsigned char CloseConnection(unsigned char ucConnNumber) {

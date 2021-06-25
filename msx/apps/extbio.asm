@@ -518,7 +518,9 @@ rs_out_ptr:
 	JP	0
 
 _fossil_rs_in_stat:
-	JP	0
+	CALL	0
+	LD	L, A
+	RET
 
 _fossil_rs_out_stat:
 	JP	0

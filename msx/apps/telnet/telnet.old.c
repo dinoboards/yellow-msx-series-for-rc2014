@@ -35,9 +35,9 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --
 */
-#include "telnet.h"
 #include "aofossilhelper.h"
 #include "print.h"
+#include "telnet.h"
 #include "xymodem.h"
 
 /*
@@ -339,10 +339,8 @@ int main(char **argv, int argc) {
   // If server do not negotiate, we won't echo, adapter takes care for us
   ucEcho = 0;
 
-
   // Initialize our text print engine
   initPrint();
-
 
   // Validate command line parameters
   if (!IsValidInput(argv, argc, ucServer, ucPort, &ucAnsi, &ucCP437)) {
@@ -354,21 +352,21 @@ int main(char **argv, int argc) {
     return 0;
   }
 
-
   // printf("What the ?%d\r\n", ucAnsi);
   ucWidth40 = 0;
   // are we going to render ansi?
   // if (ucAnsi)
   initAnsi((unsigned int)SendCursorPosition);
   // else // if not, let's ensure 80 columns mode
-    // Width(80);
+  // Width(80);
 
   if (!ucAnsi) {
     print(ucSWInfo);
   } else
     print(ucSWInfoANSI);
 
-  while( !Inkey()) ;
+  while (!Inkey())
+    ;
 
   // Time to check for TCPIP availability
   if (!InitializeTCPIP()) {

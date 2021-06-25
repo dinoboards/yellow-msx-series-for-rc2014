@@ -38,6 +38,7 @@ _msxbiosInit32:
 	LD	IY, (EXPTBL-1)
 	LD	IX, INIT32
 	CALL	CALSLT
+	EI
 	POP	IX
 	RET
 
@@ -49,6 +50,7 @@ _msxbiosInitxt:
 	LD	IY, (EXPTBL-1)
 	LD	IX, INITXT
 	CALL	CALSLT
+	EI
 	POP	IX
 	RET
 
@@ -65,7 +67,7 @@ _msxbiosPosit:
 	LD	IY, (EXPTBL-1)
 	LD	IX, POSIT
 	CALL	CALSLT
-
+	EI
 	POP	IX
 	RET
 
@@ -76,6 +78,7 @@ _msxbiosBreakX:
 	LD	IY, (EXPTBL-1)
 	LD	IX, BREAKX
 	CALL	CALSLT
+	EI
 	LD	L, 0
 	POP	IX
 	RET	NC
