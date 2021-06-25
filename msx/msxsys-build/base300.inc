@@ -49,7 +49,7 @@ CNTRY	EQU	11
 ;		0 = not inverted
 ;		1 = inverted
 
-F4INV	EQU	0
+F4INV	EQU	1
 
 
 
