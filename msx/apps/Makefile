@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil))
 
 include	Makefile.rules.mk
 
@@ -50,7 +50,10 @@ $(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files))
 fosiltst_files = $(call app_files,fosiltst,extbio.asm msxdos.asm xstdio.asm getslt.asm fossil.asm)
 $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 
-telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm)
+fossil_files = $(call app_files,fossil,extbio.asm getslt.asm)
+$(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
+
+telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm msxdos.asm)
 $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
 # .PHONY: bin/telnet.com
