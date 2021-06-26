@@ -1,10 +1,5 @@
 
-.PHONY: bin/telnet.com
-bin/telnet.com:
-	@$(MAKE) bin/telnet.com --no-print-directory -C apps
-	cp -up ./apps/bin/telnet.com ./bin/
-
-APPS := dots lines mbrot cpusptst fdisk vramtest extbio rs232tst fosiltst
+APPS := dots lines mbrot cpusptst fdisk vramtest extbio rs232tst fosiltst telnet fossil
 APP_TARGETS := $(addsuffix .com,$(addprefix ./bin/,$(APPS)))
 
 .PHONY: apps
