@@ -89,8 +89,8 @@ const unsigned char ucTTYPE3[] = {IAC, SB, CMD_TTYPE, IS, 'V', 'T', '5', '2', IA
 const unsigned char ucCrLf[3] = "\r\n"; // auxiliary
 
 // Instructions
-const char ucUsage[] = "Usage: telnet <server[:port]> [a] [r] [o] [c]\r\n\r\n"
-                       "<server[:port]>: 192.168.0.1:34 or bbs.hispamsx.org\r\n\r\n"
+const char ucUsage[] = "Usage: telnet server[:port] [a] [r] [o] [c]\r\n\r\n"
+                       "server[:port]: 192.168.0.1:34 or bbs.hispamsx.org\r\n\r\n"
                        "a: turns off automatic download detection (some BBSs can't be used with it)\r\n"
                        "o: turns off ANSI rendering and use MSX-DOS text rendering\r\n"
                        "c: turns off custom CP437 font on MSX1\r\n"

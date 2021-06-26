@@ -7,6 +7,14 @@
 	PUBLIC	_fossil_link
 
 _fossil_link:
+	LD	L, 0
+	LD	A, (FSMARK)
+	CP	'S'
+	RET	NZ
+	LD	A, (FSMARK+1)
+	CP	'R'
+	RET	NZ
+
 	LD	HL, (FSTABL)
 	INC	HL
 	LD	E, (HL)
@@ -154,6 +162,7 @@ _fossil_link:
 	LD	D, (HL)
 	LD	(_fossil_get_info+1), DE
 
+	LD	HL, 1
 	RET
 
 	PUBLIC	_fossil_get_version

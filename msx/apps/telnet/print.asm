@@ -10,7 +10,7 @@
 _print:
     ld  a,(_usingAnsiDrv)
     or  a
-    jp  nz,_AnsiPrint;
+    jp  nz,_AnsiPrint
     push    ix
 loop:
     ld  a,(hl)

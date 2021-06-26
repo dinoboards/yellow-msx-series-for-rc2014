@@ -9,7 +9,7 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 -Cs"--opt-code-speed" --allow-unsafe-read --opt-code-speed
 endif
 
-ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 $(ZCCRELFLAGS)
+ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 -pragma-define:CRT_ENABLE_COMMANDLINE=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 -DAMALLOC1 $(ZCCRELFLAGS)
 
 telnet_sources = $(wildcard telnet/*.c) $(wildcard telnet/*.asm)
 

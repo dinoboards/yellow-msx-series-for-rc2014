@@ -37,8 +37,10 @@
 */
 #include "telnet.h"
 #include "aofossilhelper.h"
+#include "msxdos.h"
 #include "print.h"
 #include "xymodem.h"
+#include <malloc.h>
 
 /*
  *
@@ -262,7 +264,6 @@ void SendCursorPosition(unsigned int uiCursorPosition) __z88dk_fastcall {
 // It is mandatory to have server as first argument
 // All other arguments are optional
 unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsigned char *ucPort, unsigned char *ucAnsiOption, unsigned char *ucMSX1CustomFont) {
-  unsigned int   iRet = 0;
   unsigned char *ucMySeek = NULL;
   unsigned char *ucInput = (unsigned char *)argv[0];
   unsigned char  ucTmp;
@@ -273,44 +274,75 @@ unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsign
   *ucAnsiOption = 1;     // try to render ANSI if possible
   *ucMSX1CustomFont = 1; // custom CP437 font
 
-  if (argc) {
-    // First the server:port
-    ucMySeek = strstr(ucInput, ":");
-    if ((ucMySeek) && ((ucMySeek - ucInput) < 128)) {
-      ucMySeek[0] = 0;
-      strcpy(ucServer, ucInput);
-      ++ucMySeek;
-      if (strlen(ucMySeek) < 6) {
-        strcpy(ucPort, ucMySeek);
-        iRet = 1;
-      }
-    } else if ((!ucMySeek) && (strlen(ucInput) < 128)) {
-      strcpy(ucServer, ucInput);
-      strcpy(ucPort, "23");
-      iRet = 1;
-    }
+  if (argc == 0 || strcmp(ucInput, "--help") == 0)
+    return 0;
 
-    if (argc > 1) {
-      for (ucTmp = 1; ucTmp <= argc; ucTmp++) {
-        ucInput = (unsigned char *)argv[ucTmp];
-        if ((ucInput[0] == 'a') || (ucInput[0] == 'A'))
-          ucAutoDownload = 0; // turn off auto download selection pop-up when binary transmission command received
-        else if ((ucInput[0] == 'o') || (ucInput[0] == 'O'))
-          *ucAnsiOption = 0; // turn off ansi rendering
-        else if ((ucInput[0] == 'c') || (ucInput[0] == 'C'))
-          *ucMSX1CustomFont = 0; // turn off custom font for MSX1
-        else if ((ucInput[0] == 'r') || (ucInput[0] == 'R'))
-          ucStandardDataTransfer = 0; // server misbehave and do not double FF on file transfers
+  // First the server:port
+  ucMySeek = strstr(ucInput, ":");
+  if ((ucMySeek) && ((ucMySeek - ucInput) < 128)) {
+    ucMySeek[0] = 0;
+    strcpy(ucServer, ucInput);
+    ++ucMySeek;
+    if (strlen(ucMySeek) < 6) {
+      strcpy(ucPort, ucMySeek);
+    }
+  } else if ((!ucMySeek) && (strlen(ucInput) < 128)) {
+    strcpy(ucServer, ucInput);
+    strcpy(ucPort, "23");
+  }
+
+  if (argc > 1) {
+    for (ucTmp = 1; ucTmp < argc; ucTmp++) {
+      ucInput = (unsigned char *)argv[ucTmp];
+      if ((ucInput[0] == 'a') || (ucInput[0] == 'A'))
+        ucAutoDownload = 0; // turn off auto download selection pop-up when binary transmission command received
+      else if ((ucInput[0] == 'o') || (ucInput[0] == 'O'))
+        *ucAnsiOption = 0; // turn off ansi rendering
+      else if ((ucInput[0] == 'c') || (ucInput[0] == 'C'))
+        *ucMSX1CustomFont = 0; // turn off custom font for MSX1
+      else if ((ucInput[0] == 'r') || (ucInput[0] == 'R'))
+        ucStandardDataTransfer = 0; // server misbehave and do not double FF on file transfers
+      else {
+        printf("Unknown option %s\r\n", ucInput);
+        return 0;
       }
     }
-  } else {
-    iRet = 1;
   }
-  return iRet;
+
+  return 1;
+}
+
+extern void debugBreak();
+
+int _main(char **argv, int argc);
+
+// z88dk MSXDOS CRT does not seem to supply the argument correctly
+// manually implemented a crude parser
+int main() {
+  char *        argv[20];
+  uint8_t       argc = 0;
+  uint8_t       i = 0;
+  const uint8_t len = strlen(msxdosCommand);
+
+  for (i = 1; i < len; i++)
+    if (msxdosCommand[i] == ' ')
+      argc++;
+
+  i = 0;
+  char *token = strtok(msxdosCommand + 1, " ");
+
+  while (token != NULL) {
+    argv[i++] = token;
+    token = strtok(NULL, " ");
+  }
+
+  argv[i++] = NULL;
+
+  return _main(argv, argc);
 }
 
 // That is where our program goes
-int main(char **argv, int argc) {
+int _main(char **argv, int argc) {
   char           ucTxData = 0;         // where our key inputs go
   unsigned char  ucRet;                // return of functions
   unsigned char  ucServer[128];        // will hold the name of the server we will connect
@@ -339,7 +371,6 @@ int main(char **argv, int argc) {
   // If server do not negotiate, we won't echo, adapter takes care for us
   ucEcho = 0;
 
-  // Initialize our text print engine
   initPrint();
 
   // Validate command line parameters
@@ -352,13 +383,12 @@ int main(char **argv, int argc) {
     return 0;
   }
 
-  // printf("What the ?%d\r\n", ucAnsi);
+  // Initialize our text print engine
   ucWidth40 = 0;
-  // are we going to render ansi?
-  // if (ucAnsi)
-  initAnsi((unsigned int)SendCursorPosition);
-  // else // if not, let's ensure 80 columns mode
-  // Width(80);
+  if (ucAnsi)
+    initAnsi((unsigned int)SendCursorPosition);
+  else
+    Width(80);
 
   if (!ucAnsi) {
     print(ucSWInfo);
@@ -384,27 +414,7 @@ int main(char **argv, int argc) {
   // Make sure those won't have any text
   memset(ucFnkStr, '\0', 160);
 
-  if (ucAnsi) {
-    print(ucHispaBD);
-    print("    ");
-    print(ucServer);
-    print("\r\n  Hit any other key to continue...\r\n");
-    uiJiffy = 0;
-
-    do {
-      ucTxData = Inkey();
-      // A key has been hit?
-      if (ucTxData) {
-        if ((ucTxData == 'h') || (ucTxData == 'H')) {
-          strcpy(ucServer, "bbs.hispamsx.org");
-          strcpy(ucPort, "23");
-        }
-        break;
-      }
-    } while (uiJiffy < 600);
-  }
-
-  ucRet = OpenSingleConnection(0, 0, &ucConnNumber);
+  ucRet = OpenSingleConnection(ucServer, ucPort, &ucConnNumber);
   if (ucAnsi)
     print("\x1b[32mTerminal in command mode. Type help for available commands\x1b[0m\r\n\r\n");
   else
