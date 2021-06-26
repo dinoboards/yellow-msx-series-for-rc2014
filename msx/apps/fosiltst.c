@@ -1,9 +1,9 @@
 
 #include "extbio.h"
+#include "fossil.h"
 #include "msxdos.h"
 #include "xstdio.h"
 #include <stdio.h>
-#include "fossil.h"
 
 typedef struct {
   uint8_t *pHead;
@@ -18,15 +18,17 @@ uint8_t  __at 0xFB1C RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
 uint8_t  __at 0xFB1B RS_FLAGS;  // RS-232C bit flags
 uint8_t *__at 0xFB18 RS_BUFEND;
 
-
 rs232Buff *__at 0xFB04 RS_FCB;
 
 void extern debugBreak();
 
 void main() {
-  debugBreak();
+
+  printf("fossil_link should return false before install %d\r\n", fossil_link());
 
   void *p = extbio_fossil_install();
+
+  printf("fossil_link should return true after %d\r\n", fossil_link());
 
   xprintf("Address %p\r\n", p);
 
@@ -42,6 +44,7 @@ void main() {
   xprintf("BUF AT %p, head: %p, tail: %p\r\n", RS_FCB, RS_FCB->pHead, RS_FCB->pTail);
   fossil_rs_out('A');
 
+  printf("Send A\r\n");
   while (1) {
     uint16_t timeout = 32000;
 
@@ -70,9 +73,11 @@ void main() {
     }
 
     while (stat) {
-      printf(">> H: %p, T: %p, ST: %d,\r\n", RS_FCB->pHead, RS_FCB->pTail, stat);
+      uint16_t count = fossil_chars_in_buf();
+      printf(">> H: %p, T: %p, ST: %d\r\n", RS_FCB->pHead, RS_FCB->pTail, stat);
+      printf(">> LN: %d - %d\r\n", count, RS_DATCNT);
       char ch = fossil_rs_in();
-      printf(">> H: %p, T: %p, ST: %d, ch: %c\r\n", RS_FCB->pHead, RS_FCB->pTail, stat, ch);
+      printf(">> H: %p, T: %p, ST: %d, ch: %c,\r\n", RS_FCB->pHead, RS_FCB->pTail, stat, ch);
 
       stat = fossil_rs_in_stat();
     }

@@ -112,4 +112,6 @@ extern uint8_t EXTBIO[5];
 
 #define RET_INSTRUCTION 0xC9
 
+extern const char __at 0x80 msxdosCommand[127];
+
 #endif

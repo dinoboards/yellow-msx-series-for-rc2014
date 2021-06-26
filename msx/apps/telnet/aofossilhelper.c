@@ -51,7 +51,9 @@ unsigned char cmdline[134];
 void Breath() { return; }
 
 unsigned char InitializeTCPIP() {
-  fossil_link();
+  if (!fossil_link())
+    return 0;
+
   fossil_set_baud(9, 9);
   fossil_set_protocol(7); // 8N1
   fossil_init();
@@ -107,7 +109,7 @@ unsigned char RXData(unsigned char ucConnNumber, unsigned char *ucBuffer, unsign
     return ERR_INV_PARAM;
 
   if (ucWaitAllDataReceived) {
-    // While bytes are available and we are recevied less bytes than requested...
+    // While bytes are available and we have received less bytes than requested...
     while ((fossil_rs_in_stat() != 0) && (nbytes < *uiSize)) {
       ucRet = 1;
       fossil_rs_in_stat();

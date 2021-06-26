@@ -29,6 +29,9 @@ DEV_RW	EQU	0x4160
 _HOKVLD:	EQU	0xFB20
 _EXTBIO:	EQU	0xFFCA
 
+	PUBLIC	_msxdosCommand
+_msxdosCommand	EQU	0x0080;
+
 	SECTION	CODE
 
 ; void msxbiosInit32();

@@ -134,8 +134,8 @@ deinit:
 	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
 	RET
 
-setbaud
-protocol:
+set_baud
+set_protocol:
 channel:
 	RET
 
@@ -170,7 +170,13 @@ rs_out_stat:
 dtr:
 rts:
 carrier:
+	RET
 chars_in_buf:
+	LD	A, (RS_DATCNT)
+	LD	L, A
+	LD	H, 0
+	RET
+
 size_of_buf:
 flushbuf:
 fastint:
