@@ -10,3 +10,6 @@
 	path = msx/msxsys-build/msxsyssrc
 	url = git@github.com:vipoo/msxsrcsrc.git
 	branch = dean/main
+[submodule "referened-repos/MSX-Development"]
+	path = referened-repos/MSX-Development
+	url = git@github.com:ducasp/MSX-Development.git
