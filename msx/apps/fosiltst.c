@@ -41,7 +41,6 @@ void main() {
 
   fossil_init();
 
-  debugBreak();
   xprintf("BUF AT %p, head: %p, tail: %p\r\n", RS_FCB, RS_FCB->pHead, RS_FCB->pTail);
   fossil_rs_out('A');
 
@@ -80,6 +79,9 @@ void main() {
       char ch = fossil_rs_in();
       printf("%c", ch);
       // printf(">> H: %p, T: %p, ST: %d, ch: %c,\r\n", RS_FCB->pHead, RS_FCB->pTail, stat, ch);
+
+      if (msxbiosBreakX())
+        goto exitApp;
 
       stat = fossil_rs_in_stat();
     }
