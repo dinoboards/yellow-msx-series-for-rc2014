@@ -21,9 +21,10 @@ uint8_t *__at 0xFB18 RS_BUFEND;
 rs232Buff *__at 0xFB04 RS_FCB;
 
 void extern debugBreak();
+void extern enableVdpInterrupts();
+void extern disableVdpInterrupts();
 
 void main() {
-
   printf("fossil_link should return false before install %d\r\n", fossil_link());
 
   void *p = extbio_fossil_install();
@@ -74,10 +75,11 @@ void main() {
 
     while (stat) {
       uint16_t count = fossil_chars_in_buf();
-      printf(">> H: %p, T: %p, ST: %d\r\n", RS_FCB->pHead, RS_FCB->pTail, stat);
-      printf(">> LN: %d - %d\r\n", count, RS_DATCNT);
+      // printf(">> H: %p, T: %p, ST: %d\r\n", RS_FCB->pHead, RS_FCB->pTail, stat);
+      // printf(">> LN: %d - %d\r\n", count, RS_DATCNT);
       char ch = fossil_rs_in();
-      printf(">> H: %p, T: %p, ST: %d, ch: %c,\r\n", RS_FCB->pHead, RS_FCB->pTail, stat, ch);
+      printf("%c", ch);
+      // printf(">> H: %p, T: %p, ST: %d, ch: %c,\r\n", RS_FCB->pHead, RS_FCB->pTail, stat, ch);
 
       stat = fossil_rs_in_stat();
     }
