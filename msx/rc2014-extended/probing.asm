@@ -22,7 +22,7 @@ PROBE_HARDWARE:
 	CALL	PRINT
 
 SIO_FOUND:
-	LD	DE, MSG.PRESENT
+	LD	DE, MSG.SIO_PRESENT
 	CALL	PRINT
 
 	LD	DE, MSG.RTC
@@ -38,43 +38,36 @@ RTC_FOUND:
 	LD	DE, MSG.PRESENT
 	CALL	PRINT
 
-	; LD	DE, MSG.RTC
-	; CALL	PRINT
-
 	; LD	DE, MSG.GAME
 	; CALL	PRINT
-
-	; LD	DE, MSG.KEYBOARD
-	; CALL	PRINT
-
-	; LD	HL, 6
-	; CALL	ALLOC
 
 	RET
 
 MSG.SIO
-	DB	"SIO/2 Module:        ", 9, 0
+	DB	"SIO/2 Module:    ", 0
 
-MSG.CPU_SPEED
-	DB	"CPU:                 ", 9, "7Mhz", 13, 10, 0
+; MSG.CPU_SPEED
+; 	DB	"CPU:             ", 9, "7Mhz", 13, 10, 0
 
-MSG.MEMORY
-	DB	"Memory Module:       ", 9, "512K, 1024K", 13, 10, 0
+; MSG.MEMORY
+; 	DB	"Memory Module:   ", 9, "512K, 1024K", 13, 10, 0
 
 MSG.RTC
-	DB	"RTC/F4 Module:       ", 9, 0
+	DB	"RTC/F4 Module:   ", 0
 
-MSG.GAME
-	DB	"Game Module:         ", 9, "PRESENT", 13, 10, 0
+; MSG.GAME
+; 	DB	"Game Module:     ", 9, "PRESENT", 13, 10, 0
 
-MSG.VIDEO
-	DB	"Video Module:        ", 9, "V9958", 13, 10, 0
-
-MSG.KEYBOARD
-	DB	"PPI/Keyboard Module: ", 9, "PRESENT", 13, 10, 0
+; MSG.VIDEO
+; 	DB	"Video Module:    ", 9, "V9958", 13, 10, 0
 
 MSG.PRESENT
 	DB	"PRESENT", 13, 10, 0
+
+if BUS_CLK EQ 307200
+MSG.SIO_PRESENT:
+	DB	"PRESENT (19200)", 13, 10, 0
+endif
 
 MSG.NOT
 	DB	"NOT ", 0
