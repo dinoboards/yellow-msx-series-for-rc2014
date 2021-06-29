@@ -383,6 +383,7 @@ InvDev:
 
 DispLine:
 
+	; ; SET CPU to 7,372,700
 	; ld	a, 00
 	; ld	(SpdCnt), a
 	; ld	a, $80
@@ -392,6 +393,15 @@ DispLine:
 	; ld	a, $00
 	; ld	(SpdCnt+3), a
 
+	; $0038 4000 => 3,686,400
+	ld	a, 00
+	ld	(SpdCnt), a
+	ld	a, $40
+	ld	(SpdCnt+1), a
+	ld	a, $38
+	ld	(SpdCnt+2), a
+	ld	a, $00
+	ld	(SpdCnt+3), a
 
 	; (display number of T-cycles) ?? freq of cpu?
 	ld	a,(SpdCnt+3)
