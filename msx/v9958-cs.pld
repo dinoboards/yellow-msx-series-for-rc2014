@@ -1,0 +1,41 @@
+Name     v9958-cs ;
+PartNo   00 ;
+Date     15/12/2020 ;
+Revision 01 ;
+Designer Dean Netherton ;
+Company  Dino ;
+Assembly None ;
+Location Ignored ;
+Device   g16v8a ;
+
+
+/************* INPUT PINS *********************/
+PIN  1 = A7;
+PIN  2 = A6;
+PIN  3 = A5;
+PIN  4 = A4;
+PIN  5 = A3;
+PIN  6 = A2;
+PIN  7 = !M1;
+PIN  8 = !RD;
+PIN  9 = !WR;
+PIN 10 = GND;
+PIN 11 = !IORQ;
+
+/**************** OUTPUT PINS *********************/
+//PIN 12 = NC;
+//PIN 13 = NC;
+//PIN 14 = NC;
+PIN 15 = !CSW;
+PIN 16 = !CSR;
+//PIN 17 = NC;
+//PIN 18 = NC;
+//PIN 19 = NC;
+PIN 20 = VCC;
+
+ADDR = A7 & !A6 & A5 & A4 & A3 & !A2;   // $98 TO $9B
+
+CS = ADDR & IORQ & !M1;
+
+CSW = CS & WR;
+CSR = CS & RD;

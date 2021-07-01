@@ -4,57 +4,29 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-# Example of MSX_JED_CDWIN environment variable
+# Example of MSX_JED_CDWIN exported environment variable
 # MSX_JED_CDWIN="u: && cd \\home\\jane\\<path to project>\\msx &&"
 
 all: rom-image-pal rom-image-ntsc rom-image-msxsyssrc #rom-image-nms8250
 
-jeds: bin/mem-selector.jed bin/rom-mapper.jed
+jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
+
+bin/%.jed:
+	@cd $$(wslpath "$$(wslvar USERPROFILE)")
+	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
+		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
+		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
+		fi
+		exit 1
+	fi
+	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat $(basename $<)"
 
 bin/mem-selector.jed: mem-selector.pld
-	@cd $$(wslpath "$$(wslvar USERPROFILE)")
-	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
-		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
-		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
-		fi
-		exit 1
-	fi
-	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat mem-selector"
-
 bin/rom-mapper.jed: rom-mapper.pld
-	@cd $$(wslpath "$$(wslvar USERPROFILE)")
-	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
-		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
-		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
-		fi
-		exit 1
-	fi
-	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat rom-mapper"
-
 bin/turbo-cpu.jed: turbo-cpu.pld
-	@cd $$(wslpath "$$(wslvar USERPROFILE)")
-	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
-		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
-		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
-		fi
-		exit 1
-	fi
-	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat turbo-cpu"
-
 bin/slot-backplane-driver.jed: slot-backplane-driver.pld
-	@cd $$(wslpath "$$(wslvar USERPROFILE)")
-	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
-		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
-		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
-		fi
-		exit 1
-	fi
-	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat slot-backplane-driver"
-
+bin/v9958-cs.jed: v9958-cs.pld
 
 .PHONY: cbios
 cbios:
