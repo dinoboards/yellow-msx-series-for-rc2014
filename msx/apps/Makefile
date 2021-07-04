@@ -9,7 +9,7 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 -Cs"--opt-code-speed" --allow-unsafe-read --opt-code-speed
 endif
 
-ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 -pragma-define:CRT_ENABLE_COMMANDLINE=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 -DAMALLOC1 $(ZCCRELFLAGS)
+ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 -pragma-define:CRT_ENABLE_COMMANDLINE=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 -DAMALLOC1 $(ZCCRELFLAGS) -I./fusion/
 
 telnet_sources = $(wildcard telnet/*.c) $(wildcard telnet/*.asm)
 
@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv))
 
 include	Makefile.rules.mk
 
@@ -53,13 +53,11 @@ $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 fossil_files = $(call app_files,fossil,extbio.asm getslt.asm)
 $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
 
-telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm msxdos.asm)
+telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/width.c)
 $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
-# .PHONY: bin/telnet.com
-# bin/telnet.com:
-# 	@$(MAKE) --no-print-directory -C ./telnet
-# 	cp -up ./telnet/bin/telnet.com ./bin/
+xrecv_files = $(call app_files,xrecv,extbio.asm fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm)
+$(BIN)xrecv.com: $(addprefix $(BIN),$(xrecv_files))
 
 clean:
 	@rm -rf ./bin

@@ -257,6 +257,9 @@ _get_fd:
 ;
 	PUBLIC	_Open
 _Open:
+	ld b,b
+	jr $+2
+
 	push ix
 	ld ix,0
 	add ix,sp
@@ -384,6 +387,10 @@ lb_op12:
 	pop	bc
 	bit	5,c	;CREATE?
 	push	bc
+
+	LD B,B
+	JR $+2
+
 	ld	c,0xF
 	jr	z,lb_op13
 	ld	c,0x16

@@ -1,4 +1,4 @@
-#include "print.h"
+#include "ansiprint.h"
 #include "asm.h"
 #include "msx2ansi.h"
 
