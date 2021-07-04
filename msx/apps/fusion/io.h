@@ -53,14 +53,14 @@
 #define SEEK_CUR 1
 #define SEEK_END 2
 
-#define O_RDONLY 0
-#define O_WRONLY 1
-#define O_RDWR   1
-#define O_CREAT  0x39
-#define O_EXCL   0x04
-#define O_TRUNC  0x31
-#define O_APPEND 0x41
-#define O_TEMP   0x80
+#define IO_RDONLY 0
+#define IO_WRONLY 1
+#define IO_RDWR   1
+#define IO_CREAT  0x39
+#define IO_EXCL   0x04
+#define IO_TRUNC  0x31
+#define IO_APPEND 0x41
+#define IO_TEMP   0x80
 
 /* get OS version	1-> MSXDOS 1.X, 2-> MSXDOS2, 0-not initiated */
 extern int GetOSVersion(void);

@@ -36,22 +36,19 @@
 
 #include "xymodem.h"
 #include "aofossilhelper.h"
-#include "io.h"
 #include "msx_fusion.h"
 #include "print.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "io.h"
+
 __at 0xFC9E unsigned int uiTickCount;
 
 // X and YMODEM Vars
-#ifdef AO_FOSSIL_ADAPTER
 #define RcvPktSize 2200
 unsigned char RcvPkt[RcvPktSize];
-#else
-__at 0x8500 unsigned char RcvPkt[]; // make sure it works in your map file, need to be in 0x8000 and beyond
-#endif // AO_FOSSIL_ADAPTER
 
 unsigned char filename[20];
 // Indicates G-Modem transfer in progress
@@ -340,7 +337,7 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
 
             strcpy(filename, &ucReadBuffer[3]);
 
-            *File = Open(&ucReadBuffer[3], O_CREAT);
+            *File = Open(&ucReadBuffer[3], IO_CREAT);
             if (*File != -1) {
               // File created, success
               if ((Action != 'G')) // YMODEM G no ack, it will just stream file after receiving next G
@@ -348,6 +345,8 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
               return 255;
             } else // couldn't create file
             {
+              printf("2222 %02X\r\n", NAK);
+
               // Failure creating file, can't move on
               ret = TxByte(chTransferConn, NAK);
               // Set timeout as 1 to indicate failure
@@ -401,6 +400,7 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
           TimeOut = 1;
           break;
         } else {
+          printf("1111 %02X\r\n", NAK);
           ret = TxByte(chTransferConn, NAK);
           // set timeout as 1 to indicate error
           TimeOut = 1;
@@ -578,7 +578,7 @@ void XYModemGet(unsigned char chConn, unsigned char chTelnetTransfer) {
   {
     TestTransfer = 0; // in XMODEM we are not able to test packet 00 (STX or SOH, 00 and FF, if fourth byte is FF then it is doubling, otherwise not)
     // in XMODEM filename is up to the user, we've already asked it, so create the file
-    iFile = Open(filename, O_CREAT);
+    iFile = Open(filename, IO_CREAT);
 
     if (iFile != -1) {
       PktNumber = 1;

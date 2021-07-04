@@ -141,6 +141,7 @@ unsigned char TxData(unsigned char ucConnNumber, unsigned char *lpucData, unsign
   if (ucConnNumber != 0x50)
     return ERR_INV_PARAM;
   for (int i = 0; i < uiDataSize; i++) {
+    printf("Sending %02X", *lpucData);
     fossil_rs_out(*lpucData);
     *lpucData++;
   }

@@ -39,7 +39,7 @@ $(BIN)%.com:
 	echo "Linked $(notdir $@) from $(notdir $^)"
 
 
-ZSDCPP_FLAGS=-iquote"." -isystem"${ZCCCFG}/../../include/_DEVELOPMENT/sdcc" -I./fdisk/ -I./telnet/
+ZSDCPP_FLAGS=-iquote"." -isystem"${ZCCCFG}/../../include/_DEVELOPMENT/sdcc" -I./fdisk/ -I./telnet/ -I./fusion/
 
 deps:
 	@echo "" > ./depends.d

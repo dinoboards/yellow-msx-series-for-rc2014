@@ -36,11 +36,10 @@
 --
 */
 #include "telnet.h"
+#include "ansiprint.h"
 #include "aofossilhelper.h"
 #include "msxdos.h"
-#include "print.h"
 #include "xymodem.h"
-#include <malloc.h>
 
 /*
  *
