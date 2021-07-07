@@ -13,3 +13,6 @@
 [submodule "referened-repos/MSX-Development"]
 	path = referened-repos/MSX-Development
 	url = git@github.com:ducasp/MSX-Development.git
+[submodule "referened-repos/fusion-c"]
+	path = referened-repos/fusion-c
+	url = git@github.com:ericb59/Fusion-C-v1.2.git
