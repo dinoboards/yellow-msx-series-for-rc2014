@@ -56,7 +56,7 @@ $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
 telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/width.c)
 $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
-xrecv_files = $(call app_files,xrecv,extbio.asm fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm)
+xrecv_files = $(call app_files,xrecv,extbio.asm fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/msx.c)
 $(BIN)xrecv.com: $(addprefix $(BIN),$(xrecv_files))
 
 clean:
