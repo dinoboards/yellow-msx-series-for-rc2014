@@ -22,8 +22,24 @@
 #define ERR5 0xFA
 #define OK 0x00
 
+typedef struct {
+  uint8_t *pHead;
+  uint8_t *pTail;
+  uint8_t  data[];
+} rs232Buff;
+
+uint8_t  __at 0xFB03 RS_TMP;
+uint8_t  __at 0xFB1A RS_ERRORS;
+uint8_t  __at 0xFB17 RS_DATCNT;
+uint8_t  __at 0xFB1C RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
+uint8_t  __at 0xFB1B RS_FLAGS;  // RS-232C bit flags
+uint8_t *__at 0xFB18 RS_BUFEND;
+
+rs232Buff *__at 0xFB04 RS_FCB;
+
+
 bool waitForByte() {
-  const uint16_t timeout = JIFFY + (VDP_FREQUENCY*2);
+  const int16_t timeout = JIFFY + (VDP_FREQUENCY*2);
 
   while(JIFFY < timeout && !fossil_rs_in_stat())
     ;
@@ -32,13 +48,11 @@ bool waitForByte() {
 }
 
 int sleep(int seconds) __z88dk_fastcall {
-  const uint16_t timeout = JIFFY + (VDP_FREQUENCY*seconds);
-  printf("%d - %d\r\n", timeout, JIFFY);
+  const int16_t timeout = JIFFY + (VDP_FREQUENCY*seconds);
 
   while(JIFFY < timeout)
-    ;
-
-    return 0;
+  ;
+  return 0;
 }
 
 uint8_t packetNumber;
@@ -47,6 +61,7 @@ uint8_t buffer[128];
 
 uint8_t read128Packet() {
   char ch;
+  uint8_t sum = 0;
 
   if (!waitForByte())
     return TIMEDOUT;
@@ -59,7 +74,7 @@ uint8_t read128Packet() {
     return TIMEDOUT;
 
   ch = fossil_rs_in();
-  if (ch != ~packetNumber)
+  if (ch != (255-packetNumber))
     return ERR2;
 
   uint8_t *p = buffer;
@@ -67,7 +82,7 @@ uint8_t read128Packet() {
     if (!waitForByte())
       return TIMEDOUT;
 
-    *p++ = fossil_rs_in();
+    sum += (*p++ = fossil_rs_in());
   }
 
   if (!waitForByte())
@@ -75,9 +90,10 @@ uint8_t read128Packet() {
 
   // checksum
   ch = fossil_rs_in();
-  printf("Received packet??? %02X\r\n", ch);
+  printf("Received packet??? %02X -> %02X\r\n", ch, sum);
   return OK;
 }
+
 
 uint8_t readPacketHeader() {
   const uint8_t ch = fossil_rs_in();
@@ -102,16 +118,15 @@ void firstPacket() {
 
   for (uint8_t tries = 0; tries < 4; tries++) {
     fossil_rs_out(NAK);
-    printf(".");
 
     if(waitForByte())
       break;
 
+    printf(".");
     sleep(4);
   }
 
   if (!waitForByte()) {
-    printf();
     printf("\r\nTimed out.\r\n");
     fossil_deinit();
     exit(1);
@@ -119,6 +134,17 @@ void firstPacket() {
 
   uint8_t r = readPacketHeader();
   printf("Result %02X\r\n", r);
+}
+
+void clearBuffers() {
+  bool stat = fossil_rs_in_stat();
+
+  while(stat) {
+    const char ch = fossil_rs_in();
+    printf("i.%02X ");
+
+    stat = fossil_rs_in_stat();
+  }
 }
 
 void main() {
@@ -130,6 +156,8 @@ void main() {
   fossil_set_baud(9, 9);
   fossil_set_protocol(7); // 8N1
   fossil_init();
+
+  clearBuffers();
 
   firstPacket();
 }
