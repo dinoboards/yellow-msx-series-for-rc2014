@@ -1,26 +1,27 @@
 #include "fossil.h"
+#include "msx.h"
+#include "xmodem.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "msx.h"
 
 #define VDP_FREQUENCY 50
 
-#define LF  ('J'-0x40)
-#define CR  ('M'-0x40)
-#define SOH ('A'-0x40)
-#define EOT ('D'-0x40)
-#define ACK ('F'-0x40)
-#define NAK ('U'-0x40)
-#define CAN ('X'-0x40)
-#define A_SUB ('Z'-0x40)
+#define LF    ('J' - 0x40)
+#define CR    ('M' - 0x40)
+#define SOH   ('A' - 0x40)
+#define EOT   ('D' - 0x40)
+#define ACK   ('F' - 0x40)
+#define NAK   ('U' - 0x40)
+#define CAN   ('X' - 0x40)
+#define A_SUB ('Z' - 0x40)
 
 #define TIMEDOUT 0xFF
-#define ERR1 0xFE
-#define ERR2 0xFD
-#define ERR3 0xFC
-#define ERR4 0xFB
-#define ERR5 0xFA
-#define OK 0x00
+#define ERR1     0xFE
+#define ERR2     0xFD
+#define ERR3     0xFC
+#define ERR4     0xFB
+#define ERR5     0xFA
+#define OK       0x00
 
 typedef struct {
   uint8_t *pHead;
@@ -38,116 +39,105 @@ uint8_t *__at 0xFB18 RS_BUFEND;
 rs232Buff *__at 0xFB04 RS_FCB;
 
 
-bool waitForByte() {
-  const int16_t timeout = JIFFY + (VDP_FREQUENCY*2);
+// int sleep(int seconds) __z88dk_fastcall {
+//   const int16_t timeout = JIFFY + (VDP_FREQUENCY * seconds);
 
-  while(JIFFY < timeout && !fossil_rs_in_stat())
-    ;
+//   while (JIFFY < timeout)
+//     ;
+//   return 0;
+// }
 
-  return fossil_rs_in_stat();
-}
+// uint8_t packetNumber;
+// uint8_t buffer[128];
 
-int sleep(int seconds) __z88dk_fastcall {
-  const int16_t timeout = JIFFY + (VDP_FREQUENCY*seconds);
+// uint8_t read128Packet() {
+//   char    ch;
+//   uint8_t sum = 0;
 
-  while(JIFFY < timeout)
-  ;
-  return 0;
-}
+//   if (!waitForByte())
+//     return TIMEDOUT;
 
-uint8_t packetNumber;
-uint8_t buffer[128];
+//   ch = fossil_rs_in();
+//   if (ch != packetNumber)
+//     return ERR1;
 
+//   if (!waitForByte())
+//     return TIMEDOUT;
 
-uint8_t read128Packet() {
-  char ch;
-  uint8_t sum = 0;
+//   ch = fossil_rs_in();
+//   if (ch != (255 - packetNumber))
+//     return ERR2;
 
-  if (!waitForByte())
-    return TIMEDOUT;
+//   uint8_t *p = buffer;
+//   for (uint8_t i = 0; i < 128; i++) {
+//     if (!waitForByte())
+//       return TIMEDOUT;
 
-  ch = fossil_rs_in();
-  if (ch != packetNumber)
-    return ERR1;
+//     sum += (*p++ = fossil_rs_in());
+//   }
 
-  if (!waitForByte())
-    return TIMEDOUT;
+//   if (!waitForByte())
+//     return TIMEDOUT;
 
-  ch = fossil_rs_in();
-  if (ch != (255-packetNumber))
-    return ERR2;
+//   // checksum
+//   ch = fossil_rs_in();
+//   printf("Received packet??? %02X -> %02X\r\n", ch, sum);
+//   return OK;
+// }
 
-  uint8_t *p = buffer;
-  for(uint8_t i = 0; i < 128; i++) {
-    if (!waitForByte())
-      return TIMEDOUT;
+// uint8_t readPacketHeader() {
+//   const uint8_t ch = fossil_rs_in();
 
-    sum += (*p++ = fossil_rs_in());
-  }
+//   switch (ch) {
+//   case EOT:
+//     return EOT;
 
-  if (!waitForByte())
-    return TIMEDOUT;
+//   case CAN:
+//     return CAN;
 
-  // checksum
-  ch = fossil_rs_in();
-  printf("Received packet??? %02X -> %02X\r\n", ch, sum);
-  return OK;
-}
+//   case SOH:
+//     return read128Packet();
 
+//   default:
+//     return ERR3;
+//   }
+// }
 
-uint8_t readPacketHeader() {
-  const uint8_t ch = fossil_rs_in();
+// void firstPacket() {
+//   packetNumber = 1;
 
-  switch(ch) {
-    case EOT:
-      return EOT;
+//   for (uint8_t tries = 0; tries < 4; tries++) {
+//     fossil_rs_out(NAK);
 
-    case CAN:
-      return CAN;
+//     if (waitForByte())
+//       break;
 
-    case SOH:
-      return read128Packet();
+//     printf(".");
+//     sleep(4);
+//   }
 
-    default:
-      return ERR3;
-  }
-}
+//   if (!waitForByte()) {
+//     printf("\r\nTimed out.\r\n");
+//     fossil_deinit();
+//     exit(1);
+//   }
 
-void firstPacket() {
-  packetNumber = 1;
+//   uint8_t r = readPacketHeader();
+//   printf("Result %02X\r\n", r);
+// }
 
-  for (uint8_t tries = 0; tries < 4; tries++) {
-    fossil_rs_out(NAK);
+// void clearBuffers() {
+//   bool stat = fossil_rs_in_stat();
 
-    if(waitForByte())
-      break;
+//   while (stat) {
+//     const char ch = fossil_rs_in();
+//     printf("i.%02X ");
 
-    printf(".");
-    sleep(4);
-  }
+//     stat = fossil_rs_in_stat();
+//   }
+// }
 
-  if (!waitForByte()) {
-    printf("\r\nTimed out.\r\n");
-    fossil_deinit();
-    exit(1);
-  }
-
-  uint8_t r = readPacketHeader();
-  printf("Result %02X\r\n", r);
-}
-
-void clearBuffers() {
-  bool stat = fossil_rs_in_stat();
-
-  while(stat) {
-    const char ch = fossil_rs_in();
-    printf("i.%02X ");
-
-    stat = fossil_rs_in_stat();
-  }
-}
-
-void main() {
+int main() {
   if (!fossil_link()) {
     printf("Fossil driver not found\r\n");
     exit(1);
@@ -157,9 +147,26 @@ void main() {
   fossil_set_protocol(7); // 8N1
   fossil_init();
 
-  clearBuffers();
+  int st;
 
-  firstPacket();
+  printf("Send data using the xmodem protocol from your terminal emulator now...\n");
+  /* the following should be changed for your environment:
+     0x30000 is the download address,
+     65536 is the maximum size to be written at this address
+   */
+  st = xmodemReceive();
+  if (st < 0) {
+    printf("Xmodem receive error: status: %d\n", st);
+  } else {
+    printf("Xmodem successfully received %d bytes\n", st);
+  }
+
+  fossil_deinit();
+  return 0;
+
+  // clearBuffers();
+
+  // firstPacket();
 }
 
 // // XYModemGet(0x50, 1);
@@ -187,9 +194,6 @@ void main() {
 
 // readFirstPacket
 // }
-
-
-
 
 // void xmodem_receive(const char* pFileName) {
 //   (void)pFileName;

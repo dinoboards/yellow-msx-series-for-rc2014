@@ -2,15 +2,16 @@
 ./bin/cpusptst/main.c.asm: cpusptst/main.c
 ./bin/dots.c.asm: dots.c msxdos.h v9958.h
 ./bin/extbio/main.c.asm: extbio/main.c extbio.h fossil.h msxdos.h xstdio.h
+./bin/fusion/width.c.asm: fusion/width.c fusion/msx_fusion.h
+./bin/fusion/msx.c.asm: fusion/msx.c fusion/msx.h
 ./bin/lines.c.asm: lines.c v9958.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
 ./bin/fossil.c.asm: fossil.c extbio.h msxdos.h xstdio.h
-./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h fusion/io.h \
- fusion/msx_fusion.h print.h
+./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h fusion/msx_fusion.h \
+ print.h fusion/io.h
 ./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h telnet/asm.h \
- fusion/msx_fusion.h aofossilhelper.h msxdos.h telnet/ansiprint.h print.h \
+ fusion/msx_fusion.h telnet/ansiprint.h print.h aofossilhelper.h msxdos.h \
  xymodem.h
-./bin/telnet/width.c.asm: telnet/width.c fusion/msx_fusion.h
 ./bin/telnet/fossil_interface.c.asm: telnet/fossil_interface.c fossil.h \
  fusion/msx_fusion.h
 ./bin/telnet/ansiprint.c.asm: telnet/ansiprint.c telnet/ansiprint.h print.h telnet/asm.h \
@@ -23,17 +24,22 @@
 ./bin/rs232tst.c.asm: rs232tst.c extbio.h msxdos.h
 ./bin/fosiltst.c.asm: fosiltst.c extbio.h fossil.h msxdos.h xstdio.h
 ./bin/aofossilhelper.c.asm: aofossilhelper.c aofossilhelper.h fossil.h \
- fusion/msx_fusion.h telnet/ansiprint.h print.h
+ fusion/msx_fusion.h print.h
 ./bin/mbrot.c.asm: mbrot.c v9958.h
-./bin/xrecv/xrecv.c.asm: xrecv/xrecv.c aofossilhelper.h msxdos.h print.h xymodem.h
+./bin/xrecv/crc16.c.asm: xrecv/crc16.c xrecv/crc16.h
+./bin/xrecv/xmodem.c.asm: xrecv/xmodem.c xrecv/xmodem.h xrecv/crc16.h xrecv/serial.h \
+ fossil.h
+./bin/xrecv/serial.c.asm: xrecv/serial.c xrecv/serial.h fossil.h fusion/msx.h
+./bin/xrecv/print.c.asm: xrecv/print.c print.h
+./bin/xrecv/xrecv.c.asm: xrecv/xrecv.c fossil.h fusion/msx.h xrecv/xmodem.h
 ./bin/msx.o: ./msx.asm ./msx.inc
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
+./bin/fusion/inputchar.o: ./fusion/inputchar.asm
 ./bin/fusion/io.o: ./fusion/io.asm
+./bin/fusion/inputstring.o: ./fusion/inputstring.asm
+./bin/fusion/inkey.o: ./fusion/inkey.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/msxdos.o: ./msxdos.asm
-./bin/telnet/inputchar.o: ./telnet/inputchar.asm
-./bin/telnet/inputstring.o: ./telnet/inputstring.asm
-./bin/telnet/inkey.o: ./telnet/inkey.asm
 ./bin/telnet/print.o: ./telnet/print.asm
 ./bin/telnet/msx2ansi.o: ./telnet/msx2ansi.asm
 ./bin/telnet/screen.o: ./telnet/screen.asm

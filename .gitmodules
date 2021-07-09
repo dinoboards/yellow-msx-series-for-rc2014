@@ -16,3 +16,6 @@
 [submodule "referened-repos/fusion-c"]
 	path = referened-repos/fusion-c
 	url = git@github.com:ericb59/Fusion-C-v1.2.git
+[submodule "referened-repos/xmodem-1k"]
+	path = referened-repos/xmodem-1k
+	url = git@github.com:kelvinlawson/xmodem-1k.git
