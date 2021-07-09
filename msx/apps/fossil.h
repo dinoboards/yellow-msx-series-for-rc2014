@@ -48,23 +48,23 @@ typedef struct fossil_info_struct {
   uint8_t  dtr_status;
   uint8_t  channel;
   uint8_t  hardware;
-} fossile_info;
+} fossil_info;
 
 typedef struct {
   uint8_t slot_id;
   void *  jump_table;
-} fossile_jump_table;
+} fossil_jump_table;
 
 extern uint16_t      fossil_get_version();
 extern bool          fossil_link();
-extern uint8_t       fossil_ex_link(fossile_jump_table *jtable) __z88dk_fastcall;
+extern uint8_t       fossil_ex_link(fossil_jump_table *jtable) __z88dk_fastcall;
 extern int           fossil_getversion();
 extern void          fossil_init();
 extern void          fossil_deinit();
 extern void          fossil_set_baud(uint8_t transmit_baud, uint8_t receive_baud);
 extern void          fossil_set_protocol(uint8_t x) __z88dk_fastcall;
 extern void          fossil_setchannel(uint8_t x) __z88dk_fastcall;
-extern char          fossil_rs_in();
+extern unsigned char fossil_rs_in();
 extern void          fossil_rs_out(uint8_t ch) __z88dk_fastcall;
 extern uint8_t       fossil_rs_in_stat();
 extern void          fossil_rs_out_stat();
@@ -78,6 +78,6 @@ extern void          fossil_fastint(uint8_t x) __z88dk_fastcall;
 extern void          fossil_hookstat(uint8_t x) __z88dk_fastcall;
 extern void          fossil_chput_hook(uint8_t x) __z88dk_fastcall;
 extern void          fossil_keyb_hook(uint8_t x) __z88dk_fastcall;
-extern fossile_info *fossil_get_info();
+extern fossil_info * fossil_get_info();
 
 #endif
