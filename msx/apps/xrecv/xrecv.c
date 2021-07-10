@@ -73,17 +73,19 @@ int _main(char **argv, int argc) {
 
   printf("Send data using the xmodem protocol from your terminal emulator now...\n");
 
-  XMODEM_SIGNAL sig = READ_HEADER;
-  while(sig = xmodemReceive(sig)) {
+  XMODEM_SIGNAL sig = READ_FIRST_HEADER;
+  while(sig = xmodem_receive(sig)) {
     if (sig == SAVE_PACKET) {
       fwrite(xmodemState.packetBuffer+3, xmodemState.currentPacketSize, 1, fptr);
       printf(".");
     }
   }
 
+  printf("finish reason sig: %d\r\n", xmodemState.finish_reason);
+
   fclose(fptr);
 
-  // int st = xmodemReceive();
+  // int st = xmodem_receive();
   // if (st < 0) {
   //   printf("Xmodem receive error: status: %d\n", st);
   // } else {

@@ -31,7 +31,9 @@
  fossil.h
 ./bin/xrecv/serial.c.asm: xrecv/serial.c xrecv/serial.h fossil.h fusion/msx.h
 ./bin/xrecv/print.c.asm: xrecv/print.c print.h
-./bin/xrecv/xrecv.c.asm: xrecv/xrecv.c fossil.h fusion/msx.h xrecv/xmodem.h
+./bin/xrecv/xrecv.c.asm: xrecv/xrecv.c fossil.h fusion/msx.h xrecv/xmodem.h \
+ crt_override.h
+./bin/crt_override.c.asm: crt_override.c crt_override.h msxdos.h
 ./bin/msx.o: ./msx.asm ./msx.inc
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/fusion/inputchar.o: ./fusion/inputchar.asm

@@ -35,4 +35,6 @@ extern uint16_t TXTNAM_ADDR TXTNAM;
 #define msxPutPtr PUTPNT
 #define msxGetPtr GETPNT
 
+#define VDP_FREQUENCY 50
+
 #endif
