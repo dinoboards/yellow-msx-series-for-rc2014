@@ -56,14 +56,14 @@ static int check(int crc, const unsigned char *buf, int sz) {
     const unsigned short crc = crc16_ccitt(buf, sz);
     const unsigned short tcrc = (buf[sz] << 8) + buf[sz + 1];
     return (crc == tcrc);
-	}
+  }
 
-	int           i;
-	unsigned char cks = 0;
-	for (i = 0; i < sz; ++i) {
-		cks += *buf++;
-	}
-	return (cks == buf[sz]);
+  int           i;
+  unsigned char cks = 0;
+  for (i = 0; i < sz; ++i) {
+    cks += *buf++;
+  }
+  return (cks == buf[sz]);
 }
 
 static void flushinput(void) {
@@ -71,115 +71,137 @@ static void flushinput(void) {
     ;
 }
 
-unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
-int            bufsz, crc = 0;
-unsigned char  trychar = 'C';
-unsigned char  packetno = 1;
-int            i, c, len = 0;
-int            retry, retrans = MAXRETRANS;
+struct xmodemState xmodemState;
+
+int           crc = 0;
+unsigned char trychar = 'C';
+unsigned char packetno = 1;
+int           i, c, len = 0;
+int           retry, retrans = MAXRETRANS;
 
 bool readPacket() {
-	unsigned char *p = xbuff;
+  unsigned char *p = xmodemState.packetBuffer;
 
-	*p++ = c;
-	for (i = 0; i < (bufsz + (crc) + 3); ++i) {
-		if (!waitForByte(DLY_1S))
-			return false;
-		*p++ = fossil_rs_in();
-	}
+  *p++ = c;
+  for (i = 0; i < (xmodemState.currentPacketSize + (crc) + 3); ++i) {
+    if (!waitForByte(DLY_1S))
+      return false;
+    *p++ = fossil_rs_in();
+  }
 
-	return true;
+  return true;
 }
 
-int xmodemReceive() {
-  for (;;) {
-    for (retry = 0; retry < 16; ++retry) {
-      if (trychar)
-        _outbyte(trychar);
+XMODEM_SIGNAL readHeader() {
+  if (trychar)
+    _outbyte(trychar);
 
-			if (waitForByte(DLY_1S)) {
-        switch (fossil_rs_in()) {
-        case SOH:
-          bufsz = 128;
-          goto start_recv;
+  if (waitForByte(DLY_1S)) {
+    switch (fossil_rs_in()) {
+    case SOH:
+      xmodemState.currentPacketSize = 128;
+      return READ_128;
 
-        case STX:
-          bufsz = 1024;
-          goto start_recv;
+    case STX:
+      xmodemState.currentPacketSize = 1024;
+      return READ_1024;
 
-        case EOT:
-          flushinput();
-          _outbyte(ACK);
-          return len; /* normal end */
-
-        case CAN:
-          if ((c = _inbyte(DLY_1S)) == CAN) {
-            flushinput();
-            _outbyte(ACK);
-            return -1; /* canceled by remote */
-          }
-          break;
-        default:
-          break;
-        }
-      }
-    }
-
-    if (trychar == 'C') {
-      trychar = NAK;
-      continue;
-    }
-
-    flushinput();
-    _outbyte(CAN);
-    _outbyte(CAN);
-    _outbyte(CAN);
-    return -2; /* sync error */
-
-  start_recv:
-    if (trychar == 'C')
-      crc = 1;
-    trychar = 0;
-
-		if(!readPacket())
-			goto reject;
-
-    if (xbuff[1] == (unsigned char)(~xbuff[2]) && (xbuff[1] == packetno ) && check(crc, &xbuff[3], bufsz)) {
-      if (xbuff[1] == packetno) {
-        printf("P: %d\r\n", packetno);
-        // register int count = destsz - len;
-        // if (count > bufsz) count = bufsz;
-        // if (count > 0) {
-        // 	memcpy (&dest[len], &xbuff[3], count);
-        // 	len += count;
-        // }
-        ++packetno;
-        retrans = MAXRETRANS + 1;
-      }
-      if (--retrans <= 0) {
-        flushinput();
-        _outbyte(CAN);
-        _outbyte(CAN);
-        _outbyte(CAN);
-        return -3; /* too many retry error */
-      }
+    case EOT:
+      flushinput();
       _outbyte(ACK);
-      continue;
+      return END_OF_STREAM;
+
+    case CAN:
+      if ((c = _inbyte(DLY_1S)) == CAN) {
+        flushinput();
+        _outbyte(ACK);
+        return UPSTREAM_CANCELLED;
+      }
+      break;
     }
-  reject:
-    printf("REJECT!\r\n");
+  }
+
+  if (trychar == 'C') {
+    trychar = NAK;
+    return TRY_AGAIN;
+  }
+
+  flushinput();
+  _outbyte(CAN);
+  _outbyte(CAN);
+  _outbyte(CAN);
+  return STREAM_ERROR;
+}
+
+XMODEM_SIGNAL startRecv() {
+  if (trychar == 'C')
+    crc = 1;
+  trychar = 0;
+
+  if (!readPacket())
+    return PACKET_REJECT;
+
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check(crc, &xmodemState.packetBuffer[3], xmodemState.currentPacketSize))
+    return SAVE_PACKET;
+
+  if (--retrans <= 0) {
     flushinput();
-    _outbyte(NAK);
+    _outbyte(CAN);
+    _outbyte(CAN);
+    _outbyte(CAN);
+    return TOO_MANY_ERRORS;
+  }
+
+  return PACKET_REJECT;
+}
+
+XMODEM_SIGNAL xmodemReceive(XMODEM_SIGNAL signal) __z88dk_fastcall {
+
+  switch(signal) {
+    case READ_HEADER:
+      if (retry >= 16)
+        return TOO_MANY_ERRORS; // send the three CAN
+
+      return readHeader();
+
+    case READ_128:
+    case READ_1024:
+      return startRecv();
+
+    case NEXT_PACKET:
+      retry = 0;
+      return READ_HEADER;
+
+    case PACKET_REJECT:
+    case TRY_AGAIN:
+      flushinput();
+      _outbyte(NAK);
+      retry++;
+      return READ_HEADER;
+
+    case SAVE_PACKET:
+      ++packetno;
+      retrans = MAXRETRANS + 1;
+      _outbyte(ACK);
+      return NEXT_PACKET;
+
+    // case END_OF_STREAM:
+    // case UPSTREAM_CANCELLED:
+    // case STREAM_ERROR:
+    // case TOO_MANY_ERRORS:
+    //   return FINISHED;
+
+    default:
+      return FINISHED;
   }
 }
-
 
 // int xmodemTransmit()
 // {
 //   const int srcsz = 10;
 
-// 	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
-// 	int bufsz, crc = -1;
+// 	unsigned char xmodemState.packetBuffer[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
+// 	int xmodemState.currentPacketSize, crc = -1;
 // 	unsigned char packetno = 1;
 // 	int i, c, len = 0;
 // 	int retry;
@@ -215,39 +237,39 @@ int xmodemReceive() {
 // 		for(;;) {
 // 		start_trans:
 // #ifdef TRANSMIT_XMODEM_1K
-// 			xbuff[0] = STX; bufsz = 1024;
+// 			xmodemState.packetBuffer[0] = STX; xmodemState.currentPacketSize = 1024;
 // #else
-// 			xbuff[0] = SOH; bufsz = 128;
+// 			xmodemState.packetBuffer[0] = SOH; xmodemState.currentPacketSize = 128;
 // #endif
-// 			xbuff[1] = packetno;
-// 			xbuff[2] = ~packetno;
+// 			xmodemState.packetBuffer[1] = packetno;
+// 			xmodemState.packetBuffer[2] = ~packetno;
 // 			c = srcsz - len;
-// 			if (c > bufsz) c = bufsz;
+// 			if (c > xmodemState.currentPacketSize) c = xmodemState.currentPacketSize;
 // 			if (c > 0) {
-// 				// memset (&xbuff[3], 0, bufsz);
-// 				// memcpy (&xbuff[3], &src[len], c);
-// 				if (c < bufsz) xbuff[3+c] = CTRLZ;
+// 				// memset (&xmodemState.packetBuffer[3], 0, xmodemState.currentPacketSize);
+// 				// memcpy (&xmodemState.packetBuffer[3], &src[len], c);
+// 				if (c < xmodemState.currentPacketSize) xmodemState.packetBuffer[3+c] = CTRLZ;
 // 				if (crc) {
-// 					unsigned short ccrc = crc16_ccitt(&xbuff[3], bufsz);
-// 					xbuff[bufsz+3] = (ccrc>>8) & 0xFF;
-// 					xbuff[bufsz+4] = ccrc & 0xFF;
+// 					unsigned short ccrc = crc16_ccitt(&xmodemState.packetBuffer[3], xmodemState.currentPacketSize);
+// 					xmodemState.packetBuffer[xmodemState.currentPacketSize+3] = (ccrc>>8) & 0xFF;
+// 					xmodemState.packetBuffer[xmodemState.currentPacketSize+4] = ccrc & 0xFF;
 // 				}
 // 				else {
 // 					unsigned char ccks = 0;
-// 					for (i = 3; i < bufsz+3; ++i) {
-// 						ccks += xbuff[i];
+// 					for (i = 3; i < xmodemState.currentPacketSize+3; ++i) {
+// 						ccks += xmodemState.packetBuffer[i];
 // 					}
-// 					xbuff[bufsz+3] = ccks;
+// 					xmodemState.packetBuffer[xmodemState.currentPacketSize+3] = ccks;
 // 				}
 // 				for (retry = 0; retry < MAXRETRANS; ++retry) {
-// 					for (i = 0; i < bufsz+4+(crc?1:0); ++i) {
-// 						_outbyte(xbuff[i]);
+// 					for (i = 0; i < xmodemState.currentPacketSize+4+(crc?1:0); ++i) {
+// 						_outbyte(xmodemState.packetBuffer[i]);
 // 					}
 // 					if ((c = _inbyte(DLY_1S)) >= 0 ) {
 // 						switch (c) {
 // 						case ACK:
 // 							++packetno;
-// 							len += bufsz;
+// 							len += xmodemState.currentPacketSize;
 // 							goto start_trans;
 // 						case CAN:
 // 							if ((c = _inbyte(DLY_1S)) == CAN) {
