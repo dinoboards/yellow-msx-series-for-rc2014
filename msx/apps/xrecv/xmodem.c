@@ -42,6 +42,8 @@
 #define MAXRETRANS 25
 #define TRANSMIT_XMODEM_1K
 
+#define FOR_SIGNAL(mask) if (signal & (mask))
+
 void delay(uint8_t period) __z88dk_fastcall {
   const int16_t timeout = ((int16_t)JIFFY) + period;
 
@@ -49,40 +51,42 @@ void delay(uint8_t period) __z88dk_fastcall {
     ;
 }
 
+static bool check_crc() {
+  const unsigned char *buf = &xmodemState.packetBuffer[3];
+  const uint16_t       sz = xmodemState.currentPacketSize;
 
-static int check(int crc, const unsigned char *buf, int sz) {
-  if (crc) {
-    const unsigned short crc = crc16_ccitt(buf, sz);
-    const unsigned short tcrc = (buf[sz] << 8) + buf[sz + 1];
-    return (crc == tcrc);
-  }
+  const unsigned short crc = crc16_ccitt(buf, sz);
+  const unsigned short tcrc = (buf[sz] << 8) + buf[sz + 1];
+  return (crc == tcrc);
+}
 
-  int           i;
-  unsigned char cks = 0;
-  for (i = 0; i < sz; ++i) {
+static bool check_sum() {
+  const unsigned char *buf = &xmodemState.packetBuffer[3];
+  const uint16_t       sz = xmodemState.currentPacketSize;
+
+  uint8_t cks = 0;
+  for (uint16_t i = 0; i < sz; ++i) {
     cks += *buf++;
   }
-  return (cks == buf[sz]);
+  return (cks == *buf);
 }
 
 static void flush_input(void) {
-  while (wait_for_byte((DLY_1S*3) >> 1))
+  while (wait_for_byte((DLY_1S * 3) >> 1))
     fossil_rs_in();
 }
 
 struct xmodemState xmodemState;
 
-int           crc = 0;
-// unsigned char trychar = 'C';
 unsigned char packetno = 1;
 int           i, c, len = 0;
 int           retry, retrans = MAXRETRANS;
 
-bool read_packet() {
+bool read_packet(bool crc) {
   unsigned char *p = xmodemState.packetBuffer;
 
   *p++ = c;
-  for (i = 0; i < (xmodemState.currentPacketSize + (crc) + 3); ++i) {
+  for (i = 0; i < (xmodemState.currentPacketSize + (crc ? 1 : 0) + 3); ++i) {
     if (!wait_for_byte(DLY_1S))
       return false;
     *p++ = fossil_rs_in();
@@ -93,45 +97,16 @@ bool read_packet() {
 
 XMODEM_SIGNAL read_first_header() {
   fossil_rs_out('C');
-  crc = 1;
 
   if (wait_for_byte(DLY_1S)) {
     switch (fossil_rs_in()) {
     case SOH:
       xmodemState.currentPacketSize = 128;
-      return READ_128;
+      return READ_CRC | READ_128;
 
     case STX:
       xmodemState.currentPacketSize = 1024;
-      return READ_1024;
-
-    case EOT:
-      flush_input();
-      fossil_rs_out(ACK);
-      return END_OF_STREAM;
-
-    case CAN:
-      flush_input();
-      fossil_rs_out(ACK);
-      return UPSTREAM_CANCELLED;
-    }
-  }
-
-  crc = 0;
-  return TRY_AGAIN;
-}
-
-
-XMODEM_SIGNAL read_header() {
-  if (wait_for_byte(DLY_1S)) {
-    switch (fossil_rs_in()) {
-    case SOH:
-      xmodemState.currentPacketSize = 128;
-      return READ_128;
-
-    case STX:
-      xmodemState.currentPacketSize = 1024;
-      return READ_1024;
+      return READ_CRC | READ_1024;
 
     case EOT:
       flush_input();
@@ -148,12 +123,38 @@ XMODEM_SIGNAL read_header() {
   return TRY_AGAIN;
 }
 
-XMODEM_SIGNAL start_receive() {
-  if (!read_packet())
-    return PACKET_REJECT;
+XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  if (wait_for_byte(DLY_1S)) {
+    switch (fossil_rs_in()) {
+    case SOH:
+      xmodemState.currentPacketSize = 128;
+      return signal | READ_128;
 
-  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check(crc, &xmodemState.packetBuffer[3], xmodemState.currentPacketSize))
-    return SAVE_PACKET;
+    case STX:
+      xmodemState.currentPacketSize = 1024;
+      return signal | READ_1024;
+
+    case EOT:
+      flush_input();
+      fossil_rs_out(ACK);
+      return END_OF_STREAM;
+
+    case CAN:
+      flush_input();
+      fossil_rs_out(ACK);
+      return UPSTREAM_CANCELLED;
+    }
+  }
+
+  return signal | TRY_AGAIN;
+}
+
+XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  if (!read_packet(1))
+    return signal | PACKET_TIMEOUT;
+
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc())
+    return signal | SAVE_PACKET;
 
   if (--retrans <= 0) {
     flush_input();
@@ -163,57 +164,101 @@ XMODEM_SIGNAL start_receive() {
     return TOO_MANY_ERRORS;
   }
 
-  return PACKET_REJECT;
+  return signal | PACKET_REJECT;
 }
 
-XMODEM_SIGNAL xmodem_receive(XMODEM_SIGNAL signal) __z88dk_fastcall {
-  switch(signal) {
-    case READ_FIRST_HEADER:
-      return read_first_header();
+XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  if (!read_packet(0))
+    return signal | PACKET_TIMEOUT;
 
-    case READ_HEADER:
-      return read_header();
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum())
+    return signal | SAVE_PACKET;
 
-    case READ_128:
-    case READ_1024:
-      return start_receive();
-
-    case PACKET_REJECT:
-    case TRY_AGAIN:
-      flush_input();
-
-      if (retry++ >= 16)
-        return TOO_MANY_ERRORS;
-
-      delay(DLY_1S*4);
-
-      printf("w");
-      fossil_rs_out(NAK);
-      retry++;
-      return READ_HEADER;
-
-    case SAVE_PACKET:
-      ++packetno;
-      retrans = MAXRETRANS + 1;
-      retry = 0;
-      fossil_rs_out(ACK);
-      return READ_HEADER;
-
-    // case END_OF_STREAM:
-    // case UPSTREAM_CANCELLED:
-    // case STREAM_ERROR:
-    case TOO_MANY_ERRORS:
-      flush_input();
-      fossil_rs_out(CAN);
-      fossil_rs_out(CAN);
-      fossil_rs_out(CAN);
-      xmodemState.finish_reason = TOO_MANY_ERRORS;
-      return FINISHED;
-
-    default:
-      xmodemState.finish_reason = signal;
-      return FINISHED;
+  if (--retrans <= 0) {
+    flush_input();
+    fossil_rs_out(CAN);
+    fossil_rs_out(CAN);
+    fossil_rs_out(CAN);
+    return TOO_MANY_ERRORS;
   }
+
+  return signal | PACKET_REJECT;
+}
+
+XMODEM_SIGNAL xmodem_tryagain(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  flush_input();
+
+  if (retry++ >= 5)
+    return TOO_MANY_ERRORS;
+
+  delay(DLY_1S * 4);
+
+  printf("w");
+  fossil_rs_out(NAK);
+  retry++;
+  return signal | READ_HEADER;
+}
+
+XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  ++packetno;
+  retrans = MAXRETRANS + 1;
+  retry = 0;
+  fossil_rs_out(ACK);
+  return signal | READ_HEADER;
+}
+
+XMODEM_SIGNAL xmodem_too_many_errors() __z88dk_fastcall {
+  flush_input();
+  fossil_rs_out(CAN);
+  fossil_rs_out(CAN);
+  fossil_rs_out(CAN);
+  xmodemState.finish_reason = TOO_MANY_ERRORS;
+  return FINISHED;
+}
+
+void traceSingle(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  FOR_SIGNAL(READ_FIRST_HEADER) { printf("READ_FIRST_HEADER "); }
+  FOR_SIGNAL(READ_HEADER) { printf("READ_HEADER "); }
+  FOR_SIGNAL(READ_CRC) { printf("READ_CRC "); }
+  FOR_SIGNAL(READ_CHECKSUM) { printf("READ_CHECKSUM "); }
+  FOR_SIGNAL(READ_128) { printf("READ_128 "); }
+  FOR_SIGNAL(READ_1024) { printf("READ_1024 "); }
+  FOR_SIGNAL(SAVE_PACKET) { printf("SAVE_PACKET "); }
+  FOR_SIGNAL(END_OF_STREAM) { printf("END_OF_STREAM "); }
+  FOR_SIGNAL(UPSTREAM_CANCELLED) { printf("UPSTREAM_CANCELLED "); }
+  FOR_SIGNAL(STREAM_ERROR) { printf("STREAM_ERROR "); }
+  FOR_SIGNAL(TRY_AGAIN) { printf("TRY_AGAIN "); }
+  FOR_SIGNAL(PACKET_REJECT) { printf("PACKET_REJECT "); }
+  FOR_SIGNAL(TOO_MANY_ERRORS) { printf("TOO_MANY_ERRORS "); }
+  FOR_SIGNAL(PACKET_TIMEOUT) { printf("PACKET_TIMEOUT "); }
+  printf("\r\n");
+}
+
+XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  traceSingle(signal);
+
+  FOR_SIGNAL(READ_FIRST_HEADER) { return read_first_header(); }
+
+  FOR_SIGNAL(READ_HEADER) { return read_header(signal & ~READ_HEADER); }
+
+  FOR_SIGNAL(READ_128 | READ_1024) {
+    FOR_SIGNAL(READ_CRC) { return start_receive_crc(signal & ~(READ_128 | READ_1024)); }
+    else {
+      return start_receive_checksum(signal & ~(READ_128 | READ_1024));
+    }
+  }
+
+  FOR_SIGNAL(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN) { return xmodem_tryagain(signal & ~(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN)); }
+
+  FOR_SIGNAL(SAVE_PACKET) { return xmodem_packet_save(signal & ~SAVE_PACKET); }
+
+  // case END_OF_STREAM:
+  // case UPSTREAM_CANCELLED:
+  // case STREAM_ERROR:
+  FOR_SIGNAL(TOO_MANY_ERRORS) { return xmodem_too_many_errors(); }
+
+  xmodemState.finish_reason = signal;
+  return FINISHED;
 }
 
 // int xmodemTransmit()
