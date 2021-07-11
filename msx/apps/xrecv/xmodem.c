@@ -233,26 +233,26 @@ XMODEM_SIGNAL xmodem_too_many_errors() __z88dk_fastcall {
   return FINISHED;
 }
 
-void traceSingle(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  FOR_SIGNAL(READ_FIRST_HEADER) { printf("READ_FIRST_HEADER "); }
-  FOR_SIGNAL(READ_HEADER) { printf("READ_HEADER "); }
-  FOR_SIGNAL(READ_CRC) { printf("READ_CRC "); }
-  FOR_SIGNAL(READ_CHECKSUM) { printf("READ_CHECKSUM "); }
-  FOR_SIGNAL(READ_128) { printf("READ_128 "); }
-  FOR_SIGNAL(READ_1024) { printf("READ_1024 "); }
-  FOR_SIGNAL(SAVE_PACKET) { printf("SAVE_PACKET "); }
-  FOR_SIGNAL(END_OF_STREAM) { printf("END_OF_STREAM "); }
-  FOR_SIGNAL(UPSTREAM_CANCELLED) { printf("UPSTREAM_CANCELLED "); }
-  FOR_SIGNAL(STREAM_ERROR) { printf("STREAM_ERROR "); }
-  FOR_SIGNAL(TRY_AGAIN) { printf("TRY_AGAIN "); }
-  FOR_SIGNAL(PACKET_REJECT) { printf("PACKET_REJECT "); }
-  FOR_SIGNAL(TOO_MANY_ERRORS) { printf("TOO_MANY_ERRORS "); }
-  FOR_SIGNAL(PACKET_TIMEOUT) { printf("PACKET_TIMEOUT "); }
-  printf("\r\n");
-}
+// void traceSingle(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+//   FOR_SIGNAL(READ_FIRST_HEADER) { printf("READ_FIRST_HEADER "); }
+//   FOR_SIGNAL(READ_HEADER) { printf("READ_HEADER "); }
+//   FOR_SIGNAL(READ_CRC) { printf("READ_CRC "); }
+//   FOR_SIGNAL(READ_CHECKSUM) { printf("READ_CHECKSUM "); }
+//   FOR_SIGNAL(READ_128) { printf("READ_128 "); }
+//   FOR_SIGNAL(READ_1024) { printf("READ_1024 "); }
+//   FOR_SIGNAL(SAVE_PACKET) { printf("SAVE_PACKET "); }
+//   FOR_SIGNAL(END_OF_STREAM) { printf("END_OF_STREAM "); }
+//   FOR_SIGNAL(UPSTREAM_CANCELLED) { printf("UPSTREAM_CANCELLED "); }
+//   FOR_SIGNAL(STREAM_ERROR) { printf("STREAM_ERROR "); }
+//   FOR_SIGNAL(TRY_AGAIN) { printf("TRY_AGAIN "); }
+//   FOR_SIGNAL(PACKET_REJECT) { printf("PACKET_REJECT "); }
+//   FOR_SIGNAL(TOO_MANY_ERRORS) { printf("TOO_MANY_ERRORS "); }
+//   FOR_SIGNAL(PACKET_TIMEOUT) { printf("PACKET_TIMEOUT "); }
+//   printf("\r\n");
+// }
 
 XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  traceSingle(signal);
+  // traceSingle(signal);
 
   FOR_SIGNAL(READ_FIRST_HEADER) { return read_first_header(); }
 
