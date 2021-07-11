@@ -54,9 +54,13 @@ void delay(uint8_t period) __z88dk_fastcall {
 static bool check_crc() {
   const unsigned char *buf = &xmodemState.packetBuffer[3];
   const uint16_t       sz = xmodemState.currentPacketSize;
+  uint16_t            counter;
+  uint16_t crc = 0;
+  for (counter = 0; counter < sz; counter++)
+    crc = (crc << 8) ^ crc16tab[((crc >> 8) ^ *buf++) & 0x00FF];
 
-  const unsigned short crc = crc16_ccitt(buf, sz);
-  const unsigned short tcrc = (buf[sz] << 8) + buf[sz + 1];
+  uint16_t tcrc = (*buf++ << 8);
+  tcrc += *buf;
   return (crc == tcrc);
 }
 
@@ -82,11 +86,24 @@ unsigned char packetno = 1;
 int           i, c, len = 0;
 int           retry, retrans = MAXRETRANS;
 
-bool read_packet(bool crc) {
+bool read_packet_crc() {
   unsigned char *p = xmodemState.packetBuffer;
 
   *p++ = c;
-  for (i = 0; i < (xmodemState.currentPacketSize + (crc ? 1 : 0) + 3); ++i) {
+  for (i = 0; i < (xmodemState.currentPacketSize + 1 + 3); ++i) {
+    if (!wait_for_byte(DLY_1S))
+      return false;
+    *p++ = fossil_rs_in();
+  }
+
+  return true;
+}
+
+bool read_packet_sum() {
+  unsigned char *p = xmodemState.packetBuffer;
+
+  *p++ = c;
+  for (i = 0; i < (xmodemState.currentPacketSize + 0+ 3); ++i) {
     if (!wait_for_byte(DLY_1S))
       return false;
     *p++ = fossil_rs_in();
@@ -150,7 +167,7 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 }
 
 XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  if (!read_packet(1))
+  if (!read_packet_crc())
     return signal | PACKET_TIMEOUT;
 
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc())
@@ -168,7 +185,7 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 }
 
 XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  if (!read_packet(0))
+  if (!read_packet_sum())
     return signal | PACKET_TIMEOUT;
 
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum())

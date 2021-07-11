@@ -28,6 +28,8 @@
 #ifndef _CRC16_H_
 #define _CRC16_H_
 
+extern const unsigned short crc16tab[256];
+
 unsigned short crc16_ccitt(const char *buf, int len);
 
 #endif /* _CRC16_H_ */
