@@ -4,7 +4,8 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-ZCCRELFLAGS=-SO0 --max-allocs-per-node0
+ZCCRELFLAGS=
+#-SO0 --max-allocs-per-node0
 ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 -Cs"--opt-code-speed" --allow-unsafe-read --opt-code-speed
 endif

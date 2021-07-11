@@ -1,7 +1,7 @@
+#include "crt_override.h"
 #include "fossil.h"
 #include "msx.h"
 #include "xmodem.h"
-#include "crt_override.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,14 +51,13 @@ int _main(char **argv, int argc) {
     exit(1);
   }
 
-  const char* pFileName = argv[0];
+  const char *pFileName = argv[0];
 
   printf("%d, %s\r\n", argc, argv[0]);
 
   fptr = fopen(pFileName, "wb");
 
   // fwrite(mydata, strlen(mydata), 1, fptr);
-
 
   // return 0;
 
@@ -74,9 +73,9 @@ int _main(char **argv, int argc) {
   printf("Send data using the xmodem protocol from your terminal emulator now...\n");
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
-  while(sig = xmodem_receive(sig)) {
-    if (sig == SAVE_PACKET) {
-      fwrite(xmodemState.packetBuffer+3, xmodemState.currentPacketSize, 1, fptr);
+  while (sig = xmodem_receive(sig)) {
+    if (sig & SAVE_PACKET) {
+      fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
       printf(".");
     }
   }
