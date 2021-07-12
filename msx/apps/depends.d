@@ -17,8 +17,8 @@
 ./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h fusion/msx_fusion.h \
  print.h fusion/io.h
 ./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h telnet/asm.h \
- fusion/msx_fusion.h telnet/ansiprint.h print.h aofossilhelper.h msxdos.h \
- xymodem.h
+ fusion/msx_fusion.h telnet/ansiprint.h print.h aofossilhelper.h \
+ crt_override.h msxdos.h xymodem.h
 ./bin/telnet/fossil_interface.c.asm: telnet/fossil_interface.c fossil.h \
  fusion/msx_fusion.h
 ./bin/telnet/ansiprint.c.asm: telnet/ansiprint.c telnet/ansiprint.h print.h telnet/asm.h \
@@ -28,7 +28,7 @@
 ./bin/fdisk/fdisk2.c.asm: fdisk/fdisk2.c fdisk/fdisk.h msxdos.h fdisk/partition.h \
  datatypes.h
 ./bin/v9958.c.asm: v9958.c v9958.h
-./bin/rs232tst.c.asm: rs232tst.c extbio.h msxdos.h
+./bin/rs232tst.c.asm: rs232tst.c crt_override.h extbio.h msxdos.h
 ./bin/fosiltst.c.asm: fosiltst.c extbio.h fossil.h msxdos.h xstdio.h
 ./bin/aofossilhelper.c.asm: aofossilhelper.c aofossilhelper.h fossil.h \
  fusion/msx_fusion.h print.h

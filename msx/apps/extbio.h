@@ -39,7 +39,7 @@ extern void *extbio_fossil_install();
 #define RS232_RAW_MODE 4
 
 extern void     rs232_link(extbio_info *p) __z88dk_fastcall;
-extern void     rs232_init(rs232_init_params *) __z88dk_fastcall;
+extern uint8_t  rs232_init(rs232_init_params *) __z88dk_fastcall;
 extern void     rs232_open(uint8_t mode, uint8_t buffer_length, uint8_t *buffer);
 extern void     rs232_close();
 extern uint8_t  rs232_sndchr(const char ch) __z88dk_fastcall;

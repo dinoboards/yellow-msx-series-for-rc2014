@@ -1,4 +1,5 @@
 
+#include "crt_override.h"
 #include "extbio.h"
 #include "msxdos.h"
 #include <stdio.h>
@@ -21,16 +22,27 @@ uint8_t     __at 0xFB1C RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
 uint8_t     __at 0xFB1B RS_FLAGS;  // RS-232C bit flags
 uint8_t *   __at 0xFB18 RS_BUFEND;
 
-void main2();
+int _main(char **argv, int argc) {
+  (void)argc;
 
-void main() {
+  const uint16_t i = atoi(argv[0]);
+  printf("Configuring for baud rate: %d\r\n", i);
+
+  init_params.receive_baud = init_params.send_baud = i;
+
   extbio_get_dev_info_table(8, info_table);
 
   printf("Slot ID %02X, Address %p\r\n", info_table[0].slot_id, info_table[0].jump_table);
 
   rs232_link(&info_table[0]);
 
-  rs232_init(&init_params);
+  printf("Linked\r\n");
+
+  const uint8_t r = rs232_init(&init_params);
+  printf("init result %d\r\n", r);
+
+  if (!r)
+    goto exitApp;
 
   printf("buffersize: %d at %p\r\n", buffer_size, &buffer);
   rs232_open(RS232_RAW_MODE, buffer_size, (uint8_t *)&buffer);
@@ -68,9 +80,10 @@ void main() {
     }
 
     while (count > 0) {
-      printf(">> H: %p, T: %p, CNT: %d,\r\n", buffer.pHead, buffer.pTail, count);
+      // printf(">> H: %p, T: %p, CNT: %d,\r\n", buffer.pHead, buffer.pTail, count);
       uint8_t ch = rs232_getchr();
-      printf(">> H: %p, T: %p, CNT: %d, ch: %c\r\n", buffer.pHead, buffer.pTail, count, ch);
+      printf("%c", ch);
+      // printf(">> H: %p, T: %p, CNT: %d, ch: %c\r\n", buffer.pHead, buffer.pTail, count, ch);
 
       count = rs232_loc();
     }
@@ -80,4 +93,5 @@ exitApp:
   printf("RS_FLAGS: %02X\r\nClosing...\r\n", RS_FLAGS);
   rs232_close();
   printf("RS_FLAGS: %02X\r\nClosed\r\n", RS_FLAGS);
+  return 0;
 }

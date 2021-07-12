@@ -45,7 +45,7 @@ $(BIN)cpusptst.com: $(addprefix $(BIN),$(cpusptst_files))
 extbio_files = $(call app_files,extbio,extbio.asm msxdos.asm xstdio.asm getslt.asm)
 $(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files))
 
-rs232tst_files = $(call app_files,rs232tst,extbio.asm msxdos.asm getslt.asm rs232.asm)
+rs232tst_files = $(call app_files,rs232tst,extbio.asm crt_override.c msxdos.asm getslt.asm rs232.asm)
 $(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files))
 
 fosiltst_files = $(call app_files,fosiltst,extbio.asm msxdos.asm xstdio.asm getslt.asm fossil.asm)
@@ -54,7 +54,7 @@ $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 fossil_files = $(call app_files,fossil,extbio.asm getslt.asm)
 $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
 
-telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/width.c)
+telnet_files = $(call app_files,telnet,extbio.asm crt_override.c fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/width.c)
 $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
 xrecv2_files = $(call app_files,xrecv2,extbio.asm crt_override.c fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/msx.c)
