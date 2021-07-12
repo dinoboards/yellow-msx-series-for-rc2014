@@ -146,8 +146,8 @@ bin/chkspd.com: ./tools/chkspd/chkspd.asm
 	$(PASMO) $< $@
 
 nextor/extras/system/xrecv.com: bin/xrecv.com
-	@mkdir -p nextor/extras/system
-	@cp -up bin/xrecv.com nextor/extras/system/xrecv.com
+	mkdir -p nextor/extras/system
+	cp -up bin/xrecv.com nextor/extras/system/xrecv.com
 
 bin/%.com: %.asm
 	@mkdir -p bin
