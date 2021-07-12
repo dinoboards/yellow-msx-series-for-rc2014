@@ -5,8 +5,21 @@
 
 NMI		EQU	$0066
 
+
 ; MSX 1 BIOS Entries
 ; --------------------------------------------------------
+
+; Function : Reads the value of an address in another slot
+; Input    : A  - ExxxSSPP  Slot-ID
+;            │        ││└┴─ Primary slot number (00-11)
+;            │        └┴─── Secondary slot number (00-11)
+;            └───────────── Expanded slot (0 = no, 1 = yes)
+;            HL - Address to read
+; Output   : A  - Contains the value of the read address
+; Registers: AF, C, DE
+; Remark   : This routine turns off the interupt, but won't turn it on again
+RDSLT		EQU	$000C
+
 ; Function : Writes a value to an address in another slot.
 ; Input    : A  - Slot ID, see RDSLT
 ;            HL - Address
@@ -80,7 +93,7 @@ RS_TMP:		EQU	$FB03		; TEMPORARY DATA STORAGE FOR RS232 DRIVER
 BIOS_FN	MACRO	ADDR
 	LD	IX, ADDR
 	LD	IY, (EXPTBL-1)		; BIOS SLOT IN IYH
-		CALL	CALSLT			; INTERSLOT CALL
+	CALL	CALSLT			; INTERSLOT CALL
 	ENDM
 
 ; ; SLTWRK+124 = Work area for slot 3-3, page 2

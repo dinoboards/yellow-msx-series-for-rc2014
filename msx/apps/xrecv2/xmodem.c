@@ -54,8 +54,8 @@ void delay(uint8_t period) __z88dk_fastcall {
 static bool check_crc() {
   const unsigned char *buf = &xmodemState.packetBuffer[3];
   const uint16_t       sz = xmodemState.currentPacketSize;
-  uint16_t            counter;
-  uint16_t crc = 0;
+  uint16_t             counter;
+  uint16_t             crc = 0;
   for (counter = 0; counter < sz; counter++)
     crc = (crc << 8) ^ crc16tab[((crc >> 8) ^ *buf++) & 0x00FF];
 
@@ -103,7 +103,7 @@ bool read_packet_sum() {
   unsigned char *p = xmodemState.packetBuffer;
 
   *p++ = c;
-  for (i = 0; i < (xmodemState.currentPacketSize + 0+ 3); ++i) {
+  for (i = 0; i < (xmodemState.currentPacketSize + 0 + 3); ++i) {
     if (!wait_for_byte(DLY_1S))
       return false;
     *p++ = fossil_rs_in();

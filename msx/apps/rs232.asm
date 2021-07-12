@@ -61,12 +61,16 @@ LOOP:
 
 	RET
 ;
-; extern void rs232_init(rs232_init_params*) __z88dk_fastcall;
+; extern uint8_t rs232_init(rs232_init_params*) __z88dk_fastcall;
 ;
 	PUBLIC	_rs232_init
 _rs232_init:
 	CALL	GETSLT			; B = number the slot of the table
-	JP	rs232_slot_init
+	CALL	rs232_slot_init
+	LD	HL, 0
+	RET	C
+	LD	L, 1
+	RET
 
 ; extern void rs232_open(uint8_t mode, uint8_t buffer_length, uint8_t* buffer);
 	PUBLIC	_rs232_open
