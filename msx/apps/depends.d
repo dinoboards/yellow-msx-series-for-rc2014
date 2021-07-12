@@ -5,6 +5,13 @@
 ./bin/fusion/width.c.asm: fusion/width.c fusion/msx_fusion.h
 ./bin/fusion/msx.c.asm: fusion/msx.c fusion/msx.h
 ./bin/lines.c.asm: lines.c v9958.h
+./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
+./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/crc16.h \
+ xrecv2/serial.h fossil.h
+./bin/xrecv2/serial.c.asm: xrecv2/serial.c xrecv2/serial.h fossil.h fusion/msx.h
+./bin/xrecv2/print.c.asm: xrecv2/print.c print.h
+./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c crt_override.h fossil.h fusion/msx.h \
+ xrecv2/xmodem.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
 ./bin/fossil.c.asm: fossil.c extbio.h msxdos.h xstdio.h
 ./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h fusion/msx_fusion.h \
@@ -26,13 +33,6 @@
 ./bin/aofossilhelper.c.asm: aofossilhelper.c aofossilhelper.h fossil.h \
  fusion/msx_fusion.h print.h
 ./bin/mbrot.c.asm: mbrot.c v9958.h
-./bin/xrecv/crc16.c.asm: xrecv/crc16.c xrecv/crc16.h
-./bin/xrecv/xmodem.c.asm: xrecv/xmodem.c xrecv/xmodem.h xrecv/crc16.h xrecv/serial.h \
- fossil.h
-./bin/xrecv/serial.c.asm: xrecv/serial.c xrecv/serial.h fossil.h fusion/msx.h
-./bin/xrecv/print.c.asm: xrecv/print.c print.h
-./bin/xrecv/xrecv.c.asm: xrecv/xrecv.c fossil.h fusion/msx.h xrecv/xmodem.h \
- crt_override.h
 ./bin/crt_override.c.asm: crt_override.c crt_override.h msxdos.h
 ./bin/msx.o: ./msx.asm ./msx.inc
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm

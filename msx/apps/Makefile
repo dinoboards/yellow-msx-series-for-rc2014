@@ -18,7 +18,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv2))
 
 include	Makefile.rules.mk
 
@@ -57,8 +57,8 @@ $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
 telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/width.c)
 $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
-xrecv_files = $(call app_files,xrecv,extbio.asm crt_override.c fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/msx.c)
-$(BIN)xrecv.com: $(addprefix $(BIN),$(xrecv_files))
+xrecv2_files = $(call app_files,xrecv2,extbio.asm crt_override.c fossil.asm getslt.asm msxdos.asm xymodem.c aofossilhelper.c fusion/io.asm fusion/inkey.asm fusion/inputstring.asm fusion/inputchar.asm fusion/msx.c)
+$(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files))
 
 clean:
 	@rm -rf ./bin

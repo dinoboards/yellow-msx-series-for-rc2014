@@ -1,5 +1,5 @@
 
-APPS := dots lines mbrot cpusptst fdisk vramtest extbio rs232tst fosiltst telnet fossil xrecv
+APPS := dots lines mbrot cpusptst fdisk vramtest extbio rs232tst fosiltst telnet fossil xrecv2
 APP_TARGETS := $(addsuffix .com,$(addprefix ./bin/,$(APPS)))
 
 .PHONY: apps
