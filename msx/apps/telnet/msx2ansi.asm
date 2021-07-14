@@ -1567,8 +1567,6 @@ V9938_CursorColor_CCLRLOOP:
 
 
 V9938_PrintChar:
-	ld b,b
-	jr $+2
 	LD	B,A
 	LD	A,(Concealed)
 	OR	A
@@ -2534,8 +2532,6 @@ V9938_CopyBlockYDown_DO2:
 
 
 V9938_WaitCmd:
-	ld b,b
-	jr $+2
 	LD	A,0x02
 	DI
 	OUT	(0x99),A
