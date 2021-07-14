@@ -257,9 +257,6 @@ _get_fd:
 ;
 	PUBLIC	_Open
 _Open:
-	ld b,b
-	jr $+2
-
 	push ix
 	ld ix,0
 	add ix,sp

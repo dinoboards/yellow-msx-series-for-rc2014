@@ -54,7 +54,7 @@ unsigned char InitializeTCPIP() {
   if (!fossil_link())
     return 0;
 
-  fossil_set_baud(9, 9);
+  fossil_set_baud(9 * 256 + 9);
   fossil_set_protocol(7); // 8N1
   fossil_init();
   TxData(0x50, modem_atz, 5);

@@ -55,13 +55,14 @@ typedef struct {
   void *  jump_table;
 } fossil_jump_table;
 
+
 extern uint16_t      fossil_get_version();
 extern bool          fossil_link();
 extern uint8_t       fossil_ex_link(fossil_jump_table *jtable) __z88dk_fastcall;
 extern int           fossil_getversion();
 extern void          fossil_init();
 extern void          fossil_deinit();
-extern void          fossil_set_baud(uint8_t transmit_baud, uint8_t receive_baud);
+extern uint16_t      fossil_set_baud(uint16_t transmit_and_receive_baud) __z88dk_fastcall;
 extern void          fossil_set_protocol(uint8_t x) __z88dk_fastcall;
 extern void          fossil_setchannel(uint8_t x) __z88dk_fastcall;
 extern unsigned char fossil_rs_in();
