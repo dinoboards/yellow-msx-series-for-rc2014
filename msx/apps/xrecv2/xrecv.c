@@ -1,7 +1,10 @@
+// #pragma printf = "%s %d"
+
 #include "arguments.h"
 #include "crt_override.h"
 #include "fossil.h"
 #include "msx.h"
+#include "print.h"
 #include "xmodem.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,7 +60,7 @@ rs232Buff *__at 0xFB04 RS_FCB;
 
 int _main(const char **argv, const int argc) {
   if (!fossil_link()) {
-    printf("Fossil driver not found\r\n");
+    print_str("Fossil driver not found\r\n");
     exit(1);
   }
 
@@ -65,28 +68,34 @@ int _main(const char **argv, const int argc) {
 
   FILE *fptr;
 
-  printf("Filename: %s\r\n", pFileName);
-  printf("Requested Baud Rate: %s\r\n", fossil_rate_to_string(baud_rate));
+  print_str("Filename: ");
+  print_str((char *)pFileName);
+  print_str("\r\n");
+  print_str("Requested Baud Rate: ");
+  print_str(fossil_rate_to_string(baud_rate));
+  print_str("\r\n");
   uint16_t actual_baud_rate = fossil_set_baud(baud_rate);
-  if (actual_baud_rate != baud_rate)
-    printf("Actual Baud Rate: %s\r\n", fossil_rate_to_string(actual_baud_rate));
-
+  if (actual_baud_rate != baud_rate) {
+    print_str("Actual Baud Rate: ");
+    print_str(fossil_rate_to_string(actual_baud_rate));
+    print_str("\r\n");
+  }
   fptr = fopen(pFileName, "wb");
 
   fossil_set_protocol(7); // 8N1
   fossil_init();
 
-  printf("Send data using the xmodem protocol from your terminal emulator now...\n");
+  print_str("Send data using the xmodem protocol from your terminal emulator now...\n");
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
   while (sig = xmodem_receive(sig)) {
     if (sig & SAVE_PACKET) {
       fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
-      printf(".");
+      fputc_cons('.');
     }
   }
 
-  printf("finish reason sig: %d\r\n", xmodemState.finish_reason);
+  print_str("finish reason: ??\r\n");
 
   fclose(fptr);
 

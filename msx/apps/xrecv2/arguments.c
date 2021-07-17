@@ -1,4 +1,5 @@
 #include "arguments.h"
+#include "print.h"
 
 const char *pFileName = NULL;
 uint16_t    baud_rate = 7 * 256 + 7; // 19200
@@ -8,14 +9,14 @@ uint16_t    baud_rate = 7 * 256 + 7; // 19200
 const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
 
 uint8_t abort_with_help() {
-  printf("Usage:  xrecv2 <filename> [options]\r\n\r\nReceive a file using xmodem protocol\r\nusing the active fossil driver\r\n\r\n  /b<rate>, /baud=<rate>\r\n    The desired tx/rx baud <rate>\r\n    eg 19200\r\n");
+  print_str("Usage:  xrecv2 <filename> [options]\r\n\r\nReceive a file using xmodem protocol\r\nusing the active fossil driver\r\n\r\n  /b<rate>, /baud=<rate>\r\n    The desired tx/rx baud <rate>\r\n    eg 19200\r\n");
   exit(1);
 
   return 255;
 }
 
 uint8_t abort_with_invalid_options() {
-  printf("Invalid usage\r\n");
+  print_str("Invalid usage\r\n");
   return abort_with_help();
 }
 
@@ -24,7 +25,7 @@ uint8_t arg_baud_rate(const uint8_t i, const char **argv) {
   const char *arg_value;
   if (strncasecmp(arg_switch, "/baud", 5) == 0) {
     if (arg_switch[5] != '=') {
-      printf("Invalid baud switch - use /baud=<rate>\r\n");
+      print_str("Invalid baud switch - use /baud=<rate>\r\n");
       return abort_with_help();
     }
 
@@ -92,7 +93,9 @@ process_baud_rate:
     return i + 1;
   }
 
-  printf("Invalid baud rate setting '%s'\r\n", argv[i + 1]);
+  print_str("Invalid baud rate setting '");
+  print_str(arg_value);
+  print_str("'\r\n");
   exit(1);
 
   return 255;
@@ -118,12 +121,14 @@ uint8_t arg_help_msg(const uint8_t i, const char **argv) {
 }
 
 uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) {
-  printf("Invalid command line option '%s'\r\n\r\n", argv[i]);
+  print_str("Invalid command line option '");
+  print_str((char *)argv[i]);
+  print_str("'\r\n\r\n");
   return abort_with_help();
 }
 
 uint8_t abort_with_missing_file_name_msg() {
-  printf("Missing filename\r\n\r\n");
+  print_str("Missing filename\r\n\r\n");
   return abort_with_help();
 }
 

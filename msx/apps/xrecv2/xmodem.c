@@ -210,7 +210,7 @@ XMODEM_SIGNAL xmodem_tryagain(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 
   delay(DLY_1S * 4);
 
-  printf("w");
+  fputc_cons('w');
   fossil_rs_out(NAK);
   retry++;
   return signal | READ_HEADER;

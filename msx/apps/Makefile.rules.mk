@@ -9,7 +9,7 @@ endef
 
 define compile
 	@mkdir -p $(dir $@)
-	$(ZCC) --c-code-in-asm  --assemble-only $< -o $@
+	$(ZCC) --assemble-only $< -o $@
 	echo "Compiled $(notdir $@) from $(notdir $<)"
 endef
 
