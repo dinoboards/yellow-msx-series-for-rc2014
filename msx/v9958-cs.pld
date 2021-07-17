@@ -33,8 +33,7 @@ PIN 16 = !CSR;
 //PIN 19 = NC;
 PIN 20 = VCC;
 
-ADDR = A7 & !A6 & A5 & A4 & A3 & !A2;   // $98 TO $9B
-
+ADDR = A7 & !A6 & !A5 & A4 & A3 & !A2;   // $98 TO $9B
 CS = ADDR & IORQ & !M1;
 
 CSW = CS & WR;
