@@ -9,9 +9,10 @@
 ./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/crc16.h \
  xrecv2/serial.h fossil.h
 ./bin/xrecv2/serial.c.asm: xrecv2/serial.c xrecv2/serial.h fossil.h fusion/msx.h
+./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h
 ./bin/xrecv2/print.c.asm: xrecv2/print.c print.h
-./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c crt_override.h fossil.h fusion/msx.h \
- xrecv2/xmodem.h
+./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h crt_override.h fossil.h \
+ fusion/msx.h xrecv2/xmodem.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
 ./bin/fossil.c.asm: fossil.c extbio.h msxdos.h xstdio.h
 ./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h fusion/msx_fusion.h \
@@ -28,7 +29,7 @@
 ./bin/fdisk/fdisk2.c.asm: fdisk/fdisk2.c fdisk/fdisk.h msxdos.h fdisk/partition.h \
  datatypes.h
 ./bin/v9958.c.asm: v9958.c v9958.h
-./bin/rs232tst.c.asm: rs232tst.c crt_override.h extbio.h msxdos.h
+./bin/rs232tst.c.asm: rs232tst.c crt_override.h extbio.h fusion/msx.h msxdos.h
 ./bin/fosiltst.c.asm: fosiltst.c extbio.h fossil.h msxdos.h xstdio.h
 ./bin/aofossilhelper.c.asm: aofossilhelper.c aofossilhelper.h fossil.h \
  fusion/msx_fusion.h print.h

@@ -51,6 +51,10 @@ void main() {
   while (1) {
     uint16_t timeout = 32000;
 
+    printf(">");
+    fossil_rs_out('T');
+    printf("<");
+
     bool stat;
 
     if (msxbiosBreakX())
@@ -67,6 +71,10 @@ void main() {
         goto exitApp;
 
       stat = fossil_rs_in_stat();
+
+      printf(">");
+      fossil_rs_out('T');
+      printf("<");
 
       timeout--;
     }

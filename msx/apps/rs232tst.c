@@ -1,6 +1,7 @@
 
 #include "crt_override.h"
 #include "extbio.h"
+#include "fusion/msx.h"
 #include "msxdos.h"
 #include <stdio.h>
 
@@ -49,45 +50,60 @@ int _main(char **argv, int argc) {
 
   printf("BUFFER END: %p\r\n", RS_BUFEND);
 
-  while (1) {
-    uint16_t timeout = 32000;
+  printf("1: %d\r\n", JIFFY);
+  rs232_sndchr('A');
+  printf("2: %d\r\n", JIFFY);
+  rs232_sndchr('b');
+  printf("2: %d\r\n", JIFFY);
 
-    int16_t count;
+  printf("\r\n");
 
-    if (msxbiosBreakX())
-      goto exitApp;
+  // while (1) {
+  //   uint16_t timeout = 32000;
 
-    count = rs232_loc();
+  //   int16_t count;
 
-    while (count == 0 && timeout != 0) {
-      if (timeout % 2048 == 0) {
-        printf(".");
-      }
+  //   if (msxbiosBreakX())
+  //     goto exitApp;
 
-      if (msxbiosBreakX())
-        goto exitApp;
+  //   count = rs232_loc();
 
-      count = rs232_loc();
+  //   while (count == 0 && timeout != 0) {
+  //     if (timeout % 2048 == 0) {
+  //       printf(".");
+  //     }
 
-      if (count != 0)
-        break;
+  //     if (msxbiosBreakX())
+  //       goto exitApp;
 
-      timeout--;
-    }
+  //     count = rs232_loc();
 
-    if (timeout == 0) {
-      printf("\r\n");
-    }
+  //     if (count != 0)
+  //       break;
 
-    while (count > 0) {
-      // printf(">> H: %p, T: %p, CNT: %d,\r\n", buffer.pHead, buffer.pTail, count);
-      uint8_t ch = rs232_getchr();
-      printf("%c", ch);
-      // printf(">> H: %p, T: %p, CNT: %d, ch: %c\r\n", buffer.pHead, buffer.pTail, count, ch);
+  //     timeout--;
+  //   }
 
-      count = rs232_loc();
-    }
-  }
+  //   if (timeout == 0) {
+
+  //     printf("1: %d", JIFFY);
+  //     rs232_sndchr('A');
+  //     printf("2: %d", JIFFY);
+  //     rs232_sndchr('b');
+  //     printf("2: %d", JIFFY);
+
+  //     printf("\r\n");
+  //   }
+
+  //   while (count > 0) {
+  //     // printf(">> H: %p, T: %p, CNT: %d,\r\n", buffer.pHead, buffer.pTail, count);
+  //     uint8_t ch = rs232_getchr();
+  //     printf("%c", ch);
+  //     // printf(">> H: %p, T: %p, CNT: %d, ch: %c\r\n", buffer.pHead, buffer.pTail, count, ch);
+
+  //     count = rs232_loc();
+  //   }
+  // }
 
 exitApp:
   printf("RS_FLAGS: %02X\r\nClosing...\r\n", RS_FLAGS);
