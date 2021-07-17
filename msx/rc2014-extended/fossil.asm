@@ -115,8 +115,6 @@ getversion:
 init:
 	PUSH	IX
 	PUSH	IY
-	ld b,b
-	jr $+2
 	LD	HL, RS232_INIT_TABLE
 	RST	30H
 	DB	$8F		; SLOT 3-3
