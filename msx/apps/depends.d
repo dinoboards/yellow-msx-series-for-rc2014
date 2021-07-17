@@ -12,7 +12,7 @@
 ./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h xrecv2/print.h
 ./bin/xrecv2/print.c.asm: xrecv2/print.c xrecv2/print.h
 ./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h crt_override.h fossil.h \
- fusion/msx.h xrecv2/print.h xrecv2/xmodem.h
+ fusion/msx.h msxdos.h xrecv2/print.h xrecv2/xmodem.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
 ./bin/helloworld.c.asm: helloworld.c
 ./bin/fossil.c.asm: fossil.c extbio.h msxdos.h xstdio.h

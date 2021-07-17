@@ -17,7 +17,7 @@
  * [x] Monitor for CTRL+BREAK
  * [ ] Monitor for CTR+C to abort
  * [x] Dont create/open file is any errors - maybe create a tmp and then rename?
- * [ ] Minimise code size if possible
+ * [x] Minimise code size if possible
  * [ ] Improved error handling reporting
  * [ ] Show file size download progress
  * [ ] Auto activate fossil driver
@@ -44,7 +44,7 @@
 
 const char *pTempFileName = "xmdwn.tmp";
 
-int _main(const char **argv, const int argc) {
+int main(const int argc, const char **argv) {
   if (!fossil_link()) {
     print_str("Fossil driver not found\r\n");
     exit(1);
@@ -93,6 +93,7 @@ int _main(const char **argv, const int argc) {
 
   fossil_deinit();
   fclose(fptr);
+  remove(pFileName);
   rename(pTempFileName, pFileName);
 
   return 0;

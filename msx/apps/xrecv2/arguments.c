@@ -132,8 +132,8 @@ uint8_t abort_with_missing_file_name_msg() {
   return abort_with_help();
 }
 
-void process_cli_arguments(char **argv, int argc) {
-  for (uint8_t i = 0; i < argc;) {
+void process_cli_arguments(const char **argv, const int argc) {
+  for (uint8_t i = 1; i < argc;) {
     const uint8_t current_i = i;
     i = arg_baud_rate(i, argv);
     if (current_i != i)

@@ -35,7 +35,8 @@ $(BIN)%.m4.o: %.asm.m4; $(assemble)
 
 $(BIN)%.com:
 	@mkdir -p $(dir $@)
-	$(ZCC) $^ -o $@
+	echo $(eval $(notdir $@).crt_enable_commandline ?= 0)
+	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $^ -o $@
 	echo "Linked $(notdir $@) from $(notdir $^)"
 
 
