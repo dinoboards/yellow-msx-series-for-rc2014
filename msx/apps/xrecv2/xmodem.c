@@ -1,30 +1,3 @@
-/*
- * Copyright 2001-2010 Georges Menie (www.menie.org)
- * All rights reserved.
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of California, Berkeley nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 #include "xmodem.h"
 #include "crc16.h"
 #include "serial.h"
@@ -44,6 +17,11 @@
 
 #define FOR_SIGNAL(mask) if (signal & (mask))
 
+struct xmodemState xmodemState;
+unsigned char      packetno = 1;
+uint16_t           i, c, len = 0;
+uint16_t           retry, retrans = MAXRETRANS;
+
 void delay(uint8_t period) __z88dk_fastcall {
   const int16_t timeout = ((int16_t)JIFFY) + period;
 
@@ -59,8 +37,7 @@ static bool check_crc() {
   for (counter = 0; counter < sz; counter++)
     crc = (crc << 8) ^ crc16tab[((crc >> 8) ^ *buf++) & 0x00FF];
 
-  uint16_t tcrc = (*buf++ << 8);
-  tcrc += *buf;
+  const uint16_t tcrc = (*buf++ << 8) + *buf;
   return (crc == tcrc);
 }
 
@@ -79,12 +56,6 @@ static void flush_input(void) {
   while (wait_for_byte((DLY_1S * 3) >> 1))
     fossil_rs_in();
 }
-
-struct xmodemState xmodemState;
-
-unsigned char packetno = 1;
-int           i, c, len = 0;
-int           retry, retrans = MAXRETRANS;
 
 bool read_packet_crc() {
   unsigned char *p = xmodemState.packetBuffer;
@@ -233,27 +204,7 @@ XMODEM_SIGNAL xmodem_too_many_errors() __z88dk_fastcall {
   return FINISHED;
 }
 
-// void traceSingle(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-//   FOR_SIGNAL(READ_FIRST_HEADER) { printf("READ_FIRST_HEADER "); }
-//   FOR_SIGNAL(READ_HEADER) { printf("READ_HEADER "); }
-//   FOR_SIGNAL(READ_CRC) { printf("READ_CRC "); }
-//   FOR_SIGNAL(READ_CHECKSUM) { printf("READ_CHECKSUM "); }
-//   FOR_SIGNAL(READ_128) { printf("READ_128 "); }
-//   FOR_SIGNAL(READ_1024) { printf("READ_1024 "); }
-//   FOR_SIGNAL(SAVE_PACKET) { printf("SAVE_PACKET "); }
-//   FOR_SIGNAL(END_OF_STREAM) { printf("END_OF_STREAM "); }
-//   FOR_SIGNAL(UPSTREAM_CANCELLED) { printf("UPSTREAM_CANCELLED "); }
-//   FOR_SIGNAL(STREAM_ERROR) { printf("STREAM_ERROR "); }
-//   FOR_SIGNAL(TRY_AGAIN) { printf("TRY_AGAIN "); }
-//   FOR_SIGNAL(PACKET_REJECT) { printf("PACKET_REJECT "); }
-//   FOR_SIGNAL(TOO_MANY_ERRORS) { printf("TOO_MANY_ERRORS "); }
-//   FOR_SIGNAL(PACKET_TIMEOUT) { printf("PACKET_TIMEOUT "); }
-//   printf("\r\n");
-// }
-
 XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  // traceSingle(signal);
-
   FOR_SIGNAL(READ_FIRST_HEADER) { return read_first_header(); }
 
   FOR_SIGNAL(READ_HEADER) { return read_header(signal & ~READ_HEADER); }
@@ -269,9 +220,6 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 
   FOR_SIGNAL(SAVE_PACKET) { return xmodem_packet_save(signal & ~SAVE_PACKET); }
 
-  // case END_OF_STREAM:
-  // case UPSTREAM_CANCELLED:
-  // case STREAM_ERROR:
   FOR_SIGNAL(TOO_MANY_ERRORS) { return xmodem_too_many_errors(); }
 
   xmodemState.finish_reason = signal;

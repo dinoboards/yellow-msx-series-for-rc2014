@@ -1,5 +1,3 @@
-// #pragma printf = "%s %d"
-
 #include "arguments.h"
 #include "crt_override.h"
 #include "fossil.h"
@@ -18,13 +16,12 @@
  * [x] Print actual selected baud rate
  * [x] Monitor for CTRL+BREAK
  * [ ] Monitor for CTR+C to abort
- * [ ] Dont create/open file is any errors - maybe create a tmp and then rename?
+ * [x] Dont create/open file is any errors - maybe create a tmp and then rename?
  * [ ] Minimise code size if possible
  * [ ] Improved error handling reporting
  * [ ] Show file size download progress
  * [ ] Auto activate fossil driver
-
-*/
+ */
 
 #define VDP_FREQUENCY 50
 
@@ -45,20 +42,7 @@
 #define ERR5     0xFA
 #define OK       0x00
 
-typedef struct {
-  uint8_t *pHead;
-  uint8_t *pTail;
-  uint8_t  data[];
-} rs232Buff;
-
-uint8_t  __at 0xFB03 RS_TMP;
-uint8_t  __at 0xFB1A RS_ERRORS;
-uint8_t  __at 0xFB17 RS_DATCNT;
-uint8_t  __at 0xFB1C RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
-uint8_t  __at 0xFB1B RS_FLAGS;  // RS-232C bit flags
-uint8_t *__at 0xFB18 RS_BUFEND;
-
-rs232Buff *__at 0xFB04 RS_FCB;
+const char *pTempFileName = "xmdwn.tmp";
 
 int _main(const char **argv, const int argc) {
   if (!fossil_link()) {
@@ -82,17 +66,19 @@ int _main(const char **argv, const int argc) {
     print_str(fossil_rate_to_string(actual_baud_rate));
     print_str("\r\n");
   }
-  fptr = fopen(pFileName, "wb");
+  fptr = fopen(pTempFileName, "wb");
 
   fossil_set_protocol(7); // 8N1
   fossil_init();
 
-  print_str("Send data using the xmodem protocol from your terminal emulator now...\n");
+  print_str("Awaiting for file to be received...\r\n");
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
   while (sig = xmodem_receive(sig)) {
-    if (msxbiosBreakX())
-      goto exitApp;
+    if (msxbiosBreakX()) {
+      print_str("\r\nAborting\r\n");
+      goto abort;
+    }
 
     if (sig & SAVE_PACKET) {
       fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
@@ -100,12 +86,20 @@ int _main(const char **argv, const int argc) {
     }
   }
 
-  print_str("finish reason: ??\r\n");
+  if (xmodemState.finish_reason != END_OF_STREAM) {
+    print_str("Error receiving file\r\n");
+    goto abort;
+  }
 
-exitApp:
   fossil_deinit();
-
   fclose(fptr);
+  rename(pTempFileName, pFileName);
 
   return 0;
+
+abort:
+  fossil_deinit();
+  fclose(fptr);
+  remove(pTempFileName);
+  return 1;
 }

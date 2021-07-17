@@ -28,7 +28,7 @@ $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
 
 V9958_DEPS := v9958.c msx.asm v9958.asm
 
-helloworld_files = $(call app_files,helloworld)
+helloworld_files = $(call app_files,helloworld,)
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files))
 
 dots_files = $(call app_files,dots,$(V9958_DEPS) msxdos.asm)
