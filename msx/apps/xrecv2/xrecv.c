@@ -4,6 +4,7 @@
 #include "crt_override.h"
 #include "fossil.h"
 #include "msx.h"
+#include "msxdos.h"
 #include "print.h"
 #include "xmodem.h"
 #include <stdio.h>
@@ -15,7 +16,8 @@
  * [x] Clean up copy on start
  * [x] Update usage help copy
  * [x] Print actual selected baud rate
- * [ ] Monitor for CTRL+BREAK and perhaps CTR+C to abort
+ * [x] Monitor for CTRL+BREAK
+ * [ ] Monitor for CTR+C to abort
  * [ ] Dont create/open file is any errors - maybe create a tmp and then rename?
  * [ ] Minimise code size if possible
  * [ ] Improved error handling reporting
@@ -89,6 +91,9 @@ int _main(const char **argv, const int argc) {
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
   while (sig = xmodem_receive(sig)) {
+    if (msxbiosBreakX())
+      goto exitApp;
+
     if (sig & SAVE_PACKET) {
       fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
       fputc_cons('.');
@@ -97,15 +102,10 @@ int _main(const char **argv, const int argc) {
 
   print_str("finish reason: ??\r\n");
 
+exitApp:
+  fossil_deinit();
+
   fclose(fptr);
 
-  // int st = xmodem_receive();
-  // if (st < 0) {
-  //   printf("Xmodem receive error: status: %d\n", st);
-  // } else {
-  //   printf("Xmodem successfully received %d bytes\n", st);
-  // }
-
-  fossil_deinit();
   return 0;
 }
