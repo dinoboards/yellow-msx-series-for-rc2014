@@ -55,7 +55,6 @@ typedef struct {
   void *  jump_table;
 } fossil_jump_table;
 
-
 extern uint16_t      fossil_get_version();
 extern bool          fossil_link();
 extern uint8_t       fossil_ex_link(fossil_jump_table *jtable) __z88dk_fastcall;
