@@ -1,6 +1,6 @@
 #include "serial.h"
-#include "msx.h"
 #include <stdio.h>
+#include <system_vars.h>
 
 bool wait_for_byte(uint8_t period) __z88dk_fastcall {
   const int16_t timeout = ((int16_t)JIFFY) + period;

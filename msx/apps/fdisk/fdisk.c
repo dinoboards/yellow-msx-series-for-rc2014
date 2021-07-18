@@ -3,12 +3,12 @@
 #include "fdisk2.h"
 #include "msxdos.h"
 #include "partition.h"
-#include <msx.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <system_vars.h>
 
 extern uint8_t workingMsxDosBuff[];
 uint8_t *      pWorkingBuffer;

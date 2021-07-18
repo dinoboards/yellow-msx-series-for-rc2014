@@ -1,9 +1,9 @@
 
 #include "crt_override.h"
 #include "extbio.h"
-#include "fusion/msx.h"
 #include "msxdos.h"
 #include <stdio.h>
+#include <system_vars.h>
 
 extbio_info       info_table[4];
 rs232_init_params init_params = {'8', 'N', '1', 'N', 'H', 'N', 'N', 'N', 19200, 19200, 0};

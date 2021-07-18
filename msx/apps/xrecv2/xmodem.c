@@ -2,6 +2,7 @@
 #include "crc16.h"
 #include "serial.h"
 #include <stdio.h>
+#include <system_vars.h>
 
 #define SOH   0x01
 #define STX   0x02

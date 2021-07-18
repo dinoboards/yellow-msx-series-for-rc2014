@@ -1,4 +1,4 @@
-#include "msx.h"
+#include "system_vars.h"
 
 // FC9E-FC9F: software clock, updated at each VDP interrupt
 uint16_t JIFFY_ADDR JIFFY;

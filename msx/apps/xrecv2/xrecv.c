@@ -1,13 +1,13 @@
 #include "arguments.h"
 #include "crt_override.h"
 #include "fossil.h"
-#include "msx.h"
 #include "msxdos.h"
 #include "print.h"
 #include "xmodem.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <system_vars.h>
 
 /*
  * TODO:

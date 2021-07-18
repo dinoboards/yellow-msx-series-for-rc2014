@@ -1,6 +1,6 @@
 #define __Z88DK_R2L_CALLING_CONVENTION
-#include "msxdos.h"
 #include "v9958.h"
+#include <msxdos.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
