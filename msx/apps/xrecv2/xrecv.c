@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <system_vars.h>
 
 /*
  * TODO:
@@ -19,7 +18,8 @@
  * [x] Dont create/open file is any errors - maybe create a tmp and then rename?
  * [x] Minimise code size if possible
  * [ ] Improved error handling reporting
- * [ ] Show file size download progress
+ * [x] Show file size download progress
+ * [ ] Report file size during download and at completion
  * [ ] Auto activate fossil driver
  */
 
@@ -43,6 +43,12 @@
 #define OK       0x00
 
 const char *pTempFileName = "xmdwn.tmp";
+
+const char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
+uint8_t     rotatingIndex = 0;
+bool        started = false;
+
+#define ERASE_LINE "\x1B\x6C\r"
 
 int main(const int argc, const char **argv) {
   if (!fossil_link()) {
@@ -72,7 +78,7 @@ int main(const int argc, const char **argv) {
   fossil_init();
 
   print_str("Press CTRL-BREAK to abort\r\n");
-  print_str("Waiting for file to be sent...\r\n");
+  print_str("Waiting for file to be sent... ");
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
   while (sig = xmodem_receive(sig)) {
@@ -81,22 +87,31 @@ int main(const int argc, const char **argv) {
       goto abort;
     }
 
+    if (!started && (sig & (READ_128 | READ_1024))) {
+      started = true;
+      print_str(ERASE_LINE "Downloading ... ");
+    }
+
     if (sig & SAVE_PACKET) {
       fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
-      fputc_cons('.');
+      print_str(rotatingChar[rotatingIndex]);
+      rotatingIndex = (rotatingIndex + 1) & 3;
     }
   }
 
   if (xmodemState.finish_reason != END_OF_STREAM) {
-    print_str("Error receiving file\r\n");
+    print_str(ERASE_LINE "Error receiving file\r\n");
     goto abort;
   }
+
+  print_str(ERASE_LINE "Saving file...");
 
   fossil_deinit();
   fclose(fptr);
   remove(pFileName);
   rename(pTempFileName, pFileName);
 
+  print_str(ERASE_LINE "Download Completed.\r\n");
   return 0;
 
 abort:
