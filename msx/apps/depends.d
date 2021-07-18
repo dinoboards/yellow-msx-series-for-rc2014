@@ -8,10 +8,10 @@
 ./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/crc16.h \
  xrecv2/serial.h fossil.h libraries/msxbios/system_vars.h
 ./bin/xrecv2/serial.c.asm: xrecv2/serial.c xrecv2/serial.h fossil.h \
- libraries/msxbios/system_vars.h
+ libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h xrecv2/print.h
 ./bin/xrecv2/print.c.asm: xrecv2/print.c xrecv2/print.h
-./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h crt_override.h fossil.h \
+./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h fossil.h \
  libraries/msxdos/msxdos.h xrecv2/print.h xrecv2/xmodem.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \

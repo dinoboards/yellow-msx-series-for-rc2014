@@ -23,12 +23,16 @@ unsigned char      packetno = 1;
 uint16_t           i, c, len = 0;
 uint16_t           retry, retrans = MAXRETRANS;
 
-void delay(uint8_t period) __z88dk_fastcall {
-  const int16_t timeout = ((int16_t)JIFFY) + period;
+static int16_t       delay_point;
+static XMODEM_SIGNAL delay_resume;
 
-  while ((timeout - ((int16_t)JIFFY) >= 0))
-    ;
+inline XMODEM_SIGNAL delay_start(uint8_t period, XMODEM_SIGNAL next_signal) {
+  delay_point = ((int16_t)JIFFY) + (period);
+  delay_resume = (next_signal);
+  return DELAY_WAIT;
 }
+
+XMODEM_SIGNAL delay_reached() { return ((delay_point - ((int16_t)JIFFY) >= 0)) ? DELAY_WAIT : delay_resume; }
 
 static bool check_crc() {
   const unsigned char *buf = &xmodemState.packetBuffer[3];
@@ -109,7 +113,7 @@ XMODEM_SIGNAL read_first_header() {
     }
   }
 
-  return TRY_AGAIN;
+  return delay_start(DLY_1S * 4, TRY_AGAIN);
 }
 
 XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
@@ -135,12 +139,12 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     }
   }
 
-  return signal | TRY_AGAIN;
+  return delay_start(DLY_1S * 4, signal | TRY_AGAIN);
 }
 
 XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (!read_packet_crc())
-    return signal | PACKET_TIMEOUT;
+    return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT);
 
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc())
     return signal | SAVE_PACKET;
@@ -153,12 +157,12 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     return TOO_MANY_ERRORS;
   }
 
-  return signal | PACKET_REJECT;
+  return delay_start(DLY_1S * 4, signal | PACKET_REJECT);
 }
 
 XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (!read_packet_sum())
-    return signal | PACKET_TIMEOUT;
+    return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT);
 
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum())
     return signal | SAVE_PACKET;
@@ -171,7 +175,7 @@ XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcal
     return TOO_MANY_ERRORS;
   }
 
-  return signal | PACKET_REJECT;
+  return delay_start(DLY_1S * 4, signal | PACKET_REJECT);
 }
 
 XMODEM_SIGNAL xmodem_tryagain(const XMODEM_SIGNAL signal) __z88dk_fastcall {
@@ -180,9 +184,7 @@ XMODEM_SIGNAL xmodem_tryagain(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (retry++ >= 5)
     return TOO_MANY_ERRORS;
 
-  delay(DLY_1S * 4);
-
-  fputc_cons('w');
+  fputc_cons('.');
   fossil_rs_out(NAK);
   retry++;
   return signal | READ_HEADER;
@@ -206,6 +208,8 @@ XMODEM_SIGNAL xmodem_too_many_errors() __z88dk_fastcall {
 }
 
 XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  FOR_SIGNAL(DELAY_WAIT) { return delay_reached(); }
+
   FOR_SIGNAL(READ_FIRST_HEADER) { return read_first_header(); }
 
   FOR_SIGNAL(READ_HEADER) { return read_header(signal & ~READ_HEADER); }

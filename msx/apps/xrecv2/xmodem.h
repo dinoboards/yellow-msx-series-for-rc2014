@@ -18,7 +18,8 @@ typedef enum {
   TRY_AGAIN = 0x0400,
   PACKET_REJECT = 0x0800,
   TOO_MANY_ERRORS = 0x1000,
-  PACKET_TIMEOUT = 0x2000
+  PACKET_TIMEOUT = 0x2000,
+  DELAY_WAIT = 0x4000
 } XMODEM_SIGNAL;
 
 extern XMODEM_SIGNAL xmodem_receive(XMODEM_SIGNAL signal) __z88dk_fastcall;

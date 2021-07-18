@@ -1,5 +1,4 @@
 #include "arguments.h"
-#include "crt_override.h"
 #include "fossil.h"
 #include "msxdos.h"
 #include "print.h"
@@ -78,18 +77,17 @@ int main(const int argc, const char **argv) {
   fossil_init();
 
   print_str("Press CTRL-BREAK to abort\r\n");
-  print_str("Waiting for file to be sent... ");
+  print_str("Waiting for file to be sent ...");
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
   while (sig = xmodem_receive(sig)) {
-    if (msxbiosBreakX()) {
-      print_str("\r\nAborting\r\n");
+    if (msxbiosBreakX())
       goto abort;
-    }
 
     if (!started && (sig & (READ_128 | READ_1024))) {
       started = true;
-      print_str(ERASE_LINE "Downloading ... ");
+      print_str(ERASE_LINE "Downloading ");
+      print_str(sig & READ_CRC ? "(crc) ... " : "(chksum) ... ");
     }
 
     if (sig & SAVE_PACKET) {
