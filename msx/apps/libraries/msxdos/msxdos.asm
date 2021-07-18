@@ -57,16 +57,10 @@ _msxbiosInitxt:
 	POP	IX
 	RET
 
-; void msxbiosPosit(uint8_t col, uint8_t row);
-	PUBLIC	_msxbiosPosit
-_msxbiosPosit:
+; void msxbiosPosit(uint16_t col_and_row) __z88dk_fastcall;
+	PUBLIC	__msxbiosPosit
+__msxbiosPosit:
 	PUSH	IX
-	LD	IX, 0
-	ADD	IX, SP
-
-	LD	H, (IX+4) 	; COL
-	LD	L, (IX+5)  	; ROW
-
 	LD	IY, (EXPTBL-1)
 	LD	IX, POSIT
 	CALL	CALSLT

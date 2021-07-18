@@ -88,7 +88,8 @@ extern uint16_t msxdosDevWrite(uint8_t slotNumber, uint8_t deviceNumber, uint8_t
 // MSX BIOS functions
 extern void msxbiosInit32();
 extern void msxbiosInitxt();
-extern void msxbiosPosit(uint8_t col, uint8_t row);
+extern void _msxbiosPosit(uint16_t col_and_row) __z88dk_fastcall;
+#define msxbiosPosit(col, row) _msxbiosPosit(((uint16_t)(col)) * 256 + row)
 extern bool msxbiosBreakX();
 
 /* MSX work area variables */

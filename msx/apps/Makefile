@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv2))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv2 helloworld))
 
 include	Makefile.rules.mk
 

@@ -15,7 +15,8 @@
  libraries/msxdos/msxdos.h xrecv2/print.h xrecv2/xmodem.h \
  libraries/msxbios/system_vars.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
-./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h
+./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h
 ./bin/fossil.c.asm: fossil.c extbio.h libraries/msxdos/msxdos.h xstdio.h
 ./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h \
  libraries/fusion/msx_fusion.h print.h libraries/fusion/io.h
