@@ -8,6 +8,8 @@
 #define PUTPNT_ADDR __at 0xF3F8
 #define GETPNT_ADDR __at 0xF3FA
 #define TXTNAM_ADDR __at 0xF3B3
+#define CSRY_ADDR   __at 0xF3DC
+#define CSRX_ADDR   __at 0xF3DD
 
 // FC9E-FC9F: software clock, updated at each VDP interrupt
 extern uint16_t JIFFY_ADDR JIFFY;
@@ -29,6 +31,14 @@ extern char *GETPNT_ADDR GETPNT;
 // F3B3-F3B4: BASE(0): name table address for SCREEN 0 (ini:$0000)
 // used to initialize NAMBAS when SCREEN 0 is activated
 extern uint16_t TXTNAM_ADDR TXTNAM;
+
+// F3DC: line where the cursor is located
+// starts to count at 1 for the topmost line
+extern uint8_t CSRY_ADDR CSRY;
+
+// F3DD: column where the cursor is located
+// starts to count at 1 for the leftmost column
+extern uint8_t CSRX_ADDR CSRX;
 
 #define msxJiffy  JIFFY
 #define msxNewKey NEWKEY

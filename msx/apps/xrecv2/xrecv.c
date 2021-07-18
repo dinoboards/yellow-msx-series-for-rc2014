@@ -71,7 +71,8 @@ int main(const int argc, const char **argv) {
   fossil_set_protocol(7); // 8N1
   fossil_init();
 
-  print_str("Awaiting for file to be received...\r\n");
+  print_str("Press CTRL-BREAK to abort\r\n");
+  print_str("Waiting for file to be sent...\r\n");
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
   while (sig = xmodem_receive(sig)) {

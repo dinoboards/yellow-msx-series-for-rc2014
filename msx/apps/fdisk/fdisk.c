@@ -3,6 +3,7 @@
 #include "fdisk2.h"
 #include "msxdos.h"
 #include "partition.h"
+#include <msx.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -133,7 +134,7 @@ void setScreenConfiguration() {
 #define hideCursor()                     printf("\x1Bx5")
 #define displayCursor()                  printf("\x1By5")
 
-void locateX(uint8_t x) { msxbiosPosit(x + 1, *(uint8_t *)CSRY); }
+void locateX(uint8_t x) { msxbiosPosit(x + 1, CSRY); }
 
 void locate(uint8_t x, uint8_t y) { msxbiosPosit(x + 1, y + 1); }
 

@@ -97,15 +97,11 @@ extern bool msxbiosBreakX();
 #define LINL32 0xF3AF
 #define LINLEN 0xF3B0
 #define CRTCNT 0xF3B1
-#define CSRY   0xF3DC
-#define CSRX   0xF3DD
 #define CNSDFG 0xF3DE
 #define VALTYP 0xF663
 #define DAC    0xF7F6
 #define SCRMOD 0xFCAF
 #define EXPTBL 0xFCC1
-// #define HOKVLD ((uint8_t *)0xFB20)
-// #define EXTBIO 0xFFCA
 
 extern uint8_t HOKVLD;
 extern uint8_t EXTBIO[5];

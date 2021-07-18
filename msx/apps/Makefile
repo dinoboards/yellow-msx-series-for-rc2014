@@ -21,12 +21,12 @@ all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpuspts
 
 include	Makefile.rules.mk
 
-fdisk_files = $(call app_files,fdisk,fdisk/memmap-override.asm msxdos.asm)
+fdisk_files = $(call app_files,fdisk,fdisk/memmap-override.asm msxdos.asm fusion/msx.c)
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
 
 V9958_DEPS := v9958.c msx.asm v9958.asm
 
-helloworld_files = $(call app_files,helloworld,)
+helloworld_files = $(call app_files,helloworld,msxdos.asm fusion/msx.c)
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files))
 helloworld.com.crt_enable_commandline:=1
 

@@ -20,3 +20,11 @@ char *GETPNT_ADDR GETPNT;
 // F3B3-F3B4: BASE(0): name table address for SCREEN 0 (ini:$0000)
 // used to initialize NAMBAS when SCREEN 0 is activated
 uint16_t TXTNAM_ADDR TXTNAM;
+
+// F3DC: line where the cursor is located
+// starts to count at 1 for the topmost line
+uint8_t CSRY_ADDR CSRY;
+
+// F3DD: column where the cursor is located
+// starts to count at 1 for the leftmost column
+uint8_t CSRX_ADDR CSRX;
