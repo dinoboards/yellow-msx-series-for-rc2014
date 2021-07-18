@@ -2,11 +2,11 @@
 #include "fossil.h"
 #include "msxdos.h"
 #include "print.h"
+#include "utils.h"
 #include "xmodem.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 /*
  * TODO:
  * [x] Clean up copy on start
@@ -18,7 +18,7 @@
  * [x] Minimise code size if possible
  * [ ] Improved error handling reporting
  * [x] Show file size download progress
- * [ ] Report file size during download and at completion
+ * [x] Report file size during download and at completion
  * [ ] Auto activate fossil driver
  */
 
@@ -41,15 +41,16 @@
 #define ERR5     0xFA
 #define OK       0x00
 
-const char *pTempFileName = "xmdwn.tmp";
+const unsigned char *pTempFileName = "xmdwn.tmp";
 
-const char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
-uint8_t     rotatingIndex = 0;
-bool        started = false;
+const unsigned char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
+uint8_t              rotatingIndex = 0;
+bool                 started = false;
+uint32_t             totalFileSize = 0;
 
 #define ERASE_LINE "\x1B\x6C\r"
 
-int main(const int argc, const char **argv) {
+int main(const int argc, const unsigned char **argv) {
   if (!fossil_link()) {
     print_str("Fossil driver not found\r\n");
     exit(1);
@@ -91,6 +92,7 @@ int main(const int argc, const char **argv) {
     }
 
     if (sig & SAVE_PACKET) {
+      totalFileSize += xmodemState.currentPacketSize;
       fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
       print_str(rotatingChar[rotatingIndex]);
       rotatingIndex = (rotatingIndex + 1) & 3;
@@ -109,7 +111,9 @@ int main(const int argc, const char **argv) {
   remove(pFileName);
   rename(pTempFileName, pFileName);
 
-  print_str(ERASE_LINE "Download Completed.\r\n");
+  print_str(ERASE_LINE "Downloaded ");
+  print_str(uint32_to_string(totalFileSize));
+  print_str(" bytes.\r\n");
   return 0;
 
 abort:

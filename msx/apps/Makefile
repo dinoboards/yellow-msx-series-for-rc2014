@@ -9,7 +9,7 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 --allow-unsafe-read
 endif
 
-ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fusion/
+ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc -lndos -pragma-define:CRT_ORG_DATA=0xC000 -pragma-define:CRT_MODEL=0 -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_INITIALIZE_BSS=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fusion/
 
 telnet_sources = $(wildcard telnet/*.c) $(wildcard telnet/*.asm)
 

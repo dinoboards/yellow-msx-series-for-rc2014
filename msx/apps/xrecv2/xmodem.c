@@ -18,10 +18,10 @@
 
 #define FOR_SIGNAL(mask) if (signal & (mask))
 
-struct xmodemState xmodemState;
-unsigned char      packetno = 1;
-uint16_t           i, c, len = 0;
-uint16_t           retry, retrans = MAXRETRANS;
+XMODEM_STATE_ADDR struct xmodemState xmodemState;
+unsigned char                        packetno = 1;
+uint16_t                             i, c, len = 0;
+uint16_t                             retry, retrans = MAXRETRANS;
 
 static int16_t       delay_point;
 static XMODEM_SIGNAL delay_resume;
@@ -102,7 +102,6 @@ XMODEM_SIGNAL read_first_header() {
       return READ_CRC | READ_1024;
 
     case EOT:
-      flush_input();
       fossil_rs_out(ACK);
       return END_OF_STREAM;
 
@@ -128,7 +127,6 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
       return signal | READ_1024;
 
     case EOT:
-      flush_input();
       fossil_rs_out(ACK);
       return END_OF_STREAM;
 
@@ -146,8 +144,10 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (!read_packet_crc())
     return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT);
 
-  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc())
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc()) {
+    fossil_rs_out(ACK);
     return signal | SAVE_PACKET;
+  }
 
   if (--retrans <= 0) {
     flush_input();
@@ -164,8 +164,10 @@ XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcal
   if (!read_packet_sum())
     return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT);
 
-  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum())
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum()) {
+    fossil_rs_out(ACK);
     return signal | SAVE_PACKET;
+  }
 
   if (--retrans <= 0) {
     flush_input();
@@ -194,7 +196,6 @@ XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   ++packetno;
   retrans = MAXRETRANS + 1;
   retry = 0;
-  fossil_rs_out(ACK);
   return signal | READ_HEADER;
 }
 
