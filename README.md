@@ -51,6 +51,10 @@ If you get a permission denied error when attempting to clone the submodules, it
 
 To setup github access using ssl - follow the instruction on github at: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh)
 
+## MSX Information
+
+See the [MSX doc index](./msx/docs/index.md) for various documents pertaining to MSX
+
 ## Building
 
 to build the RomWBW test applications:

@@ -17,6 +17,9 @@ If you had already cloned it, without the `--recursive` switch:
 
 > If using Windows Subsystem for Linux, make sure you are using the linux file system (not the mnt/c/... ntfs images)
 
+## MSX Information
+
+See the [MSX doc index](./docs/index.md) for various documents pertaining to MSX
 
 ## Subsections of this repo
 
