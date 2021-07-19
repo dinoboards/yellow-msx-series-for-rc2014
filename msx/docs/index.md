@@ -1,6 +1,7 @@
 
 # MSX System Documentation
 
+* [Apps and Utils for MSX on RC2014](./apps.md)
 * [MSX Red Book](./the-msx-red-book.md)
 * [Sony's MSX Technical Data Book](./msx_technical_data_book.pdf)
 * [MSX BIOS Book - 01](./MSX-BIOS-Book-01.pdf)
@@ -18,8 +19,8 @@ Links:
 ## MSXDOS 2:
 
 * [MSX DOS 2 User Manual](./msxdos-command.txt)
-* [MSX-DOS 2 Program Interface Specification](./msxdos-interface-specifications)
-* [MSX-DOS 2 Function Codes Specification](./msxdos-function-specifications)
+* [MSX-DOS 2 Program Interface Specification](./msxdos-interface-specifications.txt)
+* [MSX-DOS 2 Function Codes Specification](./msxdos-function-specifications.txt)
 
 ## Nextor/MSXDOS documentation
 
