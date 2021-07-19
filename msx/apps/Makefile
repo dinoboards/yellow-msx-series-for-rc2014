@@ -24,7 +24,7 @@ include	Makefile.rules.mk
 SYSTEM_VARS := libraries/msxbios/system_vars.c
 MSXDOS := libraries/msxdos/msxdos.asm
 
-fdisk_files = $(call app_files,fdisk,fdisk/memmap-override.asm $(MSXDOS) $(SYSTEM_VARS))
+fdisk_files = $(call app_files,fdisk,memmap-override.asm $(MSXDOS) $(SYSTEM_VARS))
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
 
 V9958_DEPS := v9958.c msx.asm v9958.asm
@@ -63,7 +63,7 @@ $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
 telnet_files = $(call app_files,telnet,extbio.asm crt_override.c fossil.asm getslt.asm xymodem.c aofossilhelper.c $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm width.c) $(MSXDOS))
 $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
-xrecv2_files = $(call app_files,xrecv2,extbio.asm fossil.asm getslt.asm $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
+xrecv2_files = $(call app_files,xrecv2,memmap-override.asm extbio.asm fossil.asm getslt.asm $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
 $(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files))
 xrecv2.com.crt_enable_commandline:=1
 

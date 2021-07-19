@@ -1,7 +1,7 @@
 
-#include "extbio.h"
 #include "msxdos.h"
 #include "xstdio.h"
+#include <extbio.h>
 #include <stdio.h>
 
 void main() {

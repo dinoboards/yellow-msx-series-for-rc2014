@@ -4,6 +4,7 @@
 #include "print.h"
 #include "utils.h"
 #include "xmodem.h"
+#include <extbio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,7 +20,7 @@
  * [ ] Improved error handling reporting
  * [x] Show file size download progress
  * [x] Report file size during download and at completion
- * [ ] Auto activate fossil driver
+ * [x] Auto activate fossil driver
  */
 
 #define VDP_FREQUENCY 50
@@ -52,8 +53,12 @@ uint32_t             totalFileSize = 0;
 
 int main(const int argc, const unsigned char **argv) {
   if (!fossil_link()) {
-    print_str("Fossil driver not found\r\n");
-    exit(1);
+    extbio_fossil_install();
+
+    if (!fossil_link()) {
+      print_str("Fossil driver not found\r\n");
+      exit(1);
+    }
   }
 
   process_cli_arguments(argv, argc);

@@ -1,8 +1,8 @@
 
-#include "extbio.h"
 #include "fossil.h"
-#include "msxdos.h"
 #include "xstdio.h"
+#include <extbio.h>
+#include <msxdos.h>
 #include <stdio.h>
 
 typedef struct {

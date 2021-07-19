@@ -1,7 +1,7 @@
 
 #include "crt_override.h"
-#include "extbio.h"
-#include "msxdos.h"
+#include <extbio.h>
+#include <msxdos.h>
 #include <stdio.h>
 #include <system_vars.h>
 
