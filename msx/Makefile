@@ -96,30 +96,33 @@ rom-image-msxsyssrc: nextor cbios msxsys ./rc2014-extended/bin/rc2014-extended.r
 	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/msxsyssrc-rc2014.rom bs=16k count=1 seek=31
 	printf 'Built bin/msxrc2014.rom\r\n\n'
 
+.PHONY: clean
 clean:
 	@rm -rf ./bin
 	$(MAKE) -C apps --no-print-directory clean
 	$(MAKE) -C cbios --no-print-directory clean
 	$(MAKE) -C ./rc2014-extended --no-print-directory clean
-	cd nextor/source
-	$(MAKE) --no-print-directory clean
-	rm ../extras/*
+	cd nextor/source && $(MAKE) --no-print-directory clean
+	rm -rf nextor/extras/*
 
 ## Tools
 
 VPATH = ./tools/xmodem:./bin/
 PASMO := pasmo --public -v -I ./bin/
 
-tools: bin/xrecv.com bin/chkspd.com
-bin/xrecv.com: xrecv.asm sio.asm bin/highpage.bin bdos.inc cbios.inc sio.inc ascii.inc cbios/src/hardware.asm cbios/src/hooks.asm
+tools: apps/bin/xrecv.com bin/chkspd.com
 
 bin/chkspd.com: ./tools/chkspd/chkspd.asm
 	@mkdir -p bin
 	$(PASMO) $< $@
 
-nextor/extras/system/xrecv.com: bin/xrecv.com
+.PHONY: apps/bin/xrecv.com
+apps/bin/xrecv.com:
+	@make -C apps bin/xrecv.com
+
+nextor/extras/system/xrecv.com: apps/bin/xrecv.com
 	mkdir -p nextor/extras/system
-	cp -up bin/xrecv.com nextor/extras/system/xrecv.com
+	cp -up apps/bin/xrecv.com nextor/extras/system/xrecv.com
 
 bin/%.com: %.asm
 	@mkdir -p bin

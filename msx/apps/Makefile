@@ -67,5 +67,9 @@ xrecv2_files = $(call app_files,xrecv2,memmap-override.asm extbio.asm fossil.asm
 $(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files))
 xrecv2.com.crt_enable_commandline:=1
 
+bin/xrecv.com: bin/xrecv2.com
+	@cp bin/xrecv2.com bin/xrecv.com
+
+.PHONY: clean
 clean:
 	@rm -rf ./bin

@@ -65,6 +65,8 @@ int main(const int argc, const unsigned char **argv) {
 
   FILE *fptr;
 
+  print_str("MSX/RC2014 Xmodem receive v0.5\r\n");
+
   print_str("Filename: ");
   print_str((char *)pFileName);
   print_str("\r\n");
