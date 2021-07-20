@@ -171,7 +171,7 @@ StartBuffer:
 	RET	Z
 	CALL	DisCursorSub
 	XOR	A
-	LD (CursorUpdt),A
+	LD	(CursorUpdt),A
 	RET
 
 
@@ -187,7 +187,7 @@ StartBuffer:
 _AnsiEndBuffer:
 EndBuffer:
 	LD	A,1
-	LD (CursorUpdt),A
+	LD	(CursorUpdt),A
 	CALL	V9938_SetCursorX
 	CALL	V9938_SetCursorY	; Set cursor position
 	LD	A,(CursorOn)
