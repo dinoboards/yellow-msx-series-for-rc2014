@@ -10,11 +10,11 @@ BIN := ./bin/
 
 all: $(BIN)rc2014-extended.rom
 
-$(BIN)rc2014-extended.rom: sio.inc rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm probing.asm $(BIN)fossil_000.bin $(BIN)fossil-map.bin $(BIN)fossil.sym
+$(BIN)rc2014-extended.rom: ../rc2014config.inc sio.inc rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm probing.asm $(BIN)fossil_000.bin $(BIN)fossil-map.bin $(BIN)fossil.sym
 	@mkdir -p bin
 	$(PASMO) --equ SYMBOL_ONLY=0 rc2014-extended.asm $@
 
-$(BIN)rc2014-extended.rom.sym: sio.inc rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm probing.asm $(BIN)fossil_xxx.bin $(BIN)fossil-map-xxx.bin $(BIN)fossil.sym
+$(BIN)rc2014-extended.rom.sym: ../rc2014config.inc sio.inc rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm probing.asm $(BIN)fossil_xxx.bin $(BIN)fossil-map-xxx.bin $(BIN)fossil.sym
 	@mkdir -p bin
 	$(PASMO) --equ SYMBOL_ONLY=1 rc2014-extended.asm $(BIN)ignored $@
 

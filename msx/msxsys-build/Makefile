@@ -3,21 +3,34 @@ SHELL := /bin/bash
 .ONESHELL:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
-WRK_DIR := ./working/
 PATH := $(PWD)/tools:$(PATH)
 MSXSYS ?= base300
+COUNTRY ?= aust
+RTC ?= with
+WRK_DIR := ./working/$(COUNTRY)-$(RTC)-rtc/
 
 .PRECIOUS: $(WRK_DIR)%.hex $(WRK_DIR)%.mac $(WRK_DIR)%.inc
 
 all: $(WRK_DIR)main.rom $(WRK_DIR)subrom.rom $(WRK_DIR)optrom.rom
 
-PREP := $(shell $(PWD)/tools/prep.sh > /dev/null; echo "$$?")
+PREP := $(shell WRK_DIR="$(WRK_DIR)" $(PWD)/tools/prep.sh > /dev/null; echo "$$?")
 ifneq ($(PREP),0)
   $(error prep.sh failed.)
 endif
 
-$(WRK_DIR)msx.inc: $(MSXSYS).inc
+$(WRK_DIR)msx.inc: base300.inc
 	@unix2dos -f -n "$<" "$@"
+	./tools/country-to-code.sh $(COUNTRY)
+	CNTRY=$$(./tools/country-to-code.sh $(COUNTRY))
+	echo "$$(echo -n CNTRY  EQU  $${CNTRY}; cat "$@")" > "$@"
+	echo "$$(echo; cat "$@")" > "$@"
+	if [ "$(RTC)" = "with" ]; then
+		echo "$$(echo -n RTC  EQU  1; cat "$@")" > "$@"
+	else
+		echo "$$(echo -n RTC  EQU  0; cat "$@")" > "$@"
+	fi
+	echo "$$(echo; cat "$@")" > "$@"
+	unix2dos -f -n "$@" "$@"
 
 $(WRK_DIR)%.mac: msxsyssrc/$(MSXSYS)/%.mac
 	@unix2dos -f -n "$<" "$@"
@@ -35,11 +48,11 @@ $(WRK_DIR)%.rel: $(WRK_DIR)%.mac
 
 $(WRK_DIR)%.hex:
 
-$(WRK_DIR)bios.mac: $(addprefix $(WRK_DIR), msx.inc keyint.mac chrint.mac)
-$(WRK_DIR)basic1.mac: $(addprefix $(WRK_DIR), msx.inc)
-$(WRK_DIR)basic2.mac: $(addprefix $(WRK_DIR), msx.inc)
-$(WRK_DIR)optrom.mac: $(addprefix $(WRK_DIR), msx.inc)
-$(WRK_DIR)subrom.mac: $(addprefix $(WRK_DIR), msx.inc)
+$(WRK_DIR)bios.rel: $(addprefix $(WRK_DIR), msx.inc keyint.mac chrint.mac chrkor.mac chrrus.mac chrjapv2.mac chrger.mac)
+$(WRK_DIR)basic1.rel: $(addprefix $(WRK_DIR), msx.inc)
+$(WRK_DIR)basic2.rel: $(addprefix $(WRK_DIR), msx.inc)
+$(WRK_DIR)optrom.rel: $(addprefix $(WRK_DIR), msx.inc)
+$(WRK_DIR)subrom.rel: $(addprefix $(WRK_DIR), msx.inc)
 
 $(WRK_DIR)%.rom: $(addprefix $(WRK_DIR), %.hex)
 	@hex2bin $<

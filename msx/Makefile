@@ -7,7 +7,7 @@ MAKEFLAGS += --no-builtin-rules
 # Example of MSX_JED_CDWIN exported environment variable
 # MSX_JED_CDWIN="u: && cd \\home\\jane\\<path to project>\\msx &&"
 
-all: rom-image-pal rom-image-ntsc rom-image-msxsyssrc #rom-image-nms8250
+all: rom-image-pal rom-image-ntsc msxsysromimages
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
 
@@ -60,18 +60,18 @@ rom-image-pal: nextor cbios ./rc2014-extended/bin/rc2014-extended.rom
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/yellow-msx-pal-rc2104.rom bs=16k count=27 seek=4
-	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=31
+	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 	of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1 seek=31
 	printf 'Built bin/yellow-msx-pal-rc2104.rom\r\n\n'
 
 .PHONY: rom-image-ntsc
 rom-image-ntsc: nextor cbios ./rc2014-extended/bin/rc2014-extended.rom
 	@rm -f bin/ymsx-ntsc.rom
 	dd if=/dev/zero bs=16k count=8 of=bin/yellow-msx-ntsc-rc2104.rom
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_ntsc.rom 	of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=2 seek=0
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_main_rc2014_ntsc.rom of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=2 seek=0
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=27 seek=4
-	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=31
+	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 	of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1 seek=31
 	printf 'Built bin/yellow-msx-ntsc-rc2104.rom\r\n\n'
 
 .PHONY: rom-image-nms8250
@@ -82,18 +82,7 @@ rom-image-nms8250: nextor cbios systemroms/nms8250_basic-bios2.rom systemroms/nm
 	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=2
 	dd conv=notrunc status=none if=./systemroms/nms8250_msx2sub.rom				   			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/nms8250-rc2014.rom bs=16k count=27 seek=4
-	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=31
-	printf 'Built bin/msxrc2014.rom\r\n\n'
-
-.PHONY: rom-image-msxsyssrc
-rom-image-msxsyssrc: nextor cbios msxsys ./rc2014-extended/bin/rc2014-extended.rom
-	@rm -f bin/msxrc2014.rom
-	dd if=/dev/zero bs=16k count=8 of=bin/msxsyssrc-rc2014.rom
-	dd conv=notrunc status=none if=./bin/main.rom							 										of=bin/msxsyssrc-rc2014.rom bs=16k count=2 seek=0
-	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/msxsyssrc-rc2014.rom bs=16k count=1 seek=2
-	dd conv=notrunc status=none if=./bin/subrom.rom				   											of=bin/msxsyssrc-rc2014.rom bs=16k count=1 seek=3
-	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/msxsyssrc-rc2014.rom bs=16k count=27 seek=4
-	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom		 			of=bin/msxsyssrc-rc2014.rom bs=16k count=1 seek=31
+	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom      of=bin/nms8250-rc2014.rom bs=16k count=1 seek=31
 	printf 'Built bin/msxrc2014.rom\r\n\n'
 
 .PHONY: clean
@@ -168,11 +157,46 @@ rc2014-extended/bin/rc2014-extended.rom:
 
 include Makefile-apps.mk
 
-.PHONY: msxsys
-msxsys:
+define BUILD_msxsysromimage =
+.PHONY: rom-msxsyssrc-$1-$2-rtc
+rom-msxsyssrc-$1-$2-rtc: nextor cbios msxsys-$1-$2-rtc ./rc2014-extended/bin/rc2014-extended.rom
+	@rm -f bin/msxsyssrc-rc2014-$1-$2-rtc.rom
+	dd if=/dev/zero bs=16k count=8 of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom
+	dd conv=notrunc status=none if=./bin/$1-$2-rtc-main.rom													of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=2 seek=0
+	dd conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 				of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1 seek=2
+	dd conv=notrunc status=none if=./bin/$1-$2-rtc-subrom.rom												of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1 seek=3
+	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    					of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=27 seek=4
+	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom				of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1 seek=31
+	printf 'Built bin/msxsyssrc-rc2014-$1-$2-rtc.rom\r\n\n'
+
+.PHONY: msxsys-$1-$2-rtc
+msxsys-$1-$2-rtc:
 	@cd msxsys-build
-	$(MAKE) -O -j --no-print-directory
-	cp -up ./working/*.rom ../bin/
+	RTC=$2 COUNTRY=$1 $(MAKE) -O -j --no-print-directory
+	cp -up ./working/$1-$2-rtc/main.rom    ../bin/$1-$2-rtc-main.rom
+	cp -up ./working/$1-$2-rtc/optrom.rom  ../bin/$1-$2-rtc-optrom.rom
+	cp -up ./working/$1-$2-rtc/subrom.rom  ../bin/$1-$2-rtc-subrom.rom
+
+msxsysromimages: rom-msxsyssrc-$1-$2-rtc
+endef
+
+define BUILD_msxsysromimage-country =
+$(eval $(call BUILD_msxsysromimage,$1,with))
+$(eval $(call BUILD_msxsysromimage,$1,without))
+endef
+
+$(eval $(call BUILD_msxsysromimage-country,aust))
+$(eval $(call BUILD_msxsysromimage-country,japan))
+$(eval $(call BUILD_msxsysromimage-country,usa))
+$(eval $(call BUILD_msxsysromimage-country,international))
+$(eval $(call BUILD_msxsysromimage-country,uk))
+$(eval $(call BUILD_msxsysromimage-country,france))
+$(eval $(call BUILD_msxsysromimage-country,germany))
+$(eval $(call BUILD_msxsysromimage-country,italy))
+$(eval $(call BUILD_msxsysromimage-country,spain))
+$(eval $(call BUILD_msxsysromimage-country,arabic))
+$(eval $(call BUILD_msxsysromimage-country,korea))
+$(eval $(call BUILD_msxsysromimage-country,russia))
 
 release:
 	@version=$$(date +%y-%m-%d)

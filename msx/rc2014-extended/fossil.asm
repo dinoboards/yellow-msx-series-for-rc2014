@@ -158,17 +158,17 @@ SKIP3:
 	LD	HL, RSC_RCV_BAUD
 	CP	7
 	JR	NZ, SKIP4
-	LD	HL, 19200
+	LD	HL, BAUD_HIGH
 	JR	SET_BAUD_EXIT
 
 SKIP4:
 	CP	6
 	JR	NZ, SKIP5
-	LD	HL, 9600
+	LD	HL, BAUD_MID
 	JR	SET_BAUD_EXIT
 
 SKIP5:
-	LD	HL, 4800
+	LD	HL, BAUD_LOW
 
 SET_BAUD_EXIT:
 	LD	(RSC_RCV_BAUD), HL
@@ -396,8 +396,8 @@ RSC_CTR_RTS:		DB	'H'		; CTR-RTS hand shake 'H','N'
 RSC_AUTO_RCV_LF:	DB	'N'		; Auto LF for receive 'A','N'
 RSC_AUTO_SND_LF:	DB	'N'		; Auto LF for send 'A','N'
 RSC_SI_SO_CTRL:		DB	'N'		; SI/SO control 'S','N'
-RSC_RCV_BAUD:		DW	19200		; Receiver baud rate  50-19200
-RSC_SND_BAUD:		DW	19200		; Transmitter baud rate 50-19200
+RSC_RCV_BAUD:		DW	19200		; Receiver baud rate  50-19200 ; MARK MAKE BAUD RATE CONFIG
+RSC_SND_BAUD:		DW	19200		; Transmitter baud rate 50-19200 ; MARK MAKE BAUD RATE CONFIG
 RSC_TIMEOUT_CNT:	DB	0		; Time out counter 0-255
 
 SIO_RCVBUF:

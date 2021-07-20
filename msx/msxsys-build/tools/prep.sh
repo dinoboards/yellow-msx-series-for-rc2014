@@ -2,7 +2,6 @@
 
 set -e
 
-export WRK_DIR=./working
 export PATH=$(pwd)/tools:${PATH}
 
 mkdir -p ./${WRK_DIR}
