@@ -48,9 +48,9 @@ There are plans to add additional RC2014 hardware support, including Floppy driv
 
 ### MSXSYSSRC
 
-Although MSX-DOS has effectively been opened source thru the NEXTOR system, and Microsoft open sourcing GW-BASIC and early versions of MS-DOS - its a dissapointment to many that the MSX-BIOS/BASIC has not also been opened source.
+Although MSX-DOS has effectively been opened source thru the NEXTOR system, and Microsoft open sourcing GW-BASIC and early versions of MS-DOS - its a disappointment to many that the MSX-BIOS/BASIC has not also been opened source.
 
-Given this environment, the MSXSYSSRC project is an attempt to reverse engineer the various MSX offical ROMS, so that the retro community can understand and educate themselves as to how it was all done back then.
+Given this environment, the MSXSYSSRC project is an attempt to reverse engineer the various MSX official ROMS, so that the retro community can understand and educate themselves as to how it was all done back then.
 
 https://sourceforge.net/projects/msxsyssrc/
 
@@ -65,7 +65,7 @@ After installing and configuring the prerequisites, simply run `make` in the msx
 
 ## Installing Prerequisites
 
-Before attempting to build any of the artifacts, you need to ensure you have the correct depdendencies ready:
+Before attempting to build any of the artifacts, you need to ensure you have the correct dependencies ready:
 
 * Linux (tested on ubuntu under WSL)
 * (For the JED files, you will need a windows environment)
@@ -92,7 +92,7 @@ Once all the prerequisites are done, you can build the entire system with just:
 
 `make`
 
-This should procduce the following artifacts in the `./msx/bin` directory
+This should produce the following artifacts in the `./msx/bin` directory
 
 |          File               | Description                                                  | Address   | Emulator Slot | RC2014 Slot |
 |-----------------------------|--------------------------------------------------------------|-----------|---------------|-------------|
