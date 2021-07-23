@@ -12,8 +12,5 @@ $(APP_TARGETS):
 	cp -up ./apps/$@ ./bin/
 
 .PHONY: format
-format: SHELL:=/bin/bash
 format:
-	@cd apps
-	find \( -name "*.c" -o -name "*.h" \) -exec echo "formating {}" \; -exec clang-format -i {} \;
-
+	$(MAKE) -C apps format
