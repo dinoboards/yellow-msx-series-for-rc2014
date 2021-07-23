@@ -3,7 +3,7 @@
 # To run the container:
 #   $ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}) -it yellowmsx
 
-FROM ubuntu:20.04
+FROM ubuntu:20.04 as STAGE1
 
 LABEL Version="0.1" \
       Date="2021-07-22" \
@@ -17,9 +17,10 @@ ENV Z88DK_PATH="/opt/z88dk" \
 
 RUN apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y build-essential dos2unix libboost-all-dev texinfo texi2html libxml2-dev subversion bison \
-                   flex zlib1g-dev m4 git wget pasmo sudo dosfstools curl && \
-    curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - && \
+    apt install -y  mtools build-essential dos2unix libboost-all-dev texinfo texi2html libxml2-dev subversion bison \
+                   flex zlib1g-dev m4 git wget dosfstools curl
+
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt install -y nodejs
 
 RUN mv /usr/bin/svn /usr/bin/org-svn
@@ -34,25 +35,46 @@ RUN git clone https://github.com/z88dk/z88dk.git ${Z88DK_PATH} && \
     ./build.sh && \
     rm -fR ${SDCC_PATH}
 
-RUN mkdir -p /linuxtools/  && \
-	cd /linuxtools && \
+RUN cd /opt && \
 	wget https://sourceforge.net/projects/sdcc/files/sdcc-linux-amd64/4.0.0/sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2/download -O "sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2" && \
 	tar -xjf  sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2 && \
 	rm sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2
 
-RUN cd /linuxtools && \
+RUN cd /opt && \
     git clone --depth 1 https://github.com/E3V3A/hex2bin.git && \
 	cd hex2bin && \
 	make
 
-RUN cd /linuxtools && \
+RUN cd /opt && \
 	git clone --depth 1 https://github.com/jhallen/cpm.git && \
 	cd cpm && \
 	OS=linux MAKEFLAGS= make -B --trace
 
-ENV PATH="${Z88DK_PATH}/bin:/linuxtools/sdcc-4.0.0/bin:/linuxtools/hex2bin:/linuxtools/cpm:${PATH}" \
-    ZCCCFG="${Z88DK_PATH}/lib/config/"
+RUN wget -O /tmp/node.tar.gz https://nodejs.org/dist/v16.5.0/node-v16.5.0-linux-x64.tar.gz
+RUN tar -xzf "/tmp/node.tar.gz" -C /opt && \
+    ls /opt/ -lartsh  && \
+    mv /opt/node-v16.5.0-linux-x64 /opt/nodejs && ls /opt/nodejs/bin/node -lartsh && chmod +x /opt/nodejs/bin/node && \
+    /opt/nodejs/bin/node --version
 
-RUN apt install -y mtools
+FROM ubuntu:20.04
+
+RUN apt update -y && \
+    apt dist-upgrade -y && \
+    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=STAGE1 /opt/nodejs /opt/nodejs
+COPY --from=STAGE1 /opt/sdcc-4.0.0 /opt/sdcc-4.0.0
+COPY --from=STAGE1 /opt/cpm /opt/cpm
+COPY --from=STAGE1 /opt/hex2bin /opt/hex2bin
+COPY --from=STAGE1 /opt/z88dk/bin /opt/z88dk/bin
+COPY --from=STAGE1 /opt/z88dk/include /opt/z88dk/include
+COPY --from=STAGE1 /opt/z88dk/lib /opt/z88dk/lib
+COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_peeph*.* /opt/z88dk/libsrc/_DEVELOPMENT/
+COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_opt*.* /opt/z88dk/libsrc/_DEVELOPMENT/
+
+ENV Z88DK_PATH="/opt/z88dk" \
+    PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.0.0/bin:/opt/hex2bin:/opt/cpm:${PATH}" \
+    ZCCCFG="/opt/z88dk/lib/config/"
 
 WORKDIR /src/
