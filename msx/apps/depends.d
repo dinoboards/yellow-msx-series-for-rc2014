@@ -22,12 +22,12 @@
  libraries/msxbios/extbio.h
 ./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h \
  libraries/fusion/msx_fusion.h print.h libraries/fusion/io.h
-./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h telnet/asm.h \
- libraries/fusion/msx_fusion.h telnet/ansiprint.h print.h \
- aofossilhelper.h crt_override.h libraries/msxdos/msxdos.h xymodem.h
+./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h libraries/fusion/msx_fusion.h \
+ telnet/ansiprint.h print.h aofossilhelper.h crt_override.h \
+ libraries/msxdos/msxdos.h xymodem.h
 ./bin/telnet/fossil_interface.c.asm: telnet/fossil_interface.c fossil.h \
  libraries/fusion/msx_fusion.h
-./bin/telnet/ansiprint.c.asm: telnet/ansiprint.c telnet/ansiprint.h print.h telnet/asm.h \
+./bin/telnet/ansiprint.c.asm: telnet/ansiprint.c telnet/ansiprint.h print.h \
  telnet/msx2ansi.h
 ./bin/fdisk/fdisk.c.asm: fdisk/fdisk.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
  fdisk/fdisk2.h datatypes.h fdisk/partition.h \
@@ -53,8 +53,8 @@
 ./bin/telnet/msx2ansi.o: ./telnet/msx2ansi.asm
 ./bin/telnet/screen.o: ./telnet/screen.asm
 ./bin/fdisk/fdisk.o: ./fdisk/fdisk.asm
-./bin/fdisk/memmap-override.o: ./fdisk/memmap-override.asm
 ./bin/fossil.o: ./fossil.asm ./msx.inc
+./bin/memmap-override.o: ./memmap-override.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm

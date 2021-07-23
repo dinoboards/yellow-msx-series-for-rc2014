@@ -37,7 +37,6 @@
 #ifndef _TELNET_HEADER_INCLUDED
 #define _TELNET_HEADER_INCLUDED
 
-#include "asm.h"
 #include "msx_fusion.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -207,8 +206,6 @@ __at 0xFC9E unsigned int  uiJiffy;
 unsigned char ucRcvDataMemory[RcvMemorySize]; // area to hold data sent to Fossil driver, avoid 0x8000 as it seems somehow it is used
 
 unsigned int uiGetSize;
-
-Z80_registers regs; // auxiliary structure for asm function calling
 
 void         negotiate(unsigned char *ucBuf);
 unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsigned char *ucPort, unsigned char *ucAnsiOption, unsigned char *ucMSX1CustomFont);

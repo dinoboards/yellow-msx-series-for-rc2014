@@ -48,7 +48,7 @@ deps:
 		filename=$$(basename $$file_no_ext)
 		from="$$filename.rel"
 		to="$(BIN)$$file_no_ext.c.asm"
-		zsdcpp ${ZSDCPP_FLAGS} -MM -MF /tmp/deps.deps $$file
+		z88dk-zsdcpp ${ZSDCPP_FLAGS} -MM -MF /tmp/deps.deps $$file
 		sed "s+$$from+$$to+g" /tmp/deps.deps >> ./depends.d
 	done
 
