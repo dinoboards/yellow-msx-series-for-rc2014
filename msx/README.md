@@ -97,7 +97,7 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 * [z88dk](https://github.com/z88dk/z88dk/wiki/installation)
 * Bash 4.4 or greater
 * make 4.1 or greater
-* gcc
+* gcc (build-essentials)
 * mtools
 * Nextor support tools, see below
 * [pasmo z80 assembler](https://pasmo.speccy.org/)

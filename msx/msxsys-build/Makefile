@@ -15,7 +15,7 @@ all: $(WRK_DIR)main.rom $(WRK_DIR)subrom.rom $(WRK_DIR)optrom.rom
 
 PREP := $(shell WRK_DIR="$(WRK_DIR)" $(PWD)/tools/prep.sh > /dev/null; echo "$$?")
 ifneq ($(PREP),0)
-  $(error prep.sh failed.)
+  $(error msxsys prep.sh failed.)
 endif
 
 $(WRK_DIR)msx.inc: base300.inc
