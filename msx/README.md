@@ -73,6 +73,7 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 * Bash 4.4 or greater
 * make 4.1 or greater
 * gcc
+* mtools
 * Nextor support tools, see below
 * [pasmo z80 assembler](https://pasmo.speccy.org/)
 

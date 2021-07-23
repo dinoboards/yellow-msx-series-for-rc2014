@@ -1,7 +1,7 @@
 # To create the image:
 #   $ (cd docker-tool-chain && docker build -t yellowmsx .)
 # To run the container:
-#   $ docker run -v ${PWD}:/src/ -it yellowmsx <command>
+#   $ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}) -it yellowmsx
 
 FROM ubuntu:20.04
 
@@ -52,5 +52,7 @@ RUN cd /linuxtools && \
 
 ENV PATH="${Z88DK_PATH}/bin:/linuxtools/sdcc-4.0.0/bin:/linuxtools/hex2bin:/linuxtools/cpm:${PATH}" \
     ZCCCFG="${Z88DK_PATH}/lib/config/"
+
+RUN apt install -y mtools
 
 WORKDIR /src/

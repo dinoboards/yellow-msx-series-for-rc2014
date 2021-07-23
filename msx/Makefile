@@ -42,8 +42,6 @@ INCLUDED_ROOT 	:=  AUTOEXEC.BAT  SROM.COM SROM.TXT SROM.INI
 .PHONY: nextor
 nextor: $(addprefix nextor/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor/extras/system/,$(INCLUDED_SYSTEM))  $(addprefix nextor/extras/,$(INCLUDED_ROOT)) #nextor/extras/roms/pacman.rom
 	@mkdir -p ./bin
-	echo "Requires sudo permission"
-	sudo echo
 	cd nextor/source
 	BUILD_TYPE=cbios $(MAKE) nextor-2.1.1.rc2014.rom -O -j --no-print-directory
 	cp -u ../bin/nextor-2.1.1.rc2014.rom ../../bin
@@ -89,6 +87,7 @@ rom-image-nms8250: nextor cbios systemroms/nms8250_basic-bios2.rom systemroms/nm
 clean:
 	@rm -rf ./bin
 	$(MAKE) -C apps --no-print-directory clean
+	(cd msxsys-build && $(MAKE) --no-print-directory clean)
 	$(MAKE) -C cbios --no-print-directory clean
 	$(MAKE) -C ./rc2014-extended --no-print-directory clean
 	cd nextor/source && $(MAKE) --no-print-directory clean
