@@ -1,11 +1,11 @@
 # To create the image:
-#   $ (cd docker-tool-chain && docker build -t yellowmsx .)
+#   $ (cd docker-tool-chain && ./docker-build.sh)
 # To run the container:
-#   $ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}) -it yellowmsx
+#   $ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest
 
 FROM ubuntu:20.04 as STAGE1
 
-LABEL Version="0.1" \
+LABEL Version="0.0.2" \
       Date="2021-07-22" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -20,20 +20,17 @@ RUN apt update -y && \
     apt install -y  mtools build-essential dos2unix libboost-all-dev texinfo texi2html libxml2-dev subversion bison \
                    flex zlib1g-dev m4 git wget dosfstools curl
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt install -y nodejs
-
 RUN mv /usr/bin/svn /usr/bin/org-svn
 COPY ./svnshim.sh /usr/bin/svn
 
-RUN git clone https://github.com/z88dk/z88dk.git ${Z88DK_PATH} && \
-    cd ${Z88DK_PATH} && \
-    git checkout 8d70c5aaa6a6de544d66731015aaaa0d8f0253da && \
-    git submodule update --init --recursive && \
-    rm -rf .git* && \
-    chmod 777 build.sh && \
-    ./build.sh && \
-    rm -fR ${SDCC_PATH}
+RUN git clone https://github.com/z88dk/z88dk.git ${Z88DK_PATH}
+WORKDIR /opt/z88dk
+RUN git checkout 8d70c5aaa6a6de544d66731015aaaa0d8f0253da
+RUN git submodule update --init --recursive
+RUN rm -rf .git*
+RUN chmod 777 build.sh
+RUN ./build.sh
+RUN rm -fR ${SDCC_PATH}
 
 RUN cd /opt && \
 	wget https://sourceforge.net/projects/sdcc/files/sdcc-linux-amd64/4.0.0/sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2/download -O "sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2" && \
@@ -76,5 +73,9 @@ COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_opt*.* /opt/z88dk/libsrc/
 ENV Z88DK_PATH="/opt/z88dk" \
     PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.0.0/bin:/opt/hex2bin:/opt/cpm:${PATH}" \
     ZCCCFG="/opt/z88dk/lib/config/"
+
+RUN adduser --disabled-password --gecos "" builder
+
+COPY bashrc /home/builder/.bashrc
 
 WORKDIR /src/

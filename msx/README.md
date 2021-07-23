@@ -57,7 +57,32 @@ https://sourceforge.net/projects/msxsyssrc/
 ## Updating your ROM
 
 You can assembly a new ROM image by following the instructions below, or download one of the pre-assembled [released packages](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
-## Building the binaries
+
+There are 2 different ways to compile and assemble the rom.  Docker or host.  With Docker, you only need to have docker installed.  Alternatively, you can install the full tool chain (z88dk, pasmo, linux packages etc)
+## Building the binaries using the prebuilt docker image
+
+After you have installed docker on your system, you can compile the ROM image using the following command from within the `msx` directory:
+
+```
+docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest make
+```
+
+The docker run command is complex, so to make it easier, make an alias entry (typically in something like `~/.bash_aliases`)
+
+
+```
+alias msxmake="docker run -v \${PWD}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest make"
+```
+
+There after, you can treat the alias as an alternative make command eg:
+
+```
+msxmake clean
+msxmake apps
+````
+
+> Please note, that the docker tool chain can not build the JED files, as currently, that can only be done in windows.
+## Building the binaries manually
 
 The Makefile in this directory can orchestrate the building of all binary units required for the RC2014 MSX system.
 
