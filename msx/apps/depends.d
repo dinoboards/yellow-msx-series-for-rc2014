@@ -23,8 +23,8 @@
 ./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h \
  libraries/fusion/msx_fusion.h print.h libraries/fusion/io.h
 ./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h libraries/fusion/msx_fusion.h \
- telnet/ansiprint.h print.h aofossilhelper.h crt_override.h \
- libraries/msxdos/msxdos.h xymodem.h
+ telnet/ansiprint.h print.h aofossilhelper.h libraries/msxdos/msxdos.h \
+ xymodem.h
 ./bin/telnet/fossil_interface.c.asm: telnet/fossil_interface.c fossil.h \
  libraries/fusion/msx_fusion.h
 ./bin/telnet/ansiprint.c.asm: telnet/ansiprint.c telnet/ansiprint.h print.h \
@@ -35,7 +35,7 @@
 ./bin/fdisk/fdisk2.c.asm: fdisk/fdisk2.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
  fdisk/partition.h datatypes.h
 ./bin/v9958.c.asm: v9958.c v9958.h
-./bin/rs232tst.c.asm: rs232tst.c crt_override.h libraries/msxbios/extbio.h \
+./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
 ./bin/libraries/msxbios/system_vars.c.asm: libraries/msxbios/system_vars.c \
@@ -45,7 +45,6 @@
 ./bin/aofossilhelper.c.asm: aofossilhelper.c aofossilhelper.h fossil.h \
  libraries/fusion/msx_fusion.h print.h
 ./bin/mbrot.c.asm: mbrot.c v9958.h
-./bin/crt_override.c.asm: crt_override.c crt_override.h libraries/msxdos/msxdos.h
 ./bin/msx.o: ./msx.asm ./msx.inc
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm

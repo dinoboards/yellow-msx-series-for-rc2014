@@ -32,11 +32,7 @@
 
 > utility to measure and calibrate the RTC clock
 
-## XRECV
-
-> Minimalist utility to receive files over the SIO/2 2nd serial port using xmodem (128/checksum)
-
-## XRECV2*
+## XRECV2
 
 > More capable xmodem receive utility for the SIO/2 2nd serial port.  Support CRC and 1024 packets
 

@@ -9,7 +9,7 @@ uint16_t    baud_rate = 7 * 256 + 7; // 19200
 const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
 
 uint8_t abort_with_help() {
-  print_str("Usage:  xrecv2 <filename> [options]\r\n\r\nReceive a file using xmodem protocol\r\nusing the active fossil driver\r\n\r\n  /b<rate>, /baud=<rate>\r\n    The desired tx/rx baud <rate>\r\n    eg 19200\r\n");
+  print_str("Usage:  xrecv <filename> [options]\r\n\r\nReceive a file using xmodem protocol\r\nusing the active fossil driver\r\n\r\n  /b<rate>, /baud=<rate>\r\n    The desired tx/rx baud <rate>\r\n    eg 19200\r\n");
   exit(1);
 
   return 255;

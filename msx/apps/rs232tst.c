@@ -1,5 +1,4 @@
 
-#include "crt_override.h"
 #include <extbio.h>
 #include <msxdos.h>
 #include <stdio.h>
@@ -23,7 +22,7 @@ uint8_t     __at 0xFB1C RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
 uint8_t     __at 0xFB1B RS_FLAGS;  // RS-232C bit flags
 uint8_t *   __at 0xFB18 RS_BUFEND;
 
-int _main(char **argv, int argc) {
+int main(const int argc, const unsigned char **argv) {
   (void)argc;
 
   const uint16_t i = atoi(argv[0]);
