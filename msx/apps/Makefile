@@ -60,7 +60,7 @@ $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 fossil_files = $(call app_files,fossil,extbio.asm getslt.asm)
 $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
 
-telnet_files = $(call app_files,telnet,extbio.asm fossil.asm getslt.asm xymodem.c aofossilhelper.c $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm width.c) $(MSXDOS))
+telnet_files = $(call app_files,telnet,memmap-override.asm extbio.asm fossil.asm getslt.asm xymodem.c aofossilhelper.c $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm width.c) $(MSXDOS))
 $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
 xrecv2_files = $(call app_files,xrecv2,memmap-override.asm extbio.asm fossil.asm getslt.asm $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
