@@ -57,7 +57,7 @@ FROM ubuntu:20.04
 
 RUN apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools && \
+    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=STAGE1 /opt/nodejs /opt/nodejs
