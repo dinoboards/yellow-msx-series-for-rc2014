@@ -22,7 +22,9 @@ release-notes:
 	relfile=./release/release-$${version}.md
 	rm -f $${relfile}
 	echo -e "## Release Notes\r\n\r\n" >> $${relfile}
+	echo -e "\`\`\`" >> $${relfile}
 	git log --pretty=format:"%cd: %s" --date=short --submodule=short $${last_release}..HEAD >> $${relfile}
+	echo -e "\r\n\`\`\`" >> $${relfile}
 
 .PHONY: release
 release: release-notes
