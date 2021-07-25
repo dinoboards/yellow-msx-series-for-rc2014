@@ -104,10 +104,6 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 
 > PASMO: For debian based linux, just run `sudo apt install pasmo`
 
-### **Manual patch required to z88dk**
-
-At this time, I have had to manually patch my local copy of z88dk to be able to compile MSX C applications.  I have submitted a patch to the z88dk team, but until thats accepted, you will need to manually tweak your local copy of the `msx.h` file.  See [https://github.com/z88dk/z88dk/pull/1787/files](https://github.com/z88dk/z88dk/pull/1787/files).  You dont need to compile z88dk - just change the header file on your local system.  If the patch or other fix has since been applied, this can be ignored.
-
 ### Installing Nextor Support Tools
 
 `make install-prereq`
@@ -120,30 +116,42 @@ Once all the prerequisites are done, you can build the entire system with just:
 
 This should produce the following artifacts in the `./msx/bin` directory
 
+#### ROM Flashing units
+
+These binaries are for flashing onto the SST39SF040 ROM for the MSX Memory Module:
+
+|          File                              | Description                                                       |
+|--------------------------------------------|-------------------------------------------------------------------|
+| yellow-msx-pal-rc2104.rom                  | The CBIOS based build configured for 50Hz                         |
+| yellow-msx-ntsc-rc2104.rom                 | The CBIOS based build configured for 60Hz                         |
+| msxsyssrc-rc2014-<country>-with-rtc.rom    | The MSXSYS based build per country settings, with RTC enabled     |
+| msxsyssrc-rc2014-<country>-without-rtc.rom | The MSXSYS based build per country settings, with RTC disabled    |
+
+> The *without-rtc* versions are required for configuration without the RTC module - otherwise system will not start
+
+> The various country settings can be found in [./msxsys-build/base300.inc](./msxsys-build/base300.inc) - and are not fully tested.
+
+
+#### Other files produced are:
+
 |          File               | Description                                                  | Address   | Emulator Slot | RC2014 Slot |
 |-----------------------------|--------------------------------------------------------------|-----------|---------------|-------------|
-| cbios_main_rc2014_pal.rom*  | Main 32K CBIOS ROM                                           | 0000-7FFF |       0       |      0      |
-| cbios_main_rc2014_ntsc.rom* | Main 32K CBIOS ROM                                           | 0000-7FFF |       0       |      0      |
-| cbios_logo_rc2014.rom*      | RC2014 Custom' 16K Logo ROM                                  | 8000-9FFF |       0       |      0      |
-| cbios_sub.rom*              | Sub CBIOS ROM                                                | 0000-3FFF |      3-0      |     3-0     |
-| yellow-msx-pal-rc2104.rom** | CBIOS and Nextor 512K ROM for flashing onto Memory Board     |           |               |             |
-| main.rom*                   | Main 32K MSXSRCSYS ROM                                       | 0000-7FFF |       0       |      0      |
-| optrom.rom*                 | MSXSRCSYS OPT or Logo ROM                                    | 4000-7FFF |               |             |
-| subrom.rom*                 | MSXSRCSYS SUB ROM                                            | 0000-3FFF |      3-0      |     3-0     |
-| msxsyssrc-rc2014.rom**      | MSXSRCSYS and Nextor 512K ROM for flashing onto Memory Board |           |               |             |
-| nextor-2.1.1.rc2014.rom*    | Nextor ROM Image                                             | 4000-7FFF |       2       |     3-3     |
-| rc2014-extended.rom*        | Custom Extended BIOS implementation for RC2014 platform      | 8000-CFFF |      3-3      |     3-3     |
-| chkspd. com                 | Testing tool                                                 |           |               |             |
-| dots. com                   | Testing tool                                                 |           |               |             |
-| extbio. com                 | Testing tool                                                 |           |               |             |
-| fdisk. com                  | Testing tool                                                 |           |               |             |
-| lines. com                  | Testing tool                                                 |           |               |             |
-| mbrot. com                  | Testing tool                                                 |           |               |             |
-| xrecv. com                  | Xmodem receive tools for the RC2014 SIO/2 Module             |           |               |             |
-
-> \* used only by emulator
-
-> \*\* For flashing on SST39SF040 ROM of the Memory board
+| cbios_main_rc2014_pal.rom   | Main 32K CBIOS ROM                                           | 0000-7FFF |       0       |      0      |
+| cbios_main_rc2014_ntsc.rom  | Main 32K CBIOS ROM                                           | 0000-7FFF |       0       |      0      |
+| cbios_logo_rc2014.rom       | RC2014 Custom' 16K Logo ROM                                  | 8000-9FFF |       0       |      0      |
+| cbios_sub.rom               | Sub CBIOS ROM                                                | 0000-3FFF |      3-0      |     3-0     |
+| main.rom                    | Main 32K MSXSRCSYS ROM                                       | 0000-7FFF |       0       |      0      |
+| optrom.rom                  | MSXSRCSYS OPT or Logo ROM                                    | 4000-7FFF |               |             |
+| subrom.rom                  | MSXSRCSYS SUB ROM                                            | 0000-3FFF |      3-0      |     3-0     |
+| nextor-2.1.1.rc2014.rom     | Nextor ROM Image                                             | 4000-7FFF |       2       |     3-3     |
+| rc2014-extended.rom         | Custom Extended BIOS implementation for RC2014 platform      | 8000-CFFF |      3-3      |     3-3     |
+| chkspd.com                  | Testing tool                                                 |           |               |             |
+| dots.com                    | Testing tool                                                 |           |               |             |
+| extbio.com                  | Testing tool                                                 |           |               |             |
+| fdisk.com                   | Testing tool                                                 |           |               |             |
+| lines.com                   | Testing tool                                                 |           |               |             |
+| mbrot.com                   | Testing tool                                                 |           |               |             |
+| xrecv.com                   | Xmodem receive tools for the RC2014 SIO/2 Module             |           |               |             |
 
 ## Building your own custom image
 
@@ -155,9 +163,9 @@ After verifying you have been able to build as per the instruction above, you ca
 
 2. If you would like to include any files in the embedded floppy image, simply copy them to `nextor/extras` directory*
 
-2. run `make` and ensure no assembly errors are raised.
+2. run `make` (or the docker `msxmake` alias) and ensure no assembly errors are raised.
 
-3. Flash the msxsyssrc-rc2014.rom file onto your ROM.
+3. Flash the *msxsyssrc-rc2014-<country>-without-rtc.rom* file onto your ROM.
 
 4. Boot up your new system.
 
@@ -196,6 +204,7 @@ Provides for general control signals.
 
 ### Special Magic numbers
 
+```
 Makefile: dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.rc2014.rom  of=bin/ymsx-pal.rom bs=16k count=**27** seek=4
 
 Makefile-main.mk:	dd if=/dev/zero of=rc2014-driver-with-sectors.bin bs=16k count=**19** seek=0
@@ -205,4 +214,4 @@ Makefile-main.mk:	for i in {1..**18**}
 Makefile-main.mk:	dd if=/dev/zero of=fdd.dsk bs=$$(($$DATSIZ* **18**)) count=1
 
 embinc.mac: SECTOT	EQU	**19** *SECCNT
-
+```
