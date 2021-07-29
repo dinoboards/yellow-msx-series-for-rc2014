@@ -7,7 +7,7 @@ MAKEFLAGS += --no-builtin-rules
 # Example of MSX_JED_CDWIN exported environment variable
 # MSX_JED_CDWIN="u: && cd \\home\\jane\\<path to project>\\msx &&"
 
-all: rom-image-pal rom-image-ntsc msxsysromimages
+all: rom-image-pal rom-image-ntsc msxsysromimages bin/music.rom
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
 
@@ -196,6 +196,12 @@ $(eval $(call BUILD_msxsysromimage-country,spain))
 $(eval $(call BUILD_msxsysromimage-country,arabic))
 $(eval $(call BUILD_msxsysromimage-country,korea))
 $(eval $(call BUILD_msxsysromimage-country,russia))
+
+.PHONY: bin/music.rom
+bin/music.rom:
+	@cd msxsys-build
+	$(MAKE) working/music.rom
+	cp working/music.rom ../bin/music.rom
 
 release:
 	@version=$$(date +%y-%m-%d)

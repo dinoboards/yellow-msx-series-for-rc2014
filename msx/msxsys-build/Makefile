@@ -18,6 +18,11 @@ ifneq ($(PREP),0)
   $(error msxsys prep.sh failed.)
 endif
 
+WORKING_PREP := $(shell WRK_DIR="working/" $(PWD)/tools/prep.sh > /dev/null; echo "$$?")
+ifneq ($(WORKING_PREP),0)
+  $(error msxsys/working prep.sh failed.)
+endif
+
 $(WRK_DIR)msx.inc: base300.inc
 	@unix2dos -f -n "$<" "$@"
 	./tools/country-to-code.sh $(COUNTRY)
@@ -35,6 +40,9 @@ $(WRK_DIR)msx.inc: base300.inc
 $(WRK_DIR)%.mac: msxsyssrc/$(MSXSYS)/%.mac
 	@unix2dos -f -n "$<" "$@"
 
+working/music.mac: msxsyssrc/music100/music.mac
+	@unix2dos -f -n "$<" "$@"
+
 $(WRK_DIR)%.mac: msxsyssrc/basekey/%.mac
 	@unix2dos -f -n "$<" "$@"
 
@@ -44,6 +52,11 @@ $(WRK_DIR)%.mac: msxsyssrc/basechr/%.mac
 $(WRK_DIR)%.rel: $(WRK_DIR)%.mac
 	@echo -e "\nAssembling \e[32m$<\e[0m"
 	cd $(WRK_DIR)
+	m80.sh $(notdir $<) $(notdir $@) 2>&1 | grep -v "Sorry, terminal not found, using cooked mode."
+
+working/%.rel: working/%.mac
+	@echo -e "\nAssembling \e[32m$<\e[0m"
+	cd working
 	m80.sh $(notdir $<) $(notdir $@) 2>&1 | grep -v "Sorry, terminal not found, using cooked mode."
 
 $(WRK_DIR)%.hex:
@@ -58,6 +71,10 @@ $(WRK_DIR)%.rom: $(addprefix $(WRK_DIR), %.hex)
 	@hex2bin $<
 	mv $(basename $@).bin $@
 
+working/%.rom: $(addprefix working/, %.hex)
+	@hex2bin $<
+	mv $(basename $@).bin $@
+
 $(WRK_DIR)main.hex: $(addprefix $(WRK_DIR), bios.rel basic1.rel basic2.rel)
 	@cd $(WRK_DIR)
 	l80.sh main.hex MAIN/X/E/N/P:0,BIOS,BASIC1,BASIC2
@@ -69,6 +86,13 @@ $(WRK_DIR)subrom.hex: $(addprefix $(WRK_DIR), subrom.rel)
 $(WRK_DIR)optrom.hex: $(addprefix $(WRK_DIR), optrom.rel)
 	@cd $(WRK_DIR)
 	l80.sh optrom.hex OPTROM/X/E/N/P:4000,OPTROM
+
+working/music.hex: working/music.rel
+	@cd working
+	l80.sh music.hex MUSIC/X/E/N/P:4000,MUSIC
+
+# $(WRK_DIR)music.rom: working/music.rom
+# 	@cp working/music.rom $(WRK_DIR)music.rom
 
 clean:
 	rm -rf ./working
