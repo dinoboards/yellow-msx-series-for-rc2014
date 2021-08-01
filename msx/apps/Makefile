@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv2 helloworld))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv2 helloworld rtccalb))
 
 include	Makefile.rules.mk
 
@@ -63,9 +63,13 @@ $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
 telnet_files = $(call app_files,telnet,memmap-override.asm extbio.asm fossil.asm getslt.asm xymodem.c aofossilhelper.c $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm width.c) $(MSXDOS))
 $(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
 
-xrecv2_files = $(call app_files,xrecv2,memmap-override.asm extbio.asm fossil.asm getslt.asm $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
+xrecv2_files = $(call app_files,xrecv2,memmap-override.asm extbio.asm fossil.asm getslt.asm print.c $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
 $(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files))
 xrecv2.com.crt_enable_commandline:=1
+
+rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c $(MSXDOS))
+$(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files))
+rtccalb.com.crt_enable_commandline:=1
 
 bin/xrecv.com: bin/xrecv2.com
 	@cp bin/xrecv2.com bin/xrecv.com

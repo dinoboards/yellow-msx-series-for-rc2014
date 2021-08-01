@@ -36,8 +36,8 @@ cbios:
 
 
 INCLUDED_APPS 	:= testram.com testram.txt memtest.com  memtest.eng memtest.fr memtest.jpn pt3play.com iteratn.pt3 lines.com dots.com mbrot.com
-INCLUDED_SYSTEM := xrecv.com fdisk.com
-INCLUDED_ROOT 	:=  AUTOEXEC.BAT  SROM.COM SROM.TXT SROM.INI
+INCLUDED_SYSTEM := xrecv.com fdisk.com rtccalb.com
+INCLUDED_ROOT 	:= AUTOEXEC.BAT SROM.COM SROM.TXT SROM.INI
 
 .PHONY: nextor
 nextor: $(addprefix nextor/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor/extras/system/,$(INCLUDED_SYSTEM))  $(addprefix nextor/extras/,$(INCLUDED_ROOT)) #nextor/extras/roms/pacman.rom
