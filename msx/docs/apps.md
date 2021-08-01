@@ -28,13 +28,13 @@
 
 > msxdos text editor
 
-## CHKSPD*
+## RTCCALB
 
-> utility to measure and calibrate the RTC clock
+> Utility to measure and calibrate the RTC clock against the CPU clock
 
-## XRECV2
+## XRECV
 
-> More capable xmodem receive utility for the SIO/2 2nd serial port.  Support CRC and 1024 packets
+> Xmodem receive utility for the SIO/2 2nd serial port.  Support CRC and 1024 packets
 
 ## TELNET*
 
@@ -49,4 +49,4 @@
 > Display the list of current active MSX Extended Bios drivers
 
 ---
-\* Work in progress - not yet completed.
+\* Work in progress.

@@ -145,13 +145,15 @@ These binaries are for flashing onto the SST39SF040 ROM for the MSX Memory Modul
 | subrom.rom                  | MSXSRCSYS SUB ROM                                            | 0000-3FFF |      3-0      |     3-0     |
 | nextor-2.1.1.rc2014.rom     | Nextor ROM Image                                             | 4000-7FFF |       2       |     3-3     |
 | rc2014-extended.rom         | Custom Extended BIOS implementation for RC2014 platform      | 8000-CFFF |      3-3      |     3-3     |
-| chkspd.com                  | Testing tool                                                 |           |               |             |
 | dots.com                    | Testing tool                                                 |           |               |             |
 | extbio.com                  | Testing tool                                                 |           |               |             |
 | fdisk.com                   | Testing tool                                                 |           |               |             |
 | lines.com                   | Testing tool                                                 |           |               |             |
 | mbrot.com                   | Testing tool                                                 |           |               |             |
 | xrecv.com                   | Xmodem receive tools for the RC2014 SIO/2 Module             |           |               |             |
+| rtccalb.com                 | Tool to calibrate RTC module against CPU Clock               |           |               |             |
+
+See Also [Apps and Utils for MSX on RC2014](./docs/apps.md)
 
 ## Building your own custom image
 
