@@ -36,7 +36,7 @@ cbios:
 
 
 INCLUDED_APPS 	:= testram.com testram.txt memtest.com  memtest.eng memtest.fr memtest.jpn pt3play.com iteratn.pt3 lines.com dots.com mbrot.com
-INCLUDED_SYSTEM := xrecv.com fdisk.com rtccalb.com
+INCLUDED_SYSTEM := xrecv.com fdisk.com rtccalb.com fossil.com
 INCLUDED_ROOT 	:= AUTOEXEC.BAT SROM.COM SROM.TXT SROM.INI
 
 .PHONY: nextor
@@ -81,7 +81,7 @@ rom-image-nms8250: nextor cbios systemroms/nms8250_basic-bios2.rom systemroms/nm
 	dd conv=notrunc status=none if=./systemroms/nms8250_msx2sub.rom				   			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=3
 	dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1.rc2014.rom    				of=bin/nms8250-rc2014.rom bs=16k count=27 seek=4
 	dd conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom      of=bin/nms8250-rc2014.rom bs=16k count=1 seek=31
-	printf 'Built bin/msxrc2014.rom\r\n\n'
+	printf 'Built bin/nms8250-rc2014.rom\r\n\n'
 
 .PHONY: clean
 clean:
