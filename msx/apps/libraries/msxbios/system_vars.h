@@ -12,6 +12,7 @@
 #define CSRX_ADDR   __at 0xF3DD
 #define LINLEN_ADDR __at 0xF3B0
 #define CSRSW_ADDR  __at 0xFCA9
+#define LINL40_ADDR __at 0xF3AE
 
 // FC9E-FC9F: software clock, updated at each VDP interrupt
 extern uint16_t JIFFY_ADDR JIFFY;
@@ -48,6 +49,9 @@ extern uint8_t LINLEN_ADDR LINLEN;
 // FCA9: show cursor; 0 = no, 1 = yes
 // can be changed with escape sequences x5 and y5
 extern uint8_t CSRSW_ADDR CSRSW;
+
+// F3AE: # of positions on a line in SCREEN 0 (ini:39)
+extern uint8_t LINL40_ADDR LINL40;
 
 #define msxJiffy  JIFFY
 #define msxNewKey NEWKEY

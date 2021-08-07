@@ -94,7 +94,6 @@ extern bool msxbiosBreakX();
 
 /* MSX work area variables */
 
-#define LINL40 0xF3AE
 #define LINL32 0xF3AF
 #define CRTCNT 0xF3B1
 #define CNSDFG 0xF3DE

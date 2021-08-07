@@ -44,6 +44,8 @@
 #include "xymodem.h"
 #include <system_vars.h>
 
+#include "msx_fusion.h"
+
 // Those won't change, so we won't waste memory and use global constants
 const unsigned char ucWindowSize[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 24, IAC, SE};  // our terminal is 80x24
 const unsigned char ucWindowSize0[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 40, 0, 24, IAC, SE}; // our terminal is 40x24
@@ -299,8 +301,10 @@ int main(const int argc, const unsigned char **argv) {
   ucWidth40 = 0;
   if (ucAnsi)
     initAnsi((unsigned int)SendCursorPosition);
-  else
-    Width(80);
+  else {
+    LINL40 = 80;
+    msxbiosInitxt();
+  }
 
   if (!ucAnsi) {
     print(ucSWInfo);

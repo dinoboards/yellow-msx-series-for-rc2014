@@ -35,3 +35,6 @@ uint8_t LINLEN_ADDR LINLEN;
 // FCA9: show cursor; 0 = no, 1 = yes
 // can be changed with escape sequences x5 and y5
 uint8_t CSRSW_ADDR CSRSW;
+
+// F3AE: # of positions on a line in SCREEN 0 (ini:39)
+uint8_t LINL40_ADDR LINL40;

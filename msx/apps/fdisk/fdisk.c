@@ -121,7 +121,7 @@ void composeWorkScreenConfiguration() {
 }
 
 void setScreenConfiguration() {
-  *((uint8_t *)LINL40) = 80; // screenConfig->screenWidth;
+  LINL40 = 80;
   msxbiosInitxt();
 }
 
