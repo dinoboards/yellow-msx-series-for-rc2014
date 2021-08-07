@@ -5,6 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void process_cli_arguments(const char **argv, const int argc);
+void process_cli_arguments(const int argc, const char **argv);
 
 #endif

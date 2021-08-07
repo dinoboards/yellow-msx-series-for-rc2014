@@ -21,12 +21,13 @@
  libraries/msxbios/extbio.h
 ./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h libraries/fusion/msx_fusion.h \
  telnet/instructions.h telnet/system-state.h telnet/ansi_codes.h \
- telnet/ansiprint.h telnet/print.h aofossilhelper.h \
+ telnet/ansiprint.h telnet/print.h aofossilhelper.h telnet/arguments.h \
  libraries/msxdos/msxdos.h telnet/xymodem.h \
  libraries/msxbios/system_vars.h
 ./bin/telnet/xymodem.c.asm: telnet/xymodem.c telnet/xymodem.h aofossilhelper.h \
  libraries/fusion/msx_fusion.h telnet/print.h libraries/fusion/io.h
-./bin/telnet/arguments.c.asm: telnet/arguments.c
+./bin/telnet/arguments.c.asm: telnet/arguments.c telnet/arguments.h \
+ telnet/system-state.h
 ./bin/telnet/fossil_interface.c.asm: telnet/fossil_interface.c fossil.h \
  libraries/fusion/msx_fusion.h
 ./bin/telnet/instructions.c.asm: telnet/instructions.c telnet/instructions.h

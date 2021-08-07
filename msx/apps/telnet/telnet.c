@@ -39,6 +39,7 @@
 #include "ansi_codes.h"
 #include "ansiprint.h"
 #include "aofossilhelper.h"
+#include "arguments.h"
 #include "msxdos.h"
 #include "xymodem.h"
 #include <system_vars.h>
@@ -49,6 +50,18 @@ const unsigned char ucWindowSize0[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_
 const unsigned char ucWindowSize1[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 25, IAC, SE}; // our terminal is 80x25
 const unsigned char ucTTYPE2[] = {IAC, SB, CMD_TTYPE, IS, 'A', 'N', 'S', 'I', IAC, SE};                              // Terminal ANSI
 const unsigned char ucTTYPE3[] = {IAC, SB, CMD_TTYPE, IS, 'V', 'T', '5', '2', IAC, SE};                              // Terminal UNKNOWN
+
+char           ucTxData = 0;         // where our key inputs go
+unsigned char  ucRet;                // return of functions
+unsigned char  ucAliveConnCount = 0; // when this is 0, check if connection is alive
+char           chTextLine[128];
+unsigned char  ucCursorSave;
+unsigned char  ucFnkBackup[160];
+unsigned char *ucFnkStr = (unsigned char *)0xF87F;
+unsigned char  ucF5Exit = 0;
+unsigned char  ucUseCrLf = 0;
+unsigned char  ucLockF2 = 0;
+unsigned char  ucLockF3 = 0;
 
 // This will handle CMD negotiation...
 // Basically, the first time host send any command our client will send it
@@ -262,76 +275,10 @@ void SendCursorPosition(unsigned int uiCursorPosition) __z88dk_fastcall {
   TxUnsafeData(ucConnNumber, uchPositionResponse, strlen((char *)uchPositionResponse));
 }
 
-// Checks Input Data received from command Line and copy to the variables
-// It is mandatory to have server as first argument
-// All other arguments are optional
-unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsigned char *ucPort, unsigned char *ucAnsiOption, unsigned char *ucMSX1CustomFont) {
-  unsigned char *ucMySeek = NULL;
-  unsigned char *ucInput = (unsigned char *)argv[1];
-  unsigned char  ucTmp;
-
-  // Defaults
-  ucAutoDownload = 1; // Auto download On
-  ucStandardDataTransfer = 1;
-  *ucAnsiOption = 1;     // try to render ANSI if possible
-  *ucMSX1CustomFont = 1; // custom CP437 font
-
-  if (argc == 0 || strcmp(ucInput, "--help") == 0)
-    return 0;
-
-  // First the server:port
-  ucMySeek = strstr(ucInput, ":");
-  if ((ucMySeek) && ((ucMySeek - ucInput) < 128)) {
-    ucMySeek[0] = 0;
-    strcpy(ucServer, ucInput);
-    ++ucMySeek;
-    if (strlen(ucMySeek) < 6) {
-      strcpy(ucPort, ucMySeek);
-    }
-  } else if ((!ucMySeek) && (strlen(ucInput) < 128)) {
-    strcpy(ucServer, ucInput);
-    strcpy(ucPort, "23");
-  }
-
-  if (argc > 2) {
-    for (ucTmp = 2; ucTmp < argc; ucTmp++) {
-      ucInput = (unsigned char *)argv[ucTmp];
-      if ((ucInput[0] == 'a') || (ucInput[0] == 'A'))
-        ucAutoDownload = 0; // turn off auto download selection pop-up when binary transmission command received
-      else if ((ucInput[0] == 'o') || (ucInput[0] == 'O'))
-        *ucAnsiOption = 0; // turn off ansi rendering
-      else if ((ucInput[0] == 'c') || (ucInput[0] == 'C'))
-        *ucMSX1CustomFont = 0; // turn off custom font for MSX1
-      else if ((ucInput[0] == 'r') || (ucInput[0] == 'R'))
-        ucStandardDataTransfer = 0; // server misbehave and do not double FF on file transfers
-      else {
-        printf("Unknown option %s\r\n", ucInput);
-        return 0;
-      }
-    }
-  }
-
-  return 1;
-}
-
 extern void debugBreak();
 
-unsigned char ucServer[128]; // will hold the name of the server we will connect
-unsigned char ucPort[6];     // will hold the port that the server accepts connections
-
 int main(const int argc, const unsigned char **argv) {
-  char           ucTxData = 0;         // where our key inputs go
-  unsigned char  ucRet;                // return of functions
-  unsigned char  ucAliveConnCount = 0; // when this is 0, check if connection is alive
-  char           chTextLine[128];
-  unsigned char  ucCursorSave;
-  unsigned char  ucFnkBackup[160];
-  unsigned char *ucFnkStr = (unsigned char *)0xF87F;
-  unsigned char  ucF5Exit = 0;
-  unsigned char  ucUseCrLf = 0;
-  unsigned char  ucLockF2 = 0;
-  unsigned char  ucLockF3 = 0;
-  // unsigned int   uiChrDestRamAddr;
+  process_cli_arguments(argc, argv);
 
   // we detect if enter was hit to avoid popping up protocol selection if transmit binary command is received in initial negotiations
   ucEnterHit = 0;
@@ -347,16 +294,6 @@ int main(const int argc, const unsigned char **argv) {
   ucEcho = 0;
 
   initPrint();
-
-  // Validate command line parameters
-  if (!IsValidInput(argv, argc, ucServer, ucPort, &ucAnsi, &ucCP437)) {
-    // If invalid parameters, just show some instructions
-    print(ucSWInfo);
-    print(ucUsage);
-    // restore cursor status
-    CSRSW = ucCursorSave;
-    return 0;
-  }
 
   // Initialize our text print engine
   ucWidth40 = 0;
@@ -389,7 +326,7 @@ int main(const int argc, const unsigned char **argv) {
   // Make sure those won't have any text
   memset(ucFnkStr, '\0', 160);
 
-  ucRet = OpenSingleConnection(ucServer, ucPort, &ucConnNumber);
+  ucRet = OpenSingleConnection(ucServer, &ucConnNumber);
   if (ucAnsi)
     print("\x1b[32mTerminal in command mode. Type help for available commands\x1b[0m\r\n\r\n");
   else
@@ -487,14 +424,8 @@ int main(const int argc, const unsigned char **argv) {
       }
     } while (1);
 
-    if (ucAnsi)               // using msx2ansi?
-      endAnsi();              // terminate its screen mode
-    else if (ucCP437 == 0xff) // using custom fonts?
-    {
-      // re-initialize screen fonts by re-initializing screen mode
-      Screen(0);
-      Width(40);
-    }
+    if (ucAnsi)  // using msx2ansi?
+      endAnsi(); // terminate its screen mode
 
     if (ucF5Exit)                         // F5 pressed?
       print("Closing connection...\r\n"); // Yes, so we are closing
@@ -509,7 +440,7 @@ int main(const int argc, const unsigned char **argv) {
   } else {
     if (ucAnsi) // loaded msx2ansi?
       endAnsi();
-    sprintf(chTextLine, "Error %u connecting to server: %s:%s\r\n", ucRet, ucServer, ucPort);
+    sprintf(chTextLine, "Error %u connecting to server: %s\r\n", ucRet, ucServer);
     print(chTextLine);
   }
 

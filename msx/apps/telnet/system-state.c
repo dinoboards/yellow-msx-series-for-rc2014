@@ -4,7 +4,6 @@
 unsigned char ucEcho;                 // Echo On?
 unsigned char ucAutoDownload;         // Auto download on binary transfers?
 unsigned char ucAnsi;                 // Using ANSI rendering?
-unsigned char ucCP437;                // Using custom CP437 if MSX1?
 unsigned char ucEnterHit;             // user has input enter?
 unsigned char ucWidth40;              // Detected 40 Columns or less?
 unsigned char ucState;                // State of Telnet Data Parser
@@ -17,3 +16,5 @@ unsigned char ucRcvData[128];
 
 unsigned char ucRcvDataMemory[RcvMemorySize];
 unsigned int  uiGetSize;
+
+const unsigned char *ucServer; // will hold the name of the server we will connect

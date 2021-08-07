@@ -79,7 +79,7 @@ unsigned char InitializeTCPIP();
 // connection with the resolved IP using port uchPort (host and Port are ASCII)
 //
 // In this version it always return ERR_OK
-unsigned char OpenSingleConnection(unsigned char *uchHost, unsigned char *uchPort, unsigned char *uchConn);
+unsigned char OpenSingleConnection(const unsigned char *uchHost, unsigned char *uchConn);
 
 // CloseConnection
 //

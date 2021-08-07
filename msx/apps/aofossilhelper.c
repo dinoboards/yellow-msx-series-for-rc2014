@@ -61,9 +61,9 @@ unsigned char InitializeTCPIP() {
   return 1;
 }
 
-unsigned char OpenSingleConnection(unsigned char *uchHost, unsigned char *uchPort, unsigned char *uchConn) {
-  if ((uchHost) && (uchPort)) {
-    sprintf(cmdline, "ATD\"%s:%s\"\r\n", uchHost, uchPort);
+unsigned char OpenSingleConnection(const unsigned char *uchHost, unsigned char *uchConn) {
+  if (uchHost) {
+    sprintf(cmdline, "ATD\"%s\"\r\n", uchHost);
     // print(cmdline);
     TxData(0x50, cmdline, strlen(cmdline));
   }

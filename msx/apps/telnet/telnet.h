@@ -90,7 +90,7 @@ extern const unsigned char ucTTYPE3[];
 #include "system-state.h"
 
 void         negotiate(unsigned char *ucBuf);
-unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsigned char *ucPort, unsigned char *ucAnsiOption, unsigned char *ucMSX1CustomFont);
+unsigned int IsValidInput(char **argv, int argc);
 void         ParseTelnetData(void);
 void         SendCursorPosition(unsigned int uiCursorPosition) __z88dk_fastcall;
 #endif // _TELNET_HEADER_INCLUDED
