@@ -134,10 +134,10 @@ unsigned char RXData(unsigned char ucConnNumber, unsigned char *ucBuffer, unsign
 // This routine sends only one byte
 unsigned char TxByte(unsigned char ucConnNumber, unsigned char uchByte) { return TxData(ucConnNumber, &uchByte, 1); }
 
-unsigned char TxUnsafeData(unsigned char ucConnNumber, unsigned char *lpucData, unsigned int uiDataSize) { return TxData(ucConnNumber, lpucData, uiDataSize); }
+unsigned char TxUnsafeData(unsigned char ucConnNumber, const unsigned char *lpucData, unsigned int uiDataSize) { return TxData(ucConnNumber, lpucData, uiDataSize); }
 
 // The same as TxUnsafeData but without page 3 buffer addressing
-unsigned char TxData(unsigned char ucConnNumber, unsigned char *lpucData, unsigned int uiDataSize) {
+unsigned char TxData(unsigned char ucConnNumber, const unsigned char *lpucData, unsigned int uiDataSize) {
   if (ucConnNumber != 0x50)
     return ERR_INV_PARAM;
   for (int i = 0; i < uiDataSize; i++) {

@@ -76,3 +76,8 @@
 
 // Reset
 #define reset "\x1b[0m"
+
+#define CURSOR_UP       "\x1b[A"
+#define CURSOR_DOWN     "\x1b[B"
+#define CURSOR_FORWARD  "\x1b[C"
+#define CURSOR_BACKWARD "\x1b[D"

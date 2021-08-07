@@ -115,7 +115,7 @@ unsigned char TxByte(unsigned char ucConnNumber, unsigned char uchByte);
 // Will try to send uiDataSize bytes from lpucData
 //
 // Return ERR_OK if success
-unsigned char TxData(unsigned char ucConnNumber, unsigned char *lpucData, unsigned int uiDataSize);
+unsigned char TxData(unsigned char ucConnNumber, const unsigned char *lpucData, unsigned int uiDataSize);
 
 // TXUnsafeData
 //
@@ -124,6 +124,6 @@ unsigned char TxData(unsigned char ucConnNumber, unsigned char *lpucData, unsign
 // Up to 128 bytes can be sent here
 //
 // Return ERR_OK if success
-unsigned char TxUnsafeData(unsigned char ucConnNumber, unsigned char *lpucData, unsigned int uiDataSize);
+unsigned char TxUnsafeData(unsigned char ucConnNumber, const unsigned char *lpucData, unsigned int uiDataSize);
 
 #endif

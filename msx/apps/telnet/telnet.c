@@ -36,16 +36,19 @@
 --
 */
 #include "telnet.h"
+#include "ansi_codes.h"
 #include "ansiprint.h"
 #include "aofossilhelper.h"
 #include "msxdos.h"
 #include "xymodem.h"
+#include <system_vars.h>
 
-/*
- *
- * START OF CODE
- *
- */
+// Those won't change, so we won't waste memory and use global constants
+const unsigned char ucWindowSize[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 24, IAC, SE};  // our terminal is 80x24
+const unsigned char ucWindowSize0[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 40, 0, 24, IAC, SE}; // our terminal is 40x24
+const unsigned char ucWindowSize1[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 25, IAC, SE}; // our terminal is 80x25
+const unsigned char ucTTYPE2[] = {IAC, SB, CMD_TTYPE, IS, 'A', 'N', 'S', 'I', IAC, SE};                              // Terminal ANSI
+const unsigned char ucTTYPE3[] = {IAC, SB, CMD_TTYPE, IS, 'V', 'T', '5', '2', IAC, SE};                              // Terminal UNKNOWN
 
 // This will handle CMD negotiation...
 // Basically, the first time host send any command our client will send it
@@ -313,11 +316,12 @@ unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsign
 
 extern void debugBreak();
 
+unsigned char ucServer[128]; // will hold the name of the server we will connect
+unsigned char ucPort[6];     // will hold the port that the server accepts connections
+
 int main(const int argc, const unsigned char **argv) {
   char           ucTxData = 0;         // where our key inputs go
   unsigned char  ucRet;                // return of functions
-  unsigned char  ucServer[128];        // will hold the name of the server we will connect
-  unsigned char  ucPort[6];            // will hold the port that the server accepts connections
   unsigned char  ucAliveConnCount = 0; // when this is 0, check if connection is alive
   char           chTextLine[128];
   unsigned char  ucCursorSave;
@@ -334,7 +338,7 @@ int main(const int argc, const unsigned char **argv) {
   // no bytes received yet
   uiGetSize = 0;
   // save cursor status
-  ucCursorSave = ucCursorDisplayed;
+  ucCursorSave = CSRSW;
 
   // Telnet Protocol Flags
   // Flag that indicates that a SUB OPTION reception is in progress
@@ -350,7 +354,7 @@ int main(const int argc, const unsigned char **argv) {
     print(ucSWInfo);
     print(ucUsage);
     // restore cursor status
-    ucCursorDisplayed = ucCursorSave;
+    CSRSW = ucCursorSave;
     return 0;
   }
 
@@ -376,7 +380,7 @@ int main(const int argc, const unsigned char **argv) {
 
     printf("Unable to connect to serial port\r\n");
     // restore cursor status
-    ucCursorDisplayed = ucCursorSave;
+    CSRSW = ucCursorSave;
     return 0;
   }
 
@@ -400,26 +404,26 @@ int main(const int argc, const unsigned char **argv) {
       // UNAPI Breathing just in case adapter need it
       Breath();
 
-      if ((ucMT6 & 0x21) == 1)                            // F1 and not shift: Start Transfer
+      if ((NEWKEY[6] & 0x21) == 1)                        // F1 and not shift: Start Transfer
         XYModemGet(ucConnNumber, ucStandardDataTransfer); // no need to lock, function will wait for key input
 
-      if ((ucMT6 & 0x41) == 1)               // F2 and not shift: Change Echo
-        ucLockF2 = 1;                        // key pressed, wait until it is released
-      else if ((ucLockF2) && (ucMT6 & 0x40)) // key released, let's do it
+      if ((NEWKEY[6] & 0x41) == 1)               // F2 and not shift: Change Echo
+        ucLockF2 = 1;                            // key pressed, wait until it is released
+      else if ((ucLockF2) && (NEWKEY[6] & 0x40)) // key released, let's do it
       {
         ucEcho = !ucEcho;
         ucLockF2 = 0;
       }
 
-      if ((ucMT6 & 0x81) == 1)               // F3 and not shift: Change Cr / CrLf
-        ucLockF3 = 1;                        // key pressed, wait until it is released
-      else if ((ucLockF3) && (ucMT6 & 0x80)) // key released, let's do it
+      if ((NEWKEY[6] & 0x81) == 1)               // F3 and not shift: Change Cr / CrLf
+        ucLockF3 = 1;                            // key pressed, wait until it is released
+      else if ((ucLockF3) && (NEWKEY[6] & 0x80)) // key released, let's do it
       {
         ucUseCrLf = !ucUseCrLf;
         ucLockF3 = 0;
       }
 
-      if ((!(ucMT7 & 0x2)) && ((ucMT6 & 0x1))) // F5 and not shift: Exit
+      if ((!(NEWKEY[7] & 0x2)) && ((NEWKEY[6] & 0x1))) // F5 and not shift: Exit
       {
         // no need to lock, exit immediatelly
         ucF5Exit = 1;
@@ -433,19 +437,19 @@ int main(const int argc, const unsigned char **argv) {
         {
           if (ucUseCrLf)
             // Send CR and LF as well
-            TxUnsafeData(ucConnNumber, ucCrLf, 2);
+            TxUnsafeData(ucConnNumber, "\r\n", 2);
           else // just send cr
             TxByte(ucConnNumber, ucTxData);
           // Update flag that enter has been hit
           ucEnterHit = 1;
         } else if (ucTxData == 28) // right?
-          TxUnsafeData(ucConnNumber, ucCursor_Forward, 3);
+          TxUnsafeData(ucConnNumber, CURSOR_FORWARD, 3);
         else if (ucTxData == 29) // left?
-          TxUnsafeData(ucConnNumber, ucCursor_Backward, 3);
+          TxUnsafeData(ucConnNumber, CURSOR_BACKWARD, 3);
         else if (ucTxData == 30) // up?
-          TxUnsafeData(ucConnNumber, ucCursor_Up, 3);
+          TxUnsafeData(ucConnNumber, CURSOR_UP, 3);
         else if (ucTxData == 31) // down?
-          TxUnsafeData(ucConnNumber, ucCursor_Down, 3);
+          TxUnsafeData(ucConnNumber, CURSOR_DOWN, 3);
         else
           // Send the byte directly
           TxByte(ucConnNumber, ucTxData);
@@ -510,7 +514,7 @@ int main(const int argc, const unsigned char **argv) {
   }
 
   // restore cursor status
-  ucCursorDisplayed = ucCursorSave;
+  CSRSW = ucCursorSave;
   // restore function keys
   memcpy(ucFnkStr, ucFnkBackup, 160);
 

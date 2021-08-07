@@ -109,7 +109,7 @@ uint8_t getRemainingBy1024String(uint32_t value, char *destination) {
 
 void saveOriginalScreenConfiguration() {
   originalScreenConfig.screenMode = *(uint8_t *)SCRMOD;
-  originalScreenConfig.screenWidth = *(uint8_t *)LINLEN;
+  originalScreenConfig.screenWidth = LINLEN;
   originalScreenConfig.functionKeysVisible = (*(uint8_t *)CNSDFG != 0);
 }
 

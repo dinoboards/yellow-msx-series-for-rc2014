@@ -10,6 +10,8 @@
 #define TXTNAM_ADDR __at 0xF3B3
 #define CSRY_ADDR   __at 0xF3DC
 #define CSRX_ADDR   __at 0xF3DD
+#define LINLEN_ADDR __at 0xF3B0
+#define CSRSW_ADDR  __at 0xFCA9
 
 // FC9E-FC9F: software clock, updated at each VDP interrupt
 extern uint16_t JIFFY_ADDR JIFFY;
@@ -39,6 +41,13 @@ extern uint8_t CSRY_ADDR CSRY;
 // F3DD: column where the cursor is located
 // starts to count at 1 for the leftmost column
 extern uint8_t CSRX_ADDR CSRX;
+
+// F3B0: # of actually used positions in the current screenmodus (ini:39)
+extern uint8_t LINLEN_ADDR LINLEN;
+
+// FCA9: show cursor; 0 = no, 1 = yes
+// can be changed with escape sequences x5 and y5
+extern uint8_t CSRSW_ADDR CSRSW;
 
 #define msxJiffy  JIFFY
 #define msxNewKey NEWKEY

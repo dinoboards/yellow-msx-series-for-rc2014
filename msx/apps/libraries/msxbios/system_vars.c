@@ -28,3 +28,10 @@ uint8_t CSRY_ADDR CSRY;
 // F3DD: column where the cursor is located
 // starts to count at 1 for the leftmost column
 uint8_t CSRX_ADDR CSRX;
+
+// F3B0: # of actually used positions in the current screenmodus (ini:39)
+uint8_t LINLEN_ADDR LINLEN;
+
+// FCA9: show cursor; 0 = no, 1 = yes
+// can be changed with escape sequences x5 and y5
+uint8_t CSRSW_ADDR CSRSW;
