@@ -42,9 +42,8 @@
 #include "arguments.h"
 #include "msxdos.h"
 #include "xymodem.h"
+#include <extbio.h>
 #include <system_vars.h>
-
-#include "msx_fusion.h"
 
 // Those won't change, so we won't waste memory and use global constants
 const unsigned char ucWindowSize[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 24, IAC, SE};  // our terminal is 80x24
@@ -282,6 +281,8 @@ extern void debugBreak();
 int main(const int argc, const unsigned char **argv) {
   process_cli_arguments(argc, argv);
 
+  extbio_fossil_install();
+
   // we detect if enter was hit to avoid popping up protocol selection if transmit binary command is received in initial negotiations
   ucEnterHit = 0;
   // no bytes received yet
@@ -311,9 +312,6 @@ int main(const int argc, const unsigned char **argv) {
   } else
     print(ucSWInfoANSI);
 
-  while (!Inkey())
-    ;
-
   // Time to check for TCPIP availability
   if (!InitializeTCPIP()) {
     if (ucAnsi) // Using MSX2ANSI?
@@ -340,6 +338,11 @@ int main(const int argc, const unsigned char **argv) {
     // Ok, we are connected, now we stay looping into this state
     // machine until key assigned to exit is pressed
     do {
+      if (msxbiosBreakX()) {
+        ucF5Exit = true;
+        break;
+      }
+
       // ok, after 255 loops w/o data, we check for connection state, and this is the counter of loops
       ++ucAliveConnCount;
       // UNAPI Breathing just in case adapter need it
@@ -366,7 +369,7 @@ int main(const int argc, const unsigned char **argv) {
 
       if ((!(NEWKEY[7] & 0x2)) && ((NEWKEY[6] & 0x1))) // F5 and not shift: Exit
       {
-        // no need to lock, exit immediatelly
+        // no need to lock, exit immediately
         ucF5Exit = 1;
         break;
       }
