@@ -264,7 +264,7 @@ void SendCursorPosition(unsigned int uiCursorPosition) __z88dk_fastcall {
 // All other arguments are optional
 unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsigned char *ucPort, unsigned char *ucAnsiOption, unsigned char *ucMSX1CustomFont) {
   unsigned char *ucMySeek = NULL;
-  unsigned char *ucInput = (unsigned char *)argv[0];
+  unsigned char *ucInput = (unsigned char *)argv[1];
   unsigned char  ucTmp;
 
   // Defaults
@@ -290,8 +290,8 @@ unsigned int IsValidInput(char **argv, int argc, unsigned char *ucServer, unsign
     strcpy(ucPort, "23");
   }
 
-  if (argc > 1) {
-    for (ucTmp = 1; ucTmp < argc; ucTmp++) {
+  if (argc > 2) {
+    for (ucTmp = 2; ucTmp < argc; ucTmp++) {
       ucInput = (unsigned char *)argv[ucTmp];
       if ((ucInput[0] == 'a') || (ucInput[0] == 'A'))
         ucAutoDownload = 0; // turn off auto download selection pop-up when binary transmission command received

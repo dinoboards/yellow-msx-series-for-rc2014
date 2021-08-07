@@ -19,11 +19,11 @@
  libraries/msxbios/system_vars.h
 ./bin/fossil.c.asm: fossil.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
-./bin/xymodem.c.asm: xymodem.c xymodem.h aofossilhelper.h \
- libraries/fusion/msx_fusion.h print.h libraries/fusion/io.h
 ./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h libraries/fusion/msx_fusion.h \
  telnet/ansiprint.h telnet/print.h aofossilhelper.h \
- libraries/msxdos/msxdos.h xymodem.h
+ libraries/msxdos/msxdos.h telnet/xymodem.h
+./bin/telnet/xymodem.c.asm: telnet/xymodem.c telnet/xymodem.h aofossilhelper.h \
+ libraries/fusion/msx_fusion.h telnet/print.h libraries/fusion/io.h
 ./bin/telnet/fossil_interface.c.asm: telnet/fossil_interface.c fossil.h \
  libraries/fusion/msx_fusion.h
 ./bin/telnet/ansiprint.c.asm: telnet/ansiprint.c telnet/ansiprint.h telnet/print.h \
