@@ -307,11 +307,6 @@ int main(const int argc, const unsigned char **argv) {
     msxbiosInitxt();
   }
 
-  if (!ucAnsi) {
-    print(ucSWInfo);
-  } else
-    print(ucSWInfoANSI);
-
   // Time to check for TCPIP availability
   if (!InitializeTCPIP()) {
     if (ucAnsi) // Using MSX2ANSI?

@@ -85,8 +85,6 @@ extern const unsigned char ucTTYPE3[];
 
 // Auxiliary strings
 
-// Instructions
-#include "instructions.h"
 #include "system-state.h"
 
 void         negotiate(unsigned char *ucBuf);

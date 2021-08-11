@@ -20,10 +20,10 @@
 ./bin/fossil.c.asm: fossil.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
 ./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h libraries/fusion/msx_fusion.h \
- telnet/instructions.h telnet/system-state.h telnet/ansi_codes.h \
- telnet/ansiprint.h telnet/print.h telnet/aofossilhelper.h \
- telnet/arguments.h libraries/msxdos/msxdos.h telnet/xymodem.h \
- libraries/msxbios/extbio.h libraries/msxbios/system_vars.h
+ telnet/system-state.h telnet/ansi_codes.h telnet/ansiprint.h \
+ telnet/print.h telnet/aofossilhelper.h telnet/arguments.h \
+ libraries/msxdos/msxdos.h telnet/xymodem.h libraries/msxbios/extbio.h \
+ libraries/msxbios/system_vars.h
 ./bin/telnet/xymodem.c.asm: telnet/xymodem.c telnet/xymodem.h telnet/aofossilhelper.h \
  libraries/fusion/msx_fusion.h telnet/print.h libraries/fusion/io.h
 ./bin/telnet/arguments.c.asm: telnet/arguments.c telnet/arguments.h \
@@ -32,7 +32,6 @@
  fossil.h libraries/fusion/msx_fusion.h telnet/print.h
 ./bin/telnet/fossil_interface.c.asm: telnet/fossil_interface.c fossil.h \
  libraries/fusion/msx_fusion.h
-./bin/telnet/instructions.c.asm: telnet/instructions.c telnet/instructions.h
 ./bin/telnet/ansiprint.c.asm: telnet/ansiprint.c telnet/ansiprint.h telnet/print.h \
  telnet/msx2ansi.h
 ./bin/telnet/system-state.c.asm: telnet/system-state.c telnet/system-state.h
