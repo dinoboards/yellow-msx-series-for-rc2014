@@ -59,14 +59,11 @@ ROMCS   = (MREQ & SLT0) #
 
 SLT_WR3_3_CLK = SLT3 & SUBSLT3 & WR & MREQ & !FFFF;	// WRITE SELECTOR FOR ROM MAPPER
 
-SLT_X   = SLT1 # SLT2 #
-          (SLT3 & SUBSLT1) #
-          (SLT3 & SUBSLT2) #
-          (SLT3 & SUBSLT3);
-SLT_Y	= (SLT3 & SUBSLT0) #
-          (SLT3 & SUBSLT1) #
-          (SLT3 & SUBSLT2);
+SLT_X = SLT1 # SLT2 #
+        (SLT3 & SUBSLT3);
 
+SLT_Y = SLT1 # SLT2 #
+        (SLT3 & SUBSLT0);
 
 /*
 
