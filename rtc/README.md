@@ -1,0 +1,150 @@
+# MSX Compatible RTC/F4 register for RC2014
+
+Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
+
+This module is part of the Yellow MSX series of modules to give your RC2014, MSX compatibility, providing two key capabilities:
+
+* A RTC based on the RP5C01 chip, as per the MSX2 specification.
+* And a F4 warm boot register, as per the MSX2+ specification.
+
+In addition, the module can also provide an optional power on reset signal.  See notes below.
+
+## RP5C01 based RTC
+
+The RPC501 by RICOH, is a chip that maintains a time/date counter and is powered by a coin CR2032 battery, when the machine is switched off.
+
+In addition to keeping time, it also has a small amount of onboard RAM, that is also powered by the battery when main power is off.  This RAM can be used to store machine specific settings, such as boot screen color and mode, or a boot password!
+
+You can access the chip directly thru the relevant ports, but under MSX, the 'correct' way is via the sub-rom bios calls:
+
+```
+REDCLK
+Address  : #01F5
+Function : Read clock-RAM
+Input    : C  - clock-RAM address
+                xxBBAAAA
+                  ||++++-- address
+                  ++------ Block-number
+Output   : A  - Read value in lowest four bits
+Registers: F
+
+WRTCLK
+Address  : #01F9
+Function : Write clock-RAM
+Input    : C  - clock-RAM address
+                xxBBAAAA
+                  ||++++-- address  :
+                  ++------ Block-number
+           A  - Value to write
+Registers: F
+```
+[Source](http://map.grauw.nl/resources/subrom.php)
+
+For more information on how to use and program the chip, checkout the [msx.org page](https://www.msx.org/wiki/Ricoh_RP-5C01).
+
+The chip's datasheet can be viewed [here](./ricoh_rp5c01.pdf).
+
+## F4 Boot Register
+
+The MSX2+ standard introduced the F4 Boot register.  This is a register that, only when power is first applied, will reset itself.  Thereafter only a software commands will change the state of the register.  For example, when the user reset the computer, the state of this register is not altered. This allows the software to know if the system had a cold or warm boot.
+
+MSX2+ system roms utilised this capability, to skip ram checks and the logo/boot screen, during warm boots.
+
+You can read the boot status, by reading the port at, you guessed it, $F4.  The MSX bios will on a cold boot, reset BIT 7 of this register.  The MSX bios has a couple of functions related to this register (RDRES, WRRES).
+
+```
+RDRES
+Address  : #017A
+Function : Read value of I/O port #F4
+Input    : None
+Output   : A = value read
+Registers: AF
+
+WRRES
+Address  : #017D
+Function : Write value to I/O port #F4
+Input    : A = value to write
+           When bit 7 is reset it shows the MSX 2+ startup screen on boot,
+           and counts and initialises the RAM.
+Output   : None
+Registers: None
+```
+
+[Source](http://map.grauw.nl/resources/msxbios.php)
+
+
+## Calibrating
+
+The RTC module requires calibration.  There is a small trimmer capacitor that will provide a very small change to the clock frequency.
+
+If the module is not calibrated, the clock will still work, but may slowly gain or lose time.
+
+Please note, I can provide no guarantees as to the accuracy of this clock over time with or without calibration.
+
+To aid in calibration, I wrote a small MSX-DOS application `RTCCALB.COM`, that allows you to calibrate the RTC against your CPU's clock.  This should allow for a good approximation.
+
+You can build the application from within this repo, or download a pre-compiled version under the github [releases](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
+
+## RomWBW
+
+A driver for this chip has been submitted and accepted by Wayne Warthen, currently on the pre-release dev branch.
+
+[https://github.com/wwarthen/RomWBW/blob/dev/Source/HBIOS/rp5rtc.asm](https://github.com/wwarthen/RomWBW/blob/dev/Source/HBIOS/rp5rtc.asm)
+
+
+## Port Mappings
+
+| Port |  Description
+|------|--------------------|
+|  B4    | RP5C01 Register Selection |
+|  B5    | RP5C01 Data R/W  |
+|  F4    | BIT 7 Cold/Warm Boot state |
+
+## Bill of Materials
+
+|Count   | Name  |  Designator |
+|:------:|-------|-------------|
+| 1      |	CR2032  |	B1 |
+| 8      |	0.1uf |	C1,C2,C3,C4,C8,C9,C7
+| 1      |	33pF |	C5 |
+| 1      |	Trimmer Capacitor | C6
+| 1      |	1N4148	| D1,D2,D3,D4
+| 1      |	HEADER 1x1 |	J1
+| 1      |	HEADER 1x2 |	J2
+| 2      |	10K Ω |	R2,R6
+| 2      |	100K Ω |	R3,R4
+| 2      |	1K Ω |	R5,R7
+| 1      |	RP5C01|	U1 |
+| 1      |	74HCT175	| U2 |
+| 1      |	ADM691A	 | U3 |
+| 1      |	74HCT138	| U4 |
+| 1      |	74HCT02	| U5 |
+| 1      |	74HC125	| U6 |
+| 1      |	74HC74	| U7 |
+| 1      |	74HCT21	| U8 |
+| 1      |	32.768KHz |	X1
+| 0      |	Right Angle | 20x2 Header
+| 2      |	Right Angle | 1x20 Header
+
+## PCB
+
+Assembled
+---------
+<img src="./assembled.jpg" alt="Assembled" width="50%"/>
+
+PCB Front
+---------
+<img src="./pcb-front.jpg" alt="PCB Front" width="50%"/>
+
+PCB Back
+---------
+<img src="./pcb-back.jpg" alt="PCB Back" width="50%"/>
+
+Kit Parts
+---------
+<img src="./kit.jpg" alt="Kit Parts" width="50%"/>
+
+
+
+* Schematic: [schematic.pdf](./schematic.pdf "Schematic")
+
