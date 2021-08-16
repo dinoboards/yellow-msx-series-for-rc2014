@@ -26,51 +26,64 @@ PIN 12 = GND;
 //PIN 14 = ;
 
 /**************** OUTPUT PINS *********************/
-PIN 15 = MEM_SLOW;
+PIN 15 = C3;
 PIN 16 = C0;
 PIN 17 = C1;
 PIN 18 = C2;
-PIN 19 = C3;
+PIN 19 = MEM_SLOW;
 PIN 20 = !BRAKE;
 PIN 21 = C4;
 PIN 22 = C5;
 PIN 23 = C6;
 PIN 24 = VCC;
 
-field WAITCOUNT = [C6, C5, C4, C3, C2, C1, C0];
 
-BRAKE = SLOWMODE # ((IORQ # BRAKE) & (BRAKE & ((MEM_SLOW & !WAITCOUNT:3) # (!MEM_SLOW & WAITCOUNT:127))));
+field WAITCOUNT = [C0, C1, C2, C3, C4];
 
-sequence WAITCOUNT {
-	$repeat i = [0..2]
 
-	present {i}
-		if BRAKE next {i+1};
-		if MREQ next 0;
-		if IORQ next 0;
-		default next 0;
+T00=WAITCOUNT:['b'00000];
+T01=WAITCOUNT:['b'00001];
+T02=WAITCOUNT:['b'00010];
+T03=WAITCOUNT:['b'00011];
+T04=WAITCOUNT:['b'00100];
+T05=WAITCOUNT:['b'00101];
+T06=WAITCOUNT:['b'00110];
+T07=WAITCOUNT:['b'00111];
+T08=WAITCOUNT:['b'01000];
+T09=WAITCOUNT:['b'01001];
+T10=WAITCOUNT:['b'01010];
+T11=WAITCOUNT:['b'01011];
+T12=WAITCOUNT:['b'01100];
+T13=WAITCOUNT:['b'01101];
+T14=WAITCOUNT:['b'01110];
+T15=WAITCOUNT:['b'01111];
+T16=WAITCOUNT:['b'10000];
+T17=WAITCOUNT:['b'10001];
+T18=WAITCOUNT:['b'10010];
+T19=WAITCOUNT:['b'10011];
+T20=WAITCOUNT:['b'10100];
+T21=WAITCOUNT:['b'10101];
+T22=WAITCOUNT:['b'10110];
+T23=WAITCOUNT:['b'10111];
+T24=WAITCOUNT:['b'11000];
+T25=WAITCOUNT:['b'11001];
+T26=WAITCOUNT:['b'11010];
+T27=WAITCOUNT:['b'11011];
+T28=WAITCOUNT:['b'11100];
+T29=WAITCOUNT:['b'11101];
+T30=WAITCOUNT:['b'11110];
+T31=WAITCOUNT:['b'11111];
 
-  $repend
+FINISHED=T31;
 
-	present 3
-		if BRAKE & MEM_SLOW next 3;
-		if IORQ next 0;
-		if MREQ next 0;
-		default next 0;
+MEM_SLOW.D = (MEM_SLOW # IORQ) & !FINISHED;
 
-	$repeat i = [4..126]
+BRAKE = SLOWMODE & MEM_SLOW # IORQ;
 
-	present {i}
-		if BRAKE next {i+1};
-		if IORQ next 0;
-		if MREQ next 0;
-		default next 0;
+/* COUNTER INCREMENTS TO FINISHED, AFTER IORQ GOES INACTIVE */
 
-  $repend
-
-	present 127
-		if BRAKE next 127;
-		default next 0;
-}
-
-MEM_SLOW.D = (MEM_SLOW # MREQ) & (MEM_SLOW & !IORQ);
+C0.D = !IORQ & MEM_SLOW & (T00 # T02 # T04 # T06 # T08 # T10 # T12 # T14 # T16 # T18 # T20 # T22 # T24 # T26 # T28 # T30 # T31);
+C1.D = !IORQ & MEM_SLOW & (T01 # T02 # T05 # T06 # T09 # T10 # T13 # T14 # T17 # T18 # T21 # T22 # T25 # T26 # T29 # T30 # T31);
+C2.D = !IORQ & MEM_SLOW & (T03 # T04 # T05 # T06 # T11 # T12 # T13 # T14 # T19 # T20 # T21 # T22 # T27 # T28 # T29 # T30 # T31);
+C3.D = !IORQ & MEM_SLOW & (T07 # T08 # T09 # T10 # T11 # T12 # T13 # T14 # T23 # T24 # T25 # T26 # T27 # T28 # T29 # T30 # T31);
+C4.D = !IORQ & MEM_SLOW & (T15 # T16 # T17 # T18 # T19 # T20 # T21 # T22 # T23 # T24 # T25 # T26 # T27 # T28 # T29 # T30 # T31);
