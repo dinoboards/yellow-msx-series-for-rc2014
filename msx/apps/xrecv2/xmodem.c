@@ -144,10 +144,8 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (!read_packet_crc())
     return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT);
 
-  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc()) {
-    fossil_rs_out(ACK);
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc())
     return signal | SAVE_PACKET;
-  }
 
   if (--retrans <= 0) {
     flush_input();
@@ -164,10 +162,8 @@ XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcal
   if (!read_packet_sum())
     return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT);
 
-  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum()) {
-    fossil_rs_out(ACK);
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum())
     return signal | SAVE_PACKET;
-  }
 
   if (--retrans <= 0) {
     flush_input();
@@ -193,6 +189,7 @@ XMODEM_SIGNAL xmodem_tryagain(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 }
 
 XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  fossil_rs_out(ACK);
   ++packetno;
   retrans = MAXRETRANS + 1;
   retry = 0;
