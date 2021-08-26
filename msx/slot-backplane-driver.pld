@@ -25,7 +25,7 @@ PIN 10 = GND;
 /**************** OUTPUT PINS *********************/
 PIN 12 = SLT1_BUSDIR;
 PIN 13 = SLT2_BUSDIR;
-PIN 14 = DATADIR;
+PIN 14 = !DATADIR_RD;
 PIN 15 = !SLT_SL2;
 PIN 16 = !SLT_SL1;
 PIN 17 = !CS12;
@@ -40,6 +40,6 @@ CS1 = !A15 & A14;
 CS2 = A15 & !A14;
 CS12 = (!A15 & A14) # (A15 & !A14);
 
-DATADIR = RD;
+DATADIR_RD = MREQ & RD & (SLT_SL1 # SLT_SL2);
 
 

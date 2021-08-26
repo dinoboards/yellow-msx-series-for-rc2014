@@ -9,8 +9,6 @@ if not exist "bin" mkdir bin
 echo Compiling %1.jed from %1.pld
 echo.
 
-%CUPLPATH%\cupl.exe
-
 %CUPLPATH%\cupl.exe -e -x -f - -ju %CUPLPATH%\cupl.dl %1.pld
 if %errorlevel% neq 0 exit /b %errorlevel%
 
