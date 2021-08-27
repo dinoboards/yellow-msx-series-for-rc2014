@@ -42,8 +42,6 @@ Registers: F
 
 For more information on how to use and program the chip, checkout the [msx.org page](https://www.msx.org/wiki/Ricoh_RP-5C01).
 
-The chip's datasheet can be viewed [here](./ricoh_rp5c01.pdf).
-
 ## F4 Boot Register
 
 The MSX2+ standard introduced the F4 Boot register.  This is a register that, only when power is first applied, will reset itself.  Thereafter only a software command will change the state of the register.  For example, when the user reset the computer, the state of this register is not altered. This allows the software to know if the system had a cold or warm boot.
@@ -74,13 +72,15 @@ Registers: None
 
 ## Power on reset
 
-The RP5C01 has the ability to hold a 'reset' line low for a short period of time, when power is applied.  This can be mapped to the Z80's reset line to ensure the CPU is always has a clean reset when powering on.
+The circuits power is managed by the ADM691 based supervisory circuit.  This chip mantains power to the RP5C01 by switching between the battery and the main power.
+
+The ADM691 chip has the ability to generate a reset signal, when main power is turned on.  This can be mapped to the Z80's reset line to ensure the CPU always has a clean reset at startup.
 
 There is a jumper (J2) on the board to map this signal to the RESET line on the backplane.  If you jumper this line, it will drive the RESET low on initial powering.  This is an open drain connection - as such it does not hold the line high.
 
 The RC2014 Dual Clock Module, also has a reset on power circuit.  The Dual Clock Module's circuit does have an issue - see [Paul Williamson's Must Be Art Blog Post](https://www.mustbeart.com/wp/2019/04/27/reset-mod-for-rc2014-dual-clock-and-reset-board/) for details and a specific modification.
 
-For my specific setup, the Dual Clock's Reset on Power circuit would not always trigger a reset.  And so I decided to disable it and use the Reset on Power function provided by the RP5C01 chip.
+For my specific setup, the Dual Clock's Reset on Power circuit would not always reliably trigger a reset.  And so I decided to disable it and use the Reset on Power function provided by the ADM691 chip.
 
 My modification is simpler than that applied by Paul Williamson's posting, as I just wanted to fully disable the circuit.  (But i still needed the line to be held high with a pull up resistor)
 
@@ -107,7 +107,7 @@ If the module is not calibrated, the clock will still work, but may slowly gain 
 
 > Please note, I can provide no guarantees as to the accuracy of this clock over time with or without calibration.
 
-To aid in calibration, I wrote a small MSX-DOS application `RTCCALB.COM`, that allows you to calibrate the RTC against your CPU's clock.  This should allow for a good approximation.
+To aid in calibration, I wrote a small MSX-DOS application `RTCCALB.COM`, that allows you to calibrate the RTC against your CPU's clock.  This should allow for a good approximation.  Do not worry if you can not get the clock the sync with the CPU clock.  Just get as close as you can.  If you notice your clock is gaining or losing time, you may want to retry calibration and apply a fudge factor to your calibration.
 
 You can build the application from within this repo, or download a pre-compiled version under the github [releases](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
 
@@ -171,6 +171,8 @@ Kit Parts
 <img src="./kit.jpg" alt="Kit Parts" width="50%"/>
 
 
+## Datasheets & Schematics
 
 * Schematic: [schematic.pdf](./schematic.pdf "Schematic")
-
+* [RP5C01](./ricoh_rp5c01.pdf).
+* [ADM691](./ADM691_AnalogDevices.pdf)
