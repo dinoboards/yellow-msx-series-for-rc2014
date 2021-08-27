@@ -13,7 +13,7 @@ In addition, the module can also provide an optional power on reset signal.  See
 
 The RPC501 by RICOH, is a chip that maintains a time/date counter and is powered by a coin CR2032 battery, when the machine is switched off.
 
-In addition to keeping time, it also has a small amount of onboard RAM, that is also powered by the battery when main power is off.  This RAM can be used to store machine specific settings, such as boot screen color and mode, or a boot password!
+In addition to keeping time, it also has a small amount of onboard RAM, that is also powered by the battery when main power is off.  This RAM can be used to store machine specific settings, such as boot screen color and mode.
 
 You can access the chip directly thru the relevant ports, but under MSX, the 'correct' way is via the sub-rom bios calls:
 
@@ -46,7 +46,7 @@ The chip's datasheet can be viewed [here](./ricoh_rp5c01.pdf).
 
 ## F4 Boot Register
 
-The MSX2+ standard introduced the F4 Boot register.  This is a register that, only when power is first applied, will reset itself.  Thereafter only a software commands will change the state of the register.  For example, when the user reset the computer, the state of this register is not altered. This allows the software to know if the system had a cold or warm boot.
+The MSX2+ standard introduced the F4 Boot register.  This is a register that, only when power is first applied, will reset itself.  Thereafter only a software command will change the state of the register.  For example, when the user reset the computer, the state of this register is not altered. This allows the software to know if the system had a cold or warm boot.
 
 MSX2+ system roms utilised this capability, to skip ram checks and the logo/boot screen, during warm boots.
 
@@ -72,6 +72,32 @@ Registers: None
 
 [Source](http://map.grauw.nl/resources/msxbios.php)
 
+## Power on reset
+
+The RP5C01 has the ability to hold a 'reset' line low for a short period of time, when power is applied.  This can be mapped to the Z80's reset line to ensure the CPU is always has a clean reset when powering on.
+
+There is a jumper (J2) on the board to map this signal to the RESET line on the backplane.  If you jumper this line, it will drive the RESET low on initial powering.  This is an open drain connection - as such it does not hold the line high.
+
+The RC2014 Dual Clock Module, also has a reset on power circuit.  The Dual Clock Module's circuit does have an issue - see [Paul Williamson's Must Be Art Blog Post](https://www.mustbeart.com/wp/2019/04/27/reset-mod-for-rc2014-dual-clock-and-reset-board/) for details and a specific modification.
+
+For my specific setup, the Dual Clock's Reset on Power circuit would not always trigger a reset.  And so I decided to disable it and use the Reset on Power function provided by the RP5C01 chip.
+
+My modification is simpler than that applied by Paul Williamson's posting, as I just wanted to fully disable the circuit.  (But i still needed the line to be held high with a pull up resistor)
+
+My modification was to:
+
+1. Remove PIN 4 from U1:
+
+Disconnect the connection between the 74HCT04 gate output and the RESET line.
+
+<img src="./u1-pin-4.jpg" alt="U1 Pin 4" width="50%"/>
+
+2. Solder a 10K resistor:
+
+Apply a 10K resistor to the RESET line and VCC.  I used the cathode point of D1 as shown:
+
+<img src="./10k-pull-up.jpg" alt="10K Pull Up" width="60%"/>
+
 
 ## Calibrating
 
@@ -79,7 +105,7 @@ The RTC module requires calibration.  There is a small trimmer capacitor that wi
 
 If the module is not calibrated, the clock will still work, but may slowly gain or lose time.
 
-Please note, I can provide no guarantees as to the accuracy of this clock over time with or without calibration.
+> Please note, I can provide no guarantees as to the accuracy of this clock over time with or without calibration.
 
 To aid in calibration, I wrote a small MSX-DOS application `RTCCALB.COM`, that allows you to calibrate the RTC against your CPU's clock.  This should allow for a good approximation.
 
@@ -104,7 +130,7 @@ A driver for this chip has been submitted and accepted by Wayne Warthen, current
 
 |Count   | Name  |  Designator |
 |:------:|-------|-------------|
-| 1      |	CR2032  |	B1 |
+| 1      |	CR2032 Holder  |	B1 |
 | 8      |	0.1uf |	C1,C2,C3,C4,C8,C9,C7
 | 1      |	33pF |	C5 |
 | 1      |	Trimmer Capacitor | C6
