@@ -9,20 +9,21 @@
 uint32_t measurement = 0;
 void     measure_timing();
 
-static uint32_t clock = 0;
+static uint32_t clock = 3686400;
 static bool     m1_state = false;
 
 #define T_STATES_WITHOUT_M1 77
 #define T_STATES_WITH_M1    68
 // approx 4 tstate at 3.6864 or 8 states at 7.372800
-#define T_STATES_OVERHEAD (clock / 921600)
+#define T_STATES_OVERHEAD 0
+// (clock / 921600)
 #define WAIT_T_STATES     (m1_state ? T_STATES_WITHOUT_M1 : T_STATES_WITH_M1)
 
 uint8_t abort_with_help() {
   print_str("Usage:  rtccalb [options]\r\n\r\n"
             "RTC Calibration Tool\r\n\r\n"
             "  /c<clock>, /cpu=<clock> (Optional)\r\n"
-            "    The cpu <clock> eg 3072000\r\n"
+            "    The cpu <clock> eg 3686400\r\n"
             "\r\n"
             "  /m1\r\n"
             "    Assume MSX M1 wait states are\r\n"
@@ -133,10 +134,10 @@ void main(const int argc, const unsigned char **argv) {
     const int8_t   diff = expect - measurement + T_STATES_OVERHEAD;
 
     if (diff == 0)
-      printf(ERASE_LINE "Approximately in sync with CPU clock");
-    else if (diff < 0)
-      printf(ERASE_LINE "Approximately Fast By %02d/%lu secs", -diff, clock);
+      printf(ERASE_LINE "Approx. in sync with CPU clock");
+    else if (diff > 0)
+      printf(ERASE_LINE "Approx. Fast By %02d/%lu secs", diff, clock);
     else
-      printf(ERASE_LINE "Approximately Slow By %02d/%lu secs", diff, clock);
+      printf(ERASE_LINE "Approx. Slow By %02d/%lu secs", -diff, clock);
   }
 }

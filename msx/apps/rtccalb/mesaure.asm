@@ -28,8 +28,6 @@ RP5RTC_DAT	EQU	$B5
 
 
 _measure_timing:
-	ld b,b
-	jr $+2
 	DI
 
 	LD	HL, 0
