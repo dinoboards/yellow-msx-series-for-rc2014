@@ -11,13 +11,11 @@ endif
 
 ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fusion/
 
-telnet_sources = $(wildcard telnet/*.c) $(wildcard telnet/*.asm)
-
 BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv2 helloworld rtccalb telnet))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossil xrecv2 helloworld rtccalb term))
 
 include	Makefile.rules.mk
 
@@ -60,9 +58,9 @@ $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 fossil_files = $(call app_files,fossil,extbio.asm getslt.asm)
 $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files))
 
-telnet_files = $(call app_files,telnet,memmap-override.asm extbio.asm fossil.asm getslt.asm $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
-$(BIN)telnet.com: $(addprefix $(BIN),$(telnet_files))
-telnet.com.crt_enable_commandline:=1
+term_files = $(call app_files,term,memmap-override.asm extbio.asm fossil.asm getslt.asm $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
+$(BIN)term.com: $(addprefix $(BIN),$(term_files))
+term.com.crt_enable_commandline:=1
 
 xrecv2_files = $(call app_files,xrecv2,memmap-override.asm extbio.asm fossil.asm getslt.asm print.c $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
 $(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files))

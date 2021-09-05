@@ -19,28 +19,27 @@
  libraries/msxbios/system_vars.h
 ./bin/fossil.c.asm: fossil.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
-./bin/telnet/telnet.c.asm: telnet/telnet.c telnet/telnet.h libraries/fusion/msx_fusion.h \
- telnet/system-state.h telnet/ansi_codes.h telnet/ansiprint.h \
- telnet/print.h telnet/aofossilhelper.h telnet/arguments.h \
- libraries/msxdos/msxdos.h telnet/xymodem.h libraries/msxbios/extbio.h \
- libraries/msxbios/system_vars.h
-./bin/telnet/xymodem.c.asm: telnet/xymodem.c telnet/xymodem.h telnet/aofossilhelper.h \
- libraries/fusion/msx_fusion.h telnet/print.h libraries/fusion/io.h
-./bin/telnet/arguments.c.asm: telnet/arguments.c telnet/arguments.h \
- telnet/system-state.h
-./bin/telnet/aofossilhelper.c.asm: telnet/aofossilhelper.c telnet/aofossilhelper.h \
- fossil.h libraries/fusion/msx_fusion.h telnet/print.h
-./bin/telnet/fossil_interface.c.asm: telnet/fossil_interface.c fossil.h \
- libraries/fusion/msx_fusion.h
-./bin/telnet/ansiprint.c.asm: telnet/ansiprint.c telnet/ansiprint.h telnet/print.h \
- telnet/msx2ansi.h
-./bin/telnet/system-state.c.asm: telnet/system-state.c telnet/system-state.h
 ./bin/fdisk/fdisk.c.asm: fdisk/fdisk.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
  fdisk/fdisk2.h datatypes.h fdisk/partition.h \
  libraries/msxbios/system_vars.h
 ./bin/fdisk/fdisk2.c.asm: fdisk/fdisk2.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
  fdisk/partition.h datatypes.h
 ./bin/v9958.c.asm: v9958.c v9958.h
+./bin/term/xymodem.c.asm: term/xymodem.c term/xymodem.h term/aofossilhelper.h \
+ libraries/fusion/msx_fusion.h term/print.h libraries/fusion/io.h
+./bin/term/term.c.asm: term/term.c term/term.h libraries/fusion/msx_fusion.h \
+ term/system-state.h term/ansi_codes.h term/ansiprint.h term/print.h \
+ term/aofossilhelper.h term/arguments.h libraries/msxdos/msxdos.h \
+ term/xymodem.h libraries/msxbios/extbio.h \
+ libraries/msxbios/system_vars.h
+./bin/term/arguments.c.asm: term/arguments.c term/arguments.h term/system-state.h
+./bin/term/aofossilhelper.c.asm: term/aofossilhelper.c term/aofossilhelper.h fossil.h \
+ libraries/fusion/msx_fusion.h term/print.h
+./bin/term/fossil_interface.c.asm: term/fossil_interface.c fossil.h \
+ libraries/fusion/msx_fusion.h
+./bin/term/ansiprint.c.asm: term/ansiprint.c term/ansiprint.h term/print.h \
+ term/msx2ansi.h
+./bin/term/system-state.c.asm: term/system-state.c term/system-state.h
 ./bin/print.c.asm: print.c print.h
 ./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
@@ -54,10 +53,10 @@
 ./bin/msx.o: ./msx.asm ./msx.inc
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
-./bin/telnet/print.o: ./telnet/print.asm
-./bin/telnet/msx2ansi.o: ./telnet/msx2ansi.asm
-./bin/telnet/screen.o: ./telnet/screen.asm
 ./bin/fdisk/fdisk.o: ./fdisk/fdisk.asm
+./bin/term/print.o: ./term/print.asm
+./bin/term/msx2ansi.o: ./term/msx2ansi.asm
+./bin/term/screen.o: ./term/screen.asm
 ./bin/fossil.o: ./fossil.asm ./msx.inc
 ./bin/memmap-override.o: ./memmap-override.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc

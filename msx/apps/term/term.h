@@ -1,6 +1,6 @@
 /*
 --
--- telnet.h
+-- term.h
 --   Simple TELNET client using UNAPI for MSX.
 --   Revision 1.34
 --

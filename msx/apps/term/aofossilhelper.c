@@ -57,56 +57,30 @@ unsigned char InitializeTCPIP() {
   fossil_set_baud(9 * 256 + 9);
   fossil_set_protocol(7); // 8N1
   fossil_init();
-  TxData(0x50, modem_atz, 5);
+  TxData(modem_atz, 5);
   return 1;
 }
 
-unsigned char OpenSingleConnection(const unsigned char *uchHost, unsigned char *uchConn) {
-  if (uchHost) {
-    sprintf(cmdline, "ATD\"%s\"\r\n", uchHost);
-    // print(cmdline);
-    TxData(0x50, cmdline, strlen(cmdline));
-  }
-  *uchConn = 0x50;
-  return ERR_OK;
-}
-
-unsigned char CloseConnection(unsigned char ucConnNumber) {
-  unsigned char uchRet = 0;
+void CloseConnection() {
   unsigned char ucCount = 0;
 
-  if (ucConnNumber == 0x50) {
-    TxData(0x50, modem_cmd, 3);
-    do {
-      __asm halt __endasm;
+  TxData(modem_cmd, 3);
+  do {
+    __asm halt __endasm;
 
-      ++ucCount;
-    } while (ucCount < 20);
-    fossil_deinit();
-  } else
-    uchRet = ERR_INV_PARAM;
-
-  return uchRet;
-}
-
-unsigned char IsConnected(unsigned char ucConnNumber) {
-  if (ucConnNumber == 0x50)
-    return 1;
-  else
-    return ERR_INV_PARAM;
+    ++ucCount;
+  } while (ucCount < 20);
+  fossil_deinit();
 }
 
 // This routine retrieves as much as bytes as indicated in uiSize
-// Note that uiSize=1024 in normal characters receiving mode (RcvMemorySize=1024 in telnet.h)
+// Note that uiSize=1024 in normal characters receiving mode (RcvMemorySize=1024 in term.h)
 // Receives up to uiSize bytes
 // Number of bytes retrieved from serial port are returned into uiSize
-unsigned char RXData(unsigned char ucConnNumber, unsigned char *ucBuffer, unsigned int *uiSize, unsigned char ucWaitAllDataReceived) {
+unsigned char RXData(unsigned char *ucBuffer, unsigned int *uiSize, unsigned char ucWaitAllDataReceived) {
   unsigned char ucRet = 0;
   unsigned int  nbytes = 0;
   unsigned int  tbytes = *uiSize;
-
-  if (ucConnNumber != 0x50)
-    return ERR_INV_PARAM;
 
   if (ucWaitAllDataReceived) {
     // While bytes are available and we have received less bytes than requested...
@@ -132,14 +106,12 @@ unsigned char RXData(unsigned char ucConnNumber, unsigned char *ucBuffer, unsign
 }
 
 // This routine sends only one byte
-unsigned char TxByte(unsigned char ucConnNumber, unsigned char uchByte) { return TxData(ucConnNumber, &uchByte, 1); }
+unsigned char TxByte(unsigned char uchByte) { return TxData(&uchByte, 1); }
 
-unsigned char TxUnsafeData(unsigned char ucConnNumber, const unsigned char *lpucData, unsigned int uiDataSize) { return TxData(ucConnNumber, lpucData, uiDataSize); }
+unsigned char TxUnsafeData(const unsigned char *lpucData, unsigned int uiDataSize) { return TxData(lpucData, uiDataSize); }
 
 // The same as TxUnsafeData but without page 3 buffer addressing
-unsigned char TxData(unsigned char ucConnNumber, const unsigned char *lpucData, unsigned int uiDataSize) {
-  if (ucConnNumber != 0x50)
-    return ERR_INV_PARAM;
+unsigned char TxData(const unsigned char *lpucData, unsigned int uiDataSize) {
   for (int i = 0; i < uiDataSize; i++) {
     fossil_rs_out(*lpucData);
     *lpucData++;

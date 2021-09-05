@@ -9,12 +9,9 @@ unsigned char ucWidth40;              // Detected 40 Columns or less?
 unsigned char ucState;                // State of Telnet Data Parser
 unsigned char ucCmdCounter;           // If there is a TELNET command in progress, its size
 unsigned char ucStandardDataTransfer; // Is this telnet server proper and transmitting files using telnet double FF?
-unsigned char ucConnNumber;           // hold the connection number received by UnapiHelper
 
 // For data receive parsing
 unsigned char ucRcvData[128];
 
 unsigned char ucRcvDataMemory[RcvMemorySize];
 unsigned int  uiGetSize;
-
-const unsigned char *ucServer; // will hold the name of the server we will connect

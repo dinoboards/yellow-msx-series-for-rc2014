@@ -35,7 +35,7 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --
 */
-#include "telnet.h"
+#include "term.h"
 #include "ansi_codes.h"
 #include "ansiprint.h"
 #include "aofossilhelper.h"
@@ -52,9 +52,8 @@ const unsigned char ucWindowSize1[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_
 const unsigned char ucTTYPE2[] = {IAC, SB, CMD_TTYPE, IS, 'A', 'N', 'S', 'I', IAC, SE};                              // Terminal ANSI
 const unsigned char ucTTYPE3[] = {IAC, SB, CMD_TTYPE, IS, 'V', 'T', '5', '2', IAC, SE};                              // Terminal UNKNOWN
 
-char           ucTxData = 0;         // where our key inputs go
-unsigned char  ucRet;                // return of functions
-unsigned char  ucAliveConnCount = 0; // when this is 0, check if connection is alive
+char           ucTxData = 0; // where our key inputs go
+unsigned char  ucRet;        // return of functions
 char           chTextLine[128];
 unsigned char  ucCursorSave;
 unsigned char  ucFnkBackup[160];
@@ -93,21 +92,21 @@ void negotiate(unsigned char *ucBuf) {
     case CMD_WINDOW_SIZE:
       // request of our terminal window size
       if (ucAnsi)
-        TxUnsafeData(ucConnNumber, ucWindowSize1, sizeof(ucWindowSize1)); // 80x25
+        TxUnsafeData(ucWindowSize1, sizeof(ucWindowSize1)); // 80x25
       else if (!ucWidth40)
-        TxUnsafeData(ucConnNumber, ucWindowSize, sizeof(ucWindowSize)); // 80x24
+        TxUnsafeData(ucWindowSize, sizeof(ucWindowSize)); // 80x24
       else
-        TxUnsafeData(ucConnNumber, ucWindowSize0, sizeof(ucWindowSize0)); // 40x24
+        TxUnsafeData(ucWindowSize0, sizeof(ucWindowSize0)); // 40x24
       break;
     // we are willing to negotiate TTYPE and TERMINAL SPEED
     case CMD_TTYPE:
     case CMD_TRANSMIT_BINARY:
       ucBuf[1] = WILL;
-      TxUnsafeData(ucConnNumber, ucBuf, 3);
+      TxUnsafeData(ucBuf, 3);
       break;
     default:
       ucBuf[1] = WONT;
-      TxUnsafeData(ucConnNumber, ucBuf, 3);
+      TxUnsafeData(ucBuf, 3);
       break;
     }
     break;
@@ -117,12 +116,12 @@ void negotiate(unsigned char *ucBuf) {
       // Host is going to echo
       ucEcho = 0;
       ucBuf[1] = DO;
-      TxUnsafeData(ucConnNumber, ucBuf, 3); // Ok host, you can echo, I'm not going to echo
+      TxUnsafeData(ucBuf, 3); // Ok host, you can echo, I'm not going to echo
       break;
     case CMD_TRANSMIT_BINARY:
       // Ok, can do it
       ucBuf[1] = DO;
-      TxUnsafeData(ucConnNumber, ucBuf, 3);
+      TxUnsafeData(ucBuf, 3);
       // Initial handshake?
       if (!ucEnterHit)
         // If we received TRANSMIT BINARY right at the beginning, odds are that this BBS
@@ -137,11 +136,11 @@ void negotiate(unsigned char *ucBuf) {
         // it during initial hand-shake, before user type anything. In this case AutoDownload
         // should disable the download detection (which works for Syncrhonet BBSs just fine,
         // and Synchronet BBSs do not sent it during initial handshake)
-        XYModemGet(ucConnNumber, ucStandardDataTransfer);
+        XYModemGet(ucStandardDataTransfer);
       break;
     default:
       ucBuf[1] = DO;
-      TxUnsafeData(ucConnNumber, ucBuf, 3);
+      TxUnsafeData(ucBuf, 3);
       break;
     }
     break;
@@ -149,9 +148,9 @@ void negotiate(unsigned char *ucBuf) {
     if (ucBuf[2] == CMD_TTYPE) {
       // requesting Terminal Type list
       if (ucAnsi)
-        TxUnsafeData(ucConnNumber, ucTTYPE2, sizeof(ucTTYPE2)); // ANSI
+        TxUnsafeData(ucTTYPE2, sizeof(ucTTYPE2)); // ANSI
       else
-        TxUnsafeData(ucConnNumber, ucTTYPE3, sizeof(ucTTYPE3)); // dumb/unknown
+        TxUnsafeData(ucTTYPE3, sizeof(ucTTYPE3)); // dumb/unknown
     }
     break;
   case WONT:
@@ -159,11 +158,11 @@ void negotiate(unsigned char *ucBuf) {
       // Host is not going to echo
       ucEcho = 1;
     ucBuf[1] = DONT;
-    TxUnsafeData(ucConnNumber, ucBuf, 3);
+    TxUnsafeData(ucBuf, 3);
     break;
   case DONT:
     ucBuf[1] = WONT;
-    TxUnsafeData(ucConnNumber, ucBuf, 3);
+    TxUnsafeData(ucBuf, 3);
     break;
   }
 }
@@ -273,7 +272,7 @@ void SendCursorPosition(unsigned int uiCursorPosition) __z88dk_fastcall {
   uchRow = (uiCursorPosition >> 8) & 0xff;
   // return cursor position
   sprintf(uchPositionResponse, "\x1b[%u;%uR", uchRow, uchColumn);
-  TxUnsafeData(ucConnNumber, uchPositionResponse, strlen((char *)uchPositionResponse));
+  TxUnsafeData(uchPositionResponse, strlen((char *)uchPositionResponse));
 }
 
 extern void debugBreak();
@@ -323,128 +322,101 @@ int main(const int argc, const unsigned char **argv) {
   // Make sure those won't have any text
   memset(ucFnkStr, '\0', 160);
 
-  ucRet = OpenSingleConnection(ucServer, &ucConnNumber);
   if (ucAnsi)
     print("\x1b[32mTerminal in command mode. Type help for available commands\x1b[0m\r\n\r\n");
   else
     print("Terminal in command mode. Type help for available commands\r\n\r\n");
 
-  if (ucRet == ERR_OK) {
-    // Ok, we are connected, now we stay looping into this state
-    // machine until key assigned to exit is pressed
-    do {
-      if (msxbiosBreakX()) {
-        ucF5Exit = true;
-        break;
-      }
-
-      // ok, after 255 loops w/o data, we check for connection state, and this is the counter of loops
-      ++ucAliveConnCount;
-      // UNAPI Breathing just in case adapter need it
-      Breath();
-
-      if ((NEWKEY[6] & 0x21) == 1)                        // F1 and not shift: Start Transfer
-        XYModemGet(ucConnNumber, ucStandardDataTransfer); // no need to lock, function will wait for key input
-
-      if ((NEWKEY[6] & 0x41) == 1)               // F2 and not shift: Change Echo
-        ucLockF2 = 1;                            // key pressed, wait until it is released
-      else if ((ucLockF2) && (NEWKEY[6] & 0x40)) // key released, let's do it
-      {
-        ucEcho = !ucEcho;
-        ucLockF2 = 0;
-      }
-
-      if ((NEWKEY[6] & 0x81) == 1)               // F3 and not shift: Change Cr / CrLf
-        ucLockF3 = 1;                            // key pressed, wait until it is released
-      else if ((ucLockF3) && (NEWKEY[6] & 0x80)) // key released, let's do it
-      {
-        ucUseCrLf = !ucUseCrLf;
-        ucLockF3 = 0;
-      }
-
-      if ((!(NEWKEY[7] & 0x2)) && ((NEWKEY[6] & 0x1))) // F5 and not shift: Exit
-      {
-        // no need to lock, exit immediately
-        ucF5Exit = 1;
-        break;
-      }
-
-      ucTxData = Inkey();
-      // A key has been hit?
-      if (ucTxData) {
-        if (ucTxData == 13) // enter/CR ?
-        {
-          if (ucUseCrLf)
-            // Send CR and LF as well
-            TxUnsafeData(ucConnNumber, "\r\n", 2);
-          else // just send cr
-            TxByte(ucConnNumber, ucTxData);
-          // Update flag that enter has been hit
-          ucEnterHit = 1;
-        } else if (ucTxData == 28) // right?
-          TxUnsafeData(ucConnNumber, CURSOR_FORWARD, 3);
-        else if (ucTxData == 29) // left?
-          TxUnsafeData(ucConnNumber, CURSOR_BACKWARD, 3);
-        else if (ucTxData == 30) // up?
-          TxUnsafeData(ucConnNumber, CURSOR_UP, 3);
-        else if (ucTxData == 31) // down?
-          TxUnsafeData(ucConnNumber, CURSOR_DOWN, 3);
-        else
-          // Send the byte directly
-          TxByte(ucConnNumber, ucTxData);
-
-        // If we are echoing our own keys
-        if (ucEcho) {
-          if (ucTxData != 13)
-            printChar(ucTxData);
-          else
-            print("\r\n");
-        }
-      }
-
-      // Is there DATA?
-      uiGetSize = RcvMemorySize;
-      if (RXData(ucConnNumber, ucRcvDataMemory, &uiGetSize, 0)) {
-        // Data received?
-        if (uiGetSize) {
-          // Warn we are going to print a whole buffer
-          StartPrintBuffer();
-          // Parse it and do what is needed, including printing it
-          ParseTelnetData();
-          // Buffer Processing finished
-          EndPrintBuffer();
-          // zero the connection alive count, no need to check while we are receiving data
-          ucAliveConnCount = 1;
-        }
-      }
-
-      // Have we done 255 loops w/o receiving data?
-      if (!ucAliveConnCount) {
-        // Check if connection still is alive
-        if (!IsConnected(ucConnNumber))
-          break;
-      }
-    } while (1);
-
-    if (ucAnsi)  // using msx2ansi?
-      endAnsi(); // terminate its screen mode
-
-    if (ucF5Exit)                         // F5 pressed?
-      print("Closing connection...\r\n"); // Yes, so we are closing
-    else
-      print("Connection closed on the other end...\r\n"); // No, so we will try to close after the other end closed
-    ucRet = CloseConnection(ucConnNumber);
-
-    if (ucRet != 0) {
-      sprintf(chTextLine, "Error %u closing connection.\r\n", ucRet);
-      print(chTextLine);
+  do {
+    if (msxbiosBreakX()) {
+      ucF5Exit = true;
+      break;
     }
-  } else {
-    if (ucAnsi) // loaded msx2ansi?
-      endAnsi();
-    sprintf(chTextLine, "Error %u connecting to server: %s\r\n", ucRet, ucServer);
-    print(chTextLine);
-  }
+
+    Breath();
+
+    if ((NEWKEY[6] & 0x21) == 1)          // F1 and not shift: Start Transfer
+      XYModemGet(ucStandardDataTransfer); // no need to lock, function will wait for key input
+
+    if ((NEWKEY[6] & 0x41) == 1)               // F2 and not shift: Change Echo
+      ucLockF2 = 1;                            // key pressed, wait until it is released
+    else if ((ucLockF2) && (NEWKEY[6] & 0x40)) // key released, let's do it
+    {
+      ucEcho = !ucEcho;
+      ucLockF2 = 0;
+    }
+
+    if ((NEWKEY[6] & 0x81) == 1)               // F3 and not shift: Change Cr / CrLf
+      ucLockF3 = 1;                            // key pressed, wait until it is released
+    else if ((ucLockF3) && (NEWKEY[6] & 0x80)) // key released, let's do it
+    {
+      ucUseCrLf = !ucUseCrLf;
+      ucLockF3 = 0;
+    }
+
+    if ((!(NEWKEY[7] & 0x2)) && ((NEWKEY[6] & 0x1))) // F5 and not shift: Exit
+    {
+      // no need to lock, exit immediately
+      ucF5Exit = 1;
+      break;
+    }
+
+    ucTxData = Inkey();
+    // A key has been hit?
+    if (ucTxData) {
+      if (ucTxData == 13) // enter/CR ?
+      {
+        if (ucUseCrLf)
+          // Send CR and LF as well
+          TxUnsafeData("\r\n", 2);
+        else // just send cr
+          TxByte(ucTxData);
+        // Update flag that enter has been hit
+        ucEnterHit = 1;
+      } else if (ucTxData == 28) // right?
+        TxUnsafeData(CURSOR_FORWARD, 3);
+      else if (ucTxData == 29) // left?
+        TxUnsafeData(CURSOR_BACKWARD, 3);
+      else if (ucTxData == 30) // up?
+        TxUnsafeData(CURSOR_UP, 3);
+      else if (ucTxData == 31) // down?
+        TxUnsafeData(CURSOR_DOWN, 3);
+      else
+        // Send the byte directly
+        TxByte(ucTxData);
+
+      // If we are echoing our own keys
+      if (ucEcho) {
+        if (ucTxData != 13)
+          printChar(ucTxData);
+        else
+          print("\r\n");
+      }
+    }
+
+    // Is there DATA?
+    uiGetSize = RcvMemorySize;
+    if (RXData(ucRcvDataMemory, &uiGetSize, 0)) {
+      // Data received?
+      if (uiGetSize) {
+        // Warn we are going to print a whole buffer
+        StartPrintBuffer();
+        // Parse it and do what is needed, including printing it
+        ParseTelnetData();
+        // Buffer Processing finished
+        EndPrintBuffer();
+      }
+    }
+  } while (1);
+
+  if (ucAnsi)  // using msx2ansi?
+    endAnsi(); // terminate its screen mode
+
+  if (ucF5Exit)                         // F5 pressed?
+    print("Closing connection...\r\n"); // Yes, so we are closing
+  else
+    print("Connection closed on the other end...\r\n"); // No, so we will try to close after the other end closed
+  CloseConnection();
 
   // restore cursor status
   CSRSW = ucCursorSave;

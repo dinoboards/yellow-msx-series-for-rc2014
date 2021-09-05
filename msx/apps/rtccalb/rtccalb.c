@@ -17,7 +17,7 @@ static bool     m1_state = false;
 // approx 4 tstate at 3.6864 or 8 states at 7.372800
 #define T_STATES_OVERHEAD 0
 // (clock / 921600)
-#define WAIT_T_STATES     (m1_state ? T_STATES_WITHOUT_M1 : T_STATES_WITH_M1)
+#define WAIT_T_STATES (m1_state ? T_STATES_WITHOUT_M1 : T_STATES_WITH_M1)
 
 uint8_t abort_with_help() {
   print_str("Usage:  rtccalb [options]\r\n\r\n"

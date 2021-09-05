@@ -56,7 +56,6 @@ unsigned char G;
 unsigned char TestTransfer;
 unsigned long SentFileSize;
 unsigned char chFileSize[30];
-unsigned char chTransferConn;
 unsigned char chDoubleFF;
 char          chProtocolString[128];
 
@@ -139,7 +138,7 @@ int GetPacket(unsigned char **ucPacket, unsigned char *ucIs1K) {
     ucTmpPointer = *ucPacket + PktStatus;
 
     // Read data
-    if (RXData(chTransferConn, ucTmpPointer, &uiReadHelper, 1)) {
+    if (RXData(ucTmpPointer, &uiReadHelper, 1)) {
       if (!ucFoundStart) {
         // New package, so split information do not matter, we will wait SOH/STX/EOT/ETB/CAN
         for (uiI = 0; uiI < uiReadHelper; ++uiI) {
@@ -262,7 +261,7 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
 
   // This is an escape indicating to just send an Action (i.e.: C, ACK, NAK)
   if (*File == -1) {
-    ret = TxByte(chTransferConn, Action);
+    ret = TxByte(Action);
 
     if (ret == ERR_OK)
       return 1;
@@ -291,7 +290,7 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
 
     // Send the Action (could either be an ACK or NAK or C)
     if (Action)
-      ret = TxByte(chTransferConn, Action);
+      ret = TxByte(Action);
 
     // This is the packet receiving loop, it will exit upon timeout
     // or receiving the packet
@@ -341,14 +340,14 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
             if (*File != -1) {
               // File created, success
               if ((Action != 'G')) // YMODEM G no ack, it will just stream file after receiving next G
-                ret = TxByte(chTransferConn, ACK);
+                ret = TxByte(ACK);
               return 255;
             } else // couldn't create file
             {
               printf("2222 %02X\r\n", NAK);
 
               // Failure creating file, can't move on
-              ret = TxByte(chTransferConn, NAK);
+              ret = TxByte(NAK);
               // Set timeout as 1 to indicate failure
               TimeOut = 1;
               break;
@@ -401,7 +400,7 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
           break;
         } else {
           printf("1111 %02X\r\n", NAK);
-          ret = TxByte(chTransferConn, NAK);
+          ret = TxByte(NAK);
           // set timeout as 1 to indicate error
           TimeOut = 1;
           break;
@@ -449,7 +448,7 @@ void CancelTransfer(void) {
 }
 
 // This function will deal with file reception
-void XYModemGet(unsigned char chConn, unsigned char chTelnetTransfer) {
+void XYModemGet(unsigned char chTelnetTransfer) {
   unsigned char ret;
   int           iFile = 0;
   int           iNoFile = -1;
@@ -458,7 +457,6 @@ void XYModemGet(unsigned char chConn, unsigned char chTelnetTransfer) {
   unsigned char advance[4] = {'-', '\\', '|', '/'};
   unsigned int  FilesRcvd = 0;
 
-  chTransferConn = chConn;
   chDoubleFF = chTelnetTransfer;
 
   print("\r\n\r\nXMODEM Download type file Name\r\nYMODEM Download type Y\r\nYMODEM-G Download type G: ");

@@ -73,49 +73,32 @@ void Breath();
 // Return 1 if a TCP-IP Unapi implementation has been found
 unsigned char InitializeTCPIP();
 
-// OpenSingleConnection
-//
-// Will try do DNS resolve ucHost, if found, will try to open a TCP/IP active
-// connection with the resolved IP using port uchPort (host and Port are ASCII)
-//
-// In this version it always return ERR_OK
-unsigned char OpenSingleConnection(const unsigned char *uchHost, unsigned char *uchConn);
-
 // CloseConnection
 //
-// Will request connection ucConnNumber to be closed
-//
 // Will return ERR_OK if success
-unsigned char CloseConnection(unsigned char ucConnNumber);
-
-// IsConnected
-//
-// Return 1 if ucConnNumber connection state is established
-// Return 0 otherwise
-// Currently not implemented for this interface, always return 1
-unsigned char IsConnected(unsigned char ucConnNumber);
+void CloseConnection();
 
 // RXData
 //
-// Will try to retrieve up to uiSize bytes from ucConnNumber and place in ucBuffer
+// Will try to retrieve up to uiSize bytes and place in ucBuffer
 //
 // Return 0 and uiSize = 0 if no data
 // Return 1 and uiSize = bytes read if data was available
-unsigned char RXData(unsigned char ucConnNumber, unsigned char *ucBuffer, unsigned int *uiSize, unsigned char ucWaitAllDataReceived);
+unsigned char RXData(unsigned char *ucBuffer, unsigned int *uiSize, unsigned char ucWaitAllDataReceived);
 
 // TXByte
 //
-// Will try to send uchByte in ucConnNumber
+// Will try to send uchByte
 //
 // Return ERR_OK if success
-unsigned char TxByte(unsigned char ucConnNumber, unsigned char uchByte);
+unsigned char TxByte(unsigned char uchByte);
 
 // TXData
 //
 // Will try to send uiDataSize bytes from lpucData
 //
 // Return ERR_OK if success
-unsigned char TxData(unsigned char ucConnNumber, const unsigned char *lpucData, unsigned int uiDataSize);
+unsigned char TxData(const unsigned char *lpucData, unsigned int uiDataSize);
 
 // TXUnsafeData
 //
@@ -124,6 +107,6 @@ unsigned char TxData(unsigned char ucConnNumber, const unsigned char *lpucData, 
 // Up to 128 bytes can be sent here
 //
 // Return ERR_OK if success
-unsigned char TxUnsafeData(unsigned char ucConnNumber, const unsigned char *lpucData, unsigned int uiDataSize);
+unsigned char TxUnsafeData(const unsigned char *lpucData, unsigned int uiDataSize);
 
 #endif

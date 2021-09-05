@@ -1,10 +1,8 @@
 #include "arguments.h"
 #include "system-state.h"
-const unsigned char *usage = "Usage:  telnet server[:port] [option]\r\n\n"
+const unsigned char *usage = "Usage:  term [options]\r\n\n"
                              "Connect to a remote BBS system using\r\n"
                              "fossil serial driver\r\n\n"
-                             "server  The target domain name or ip\r\n"
-                             "port    The optional port number\r\n\n"
                              "/a      turn off automatic download\r\n"
                              "        detection\r\n"
                              "/o      turn off ANSI rendering and\r\n"
@@ -34,7 +32,7 @@ uint8_t arg_info_msg(const uint8_t i, const char **argv) {
   if (strcmp(arg_switch, "/i") != 0)
     return i;
 
-  printf("TELNET.COM written for Yellow MSX Series\r\n"
+  printf("TERM.COM written for Yellow MSX Series\r\n"
          "designed for RC2014\r\n"
          "Version 0.0.1\r\n"
          "By Dean Netherton\r\n\n"
@@ -55,11 +53,6 @@ uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) {
   printf((char *)argv[i]);
   printf("'\r\n\r\n");
   return abort_with_help();
-}
-
-void abort_with_missing_remote_caller() {
-  printf("Missing remote server domain name\r\n\r\n");
-  abort_with_help();
 }
 
 uint8_t arg_automatic_download(const uint8_t i, const char **argv) {
@@ -89,20 +82,7 @@ uint8_t arg_alternative_download_method(const uint8_t i, const char **argv) {
   return i + 1;
 }
 
-uint8_t arg_remote_caller(const uint8_t i, const char **argv) {
-  if (argv[i][0] != '/') {
-    if (ucServer)
-      return abort_with_invalid_arg_msg(i, argv);
-
-    ucServer = argv[i];
-    return i + 1;
-  }
-
-  return i;
-}
-
 void process_cli_arguments(const int argc, const char **argv) {
-  ucServer = NULL;
   ucAutoDownload = 1;
   ucStandardDataTransfer = 1;
   ucAnsi = 1;
@@ -130,15 +110,6 @@ void process_cli_arguments(const int argc, const char **argv) {
     if (current_i != i)
       continue;
 
-    i = arg_remote_caller(i, argv);
-    if (current_i != i)
-      continue;
-
     abort_with_invalid_arg_msg(i, argv);
   }
-
-  if (ucServer == NULL)
-    abort_with_missing_remote_caller();
-
-  printf("cli parsed: %s\r\n", ucServer);
 }
