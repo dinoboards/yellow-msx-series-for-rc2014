@@ -7,7 +7,7 @@ MAKEFLAGS += --no-builtin-rules
 # Example of MSX_JED_CDWIN exported environment variable
 # MSX_JED_CDWIN="u: && cd \\home\\jane\\<path to project>\\msx &&"
 
-all: rom-image-pal rom-image-ntsc msxsysromimages bin/music.rom
+all: rom-image-pal rom-image-ntsc msxsysromimages bin/music.rom apps
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
 

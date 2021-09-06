@@ -1,13 +1,16 @@
 #include "arguments.h"
-#include "fossil.h"
 #include "msxdos.h"
 #include "print.h"
 #include "utils.h"
 #include "xmodem.h"
+#include <delay.h>
 #include <extbio.h>
+#include <fossil.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <system_vars.h>
+
 /*
  * TODO:
  * [x] Clean up copy on start
@@ -51,6 +54,8 @@ uint32_t             totalFileSize = 0;
 
 #define ERASE_LINE "\x1B\x6C\r"
 
+#define ONE_AND_HALF_SECONDS (VDP_FREQUENCY * 1.5)
+
 int main(const int argc, const unsigned char **argv) {
   if (!fossil_link()) {
     extbio_fossil_install();
@@ -65,7 +70,7 @@ int main(const int argc, const unsigned char **argv) {
 
   FILE *fptr;
 
-  print_str("MSX/RC2014 Xmodem receive v0.5.1\r\n");
+  print_str("MSX/RC2014 Xmodem receive v0.6.0\r\n");
 
   print_str("Filename: ");
   print_str((char *)pFileName);
@@ -83,6 +88,27 @@ int main(const int argc, const unsigned char **argv) {
 
   fossil_set_protocol(7); // 8N1
   fossil_init();
+
+  if (pDialAddress) {
+    print_str("Resetting modem ...");
+    fossil_rs_flush();
+    delay(ONE_AND_HALF_SECONDS);
+    fossil_rs_string("+++");
+    delay(ONE_AND_HALF_SECONDS);
+
+    fossil_rs_string("\r\nAT\r\n");
+
+    print_str(" OK\r\nRequesting connection to:\r\n  ");
+    print_str(pDialAddress);
+    print_str(" ...");
+    fossil_rs_string("ATD");
+    fossil_rs_string(pDialAddress);
+    fossil_rs_string("\r\n");
+
+    fossil_rs_flush();
+
+    print_str(" OK\r\n");
+  }
 
   print_str("Press CTRL-BREAK to abort\r\n");
   print_str("Waiting for file to be sent ...");

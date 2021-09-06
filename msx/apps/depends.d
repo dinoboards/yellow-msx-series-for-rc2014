@@ -1,24 +1,27 @@
 
 ./bin/cpusptst/main.c.asm: cpusptst/main.c
 ./bin/dots.c.asm: dots.c v9958.h libraries/msxdos/msxdos.h
-./bin/extbio/main.c.asm: extbio/main.c fossil.h libraries/msxdos/msxdos.h xstdio.h \
- libraries/msxbios/extbio.h
+./bin/extbio/main.c.asm: extbio/main.c libraries/fossil/fossil.h \
+ libraries/msxdos/msxdos.h xstdio.h libraries/msxbios/extbio.h
 ./bin/lines.c.asm: lines.c v9958.h
+./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
+./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c libraries/msxbios/extbio.h \
+ libraries/fossil/fossil.h print.h libraries/msxbios/system_vars.h
 ./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
 ./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/memory.h \
- xrecv2/crc16.h xrecv2/serial.h fossil.h libraries/msxbios/system_vars.h
-./bin/xrecv2/serial.c.asm: xrecv2/serial.c xrecv2/serial.h fossil.h \
+ xrecv2/crc16.h xrecv2/serial.h libraries/fossil/fossil.h \
+ libraries/msxbios/system_vars.h
+./bin/xrecv2/serial.c.asm: xrecv2/serial.c xrecv2/serial.h libraries/fossil/fossil.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h print.h
 ./bin/xrecv2/utils.c.asm: xrecv2/utils.c xrecv2/utils.h xrecv2/memory.h
-./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h fossil.h \
- libraries/msxdos/msxdos.h print.h xrecv2/utils.h xrecv2/memory.h \
- xrecv2/xmodem.h libraries/msxbios/extbio.h
+./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h libraries/msxdos/msxdos.h \
+ print.h xrecv2/utils.h xrecv2/memory.h xrecv2/xmodem.h \
+ libraries/delay/delay.h libraries/msxbios/extbio.h \
+ libraries/fossil/fossil.h libraries/msxbios/system_vars.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
-./bin/fossil.c.asm: fossil.c libraries/msxdos/msxdos.h xstdio.h \
- libraries/msxbios/extbio.h
 ./bin/fdisk/fdisk.c.asm: fdisk/fdisk.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
  fdisk/fdisk2.h datatypes.h fdisk/partition.h \
  libraries/msxbios/system_vars.h
@@ -33,9 +36,9 @@
  term/xymodem.h libraries/msxbios/extbio.h \
  libraries/msxbios/system_vars.h
 ./bin/term/arguments.c.asm: term/arguments.c term/arguments.h term/system-state.h
-./bin/term/aofossilhelper.c.asm: term/aofossilhelper.c term/aofossilhelper.h fossil.h \
- libraries/fusion/msx_fusion.h term/print.h
-./bin/term/fossil_interface.c.asm: term/fossil_interface.c fossil.h \
+./bin/term/aofossilhelper.c.asm: term/aofossilhelper.c term/aofossilhelper.h \
+ libraries/fossil/fossil.h libraries/fusion/msx_fusion.h term/print.h
+./bin/term/fossil_interface.c.asm: term/fossil_interface.c libraries/fossil/fossil.h \
  libraries/fusion/msx_fusion.h
 ./bin/term/ansiprint.c.asm: term/ansiprint.c term/ansiprint.h term/print.h \
  term/msx2ansi.h
@@ -44,10 +47,15 @@
 ./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
+./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h
 ./bin/libraries/msxbios/system_vars.c.asm: libraries/msxbios/system_vars.c \
  libraries/msxbios/system_vars.h
-./bin/fosiltst.c.asm: fosiltst.c fossil.h xstdio.h libraries/msxbios/extbio.h \
- libraries/msxdos/msxdos.h
+./bin/libraries/fossil/fossil.c.asm: libraries/fossil/fossil.c libraries/fossil/fossil.h
+./bin/fossilon.c.asm: fossilon.c libraries/msxdos/msxdos.h xstdio.h \
+ libraries/msxbios/extbio.h
+./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h xstdio.h \
+ libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
 ./bin/mbrot.c.asm: mbrot.c v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
 ./bin/msx.o: ./msx.asm ./msx.inc
@@ -57,15 +65,15 @@
 ./bin/term/print.o: ./term/print.asm
 ./bin/term/msx2ansi.o: ./term/msx2ansi.asm
 ./bin/term/screen.o: ./term/screen.asm
-./bin/fossil.o: ./fossil.asm ./msx.inc
 ./bin/memmap-override.o: ./memmap-override.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc
+./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
 ./bin/libraries/fusion/inputstring.o: ./libraries/fusion/inputstring.asm
 ./bin/libraries/fusion/inkey.o: ./libraries/fusion/inkey.asm
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm
-./bin/extbio.o: ./extbio.asm ./msx.inc
+./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm
 ./bin/v9958.o: ./v9958.asm ./msx.inc
 ./bin/utils.o: ./utils.asm 

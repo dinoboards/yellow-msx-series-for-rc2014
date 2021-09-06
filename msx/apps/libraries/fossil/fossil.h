@@ -80,4 +80,7 @@ extern void          fossil_chput_hook(uint8_t x) __z88dk_fastcall;
 extern void          fossil_keyb_hook(uint8_t x) __z88dk_fastcall;
 extern fossil_info * fossil_get_info();
 
+extern void fossil_rs_string(const char *pString);
+extern void fossil_rs_flush();
+
 #endif

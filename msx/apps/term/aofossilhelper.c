@@ -43,9 +43,9 @@
 
 char          chHelperString[128];
 unsigned char ucFossilUnsafeDataTXBuffer[128];
-const char    modem_atz[] = "ATZ\r\n";
-const char    modem_cmd[] = "+++";
-const char    modem_disc[] = "ATH\r\n";
+// const char    modem_atz[] = "ATZ\r\n";
+// const char    modem_cmd[] = "+++";
+// const char    modem_disc[] = "ATH\r\n";
 unsigned char cmdline[134];
 
 void Breath() { return; }
@@ -57,14 +57,12 @@ unsigned char InitializeTCPIP() {
   fossil_set_baud(9 * 256 + 9);
   fossil_set_protocol(7); // 8N1
   fossil_init();
-  TxData(modem_atz, 5);
   return 1;
 }
 
 void CloseConnection() {
   unsigned char ucCount = 0;
 
-  TxData(modem_cmd, 3);
   do {
     __asm halt __endasm;
 
