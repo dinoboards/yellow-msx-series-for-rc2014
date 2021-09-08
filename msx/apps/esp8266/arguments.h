@@ -5,13 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern const char *pFileName;
-extern uint16_t    baud_rate;
-extern const char *pDialAddress;
+#define SUB_COMMAND_TIME_SYNC 1
+#define SUB_COMMAND_HANGUP    2
 
-extern const char *pFossilBaudRates[12];
-
-#define fossil_rate_to_string(f) pFossilBaudRates[f & 0xF]
+extern uint8_t subCommand;
 
 void process_cli_arguments(const char **argv, const int argc);
 

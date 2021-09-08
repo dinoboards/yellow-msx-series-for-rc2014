@@ -5,8 +5,10 @@
  libraries/msxdos/msxdos.h xstdio.h libraries/msxbios/extbio.h
 ./bin/lines.c.asm: lines.c v9958.h
 ./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
-./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c libraries/msxbios/extbio.h \
- libraries/fossil/fossil.h print.h libraries/msxbios/system_vars.h
+./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/arguments.h print.h \
+ libraries/delay/delay.h libraries/msxbios/extbio.h \
+ libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h
 ./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
 ./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/memory.h \
  xrecv2/crc16.h xrecv2/serial.h libraries/fossil/fossil.h \
@@ -72,7 +74,10 @@
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
 ./bin/libraries/fusion/inputstring.o: ./libraries/fusion/inputstring.asm
 ./bin/libraries/fusion/inkey.o: ./libraries/fusion/inkey.asm
-./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm
+./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_set_date.o: ./libraries/msxdos/msxdos_set_date.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm
 ./bin/v9958.o: ./v9958.asm ./msx.inc

@@ -323,9 +323,9 @@ int main(const int argc, const unsigned char **argv) {
   memset(ucFnkStr, '\0', 160);
 
   if (ucAnsi)
-    print("\x1b[32mTerminal in command mode. Type help for available commands\x1b[0m\r\n\r\n");
+    print("\x1b[32mTerm Ready\x1b[0m\r\n\r\n");
   else
-    print("Terminal in command mode. Type help for available commands\r\n\r\n");
+    print("Term Ready\r\n\r\n");
 
   do {
     if (msxbiosBreakX()) {

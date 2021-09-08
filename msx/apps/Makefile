@@ -22,7 +22,7 @@ all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpuspts
 include	Makefile.rules.mk
 
 SYSTEM_VARS := libraries/msxbios/system_vars.c
-MSXDOS := libraries/msxdos/msxdos.asm
+MSXDOS := libraries/msxdos/msxdos.asm libraries/msxdos/msxdos_set_date.asm libraries/msxdos/msxdos_set_time.asm libraries/msxdos/msxdos_get_time.asm
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := libraries/delay/delay.c
 
@@ -74,7 +74,7 @@ rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c $(MSXDOS))
 $(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files))
 rtccalb.com.crt_enable_commandline:=1
 
-esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS))
+esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) $(MSXDOS))
 $(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files))
 esp8266.com.crt_enable_commandline:=1
 

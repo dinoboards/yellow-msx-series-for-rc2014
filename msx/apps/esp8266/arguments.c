@@ -1,24 +1,18 @@
 #include "arguments.h"
 #include "print.h"
 
-const char *pFileName = NULL;
-uint16_t    baud_rate = 7 * 256 + 7; // 19200
-const char *pDialAddress = NULL;
-
-#define FOSSIL_BAUD_RATE_75 1 * 256 + 1
-
-const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
+uint8_t subCommand = 0;
 
 uint8_t abort_with_help() {
-  print_str("Usage:  xrecv <filename> [options]\r\n\r\n"
-            "Receive a file using xmodem protocol\r\n"
-            "using the active fossil driver\r\n\r\n"
-            "  /b<rate>, /baud=<rate>\r\n"
-            "    The desired tx/rx baud <rate>\r\n"
-            "    eg 19200\r\n"
-            "  /d<ip:port> /atd=<ip:port>\r\n"
-            "    Dial connection on modem\r\n"
-            "   eg: 192.168.1.2:3000\r\n");
+  print_str("Usage:  esp8266 <subcommand> [options]\r\n\r\n"
+            "Utility to manage RC2014 Wifi Module\r\n\r\n"
+            "  hangup\r\n"
+            "    Issue command to hangup remote\r\n"
+            "    connection\r\n"
+            "  time-sync\r\n"
+            "    Sync the MSX RTC with\r\n"
+            "    internet time\r\n"
+            "\r\n");
   exit(1);
 
   return 255;
@@ -29,114 +23,22 @@ uint8_t abort_with_invalid_options() {
   return abort_with_help();
 }
 
-uint8_t arg_baud_rate(const uint8_t i, const char **argv) {
-  const char *arg_switch = argv[i];
-  const char *arg_value;
-  if (strncasecmp(arg_switch, "/baud", 5) == 0) {
-    if (arg_switch[5] != '=') {
-      print_str("Invalid baud switch - use /baud=<rate>\r\n");
-      return abort_with_help();
-    }
-
-    arg_value = arg_switch + 6;
-    goto process_baud_rate;
-  } else if (strncmp(arg_switch, "/b", 2) == 0) {
-    arg_value = arg_switch + 2;
-    goto process_baud_rate;
-  } else
-    return i;
-
-process_baud_rate:
-  if (strcmp(arg_value, "75") == 0) {
-    baud_rate = 0;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "300") == 0) {
-    baud_rate = 1 * 256 + 1;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "600") == 0) {
-    baud_rate = 2 * 256 + 2;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "1200") == 0) {
-    baud_rate = 3 * 256 + 3;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "2400") == 0) {
-    baud_rate = 4 * 256 + 4;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "4800") == 0) {
-    baud_rate = 5 * 256 + 5;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "9600") == 0) {
-    baud_rate = 6 * 256 + 6;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "19200") == 0) {
-    baud_rate = 7 * 256 + 7;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "38400") == 0) {
-    baud_rate = 8 * 256 + 8;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "57600") == 0) {
-    baud_rate = 9 * 256 + 9;
-    return i + 1;
-  }
-
-  if (strcmp(arg_value, "115200") == 0) {
-    baud_rate = 11 * 256 + 11;
-    return i + 1;
-  }
-
-  print_str("Invalid baud rate setting '");
-  print_str(arg_value);
-  print_str("'\r\n");
-  exit(1);
-
-  return 255;
-}
-
-uint8_t arg_file_name(const uint8_t i, const char **argv) {
+uint8_t arg_sub_command(const uint8_t i, const char **argv) {
   if (argv[i][0] != '/') {
-    if (pFileName)
+    if (subCommand)
       return abort_with_invalid_options();
-    pFileName = argv[i];
-    return i + 1;
-  }
 
-  return i;
-}
-
-uint8_t arg_atd(const uint8_t i, const char **argv) {
-  const char *arg_switch = argv[i];
-
-  if (strncasecmp(arg_switch, "/atd", 4) == 0) {
-    if (arg_switch[4] != '=') {
-      print_str("Invalid atd switch - use /atd=<ip:port>\r\n");
-      return abort_with_help();
+    if (strncasecmp(argv[i], "time-sync", 9) == 0) {
+      subCommand = SUB_COMMAND_TIME_SYNC;
+      return i + 1;
     }
 
-    pDialAddress = arg_switch + 5;
-    return i + 1;
-  }
+    if (strncasecmp(argv[i], "hangup", 6) == 0) {
+      subCommand = SUB_COMMAND_HANGUP;
+      return i + 1;
+    }
 
-  if (strncmp(arg_switch, "/d", 2) == 0) {
-    pDialAddress = arg_switch + 2;
-    return i + 1;
+    return abort_with_invalid_options();
   }
 
   return i;
@@ -157,33 +59,26 @@ uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) {
   return abort_with_help();
 }
 
-uint8_t abort_with_missing_file_name_msg() {
-  print_str("Missing filename.\r\n\r\n");
+uint8_t abort_with_missing_sub_command_msg() {
+  print_str("Missing subcommand argument.\r\n\r\n");
   return abort_with_help();
 }
 
 void process_cli_arguments(const char **argv, const int argc) {
   for (uint8_t i = 1; i < argc;) {
     const uint8_t current_i = i;
-    i = arg_baud_rate(i, argv);
-    if (current_i != i)
-      continue;
 
     i = arg_help_msg(i, argv);
     if (current_i != i)
       continue;
 
-    i = arg_file_name(i, argv);
-    if (current_i != i)
-      continue;
-
-    i = arg_atd(i, argv);
+    i = arg_sub_command(i, argv);
     if (current_i != i)
       continue;
 
     abort_with_invalid_arg_msg(i, argv);
   }
 
-  if (pFileName == NULL)
-    abort_with_missing_file_name_msg();
+  if (subCommand == 0)
+    abort_with_missing_sub_command_msg();
 }

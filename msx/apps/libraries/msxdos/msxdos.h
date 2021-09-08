@@ -82,6 +82,10 @@ extern uint16_t msxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8
 extern uint16_t msxdosDevRead(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer);
 extern uint16_t msxdosDevWrite(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer);
 
+extern uint8_t msxdosSetDate(uint16_t year, uint8_t month, uint8_t date);
+extern uint8_t msxdosSetTime(uint8_t hour, uint8_t minutes, uint8_t seconds, uint8_t centiseconds);
+extern void    msxdosGetTime(uint8_t *hour, uint8_t *minutes, uint8_t *seconds);
+
 #define _IPART 0xB4
 #define _NOFIL 0xD7
 
