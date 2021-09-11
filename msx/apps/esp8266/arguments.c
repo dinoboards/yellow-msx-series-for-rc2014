@@ -3,6 +3,8 @@
 
 uint8_t     subCommand = 0;
 const char *pNewTimeZone;
+const char *pNewSSID;
+const char *pNewPassword;
 
 uint8_t abort_with_help() {
   print_str("Usage:  esp8266 <subcommand>\r\n\r\n"
@@ -15,6 +17,8 @@ uint8_t abort_with_help() {
             "    internet time\r\n"
             "  set-timezone <zone>\r\n"
             "    Set timezone\r\n"
+            "  set-wifi <ssid> <password>\r\n"
+            "    Set wifi credentials\r\n"
             "\r\n");
   exit(1);
 
@@ -47,6 +51,15 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
       subCommand = SUB_COMMAND_SET_TIMEZONE;
       pNewTimeZone = argv[i + 1];
       return i + 2;
+    }
+
+    if (strncasecmp(argv[i], "set-wifi", 6) == 0) {
+      if (i + 2 >= argc)
+        return abort_with_invalid_options();
+      subCommand = SUB_COMMAND_SET_WIFI;
+      pNewSSID = argv[i + 1];
+      pNewPassword = argv[i + 2];
+      return i + 3;
     }
 
     return abort_with_invalid_options();

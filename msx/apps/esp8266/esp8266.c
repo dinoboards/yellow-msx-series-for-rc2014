@@ -9,17 +9,22 @@
 #include <string.h>
 #include <system_vars.h>
 
-#define ONE_SECOND (VDP_FREQUENCY * 1.1)
+#define ONE_SECOND              (VDP_FREQUENCY * 1.1)
+#define MAX_RESPONSE_STRING_LEN 128
+unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
-bool fossil_rs_read_line(unsigned char *pBuffer, const uint8_t maxLength) {
+bool fossil_rs_read_line(const bool withLogging) {
+  uint8_t        length = 0;
+  unsigned int   timeout = 65000;
+  unsigned char *pBuffer = responseStr;
 
-  uint8_t      length = 0;
-  unsigned int timeout = 65000;
-
-  while (length < maxLength && timeout != 0) {
+  while (length < MAX_RESPONSE_STRING_LEN && timeout != 0) {
     if (fossil_rs_in_stat() != 0) {
       timeout = 65000;
       const unsigned char t = fossil_rs_in();
+      if (withLogging)
+        fputc_cons(t);
+
       if (t >= 32 && t < 128) {
         *pBuffer++ = t;
         length++;
@@ -36,13 +41,31 @@ bool fossil_rs_read_line(unsigned char *pBuffer, const uint8_t maxLength) {
   return timeout == 0;
 }
 
-#define MAX_TIME_STRING_LEN 50
-unsigned char responseStr[MAX_TIME_STRING_LEN + 1];
+bool read_until_ok_or_error() {
+  unsigned int timeout = 65000;
+  bool         lineReceived = true;
+
+  responseStr[0] = 0;
+
+  while (true) {
+    if (lineReceived = fossil_rs_read_line(true)) {
+      timeout = 65000;
+      continue;
+    }
+
+    if ((strncmp(responseStr, "OK", 2) != 0 && strncmp(responseStr, "ERROR", 2)) && timeout-- != 0)
+      continue;
+
+    break;
+  }
+
+  return strncmp(responseStr, "OK", 2) == 0;
+}
 
 void subCommandTimeSync() {
   fossil_rs_flush();
   fossil_rs_string("\r\nAT+time?\r\n");
-  if (fossil_rs_read_line(responseStr, MAX_TIME_STRING_LEN)) {
+  if (fossil_rs_read_line(false)) {
     print_str("Error getting time\r\n");
     return;
   }
@@ -82,7 +105,7 @@ void subCommandSetTimeZone() {
   fossil_rs_string(pNewTimeZone);
   fossil_rs_string("\r\n");
 
-  if (fossil_rs_read_line(responseStr, MAX_TIME_STRING_LEN)) {
+  if (fossil_rs_read_line(false)) {
     print_str("Error setting timezone\r\n");
     return;
   }
@@ -95,6 +118,17 @@ void subCommandSetTimeZone() {
   print_str("Error setting timezone: ");
   print_str(responseStr);
   print_str("\r\n");
+}
+
+void subCommandSetWiFi() {
+  fossil_rs_flush();
+  fossil_rs_string("\r\nat+cwjap=");
+  fossil_rs_string(pNewSSID);
+  fossil_rs_string(",");
+  fossil_rs_string(pNewPassword);
+  fossil_rs_string("\r\n");
+
+  read_until_ok_or_error();
 }
 
 void main(const int argc, const unsigned char **argv) {
@@ -132,6 +166,11 @@ void main(const int argc, const unsigned char **argv) {
 
   if (subCommand == SUB_COMMAND_SET_TIMEZONE) {
     subCommandSetTimeZone();
+    goto done;
+  }
+
+  if (subCommand == SUB_COMMAND_SET_WIFI) {
+    subCommandSetWiFi();
     goto done;
   }
 
