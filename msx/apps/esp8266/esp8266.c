@@ -37,15 +37,66 @@ bool fossil_rs_read_line(unsigned char *pBuffer, const uint8_t maxLength) {
 }
 
 #define MAX_TIME_STRING_LEN 50
-unsigned char timeString[MAX_TIME_STRING_LEN + 1];
+unsigned char responseStr[MAX_TIME_STRING_LEN + 1];
 
-/*
-1. Establish fossil serial connection
-2. Issue +++ to enter command mode
-3. Issue command
-4. Write out response
+void subCommandTimeSync() {
+  fossil_rs_flush();
+  fossil_rs_string("\r\nAT+time?\r\n");
+  if (fossil_rs_read_line(responseStr, MAX_TIME_STRING_LEN)) {
+    print_str("Error getting time\r\n");
+    return;
+  }
 
-*/
+  if (strlen(responseStr) != 24) {
+    print_str("Invalid time string received ");
+    print_str(responseStr);
+    print_str("\r\n");
+    return;
+  }
+
+  const int year = atoi(responseStr);
+  const int month = atoi(responseStr + 5);
+  const int day = atoi(responseStr + 8);
+  const int hour = atoi(responseStr + 11);
+  const int min = atoi(responseStr + 14);
+  const int sec = atoi(responseStr + 17);
+
+  uint8_t currentHour;
+  uint8_t currentMinute;
+  uint8_t currentSecond;
+  msxdosGetTime(&currentHour, &currentMinute, &currentSecond);
+
+  msxdosSetDate(year, month, day);
+  msxdosSetTime(hour, min, sec, 0);
+
+  int32_t t1 = (((int32_t)currentHour) * 60 * 60) + (int32_t)currentMinute * 60 + (int32_t)currentSecond;
+  int32_t t2 = ((int32_t)hour * 60 * 60) + (int32_t)min * 60 + (int32_t)sec;
+
+  printf("Time: %04d:%02d:%02d %02d:%02d:%02d\r\n", year, month, day, hour, min, sec);
+  printf("Second drift: %d\r\n", (int)(t2 - t1));
+}
+
+void subCommandSetTimeZone() {
+  fossil_rs_flush();
+  fossil_rs_string("\r\nat+locale=");
+  fossil_rs_string(pNewTimeZone);
+  fossil_rs_string("\r\n");
+
+  if (fossil_rs_read_line(responseStr, MAX_TIME_STRING_LEN)) {
+    print_str("Error setting timezone\r\n");
+    return;
+  }
+
+  if (strncmp(responseStr, "OK", 2) == 0) {
+    subCommandTimeSync();
+    return;
+  }
+
+  print_str("Error setting timezone: ");
+  print_str(responseStr);
+  print_str("\r\n");
+}
+
 void main(const int argc, const unsigned char **argv) {
   (void)argc;
   (void)argv;
@@ -75,40 +126,13 @@ void main(const int argc, const unsigned char **argv) {
   fossil_rs_string("\r\nATE0\r\n"); // echo off
 
   if (subCommand == SUB_COMMAND_TIME_SYNC) {
-    fossil_rs_flush();
-    fossil_rs_string("\r\nAT+time?\r\n");
-    if (fossil_rs_read_line(timeString, MAX_TIME_STRING_LEN)) {
-      print_str("Error getting time\r\n");
-      goto done;
-    }
+    subCommandTimeSync();
+    goto done;
+  }
 
-    if (strlen(timeString) != 24) {
-      print_str("Invalid time string received ");
-      print_str(timeString);
-      print_str("\r\n");
-      goto done;
-    }
-
-    const int year = atoi(timeString);
-    const int month = atoi(timeString + 5);
-    const int day = atoi(timeString + 8);
-    const int hour = atoi(timeString + 11);
-    const int min = atoi(timeString + 14);
-    const int sec = atoi(timeString + 17);
-
-    uint8_t currentHour;
-    uint8_t currentMinute;
-    uint8_t currentSecond;
-    msxdosGetTime(&currentHour, &currentMinute, &currentSecond);
-
-    msxdosSetDate(year, month, day);
-    msxdosSetTime(hour, min, sec, 0);
-
-    int32_t t1 = (((int32_t)currentHour) * 60 * 60) + (int32_t)currentMinute * 60 + (int32_t)currentSecond;
-    int32_t t2 = ((int32_t)hour * 60 * 60) + (int32_t)min * 60 + (int32_t)sec;
-
-    printf("Time: %04d:%02d:%02d %02d:%02d:%02d\r\n", year, month, day, hour, min, sec);
-    printf("Second drift: %d\r\n", (int)(t2 - t1));
+  if (subCommand == SUB_COMMAND_SET_TIMEZONE) {
+    subCommandSetTimeZone();
+    goto done;
   }
 
 done:

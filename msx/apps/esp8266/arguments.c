@@ -1,10 +1,11 @@
 #include "arguments.h"
 #include "print.h"
 
-uint8_t subCommand = 0;
+uint8_t     subCommand = 0;
+const char *pNewTimeZone;
 
 uint8_t abort_with_help() {
-  print_str("Usage:  esp8266 <subcommand> [options]\r\n\r\n"
+  print_str("Usage:  esp8266 <subcommand>\r\n\r\n"
             "Utility to manage RC2014 Wifi Module\r\n\r\n"
             "  hangup\r\n"
             "    Issue command to hangup remote\r\n"
@@ -12,6 +13,8 @@ uint8_t abort_with_help() {
             "  time-sync\r\n"
             "    Sync the MSX RTC with\r\n"
             "    internet time\r\n"
+            "  set-timezone <zone>\r\n"
+            "    Set timezone\r\n"
             "\r\n");
   exit(1);
 
@@ -23,7 +26,7 @@ uint8_t abort_with_invalid_options() {
   return abort_with_help();
 }
 
-uint8_t arg_sub_command(const uint8_t i, const char **argv) {
+uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
   if (argv[i][0] != '/') {
     if (subCommand)
       return abort_with_invalid_options();
@@ -36,6 +39,14 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv) {
     if (strncasecmp(argv[i], "hangup", 6) == 0) {
       subCommand = SUB_COMMAND_HANGUP;
       return i + 1;
+    }
+
+    if (strncasecmp(argv[i], "set-timezone", 6) == 0) {
+      if (i + 1 >= argc)
+        return abort_with_invalid_options();
+      subCommand = SUB_COMMAND_SET_TIMEZONE;
+      pNewTimeZone = argv[i + 1];
+      return i + 2;
     }
 
     return abort_with_invalid_options();
@@ -72,7 +83,7 @@ void process_cli_arguments(const char **argv, const int argc) {
     if (current_i != i)
       continue;
 
-    i = arg_sub_command(i, argv);
+    i = arg_sub_command(i, argv, argc);
     if (current_i != i)
       continue;
 
