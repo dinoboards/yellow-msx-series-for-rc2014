@@ -9,7 +9,7 @@ MAKEFLAGS += --no-builtin-rules
 
 all: rom-image-pal rom-image-ntsc msxsysromimages bin/music.rom apps
 
-jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
+jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/turbo-cpu-mwait.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
 
 bin/%.jed:
 	@cd $$(wslpath "$$(wslvar USERPROFILE)")
@@ -25,6 +25,7 @@ bin/%.jed:
 bin/mem-selector.jed: mem-selector.pld
 bin/rom-mapper.jed: rom-mapper.pld
 bin/turbo-cpu.jed: turbo-cpu.pld
+bin/turbo-cpu-mwait.jed: turbo-cpu-mwait.pld
 bin/slot-backplane-driver.jed: slot-backplane-driver.pld
 bin/v9958-cs.jed: v9958-cs.pld
 

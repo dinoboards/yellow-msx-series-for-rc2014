@@ -1,0 +1,60 @@
+Name     turbo-cpu-mwait ;
+PartNo   00 ;
+Date     15/12/2020 ;
+Revision 01 ;
+Designer Dean Netherton ;
+Company  Dino ;
+Assembly None ;
+Location Ignored ;
+Device   g16v8a ;
+
+
+/************* INPUT PINS *********************/
+PIN  1 = CPU_CLK;
+PIN  2 = !M1;
+PIN  3 = !MREQ;
+PIN  4 = !BWAIT;
+PIN  5 = WAIT_EN;
+PIN  6 = !RFSH;
+PIN  7 = !IORQ;
+//PIN  8 = ;
+//PIN  9 = ;
+PIN 10 = GND;
+//PIN 11 = ;
+
+/**************** OUTPUT PINS *********************/
+PIN 12 = C0;
+PIN 13 = C1;
+PIN 14 = C2;
+PIN 15 = !MWAIT1;
+PIN 16 = !MWAIT2;
+PIN 17 = !CWAIT;
+//PIN 18 = ;
+//PIN 19 = ;
+PIN 20 = VCC;
+
+
+field WAITCOUNT = [C0, C1, C2];
+
+
+T00=WAITCOUNT:['b'000];
+T01=WAITCOUNT:['b'001];
+T02=WAITCOUNT:['b'010];
+T03=WAITCOUNT:['b'011];
+T04=WAITCOUNT:['b'100];
+T05=WAITCOUNT:['b'101];
+T06=WAITCOUNT:['b'110];
+T07=WAITCOUNT:['b'111];
+
+MR = MREQ & !RFSH;
+
+FINISHED=T01;
+
+MWAIT1.D = (MWAIT1 # MR) & !FINISHED & !(!MWAIT1 & MWAIT2);
+MWAIT2.D = (MWAIT2 # MWAIT1) & MR;
+
+CWAIT = BWAIT # MWAIT1;
+
+C0.D = MR & (T00 # T02 # T04 # T06);
+C1.D = MR & (T01 # T02 # T05 # T06);
+C2.D = MR & (T03 # T04 # T05 # T06);
