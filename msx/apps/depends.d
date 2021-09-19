@@ -8,7 +8,8 @@
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/arguments.h print.h \
  libraries/delay/delay.h libraries/msxbios/extbio.h \
  libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h
+ libraries/msxbios/system_vars.h xrecv2/utils.h xrecv2/memory.h \
+ xrecv2/xmodem.h
 ./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
 ./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/memory.h \
  xrecv2/crc16.h xrecv2/serial.h libraries/fossil/fossil.h \

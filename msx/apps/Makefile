@@ -9,7 +9,7 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 --allow-unsafe-read
 endif
 
-LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay
+LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2
 
 ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
 
@@ -74,7 +74,7 @@ rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c $(MSXDOS))
 $(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files))
 rtccalb.com.crt_enable_commandline:=1
 
-esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) $(MSXDOS))
+esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) $(MSXDOS) xrecv2/xmodem.c xrecv2/crc16.c xrecv2/serial.c xrecv2/utils.c)
 $(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files))
 esp8266.com.crt_enable_commandline:=1
 

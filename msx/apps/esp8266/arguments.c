@@ -6,6 +6,8 @@ uint8_t     subCommand = 0;
 const char *pNewTimeZone;
 const char *pNewSSID;
 const char *pNewPassword;
+const char *pWgetUrl;
+const char *pFileName;
 uint16_t    baud_rate = 7 * 256 + 7; // 19200
 
 const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
@@ -69,13 +71,14 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
       return i + 3;
     }
 
-    // if (strncasecmp(argv[i], "wget", 4) == 0) {
-    //   if (i + 2 >= argc)
-    //     return abort_with_invalid_options();
-    //   subCommand = SUB_COMMAND_SET_WIFI;
-    //   pWgetUrl = argv[i + 1];
-    //   return i + 2;
-    // }
+    if (strncasecmp(argv[i], "wget", 4) == 0) {
+      if (i + 2 >= argc)
+        return abort_with_invalid_options();
+      subCommand = SUB_COMMAND_WGET;
+      pWgetUrl = argv[i + 1];
+      pFileName = argv[i + 2];
+      return i + 3;
+    }
 
     return abort_with_invalid_options();
   }

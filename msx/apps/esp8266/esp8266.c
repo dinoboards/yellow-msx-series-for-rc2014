@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <system_vars.h>
+#include <utils.h>
+#include <xmodem.h>
 
 #define ONE_SECOND              (VDP_FREQUENCY * 1.1)
 #define MAX_RESPONSE_STRING_LEN 128
@@ -131,6 +133,62 @@ void subCommandSetWiFi() {
   read_until_ok_or_error();
 }
 
+#define ERASE_LINE "\x1B\x6C\r"
+const unsigned char *pTempFileName = "xmdwn.tmp";
+bool                 started = false;
+uint32_t             totalFileSize = 0;
+const unsigned char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
+uint8_t              rotatingIndex = 0;
+
+void subCommandWGet() {
+  fossil_rs_flush();
+  fossil_rs_string("\r\nat+wget");
+  fossil_rs_string(pWgetUrl);
+  fossil_rs_string("\r\n");
+
+  FILE *fptr;
+  fptr = fopen(pTempFileName, "wb");
+
+  XMODEM_SIGNAL sig = READ_FIRST_HEADER;
+  while (sig = xmodem_receive(sig)) {
+    if (msxbiosBreakX())
+      goto abort;
+
+    if (!started && (sig & (READ_128 | READ_1024))) {
+      started = true;
+      print_str(ERASE_LINE "Downloading ");
+      print_str(sig & READ_CRC ? "(crc) ... " : "(chksum) ... ");
+    }
+
+    if (sig & SAVE_PACKET) {
+      totalFileSize += xmodemState.currentPacketSize;
+      fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
+      print_str(rotatingChar[rotatingIndex]);
+      rotatingIndex = (rotatingIndex + 1) & 3;
+    }
+  }
+
+  if (xmodemState.finish_reason != END_OF_STREAM) {
+    print_str(ERASE_LINE "Error receiving file\r\n");
+    goto abort;
+  }
+
+  print_str(ERASE_LINE "Saving file...");
+
+  fclose(fptr);
+  remove(pFileName);
+  rename(pTempFileName, pFileName);
+
+  print_str(ERASE_LINE "Downloaded ");
+  print_str(uint32_to_string(totalFileSize));
+  print_str(" bytes.\r\n");
+  return;
+
+abort:
+  fclose(fptr);
+  remove(pTempFileName);
+}
+
 void main(const int argc, const unsigned char **argv) {
   (void)argc;
   (void)argv;
@@ -182,6 +240,10 @@ void main(const int argc, const unsigned char **argv) {
     goto done;
   }
 
+  if (subCommand == SUB_COMMAND_WGET) {
+    subCommandWGet();
+    goto done;
+  }
 done:
   fossil_deinit();
 }

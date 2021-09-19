@@ -15,6 +15,8 @@ extern uint8_t     subCommand;
 extern const char *pNewTimeZone;
 extern const char *pNewSSID;
 extern const char *pNewPassword;
+extern const char *pWgetUrl;
+extern const char *pFileName;
 extern uint16_t    baud_rate;
 
 void process_cli_arguments(const char **argv, const int argc);
