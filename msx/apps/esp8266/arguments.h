@@ -9,12 +9,17 @@
 #define SUB_COMMAND_HANGUP       2
 #define SUB_COMMAND_SET_TIMEZONE 3
 #define SUB_COMMAND_SET_WIFI     4
+#define SUB_COMMAND_WGET         5
 
 extern uint8_t     subCommand;
 extern const char *pNewTimeZone;
 extern const char *pNewSSID;
 extern const char *pNewPassword;
+extern uint16_t    baud_rate;
 
 void process_cli_arguments(const char **argv, const int argc);
+
+extern const char *pFossilBaudRates[12];
+#define fossil_rate_to_string(f) pFossilBaudRates[f & 0xF]
 
 #endif

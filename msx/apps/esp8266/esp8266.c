@@ -145,8 +145,16 @@ void main(const int argc, const unsigned char **argv) {
 
   process_cli_arguments(argv, argc);
 
-  uint16_t actual_baud_rate = fossil_set_baud(7); // 19200
-  fossil_set_protocol(7);                         // 8N1
+  print_str("Requested Baud Rate: ");
+  print_str(fossil_rate_to_string(baud_rate));
+  print_str("\r\n");
+  uint16_t actual_baud_rate = fossil_set_baud(baud_rate);
+  if (actual_baud_rate != baud_rate) {
+    print_str("Actual Baud Rate: ");
+    print_str(fossil_rate_to_string(actual_baud_rate));
+    print_str("\r\n");
+  }
+  fossil_set_protocol(7); // 8N1
   fossil_init();
 
   if (subCommand == SUB_COMMAND_HANGUP) {
