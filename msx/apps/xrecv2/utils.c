@@ -1,6 +1,6 @@
 #include "utils.h"
 
-BUFFER_ADDR static unsigned char buffer[30];
+static unsigned char buffer[30];
 
 const unsigned char *uint32_to_string(uint32_t value) __z88dk_fastcall {
   unsigned char *ptr = buffer;

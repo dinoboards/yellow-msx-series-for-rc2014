@@ -1,3 +1,3 @@
 
 	SECTION BSS
-	org 0x9000
+	org 0xA000

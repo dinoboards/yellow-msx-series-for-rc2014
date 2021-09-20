@@ -1,7 +1,6 @@
 #ifndef __XMODEM
 #define __XMODEM
 
-#include "memory.h"
 #include <stdlib.h>
 
 typedef enum {
@@ -31,6 +30,6 @@ typedef struct xmodemState {
   XMODEM_SIGNAL finish_reason;
 };
 
-extern XMODEM_STATE_ADDR struct xmodemState xmodemState;
+extern struct xmodemState xmodemState;
 
 #endif

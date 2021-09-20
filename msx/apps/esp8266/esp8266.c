@@ -141,6 +141,12 @@ const unsigned char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", 
 uint8_t              rotatingIndex = 0;
 
 void subCommandWGet() {
+  print_str("Attempting to retrieve file ");
+  print_str(pFileName);
+  print_str(" from ");
+  print_str(pWgetUrl);
+  print_str("\r\n");
+
   fossil_rs_flush();
   fossil_rs_string("\r\nat+wget");
   fossil_rs_string(pWgetUrl);

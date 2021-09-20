@@ -18,10 +18,10 @@
 
 #define FOR_SIGNAL(mask) if (signal & (mask))
 
-XMODEM_STATE_ADDR struct xmodemState xmodemState;
-unsigned char                        packetno = 1;
-uint16_t                             i, c, len = 0;
-uint16_t                             retry, retrans = MAXRETRANS;
+struct xmodemState xmodemState;
+unsigned char      packetno = 1;
+uint16_t           i, c, len = 0;
+uint16_t           retry, retrans = MAXRETRANS;
 
 static int16_t       delay_point;
 static XMODEM_SIGNAL delay_resume;

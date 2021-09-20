@@ -8,20 +8,19 @@
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/arguments.h print.h \
  libraries/delay/delay.h libraries/msxbios/extbio.h \
  libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h xrecv2/utils.h xrecv2/memory.h \
- xrecv2/xmodem.h
+ libraries/msxbios/system_vars.h xrecv2/utils.h xrecv2/xmodem.h
 ./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
-./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/memory.h \
- xrecv2/crc16.h xrecv2/serial.h libraries/fossil/fossil.h \
+./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/crc16.h \
+ xrecv2/serial.h libraries/fossil/fossil.h \
  libraries/msxbios/system_vars.h
 ./bin/xrecv2/serial.c.asm: xrecv2/serial.c xrecv2/serial.h libraries/fossil/fossil.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h print.h
-./bin/xrecv2/utils.c.asm: xrecv2/utils.c xrecv2/utils.h xrecv2/memory.h
+./bin/xrecv2/utils.c.asm: xrecv2/utils.c xrecv2/utils.h
 ./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h libraries/msxdos/msxdos.h \
- print.h xrecv2/utils.h xrecv2/memory.h xrecv2/xmodem.h \
- libraries/delay/delay.h libraries/msxbios/extbio.h \
- libraries/fossil/fossil.h libraries/msxbios/system_vars.h
+ print.h xrecv2/utils.h xrecv2/xmodem.h libraries/delay/delay.h \
+ libraries/msxbios/extbio.h libraries/fossil/fossil.h \
+ libraries/msxbios/system_vars.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
