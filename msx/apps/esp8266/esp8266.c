@@ -15,6 +15,22 @@
 #define MAX_RESPONSE_STRING_LEN 128
 unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
+#if 0
+void fossil_rs_flush_with_log() {
+  unsigned int i = 65000;
+
+  while (i != 0) {
+    i--;
+
+    while (fossil_rs_in_stat() != 0) {
+      unsigned char c = fossil_rs_in();
+      printf("%c", c);
+      i = 65000;
+    }
+  }
+}
+#endif
+
 bool fossil_rs_read_line(const bool withLogging) {
   uint8_t        length = 0;
   unsigned int   timeout = 65000;
@@ -55,7 +71,7 @@ bool read_until_ok_or_error() {
       continue;
     }
 
-    if ((strncmp(responseStr, "OK", 2) != 0 && strncmp(responseStr, "ERROR", 2)) && timeout-- != 0)
+    if ((strncmp(responseStr, "OK", 2) != 0 && strncmp(responseStr, "ERROR", 5)) && timeout-- != 0)
       continue;
 
     break;
@@ -151,6 +167,18 @@ void subCommandWGet() {
   fossil_rs_string("\r\nat+wget");
   fossil_rs_string(pWgetUrl);
   fossil_rs_string("\r\n");
+
+  if (fossil_rs_read_line(false)) {
+    print_str("Error requesting file\r\n");
+    return;
+  }
+
+  if (strncmp(responseStr, "OK", 2) != 0) {
+    print_str("Error response received: ");
+    print_str(responseStr);
+    print_str("\r\n");
+    return;
+  }
 
   FILE *fptr;
   fptr = fopen(pTempFileName, "wb");

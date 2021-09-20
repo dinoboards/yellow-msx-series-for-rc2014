@@ -26,7 +26,7 @@ uint16_t           retry, retrans = MAXRETRANS;
 static int16_t       delay_point;
 static XMODEM_SIGNAL delay_resume;
 
-inline XMODEM_SIGNAL delay_start(uint8_t period, XMODEM_SIGNAL next_signal) {
+inline XMODEM_SIGNAL delay_start(uint16_t period, XMODEM_SIGNAL next_signal) {
   delay_point = ((int16_t)JIFFY) + (period);
   delay_resume = (next_signal);
   return DELAY_WAIT;
@@ -91,7 +91,7 @@ bool read_packet_sum() {
 XMODEM_SIGNAL read_first_header() {
   fossil_rs_out('C');
 
-  if (wait_for_byte(DLY_1S)) {
+  if (wait_for_byte(DLY_1S * 10)) {
     switch (fossil_rs_in()) {
     case SOH:
       xmodemState.currentPacketSize = 128;
@@ -116,7 +116,7 @@ XMODEM_SIGNAL read_first_header() {
 }
 
 XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  if (wait_for_byte(DLY_1S)) {
+  if (wait_for_byte(DLY_1S * 10)) {
     switch (fossil_rs_in()) {
     case SOH:
       xmodemState.currentPacketSize = 128;
