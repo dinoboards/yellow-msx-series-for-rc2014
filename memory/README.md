@@ -129,7 +129,15 @@ If you created more than one parition, you may need to use the [MAPDRV](https://
 
 ### Xmodem for SIO/2
 
-TBD - use the xrecv.com tool
+This version of the ROM image includes a very basic serial driver for the SIO/2 chip.
+
+By use of the included `xrecv.com` application, files can be sent to your device using xmodem.
+
+The image has been compiled on the assumption that the second clock rate is set to 0.3072Mhz (equating to 19200)
+
+If you want to send files over a serial link you will need the RC2014 Dual serial module SIO/2.  The Driver only uses the 2nd serial port - the first is unused. Configuring the 2nd Clock at 0.3072Mhz will map to a max and default baud rate of 19200. Please note that this mapping of clock frequency to baud rate is a little different than RomWBW configuration. At a clock of 0.3072Mhz, the software can select a baud rate of 19200, 9600 or 4800.
+
+*SIO/2 Driver versioning. Please note that for BIOS version 21-05-08, the dual serial clock rates were as per RomWBW - for 19200 Baud, select a clock of 1.2288Mhz. For build 2021-07-24 and after, follow settings as described above (eg: 0.3072Mhz => 19200)
 
 ### Playing ROM game images
 
