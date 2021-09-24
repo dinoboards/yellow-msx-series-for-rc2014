@@ -9,6 +9,17 @@ This module is part of the Yellow MSX series of modules to give your RC2014, MSX
 
 In addition, the module can also provide an optional power on reset signal.  See notes below.
 
+### Errata (1.6 revision)
+
+The ceramic capacitor value for the main clock should be 30pf, not 33pf.
+
+With a 33pf, the clock will work but may run a little slow.  Decreasing the capacitor's value will make the clock run a little faster.
+
+Individual cases may vary, so the kit has been supplied with 27pf, 30pf and 33pf to allow for experimentation.
+
+<img src="./errata-1.jpg" alt="Capacitor to change" width="50%"/>
+
+
 ## RP5C01 based RTC
 
 The RPC501 by RICOH, is a chip that maintains a time/date counter and is powered by a coin CR2032 battery, when the machine is switched off.
@@ -110,6 +121,10 @@ If the module is not calibrated, the clock will still work, but may slowly gain 
 To aid in calibration, I wrote a small MSX-DOS application `RTCCALB.COM`, that allows you to calibrate the RTC against your CPU's clock.  This should allow for a good approximation.  Do not worry if you can not get the clock the sync with the CPU clock.  Just get as close as you can.  If you notice your clock is gaining or losing time, you may want to retry calibration and apply a fudge factor to your calibration.
 
 You can build the application from within this repo, or download a pre-compiled version under the github [releases](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
+
+## Synchronizing with external time using ESP8266 Wifi Module.
+
+It is possible to synchronise the RTC via the ESP8266 to an internet synchronised clock.  It requires the WIFI module and SIO/2 be linked via the 2nd serial channel.  The `ESP8266.COM` application along with custom firmware for the ESP8266 are still under development.  See the [Hackaday project log](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014/log/197686-integrating-the-rc2014-wifi-module) for current status.
 
 ## RomWBW
 
