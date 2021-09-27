@@ -49,7 +49,7 @@ To select standard 1vpp sync signal - apply the jumper to J5 bottom two pins.
 
 > **Please note that using a TTL level sync signal to device not designed for this level of voltage, may damage the monitor/converter's components.**
 
-### Bill of Materials (advanced module)
+### Bill of Materials
 
 |Count   | Name  |
 |:------:|-------|
@@ -62,6 +62,8 @@ To select standard 1vpp sync signal - apply the jumper to J5 bottom two pins.
 | 1      | SHUNT 1x2 |
 | 1      |  5.6uH   |
 | 1      |  15-PIN DSUB  |
+| 3      |  2N3906  |
+| 1      |  2N3904  |
 | 3      |  10K  |
 | 3      |  12K  |
 | 3      |  27K  |
@@ -70,7 +72,6 @@ To select standard 1vpp sync signal - apply the jumper to J5 bottom two pins.
 | 8      |  100   |
 | 1      |  V9958   |
 | 1      |  ATF16V8  |
-| 1      |  74HC04  |
 | 4      |  41464C  |
 | 1      |  21.47727MHz  |
 | 1      | Right Angle 20x2 Header |

@@ -1,3 +1,8 @@
+## References
+
+http://fabf38.free.fr/diy/upgrmsx2/ct80msx2.png
+
+
 ## Title
 
 V9958 MSX RGB Video Module for RC2014
@@ -88,4 +93,5 @@ For more notes and any revisions please have a look at the [github page](https:/
 Please note that this is a kit, produced by a non-professional (me) for hackers, DIYers' and retro lovers, to tinker with.  I will do my best to answer any support questions you may have.
 
 The V9958 and 41464C chips are obsolete and out of manufacture.  They may be old-new-stock or pre-used, and as such there is a risk they may not function correctly.  Therefore, I fully test each chip, in-circuit, prior to packaging, so you can have good confidence that the chips you receive will perform as required.
+
 

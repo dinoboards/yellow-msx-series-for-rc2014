@@ -127,6 +127,7 @@ The design of the boards has borrowed a lot from pre-existing solutions out ther
 * [Steckschwein](https://steckschwein.de/hardware/v9958-video-board/)
 * [The Artemisa Project](https://github.com/apoloval/artemisa)
 * [The Omega MSX Kit](https://github.com/skiselev/omega)
+* [MSX ORG Forums](https://www.msx.org/)
 
 *Standing on the shoulders of giants.  Many thanks to all who share their knowledge and passions*
 
