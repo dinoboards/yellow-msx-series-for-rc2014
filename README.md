@@ -55,13 +55,13 @@ If you wish to operate in MSX Compatibility module, in addition to the GAME, VID
 
 See the [README file here](./video/README.md)
 
-Kit available at: https://www.tindie.com/products/dinotron/v9958-msx-video-board-for-rc2014/
+Kit available at: https://www.tindie.com/products/dinotron/v9958-msx-video-advanced-module-for-rc2014
 
 ## YM2149 Game Board Designed for RC2014
 
 See the [README file here](./game/README.md)
 
-Kit available at: https://www.tindie.com/products/dinotron/ym2149-msx-game-board-for-rc2014/
+Kit available at: https://www.tindie.com/products/dinotron/ym2149-msx-game-board-for-rc2014
 
 ## Real-Time-Clock Board Designed for RC2014
 
@@ -73,17 +73,17 @@ Comming Soon.
 
 See the [PPI README file here](./ppi/README.md)
 
-Kit available at: https://www.tindie.com/products/dinotron/msx-keyboard-designed-for-rc2014/
+Kit available at: https://www.tindie.com/products/dinotron/msx-keyboard-designed-for-rc2014
 
 See the [Keyboard README file here](./keyboard/README.md)
 
-Switches & Caps: at https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard/
+Switches & Caps: at https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard
 
 ## MSX Memory Board Designed for RC2014
 
 See the [README file here](./memory/README.md)
 
-Kit available at: https://www.tindie.com/products/dinotron/msx-memory-board-for-rc2014/
+Kit available at: https://www.tindie.com/products/dinotron/msx-memory-board-for-rc2014
 
 ### MSX BIOS/MSX-DOS
 

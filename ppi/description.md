@@ -28,7 +28,7 @@ These are a series of boards that I am developing to achieve MSX compatibility f
 
 The idea is that you can build each board one at a time, test it and play with it under RomWBW - and then once you have the set - load up some MSX/MSX2+ games!
 
-The first board in the series is the [V9958 Video board](https://www.tindie.com/products/dinotron/v9958-msx-video-board-for-rc2014/)
+The first board in the series is the [V9958 Video board](https://www.tindie.com/products/dinotron/v9958-msx-video-advanced-module-for-rc2014)
 
 The PPI board is a central component, needed for keyboard and memory management.
 
