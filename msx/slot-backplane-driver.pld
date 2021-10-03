@@ -20,11 +20,11 @@ PIN  7 = !RD;
 PIN  8 = !MREQ;
 PIN  9 = !M1;
 PIN 10 = GND;
-//PIN 11 = ;
-
-/**************** OUTPUT PINS *********************/
+PIN 11 = !RFSH;
 PIN 12 = SLT1_BUSDIR;
 PIN 13 = SLT2_BUSDIR;
+
+/**************** OUTPUT PINS *********************/
 PIN 14 = !DATADIR_RD;
 PIN 15 = !SLT_SL2;
 PIN 16 = !SLT_SL1;
@@ -33,13 +33,15 @@ PIN 18 = !CS2;
 PIN 19 = !CS1;
 PIN 20 = VCC;
 
-SLT_SL1 = SLT_HIGH & !SLT_LOW;
-SLT_SL2 = !SLT_HIGH & SLT_LOW;
+MRW = MREQ & !RFSH;
+READ = MRW & RD;
 
-CS1 = !A15 & A14;
-CS2 = A15 & !A14;
-CS12 = (!A15 & A14) # (A15 & !A14);
+SLT_SL1 = !SLT_HIGH & SLT_LOW & MRW;
+SLT_SL2 = SLT_HIGH & !SLT_LOW & MRW;
 
-DATADIR_RD = MREQ & RD & (SLT_SL1 # SLT_SL2);
+CS1 = !A15 & A14 & RD;
+CS2 = A15 & !A14 & RD;
+CS12 = ((!A15 & A14) # (A15 & !A14)) & RD;
 
+DATADIR_RD = MRW & RD & (SLT_SL1 # SLT_SL2);
 
