@@ -13,3 +13,8 @@ bool wait_for_byte(uint16_t period) __z88dk_fastcall {
 
   return fossil_rs_in_stat();
 }
+
+void fossil_flush_input(uint16_t period) __z88dk_fastcall {
+  while (wait_for_byte(period))
+    fossil_rs_in();
+}

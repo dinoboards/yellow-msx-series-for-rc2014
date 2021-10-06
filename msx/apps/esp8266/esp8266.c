@@ -1,3 +1,5 @@
+#define DIAGNOSTIC_FILE_CAPTURE true
+
 #include "arguments.h"
 #include "print.h"
 #include <delay.h>
@@ -15,7 +17,7 @@
 #define MAX_RESPONSE_STRING_LEN 128
 unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
-#if 0
+#if 1
 void fossil_rs_flush_with_log() {
   unsigned int i = 65000;
 
@@ -155,6 +157,17 @@ bool                 started = false;
 uint32_t             totalFileSize = 0;
 const unsigned char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
 uint8_t              rotatingIndex = 0;
+FILE *               fptrDiagnostics;
+
+void resetModem() {
+  delay(ONE_SECOND);
+  fossil_rs_string("+++");
+  delay(ONE_SECOND);
+  fossil_rs_string("\r\nATH\r\n"); // hang up
+  fossil_rs_read_line(false);
+  fossil_rs_string("\r\nATE0\r\n"); // hang up
+  fossil_rs_read_line(false);
+}
 
 void subCommandWGet() {
   print_str("Attempting to retrieve file ");
@@ -168,20 +181,25 @@ void subCommandWGet() {
   fossil_rs_string(pWgetUrl);
   fossil_rs_string("\r\n");
 
-  if (fossil_rs_read_line(false)) {
-    print_str("Error requesting file\r\n");
-    return;
-  }
+  if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
+    print_str("Resetting modem\r\n");
+    resetModem();
 
-  if (strncmp(responseStr, "OK", 2) != 0) {
-    print_str("Error response received: ");
-    print_str(responseStr);
-    print_str("\r\n");
-    return;
+    if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
+      print_str("Error requesting file:\r\n");
+      print_str(responseStr);
+      fossil_rs_flush_with_log();
+      print_str("\r\n");
+      return;
+    }
   }
 
   FILE *fptr;
   fptr = fopen(pTempFileName, "wb");
+
+#ifdef DIAGNOSTIC_FILE_CAPTURE
+  fptrDiagnostics = fopen("esp8266.txt", "wb");
+#endif
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
   while (sig = xmodem_receive(sig)) {
@@ -200,6 +218,26 @@ void subCommandWGet() {
       print_str(rotatingChar[rotatingIndex]);
       rotatingIndex = (rotatingIndex + 1) & 3;
     }
+
+    if (sig & PACKET_TIMEOUT) {
+      printf("\r\nTimeout %04X\r\n", sig);
+    }
+
+    if (sig & PACKET_REJECT) {
+      printf("\r\nReject %04X\r\n", sig);
+    }
+
+    if (sig & TRY_AGAIN) {
+      printf("\r\nTry Again %04X\r\n", sig);
+    }
+
+    if (sig & TOO_MANY_ERRORS) {
+      printf("\r\nToo Many Errors %04X\r\n", sig);
+    }
+
+    if (sig & UPSTREAM_CANCELLED) {
+      printf("\r\nUpstream Cancelled %04X\r\n", sig);
+    }
   }
 
   if (xmodemState.finish_reason != END_OF_STREAM) {
@@ -208,6 +246,10 @@ void subCommandWGet() {
   }
 
   print_str(ERASE_LINE "Saving file...");
+
+#ifdef DIAGNOSTIC_FILE_CAPTURE
+  fclose(fptrDiagnostics);
+#endif
 
   fclose(fptr);
   remove(pFileName);
@@ -219,6 +261,9 @@ void subCommandWGet() {
   return;
 
 abort:
+#ifdef DIAGNOSTIC_FILE_CAPTURE
+  fclose(fptrDiagnostics);
+#endif
   fclose(fptr);
   remove(pTempFileName);
 }

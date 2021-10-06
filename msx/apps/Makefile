@@ -74,7 +74,7 @@ rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c $(MSXDOS))
 $(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files))
 rtccalb.com.crt_enable_commandline:=1
 
-esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) $(MSXDOS) xrecv2/xmodem.c xrecv2/crc16.c xrecv2/serial.c xrecv2/utils.c)
+esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) $(MSXDOS) xrecv2/crc16.c xrecv2/serial.c xrecv2/utils.c)
 $(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files))
 esp8266.com.crt_enable_commandline:=1
 

@@ -57,42 +57,50 @@ static bool check_sum() {
   return (cks == *buf);
 }
 
-static void flush_input(void) {
-  while (wait_for_byte((DLY_1S * 3) >> 1))
-    fossil_rs_in();
-}
+static void flush_input(void) { serial_flush_input((DLY_1S * 3) >> 1); }
 
 bool read_packet_crc() {
   unsigned char *p = xmodemState.packetBuffer;
 
+  serial_in_block_start("\r\nReceiving Packet with CRC\r\n");
+
   *p++ = c;
   for (i = 0; i < (xmodemState.currentPacketSize + 1 + 3); ++i) {
-    if (!wait_for_byte(DLY_1S))
+    if (!wait_for_byte(DLY_1S)) {
+      serial_in_block_end("\r\nTimed out waiting for a full CRC packet to arrive.\r\n");
       return false;
-    *p++ = fossil_rs_in();
+    }
+    *p++ = serial_in();
   }
 
+  serial_in_block_end(NULL);
   return true;
 }
 
 bool read_packet_sum() {
   unsigned char *p = xmodemState.packetBuffer;
 
+  serial_in_block_start("\r\nReceiving Packet with CHKSUM\r\n");
+
   *p++ = c;
   for (i = 0; i < (xmodemState.currentPacketSize + 0 + 3); ++i) {
-    if (!wait_for_byte(DLY_1S))
+    if (!wait_for_byte(DLY_1S)) {
+      serial_in_block_end("\r\nTimed out waiting for a full CHKSUM packet to arrive.\r\n");
       return false;
-    *p++ = fossil_rs_in();
+    }
+    *p++ = serial_in();
   }
+
+  serial_in_block_end(NULL);
 
   return true;
 }
 
 XMODEM_SIGNAL read_first_header() {
-  fossil_rs_out('C');
+  serial_out('C');
 
   if (wait_for_byte(DLY_1S * 10)) {
-    switch (fossil_rs_in()) {
+    switch (serial_in()) {
     case SOH:
       xmodemState.currentPacketSize = 128;
       return READ_CRC | READ_128;
@@ -102,12 +110,12 @@ XMODEM_SIGNAL read_first_header() {
       return READ_CRC | READ_1024;
 
     case EOT:
-      fossil_rs_out(ACK);
+      serial_out(ACK);
       return END_OF_STREAM;
 
     case CAN:
       flush_input();
-      fossil_rs_out(ACK);
+      serial_out(ACK);
       return UPSTREAM_CANCELLED;
     }
   }
@@ -117,7 +125,7 @@ XMODEM_SIGNAL read_first_header() {
 
 XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (wait_for_byte(DLY_1S * 10)) {
-    switch (fossil_rs_in()) {
+    switch (serial_in()) {
     case SOH:
       xmodemState.currentPacketSize = 128;
       return signal | READ_128;
@@ -127,12 +135,12 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
       return signal | READ_1024;
 
     case EOT:
-      fossil_rs_out(ACK);
+      serial_out(ACK);
       return END_OF_STREAM;
 
     case CAN:
       flush_input();
-      fossil_rs_out(ACK);
+      serial_out(ACK);
       return UPSTREAM_CANCELLED;
     }
   }
@@ -142,16 +150,20 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 
 XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (!read_packet_crc())
-    return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT);
+    return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT | STREAM_ERROR);
+
+  serial_diagnostic_message("\r\nPacket Received via CRC\r\n");
 
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc())
     return signal | SAVE_PACKET;
 
+  serial_diagnostic_message("\r\nCRC failure\r\n");
+
   if (--retrans <= 0) {
     flush_input();
-    fossil_rs_out(CAN);
-    fossil_rs_out(CAN);
-    fossil_rs_out(CAN);
+    serial_out(CAN);
+    serial_out(CAN);
+    serial_out(CAN);
     return TOO_MANY_ERRORS;
   }
 
@@ -160,16 +172,20 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 
 XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (!read_packet_sum())
-    return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT);
+    return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT | STREAM_ERROR);
+
+  serial_diagnostic_message("\r\nPacket Received via CHKSUM\r\n");
 
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum())
     return signal | SAVE_PACKET;
 
+  serial_diagnostic_message("\r\nCHKSUM failure\r\n");
+
   if (--retrans <= 0) {
     flush_input();
-    fossil_rs_out(CAN);
-    fossil_rs_out(CAN);
-    fossil_rs_out(CAN);
+    serial_out(CAN);
+    serial_out(CAN);
+    serial_out(CAN);
     return TOO_MANY_ERRORS;
   }
 
@@ -183,13 +199,13 @@ XMODEM_SIGNAL xmodem_tryagain(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     return TOO_MANY_ERRORS;
 
   fputc_cons('.');
-  fossil_rs_out(NAK);
+  serial_out(NAK);
   retry++;
   return signal | READ_HEADER;
 }
 
 XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  fossil_rs_out(ACK);
+  serial_out(ACK);
   ++packetno;
   retrans = MAXRETRANS + 1;
   retry = 0;
@@ -198,9 +214,9 @@ XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 
 XMODEM_SIGNAL xmodem_too_many_errors() __z88dk_fastcall {
   flush_input();
-  fossil_rs_out(CAN);
-  fossil_rs_out(CAN);
-  fossil_rs_out(CAN);
+  serial_out(CAN);
+  serial_out(CAN);
+  serial_out(CAN);
   xmodemState.finish_reason = TOO_MANY_ERRORS;
   return FINISHED;
 }
@@ -251,7 +267,7 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 					goto start_trans;
 // 				case CAN:
 // 					if ((c = _inbyte(DLY_1S)) == CAN) {
-// 						fossil_rs_out(ACK);
+// 						serial_out(ACK);
 // 						flush_input();
 // 						return -1; /* canceled by remote */
 // 					}
@@ -261,9 +277,9 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 				}
 // 			}
 // 		}
-// 		fossil_rs_out(CAN);
-// 		fossil_rs_out(CAN);
-// 		fossil_rs_out(CAN);
+// 		serial_out(CAN);
+// 		serial_out(CAN);
+// 		serial_out(CAN);
 // 		flush_input();
 // 		return -2; /* no sync */
 
@@ -296,7 +312,7 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 				}
 // 				for (retry = 0; retry < MAXRETRANS; ++retry) {
 // 					for (i = 0; i < xmodemState.currentPacketSize+4+(crc?1:0); ++i) {
-// 						fossil_rs_out(xmodemState.packetBuffer[i]);
+// 						serial_out(xmodemState.packetBuffer[i]);
 // 					}
 // 					if ((c = _inbyte(DLY_1S)) >= 0 ) {
 // 						switch (c) {
@@ -306,7 +322,7 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 							goto start_trans;
 // 						case CAN:
 // 							if ((c = _inbyte(DLY_1S)) == CAN) {
-// 								fossil_rs_out(ACK);
+// 								serial_out(ACK);
 // 								flush_input();
 // 								return -1; /* canceled by remote */
 // 							}
@@ -317,15 +333,15 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 						}
 // 					}
 // 				}
-// 				fossil_rs_out(CAN);
-// 				fossil_rs_out(CAN);
-// 				fossil_rs_out(CAN);
+// 				serial_out(CAN);
+// 				serial_out(CAN);
+// 				serial_out(CAN);
 // 				flush_input();
 // 				return -4; /* xmit error */
 // 			}
 // 			else {
 // 				for (retry = 0; retry < 10; ++retry) {
-// 					fossil_rs_out(EOT);
+// 					serial_out(EOT);
 // 					if ((c = _inbyte((DLY_1S)<<1)) == ACK) break;
 // 				}
 // 				flush_input();
