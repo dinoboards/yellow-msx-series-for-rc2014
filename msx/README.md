@@ -40,7 +40,7 @@ This submodule contains a fork of the NEXTOR disk operating system for MSX syste
 This local fork, also includes drivers specifically for RC2014, including:
 
 * An embedded floppy boot image, allowing the RC2014 to be booted diskless, without the need for any external storage
-* A driver for the [RC2014 Compact Flash module](https://www.tindie.com/products/semachthemonkey/compact-flash-module-for-cpm-rc2014-computer/)
+* A driver for the RC2014 Compact Flash Module - Spencer's Kits at [Z80Kits](https://z80kits.com/shop/compact-flash-module) and [Tindie](https://www.tindie.com/products/semachthemonkey/compact-flash-module-for-cpm-rc2014-computer)
 
 There are plans to add additional RC2014 hardware support, including Floppy drives, Serial and others.
 
