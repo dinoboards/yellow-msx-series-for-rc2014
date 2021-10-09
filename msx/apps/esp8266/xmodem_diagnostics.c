@@ -1,7 +1,9 @@
-#define DIAGNOSTIC_FILE_CAPTURE true
+// #define DIAGNOSTIC_FILE_CAPTURE true
+
 #include "../xrecv2/xmodem.c"
 #include <stdio.h>
 
+#ifdef DIAGNOSTIC_FILE_CAPTURE
 extern FILE *fptrDiagnostics;
 
 void serial_out(uint8_t ch) __z88dk_fastcall {
@@ -36,3 +38,4 @@ void serial_in_block_end(const unsigned char *pMessage) {
 }
 
 extern void serial_diagnostic_message(const unsigned char *pMessage) { fprintf(fptrDiagnostics, pMessage); }
+#endif

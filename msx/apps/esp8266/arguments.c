@@ -17,17 +17,16 @@ uint8_t abort_with_help() {
             "Utility to manage RC2014 Wifi Module\r\n\r\n"
             "  /b<rate>, /baud=<rate>\r\n"
             "    The desired tx/rx baud <rate>\r\n"
-            "    eg 19200\r\n"
             "  hangup\r\n"
-            "    Issue command to hangup remote\r\n"
-            "    connection\r\n"
+            "    Issue command to hangup\r\n"
             "  time-sync\r\n"
-            "    Sync the MSX RTC with\r\n"
-            "    internet time\r\n"
+            "    Sync the MSX RTC\r\n"
             "  set-timezone <zone>\r\n"
             "    Set timezone\r\n"
             "  set-wifi <ssid> <password>\r\n"
             "    Set wifi credentials\r\n"
+            "  wget <url> <localfile>\r\n"
+            "    Retrieve with http/https"
             "\r\n");
   exit(1);
 

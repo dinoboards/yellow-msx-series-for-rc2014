@@ -1,4 +1,4 @@
-#define DIAGNOSTIC_FILE_CAPTURE true
+// #define DIAGNOSTIC_FILE_CAPTURE true
 
 #include "arguments.h"
 #include "print.h"
@@ -116,7 +116,6 @@ void subCommandTimeSync() {
   int32_t t2 = ((int32_t)hour * 60 * 60) + (int32_t)min * 60 + (int32_t)sec;
 
   printf("Time: %04d:%02d:%02d %02d:%02d:%02d\r\n", year, month, day, hour, min, sec);
-  printf("Second drift: %d\r\n", (int)(t2 - t1));
 }
 
 void subCommandSetTimeZone() {
@@ -282,9 +281,6 @@ void main(const int argc, const unsigned char **argv) {
 
   process_cli_arguments(argv, argc);
 
-  print_str("Requested Baud Rate: ");
-  print_str(fossil_rate_to_string(baud_rate));
-  print_str("\r\n");
   uint16_t actual_baud_rate = fossil_set_baud(baud_rate);
   if (actual_baud_rate != baud_rate) {
     print_str("Actual Baud Rate: ");
