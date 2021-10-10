@@ -10,6 +10,7 @@
 #define SUB_COMMAND_SET_TIMEZONE 3
 #define SUB_COMMAND_SET_WIFI     4
 #define SUB_COMMAND_WGET         5
+#define SUB_COMMAND_MSXHUB       6
 
 extern uint8_t     subCommand;
 extern const char *pNewTimeZone;
@@ -18,6 +19,7 @@ extern const char *pNewPassword;
 extern const char *pWgetUrl;
 extern const char *pFileName;
 extern uint16_t    baud_rate;
+extern const char *pMsxHubPackageName;
 
 void process_cli_arguments(const char **argv, const int argc);
 

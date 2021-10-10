@@ -9,6 +9,7 @@ const char *pNewPassword;
 const char *pWgetUrl;
 const char *pFileName;
 uint16_t    baud_rate = 7 * 256 + 7; // 19200
+const char *pMsxHubPackageName;
 
 const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
 
@@ -36,6 +37,11 @@ uint8_t abort_with_help() {
 uint8_t abort_with_invalid_options() {
   print_str("Invalid usage\r\n");
   return abort_with_help();
+}
+
+uint8_t abort_with_invalid_package_name() {
+  print_str("msxhub package name is invalid.  Must be 8 or less characters\r\n");
+  return 255;
 }
 
 uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
@@ -77,6 +83,16 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
       pWgetUrl = argv[i + 1];
       pFileName = argv[i + 2];
       return i + 3;
+    }
+
+    if (strncasecmp(argv[i], "msxhub", 6) == 0) {
+      if (i + 1 >= argc)
+        return abort_with_invalid_options();
+      subCommand = SUB_COMMAND_MSXHUB;
+      pMsxHubPackageName = argv[i + 1];
+      if (strlen(pMsxHubPackageName) > 8)
+        return abort_with_invalid_package_name();
+      return i + 2;
     }
 
     return abort_with_invalid_options();

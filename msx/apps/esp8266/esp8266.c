@@ -2,6 +2,7 @@
 
 #include "arguments.h"
 #include "print.h"
+#include <ctype.h>
 #include <delay.h>
 #include <extbio.h>
 #include <fossil.h>
@@ -272,6 +273,41 @@ abort:
   remove(pTempFileName);
 }
 
+char msxHubUrl[] = "https://msxhub.com/api/12345678/latest/get/12345678.zip  ";
+char msxHubFileName[] = "12345678.zip  ";
+
+char *str_append(char *dest, const char *src) {
+  while (*src)
+    *dest++ = *src++;
+
+  *dest = 0;
+  return dest;
+}
+
+char *str_append_upper(char *dest, const char *src) {
+  while (*src)
+    *dest++ = toupper(*src++);
+
+  *dest = 0;
+  return dest;
+}
+void subCommandMsxHub() {
+  msxHubUrl[0] = 0;
+  char *p = str_append(msxHubUrl, "https://msxhub.com/api/");
+  p = str_append_upper(p, pMsxHubPackageName);
+  p = str_append(p, "/latest/get/");
+  p = str_append_upper(p, pMsxHubPackageName);
+  p = str_append(p, ".zip");
+
+  msxHubFileName[0] = 0;
+  p = str_append_upper(msxHubFileName, pMsxHubPackageName);
+  str_append(p, ".zip");
+
+  pWgetUrl = msxHubUrl;
+  pFileName = msxHubFileName;
+  subCommandWGet();
+}
+
 void main(const int argc, const unsigned char **argv) {
   (void)argc;
   (void)argv;
@@ -324,6 +360,12 @@ void main(const int argc, const unsigned char **argv) {
     subCommandWGet();
     goto done;
   }
+
+  if (subCommand == SUB_COMMAND_MSXHUB) {
+    subCommandMsxHub();
+    goto done;
+  }
+
 done:
   fossil_deinit();
 }
