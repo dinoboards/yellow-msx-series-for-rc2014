@@ -164,7 +164,7 @@ void resetModem() {
   delay(ONE_SECOND);
   fossil_rs_string("\r\nATH\r\n"); // hang up
   fossil_rs_read_line(false);
-  fossil_rs_string("\r\nATE0\r\n"); // hang up
+  fossil_rs_string("\r\nATE0\r\n"); // echo off
   fossil_rs_read_line(false);
 }
 
@@ -183,6 +183,11 @@ void subCommandWGet() {
   if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
     print_str("Resetting modem\r\n");
     resetModem();
+
+    fossil_rs_flush();
+    fossil_rs_string("\r\nat+wget");
+    fossil_rs_string(pWgetUrl);
+    fossil_rs_string("\r\n");
 
     if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
       print_str("Error requesting file:\r\n");
