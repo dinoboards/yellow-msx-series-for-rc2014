@@ -20,8 +20,8 @@ This V9958 chip, was produced by Yamaha in the late 80s and was an update to the
 * Easy prototyping to various V9958 pins such as the colour bus, clock and other syncing signals.
 
 <table>
-  <tr><td><img src="./pictures/pcb-front-v2.2.jpg" width="100%"/></td><td><img src="./pictures/pcb-rear-v2.2.jpg" width="100%"/></td></tr>
-  <tr><td><img src="./pictures/video-RGB-assembled.jpg" width="100%"/></td><td><img src="./pictures/video-rgb-profile.jpg" width="100%"/></td></tr>
+  <tr><td><img src="./pictures/rgb-pcb-front-v2.2.4.jpg" width="100%"/></td><td><img src="./pictures/rgb-pcb-rear-v2.2.4.jpg" width="88%"/></td></tr>
+  <tr><td><img src="./pictures/video-rgb-v2.2.4.jpg" width="100%"/>V2.2.4</td><td><img src="./pictures/video-rgb-profile.jpg" width="100%"/></td></tr>
 </table>
 
 ### DSUB pin out
@@ -141,9 +141,17 @@ Extra care needed when inserting the V9958 into its socket - there are lots of p
 
 The pads for the transistor footprints are very close together - take extra care not to bridge the pins.  Its recommend you solder the inner pins first.  After soldering each transistor, double check with a multimeter that there are no unexpected shorts.
 
-### Errata for V2.2
+### Revisions
 
-The Diodes D1 and D2 are redundant and not required.  Solder a wire where the silkscreen has the diodes layed out (bottom right of pcb).
+* V2.2.3 - First revision sold on Tindie
+* V2.2.4 - Minor changes to layout to allow for larger capacitors to be installed
+
+### Errata for V2.2.3
+
+The Diodes D1 and D2 are not required.  Solder a wire where the silkscreen has the diodes layed out (bottom right of pcb).
+
+<img src="./pictures/video-RGB-assembled.jpg" width="50%"/>
+
 
 ## License
 Copyright 2021 Dean Netherton
