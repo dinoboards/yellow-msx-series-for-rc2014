@@ -20,15 +20,13 @@ unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
 #if 1
 void fossil_rs_flush_with_log() {
-  unsigned int i = 65000;
+  int16_t        timeout = get_future_time(from_ms(5000));
 
-  while (i != 0) {
-    i--;
-
+  while (!is_time_past(timeout)) {
     while (fossil_rs_in_stat() != 0) {
       unsigned char c = fossil_rs_in();
       printf("%c", c);
-      i = 65000;
+      timeout = get_future_time(from_ms(5000));
     }
   }
 }
@@ -36,12 +34,12 @@ void fossil_rs_flush_with_log() {
 
 bool fossil_rs_read_line(const bool withLogging) {
   uint8_t        length = 0;
-  unsigned int   timeout = 65000;
+  int16_t        timeout = get_future_time(from_ms(5000));
   unsigned char *pBuffer = responseStr;
 
-  while (length < MAX_RESPONSE_STRING_LEN && timeout != 0) {
+  while (length < MAX_RESPONSE_STRING_LEN && !is_time_past(timeout)) {
     if (fossil_rs_in_stat() != 0) {
-      timeout = 65000;
+      timeout = get_future_time(from_ms(5000));
       const unsigned char t = fossil_rs_in();
       if (withLogging)
         fputc_cons(t);
@@ -53,28 +51,27 @@ bool fossil_rs_read_line(const bool withLogging) {
 
       if (t == '\n')
         break;
-    } else
-      timeout--;
+    }
   }
 
   *pBuffer = 0;
 
-  return timeout == 0;
+  return is_time_past(timeout);
 }
 
 bool read_until_ok_or_error() {
-  unsigned int timeout = 65000;
+  int16_t        timeout = get_future_time(from_ms(2000));
   bool         lineReceived = true;
 
   responseStr[0] = 0;
 
   while (true) {
     if (lineReceived = fossil_rs_read_line(true)) {
-      timeout = 65000;
+      timeout = get_future_time(from_ms(2000));
       continue;
     }
 
-    if ((strncmp(responseStr, "OK", 2) != 0 && strncmp(responseStr, "ERROR", 5)) && timeout-- != 0)
+    if ((strncmp(responseStr, "OK", 2) != 0 && strncmp(responseStr, "ERROR", 5) != 0) && !is_time_past(timeout))
       continue;
 
     break;
