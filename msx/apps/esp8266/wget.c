@@ -68,6 +68,15 @@ void wget() {
 
   print_str(waitForMessage);
 
+  char downloadMessage[3 + 13 + 1];
+  strcpy(downloadMessage, ERASE_LINE);
+  if (pFileName)
+    strcat(downloadMessage, pFileName);
+  else
+    strcat(downloadMessage, "Downloading");
+
+  strcat(downloadMessage, " ");
+
   FILE *fptr = NULL;
   if (pFileName)
     fptr = fopen(pTempFileName, "wb");
@@ -83,7 +92,7 @@ void wget() {
 
     if (!started && (sig & (READ_128 | READ_1024))) {
       started = true;
-      print_str(ERASE_LINE "Downloading ");
+      print_str(downloadMessage);
       print_str(sig & READ_CRC ? "(crc) ... " : "(chksum) ... ");
     }
 
@@ -134,7 +143,12 @@ void wget() {
     remove(pFileName);
     rename(pTempFileName, pFileName);
 
-    print_str(ERASE_LINE "Downloaded ");
+    print_str(ERASE_LINE);
+    if (pFileName)
+      print_str(pFileName);
+    else
+      print_str("Downloaded");
+    print_str(" ");
     print_str(uint32_to_string(totalFileSize));
     print_str(" bytes.\r\n");
   }

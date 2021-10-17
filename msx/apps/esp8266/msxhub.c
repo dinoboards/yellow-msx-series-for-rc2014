@@ -132,8 +132,6 @@ void downloadFile(const char *fileName) __z88dk_fastcall {
   p = str_append(p, "/");
   str_append(p, fileName);
 
-  printf("FILE: %s\r\n", fileName);
-
   pWgetUrl = msxHubUrl;
   pFileName = fileName;
   requestLargePacket = false;
