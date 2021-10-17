@@ -1,4 +1,4 @@
-// #define DIAGNOSTIC_FILE_CAPTURE true
+#include "features.h"
 
 #include "../xrecv2/xmodem.c"
 #include <stdio.h>

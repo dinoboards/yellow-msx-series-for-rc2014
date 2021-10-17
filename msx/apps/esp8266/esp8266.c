@@ -1,4 +1,4 @@
-// #define DIAGNOSTIC_FILE_CAPTURE true
+#include "features.h"
 
 #include "arguments.h"
 #include "print.h"
@@ -20,7 +20,7 @@ unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
 #if 1
 void fossil_rs_flush_with_log() {
-  int16_t        timeout = get_future_time(from_ms(5000));
+  int16_t timeout = get_future_time(from_ms(5000));
 
   while (!is_time_past(timeout)) {
     while (fossil_rs_in_stat() != 0) {
@@ -60,8 +60,8 @@ bool fossil_rs_read_line(const bool withLogging) {
 }
 
 bool read_until_ok_or_error() {
-  int16_t        timeout = get_future_time(from_ms(2000));
-  bool         lineReceived = true;
+  int16_t timeout = get_future_time(from_ms(2000));
+  bool    lineReceived = true;
 
   responseStr[0] = 0;
 
