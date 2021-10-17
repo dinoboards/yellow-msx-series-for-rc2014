@@ -20,7 +20,7 @@
 
 struct xmodemState xmodemState;
 unsigned char      packetno = 1;
-uint16_t           i, c, len = 0;
+uint16_t           i;
 uint16_t           retry, retrans = MAXRETRANS;
 
 static int16_t       delay_point;
@@ -64,7 +64,7 @@ bool read_packet_crc() {
 
   serial_in_block_start("\r\nReceiving Packet with CRC\r\n");
 
-  *p++ = c;
+  p++;
   for (i = 0; i < (xmodemState.currentPacketSize + 1 + 3); ++i) {
     if (!wait_for_byte(DLY_1S)) {
       serial_in_block_end("\r\nTimed out waiting for a full CRC packet to arrive.\r\n");
@@ -82,7 +82,7 @@ bool read_packet_sum() {
 
   serial_in_block_start("\r\nReceiving Packet with CHKSUM\r\n");
 
-  *p++ = c;
+  p++;
   for (i = 0; i < (xmodemState.currentPacketSize + 0 + 3); ++i) {
     if (!wait_for_byte(DLY_1S)) {
       serial_in_block_end("\r\nTimed out waiting for a full CHKSUM packet to arrive.\r\n");
@@ -97,6 +97,9 @@ bool read_packet_sum() {
 }
 
 XMODEM_SIGNAL read_first_header() {
+  packetno = 1;
+  retry = retrans = MAXRETRANS;
+
   serial_out('C');
 
   if (wait_for_byte(DLY_1S * 10)) {

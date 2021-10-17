@@ -210,7 +210,7 @@ process_baud_rate:
   return 255;
 }
 
-bool isBlank(const char *str) {
+bool isBlank(const char *str) __z88dk_fastcall {
   while (*str && *str == ' ')
     str++;
 

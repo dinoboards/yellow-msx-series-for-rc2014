@@ -4,15 +4,21 @@
 ./bin/extbio/main.c.asm: extbio/main.c libraries/fossil/fossil.h \
  libraries/msxdos/msxdos.h xstdio.h libraries/msxbios/extbio.h
 ./bin/lines.c.asm: lines.c v9958.h
+./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
+ esp8266/esp8266.h print.h xrecv2/utils.h libraries/fossil/fossil.h \
+ libraries/msxdos/msxdos.h xrecv2/xmodem.h
 ./bin/esp8266/xmodem_diagnostics.c.asm: esp8266/xmodem_diagnostics.c esp8266/features.h \
  esp8266/../xrecv2/xmodem.c esp8266/../xrecv2/xmodem.h \
  esp8266/../xrecv2/crc16.h esp8266/../xrecv2/serial.h \
  libraries/fossil/fossil.h libraries/msxbios/system_vars.h
 ./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
+./bin/esp8266/msxhub.c.asm: esp8266/msxhub.c esp8266/msxhub.h esp8266/arguments.h \
+ esp8266/esp8266.h print.h esp8266/wget.h xrecv2/xmodem.h
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/features.h esp8266/arguments.h \
- print.h libraries/delay/delay.h libraries/msxbios/extbio.h \
+ esp8266/esp8266.h esp8266/msxhub.h print.h esp8266/wget.h \
+ libraries/delay/delay.h libraries/msxbios/extbio.h \
  libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h xrecv2/utils.h xrecv2/xmodem.h
+ libraries/msxbios/system_vars.h
 ./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
 ./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/crc16.h \
  xrecv2/serial.h libraries/fossil/fossil.h \

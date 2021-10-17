@@ -1,24 +1,27 @@
 #include "features.h"
 
 #include "arguments.h"
+#include "esp8266.h"
+#include "msxhub.h"
 #include "print.h"
-#include <ctype.h>
+#include "wget.h"
 #include <delay.h>
 #include <extbio.h>
 #include <fossil.h>
 #include <msxdos.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <system_vars.h>
-#include <utils.h>
-#include <xmodem.h>
 
-#define ONE_SECOND              (VDP_FREQUENCY * 1.1)
-#define MAX_RESPONSE_STRING_LEN 128
 unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
-#if 1
+void abortWithError(const char *pMessage) __z88dk_fastcall {
+  if (pMessage) {
+    print_str("\r\n");
+    print_str(pMessage);
+    print_str("\r\n");
+  }
+  exit(1);
+}
+
 void fossil_rs_flush_with_log() {
   int16_t timeout = get_future_time(from_ms(5000));
 
@@ -30,9 +33,8 @@ void fossil_rs_flush_with_log() {
     }
   }
 }
-#endif
 
-bool fossil_rs_read_line(const bool withLogging) {
+bool fossil_rs_read_line(const bool withLogging) __z88dk_fastcall {
   uint8_t        length = 0;
   int16_t        timeout = get_future_time(from_ms(5000));
   unsigned char *pBuffer = responseStr;
@@ -148,14 +150,6 @@ void subCommandSetWiFi() {
   read_until_ok_or_error();
 }
 
-#define ERASE_LINE "\x1B\x6C\r"
-const unsigned char *pTempFileName = "xmdwn.tmp";
-bool                 started = false;
-uint32_t             totalFileSize = 0;
-const unsigned char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
-uint8_t              rotatingIndex = 0;
-FILE *               fptrDiagnostics;
-
 void resetModem() {
   delay(ONE_SECOND);
   fossil_rs_string("+++");
@@ -164,183 +158,6 @@ void resetModem() {
   fossil_rs_read_line(false);
   fossil_rs_string("\r\nATE0\r\n"); // echo off
   fossil_rs_read_line(false);
-}
-
-extern uint8_t wget();
-
-void subCommandWGet() {
-  print_str("Attempting to retrieve file ");
-  print_str(pFileName);
-  print_str(" from ");
-  print_str(pWgetUrl);
-  print_str("\r\n");
-
-  wget();
-}
-
-uint8_t wget() {
-  print_str(ERASE_LINE "Connecting ...");
-
-  fossil_rs_flush();
-  fossil_rs_string("\r\nat+wget");
-  if (requestLargePacket)
-    fossil_rs_string("1");
-  fossil_rs_string(pWgetUrl);
-  fossil_rs_string("\r\n");
-
-  if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
-    print_str(ERASE_LINE "Resetting modem ...");
-    resetModem();
-
-    fossil_rs_flush();
-    fossil_rs_string("\r\nat+wget");
-    if (requestLargePacket)
-      fossil_rs_string("1");
-    fossil_rs_string(pWgetUrl);
-    fossil_rs_string("\r\n");
-
-    if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
-      print_str("\r\nError requesting file:\r\n");
-      print_str(responseStr);
-      fossil_rs_flush_with_log();
-      print_str("\r\n");
-      return 2;
-    }
-  }
-
-  print_str(ERASE_LINE "Waiting for data ...");
-
-  FILE *fptr = NULL;
-  if (pFileName)
-    fptr = fopen(pTempFileName, "wb");
-
-#ifdef DIAGNOSTIC_FILE_CAPTURE
-  fptrDiagnostics = fopen("esp8266.txt", "wb");
-#endif
-
-  XMODEM_SIGNAL sig = READ_FIRST_HEADER;
-  while (sig = xmodem_receive(sig)) {
-    if (msxbiosBreakX())
-      goto abort;
-
-    if (!started && (sig & (READ_128 | READ_1024))) {
-      started = true;
-      print_str(ERASE_LINE "Downloading ");
-      print_str(sig & READ_CRC ? "(crc) ... " : "(chksum) ... ");
-    }
-
-    if (sig & SAVE_PACKET) {
-      totalFileSize += xmodemState.currentPacketSize;
-      if (pFileName)
-        fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
-      print_str(rotatingChar[rotatingIndex]);
-      rotatingIndex = (rotatingIndex + 1) & 3;
-    }
-
-    if (sig & PACKET_TIMEOUT) {
-      printf("\r\nTimeout %04X\r\n", sig);
-    }
-
-    if (sig & PACKET_REJECT) {
-      printf("\r\nReject %04X\r\n", sig);
-    }
-
-    if (sig & TRY_AGAIN) {
-      printf("\r\nTry Again %04X\r\n", sig);
-    }
-
-    if (sig & TOO_MANY_ERRORS) {
-      printf("\r\nToo Many Errors %04X\r\n", sig);
-    }
-
-    if (sig & UPSTREAM_CANCELLED) {
-      printf("\r\nUpstream Cancelled %04X\r\n", sig);
-    }
-  }
-
-  if (xmodemState.finish_reason != END_OF_STREAM) {
-    print_str(ERASE_LINE "Error receiving file\r\n");
-    goto abort;
-  }
-
-  if (pFileName) {
-    print_str(ERASE_LINE "Saving file...");
-  }
-
-#ifdef DIAGNOSTIC_FILE_CAPTURE
-  fclose(fptrDiagnostics);
-#endif
-
-  if (pFileName) {
-    fclose(fptr);
-    remove(pFileName);
-    rename(pTempFileName, pFileName);
-
-    print_str(ERASE_LINE "Downloaded ");
-    print_str(uint32_to_string(totalFileSize));
-    print_str(" bytes.\r\n");
-  }
-
-  return 0;
-
-abort:
-#ifdef DIAGNOSTIC_FILE_CAPTURE
-  fclose(fptrDiagnostics);
-#endif
-  if (pFileName) {
-    fclose(fptr);
-    remove(pTempFileName);
-  }
-
-  return 1;
-}
-
-char msxHubUrl[] = "https://msxhub.com/api/12345678/latest/get/12345678.zip  ";
-char msxHubFileName[] = "12345678.zip  ";
-
-char *str_append(char *dest, const char *src) {
-  while (*src)
-    *dest++ = *src++;
-
-  *dest = 0;
-  return dest;
-}
-
-char *str_append_upper(char *dest, const char *src) {
-  while (*src)
-    *dest++ = toupper(*src++);
-
-  *dest = 0;
-  return dest;
-}
-void subCommandMsxHub() {
-  msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, "https://msxhub.com/api/");
-  p = str_append_upper(p, pMsxHubPackageName);
-  p = str_append(p, "/latest/pages");
-
-  pWgetUrl = msxHubUrl;
-  pFileName = NULL;
-
-  if (wget())
-    return;
-
-  const int numberOfPages = atoi(xmodemState.packetBuffer + 3);
-
-  for (int i = 0; i < numberOfPages; i++) {
-  }
-  printf("\r\nINT----> %d\r\n", numberOfPages);
-
-  // p = str_append_upper(p, pMsxHubPackageName);
-  // p = str_append(p, ".zip");
-
-  // msxHubFileName[0] = 0;
-  // p = str_append_upper(msxHubFileName, pMsxHubPackageName);
-  // str_append(p, ".zip");
-
-  // pWgetUrl = msxHubUrl;
-  // pFileName = msxHubFileName;
-  // subCommandWGet();
 }
 
 void main(const int argc, const unsigned char **argv) {
