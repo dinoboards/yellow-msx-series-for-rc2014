@@ -183,6 +183,8 @@ uint8_t wget() {
 
   fossil_rs_flush();
   fossil_rs_string("\r\nat+wget");
+  if (requestLargePacket)
+    fossil_rs_string("1");
   fossil_rs_string(pWgetUrl);
   fossil_rs_string("\r\n");
 
@@ -192,6 +194,8 @@ uint8_t wget() {
 
     fossil_rs_flush();
     fossil_rs_string("\r\nat+wget");
+    if (requestLargePacket)
+      fossil_rs_string("1");
     fossil_rs_string(pWgetUrl);
     fossil_rs_string("\r\n");
 
@@ -259,7 +263,7 @@ uint8_t wget() {
     goto abort;
   }
 
-  if(pFileName) {
+  if (pFileName) {
     print_str(ERASE_LINE "Saving file...");
   }
 
@@ -267,7 +271,7 @@ uint8_t wget() {
   fclose(fptrDiagnostics);
 #endif
 
-  if(pFileName) {
+  if (pFileName) {
     fclose(fptr);
     remove(pFileName);
     rename(pTempFileName, pFileName);
@@ -283,7 +287,7 @@ abort:
 #ifdef DIAGNOSTIC_FILE_CAPTURE
   fclose(fptrDiagnostics);
 #endif
-  if(pFileName) {
+  if (pFileName) {
     fclose(fptr);
     remove(pTempFileName);
   }
@@ -323,8 +327,7 @@ void subCommandMsxHub() {
 
   const int numberOfPages = atoi(xmodemState.packetBuffer + 3);
 
-  for(int i = 0; i < numberOfPages; i++) {
-
+  for (int i = 0; i < numberOfPages; i++) {
   }
   printf("\r\nINT----> %d\r\n", numberOfPages);
 

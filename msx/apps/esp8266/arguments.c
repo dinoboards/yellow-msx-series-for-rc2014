@@ -10,6 +10,7 @@ const char *pWgetUrl;
 const char *pFileName;
 uint16_t    baud_rate = 7 * 256 + 7; // 19200
 const char *pMsxHubPackageName;
+uint8_t     requestLargePacket;
 
 const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
 
@@ -26,7 +27,7 @@ uint8_t abort_with_help() {
             "    Set timezone\r\n"
             "  set-wifi <ssid> <password>\r\n"
             "    Set wifi credentials\r\n"
-            "  wget <url> <localfile>\r\n"
+            "  wget [1k] <url> <localfile>\r\n"
             "    Retrieve with http/https"
             "\r\n");
   exit(1);
@@ -80,8 +81,15 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
       if (i + 2 >= argc)
         return abort_with_invalid_options();
       subCommand = SUB_COMMAND_WGET;
+      if (strncasecmp(argv[i + 1], "1k", 2) == 0) {
+        pWgetUrl = argv[i + 2];
+        pFileName = argv[i + 3];
+        requestLargePacket = true;
+        return i + 4;
+      }
       pWgetUrl = argv[i + 1];
       pFileName = argv[i + 2];
+      requestLargePacket = false;
       return i + 3;
     }
 
