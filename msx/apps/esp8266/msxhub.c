@@ -10,8 +10,8 @@
 #include <xmodem.h>
 
 char fileNames[1025];
-char msxHubUrl[] = "https://msxhub.com/api/12345678/latest/get/12345678/12345678/12345678/12345678/12345678/12345678.zip  ";
-char msxHubFileName[] = "12345678.zip  ";
+char msxHubUrl[128];
+char msxHubFileName[13];
 
 char *curLine;
 char *nextLinePtr;
