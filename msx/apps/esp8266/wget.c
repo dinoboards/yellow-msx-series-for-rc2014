@@ -12,14 +12,14 @@
 #include <string.h>
 #include <xmodem.h>
 
-const unsigned char *pTempFileName = "xmdwn.tmp";
-bool                 started;
-uint32_t             totalFileSize;
-const unsigned char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
-uint8_t              rotatingIndex = 0;
-FILE *               fptrDiagnostics;
-const char *         defaultWaitForMessage = ERASE_LINE "Waiting for data ...";
-char *               waitForMessage = NULL;
+const unsigned char pTempFileName[] = "xmdwn.tmp";
+bool                started;
+uint32_t            totalFileSize;
+const unsigned char rotatingChar[4][5] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
+uint8_t             rotatingIndex = 0;
+FILE *              fptrDiagnostics;
+const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
+char *              waitForMessage = NULL;
 
 void subCommandWGet() {
   print_str("Attempting to retrieve file ");

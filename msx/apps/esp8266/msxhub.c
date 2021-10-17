@@ -18,6 +18,8 @@ char *nextLinePtr;
 char  lineBuffer[128];
 char *pStart;
 
+const char MSX_HUB_API_PREFIX[] = "https://msxhub.com/api/";
+
 char *str_append(char *dest, const char *src) {
   while (*src)
     *dest++ = *src++;
@@ -64,7 +66,7 @@ void nextLine() { curLine = nextLinePtr ? (nextLinePtr + 2) : NULL; }
 
 int8_t getNumberOfPages() {
   msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, "https://msxhub.com/api/");
+  char *p = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
   p = str_append_upper(p, pMsxHubPackageName);
   p = str_append(p, "/latest/pages");
 
@@ -80,7 +82,7 @@ int8_t getNumberOfPages() {
 
 void getFileListForPage(int8_t i) __z88dk_fastcall {
   msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, "https://msxhub.com/api/");
+  char *p = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
   p = str_append_upper(p, pMsxHubPackageName);
   p = str_append(p, "/latest/files/");
   sprintf(p, "%d", i);
@@ -95,7 +97,7 @@ void getFileListForPage(int8_t i) __z88dk_fastcall {
 
 const char *getInstallDirectory() {
   msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, "https://msxhub.com/api/");
+  char *p = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
   p = str_append_upper(p, pMsxHubPackageName);
   str_append(p, "/latest/installdir");
 
@@ -123,7 +125,7 @@ void createInstallDirectory(const char *installDir) __z88dk_fastcall {
 
 void downloadFile(const char *fileName) __z88dk_fastcall {
   msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, "https://msxhub.com/api/");
+  char *p = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
   p = str_append_upper(p, pMsxHubPackageName);
   p = str_append(p, "/latest/get/");
   p = str_append_upper(p, pMsxHubPackageName);
