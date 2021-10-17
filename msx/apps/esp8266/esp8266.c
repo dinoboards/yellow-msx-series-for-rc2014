@@ -173,13 +173,15 @@ void subCommandWGet() {
   print_str(pWgetUrl);
   print_str("\r\n");
 
+  print_str(ERASE_LINE "Connecting ...");
+
   fossil_rs_flush();
   fossil_rs_string("\r\nat+wget");
   fossil_rs_string(pWgetUrl);
   fossil_rs_string("\r\n");
 
   if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
-    print_str("Resetting modem\r\n");
+    print_str(ERASE_LINE "Resetting modem ...");
     resetModem();
 
     fossil_rs_flush();
@@ -188,13 +190,15 @@ void subCommandWGet() {
     fossil_rs_string("\r\n");
 
     if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
-      print_str("Error requesting file:\r\n");
+      print_str("\r\nError requesting file:\r\n");
       print_str(responseStr);
       fossil_rs_flush_with_log();
       print_str("\r\n");
       return;
     }
   }
+
+  print_str(ERASE_LINE "Waiting for data ...");
 
   FILE *fptr;
   fptr = fopen(pTempFileName, "wb");
