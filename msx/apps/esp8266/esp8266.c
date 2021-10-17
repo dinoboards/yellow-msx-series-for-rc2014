@@ -166,6 +166,8 @@ void resetModem() {
   fossil_rs_read_line(false);
 }
 
+extern uint8_t wget();
+
 void subCommandWGet() {
   print_str("Attempting to retrieve file ");
   print_str(pFileName);
@@ -173,6 +175,10 @@ void subCommandWGet() {
   print_str(pWgetUrl);
   print_str("\r\n");
 
+  wget();
+}
+
+uint8_t wget() {
   print_str(ERASE_LINE "Connecting ...");
 
   fossil_rs_flush();
@@ -194,14 +200,15 @@ void subCommandWGet() {
       print_str(responseStr);
       fossil_rs_flush_with_log();
       print_str("\r\n");
-      return;
+      return 2;
     }
   }
 
   print_str(ERASE_LINE "Waiting for data ...");
 
-  FILE *fptr;
-  fptr = fopen(pTempFileName, "wb");
+  FILE *fptr = NULL;
+  if (pFileName)
+    fptr = fopen(pTempFileName, "wb");
 
 #ifdef DIAGNOSTIC_FILE_CAPTURE
   fptrDiagnostics = fopen("esp8266.txt", "wb");
@@ -220,7 +227,8 @@ void subCommandWGet() {
 
     if (sig & SAVE_PACKET) {
       totalFileSize += xmodemState.currentPacketSize;
-      fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
+      if (pFileName)
+        fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
       print_str(rotatingChar[rotatingIndex]);
       rotatingIndex = (rotatingIndex + 1) & 3;
     }
@@ -251,27 +259,36 @@ void subCommandWGet() {
     goto abort;
   }
 
-  print_str(ERASE_LINE "Saving file...");
+  if(pFileName) {
+    print_str(ERASE_LINE "Saving file...");
+  }
 
 #ifdef DIAGNOSTIC_FILE_CAPTURE
   fclose(fptrDiagnostics);
 #endif
 
-  fclose(fptr);
-  remove(pFileName);
-  rename(pTempFileName, pFileName);
+  if(pFileName) {
+    fclose(fptr);
+    remove(pFileName);
+    rename(pTempFileName, pFileName);
 
-  print_str(ERASE_LINE "Downloaded ");
-  print_str(uint32_to_string(totalFileSize));
-  print_str(" bytes.\r\n");
-  return;
+    print_str(ERASE_LINE "Downloaded ");
+    print_str(uint32_to_string(totalFileSize));
+    print_str(" bytes.\r\n");
+  }
+
+  return 0;
 
 abort:
 #ifdef DIAGNOSTIC_FILE_CAPTURE
   fclose(fptrDiagnostics);
 #endif
-  fclose(fptr);
-  remove(pTempFileName);
+  if(pFileName) {
+    fclose(fptr);
+    remove(pTempFileName);
+  }
+
+  return 1;
 }
 
 char msxHubUrl[] = "https://msxhub.com/api/12345678/latest/get/12345678.zip  ";
@@ -296,17 +313,31 @@ void subCommandMsxHub() {
   msxHubUrl[0] = 0;
   char *p = str_append(msxHubUrl, "https://msxhub.com/api/");
   p = str_append_upper(p, pMsxHubPackageName);
-  p = str_append(p, "/latest/get/");
-  p = str_append_upper(p, pMsxHubPackageName);
-  p = str_append(p, ".zip");
-
-  msxHubFileName[0] = 0;
-  p = str_append_upper(msxHubFileName, pMsxHubPackageName);
-  str_append(p, ".zip");
+  p = str_append(p, "/latest/pages");
 
   pWgetUrl = msxHubUrl;
-  pFileName = msxHubFileName;
-  subCommandWGet();
+  pFileName = NULL;
+
+  if (wget())
+    return;
+
+  const int numberOfPages = atoi(xmodemState.packetBuffer + 3);
+
+  for(int i = 0; i < numberOfPages; i++) {
+
+  }
+  printf("\r\nINT----> %d\r\n", numberOfPages);
+
+  // p = str_append_upper(p, pMsxHubPackageName);
+  // p = str_append(p, ".zip");
+
+  // msxHubFileName[0] = 0;
+  // p = str_append_upper(msxHubFileName, pMsxHubPackageName);
+  // str_append(p, ".zip");
+
+  // pWgetUrl = msxHubUrl;
+  // pFileName = msxHubFileName;
+  // subCommandWGet();
 }
 
 void main(const int argc, const unsigned char **argv) {
