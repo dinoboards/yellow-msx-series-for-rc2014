@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <xmodem.h>
 
 const unsigned char pTempFileName[] = "xmdwn.tmp";
@@ -20,6 +21,25 @@ uint8_t             rotatingIndex = 0;
 FILE *              fptrDiagnostics;
 const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
 char *              waitForMessage = NULL;
+char                backupPacket[1025];
+int32_t             backupPacketSize;
+bool                firstPacket;
+
+char *strnstr(const char *haystack, const char *needle, size_t len) {
+  int    i;
+  size_t needle_len;
+
+  if (0 == (needle_len = strnlen(needle, len)))
+    return (char *)haystack;
+
+  for (i = 0; i <= (int)(len - needle_len); i++) {
+    if ((haystack[0] == needle[0]) && (0 == strncmp(haystack, needle, needle_len)))
+      return (char *)haystack;
+
+    haystack++;
+  }
+  return NULL;
+}
 
 void subCommandWGet() {
   print_str("Attempting to retrieve file ");
@@ -34,6 +54,8 @@ void subCommandWGet() {
 }
 
 void wget() {
+  xmodem_enable_extended_info_packet_support();
+  firstPacket = true;
   started = false;
   totalFileSize = 0;
   print_str(ERASE_LINE "Connecting ...");
@@ -96,10 +118,14 @@ void wget() {
       print_str(sig & READ_CRC ? "(crc) ... " : "(chksum) ... ");
     }
 
-    if (sig & SAVE_PACKET) {
-      totalFileSize += xmodemState.currentPacketSize;
-      if (pFileName)
-        fwrite(xmodemState.packetBuffer + 3, xmodemState.currentPacketSize, 1, fptr);
+    if (sig & SAVE_PACKET && !(sig & INFO_PACKET)) {
+      if (!firstPacket && pFileName)
+        fwrite(backupPacket, backupPacketSize, 1, fptr);
+
+      firstPacket = false;
+      backupPacketSize = xmodemState.currentPacketSize;
+      memcpy(backupPacket, xmodemState.packetBuffer + 3, backupPacketSize);
+      totalFileSize += backupPacketSize;
       print_str(rotatingChar[rotatingIndex]);
       rotatingIndex = (rotatingIndex + 1) & 3;
     }
@@ -125,12 +151,23 @@ void wget() {
     }
   }
 
-  if (xmodemState.finish_reason != END_OF_STREAM) {
+  if (!(xmodemState.finish_reason | END_OF_STREAM)) {
     print_str(ERASE_LINE "Error receiving file\r\n");
     goto abort;
   }
 
+  if (xmodemState.finish_reason | INFO_PACKET) {
+    const char *lengthPtr = strnstr(xmodemState.packetBuffer + 3, "LEN=", 128);
+    if (lengthPtr) {
+      const int32_t length = atol(lengthPtr + 4);
+
+      backupPacketSize = length - (totalFileSize - backupPacketSize);
+      totalFileSize = length;
+    }
+  }
+
   if (pFileName) {
+    fwrite(backupPacket, backupPacketSize, 1, fptr);
     print_str(ERASE_LINE "Saving file...");
   }
 

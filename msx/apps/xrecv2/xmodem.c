@@ -11,6 +11,7 @@
 #define NAK   0x15
 #define CAN   0x18
 #define CTRLZ 0x1A
+#define RS    0x1e
 
 #define DLY_1S     VDP_FREQUENCY
 #define MAXRETRANS 25
@@ -22,6 +23,8 @@ struct xmodemState xmodemState;
 unsigned char      packetno = 1;
 uint16_t           i;
 uint16_t           retry, retrans = MAXRETRANS;
+
+bool supportExtendedInfoPacket = false;
 
 static int16_t       delay_point;
 static XMODEM_SIGNAL delay_resume;
@@ -137,7 +140,15 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
       xmodemState.currentPacketSize = 1024;
       return signal | READ_1024;
 
+    case RS:
+      return signal | READ_128 | INFO_PACKET;
+
     case EOT:
+      if (supportExtendedInfoPacket) {
+        packetno = 0;
+        serial_out(ACK);
+        return read_header(signal & (READ_CRC | READ_CHECKSUM));
+      }
       serial_out(ACK);
       return END_OF_STREAM;
 
@@ -239,6 +250,13 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   }
 
   FOR_SIGNAL(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN) { return xmodem_tryagain(signal & ~(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN)); }
+
+  FOR_SIGNAL(INFO_PACKET) {
+    FOR_SIGNAL(SAVE_PACKET) {
+      serial_out(ACK);
+      return INFO_PACKET | END_OF_STREAM;
+    }
+  }
 
   FOR_SIGNAL(SAVE_PACKET) { return xmodem_packet_save(signal & ~SAVE_PACKET); }
 

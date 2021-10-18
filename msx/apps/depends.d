@@ -16,9 +16,9 @@
  esp8266/esp8266.h print.h esp8266/wget.h xrecv2/xmodem.h
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/features.h esp8266/arguments.h \
  esp8266/esp8266.h esp8266/msxhub.h print.h esp8266/wget.h \
- libraries/delay/delay.h libraries/msxbios/extbio.h \
- libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/msxbios/extbio.h libraries/fossil/fossil.h \
+ libraries/msxdos/msxdos.h
 ./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
 ./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/crc16.h \
  xrecv2/serial.h libraries/fossil/fossil.h \
@@ -29,8 +29,8 @@
 ./bin/xrecv2/utils.c.asm: xrecv2/utils.c xrecv2/utils.h
 ./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h libraries/msxdos/msxdos.h \
  print.h xrecv2/utils.h xrecv2/xmodem.h libraries/delay/delay.h \
- libraries/msxbios/extbio.h libraries/fossil/fossil.h \
- libraries/msxbios/system_vars.h
+ libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
+ libraries/fossil/fossil.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
@@ -63,7 +63,8 @@
  libraries/msxbios/system_vars.h
 ./bin/libraries/msxbios/system_vars.c.asm: libraries/msxbios/system_vars.c \
  libraries/msxbios/system_vars.h
-./bin/libraries/fossil/fossil.c.asm: libraries/fossil/fossil.c libraries/fossil/fossil.h
+./bin/libraries/fossil/fossil.c.asm: libraries/fossil/fossil.c libraries/fossil/fossil.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h
 ./bin/fossilon.c.asm: fossilon.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
 ./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h xstdio.h \

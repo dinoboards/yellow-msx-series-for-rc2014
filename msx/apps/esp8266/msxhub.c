@@ -77,7 +77,7 @@ int8_t getNumberOfPages() {
 
   wget();
 
-  return atoi(xmodemState.packetBuffer + 3);
+  return atoi(lastCapturedPacket);
 }
 
 void getFileListForPage(int8_t i) __z88dk_fastcall {
@@ -108,17 +108,17 @@ const char *getInstallDirectory() {
 
   wget();
 
-  char *stringEndPtr = (char *)memchr(xmodemState.packetBuffer + 3, CTRLZ, 1024);
+  char *stringEndPtr = (char *)memchr(lastCapturedPacket, CTRLZ, 1024);
   *stringEndPtr = 0;
 
-  return xmodemState.packetBuffer + 4; // skip leading slash
+  return lastCapturedPacket + 1; // skip leading slash
 }
 
 void createInstallDirectory(const char *installDir) __z88dk_fastcall {
-  int result = mkdir((char *)installDir, S_IRWXO);
+  /*int result =*/mkdir((char *)installDir, S_IRWXO);
 
-  if (result)
-    abortWithError("Unable to create install directory");
+  // if (result)
+  //   abortWithError("Unable to create install directory");
 
   chdir(installDir);
 }
@@ -149,7 +149,7 @@ void subCommandMsxHub() {
   for (int i = 0; i < p; i++) {
     getFileListForPage(i + 1);
 
-    memcpy(fileNames, xmodemState.packetBuffer + 3, 1024);
+    memcpy(fileNames, lastCapturedPacket, 1024);
 
     int ii = 20;
     for (char *line = eachLine(fileNames); line = currentLine(); nextLine()) {

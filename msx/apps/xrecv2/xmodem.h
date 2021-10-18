@@ -1,6 +1,7 @@
 #ifndef __XMODEM
 #define __XMODEM
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 typedef enum {
@@ -19,7 +20,8 @@ typedef enum {
   PACKET_REJECT = 0x0800,
   TOO_MANY_ERRORS = 0x1000,
   PACKET_TIMEOUT = 0x2000,
-  DELAY_WAIT = 0x4000
+  DELAY_WAIT = 0x4000,
+  INFO_PACKET = 0x8000
 } XMODEM_SIGNAL;
 
 extern XMODEM_SIGNAL xmodem_receive(XMODEM_SIGNAL signal) __z88dk_fastcall;
@@ -31,5 +33,12 @@ typedef struct xmodemState {
 };
 
 extern struct xmodemState xmodemState;
+
+extern bool supportExtendedInfoPacket;
+
+#define xmodem_enable_extended_info_packet_support() \
+  { supportExtendedInfoPacket = true; }
+#define xmodem_disable_extended_info_packet_support() \
+  { supportExtendedInfoPacket = false; }
 
 #endif

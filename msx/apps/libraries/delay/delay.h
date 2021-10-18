@@ -2,6 +2,7 @@
 #define __DELAY
 
 #include <stdlib.h>
+#include <system_vars.h>
 
 extern void delay(uint8_t period);
 

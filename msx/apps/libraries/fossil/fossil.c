@@ -1,5 +1,6 @@
 
 #include "fossil.h"
+#include "delay.h"
 
 void fossil_rs_string(const char *pString) {
   while (*pString)
@@ -11,14 +12,12 @@ void fossil_rs_string(const char *pString) {
  *
  */
 void fossil_rs_flush() {
-  unsigned int i = 65000;
+  int16_t timeout = get_future_time(from_ms(1500));
 
-  while (i != 0) {
-    i--;
-
+  while (!is_time_past(timeout)) {
     while (fossil_rs_in_stat() != 0) {
       fossil_rs_in();
-      i = 65000;
+      timeout = get_future_time(from_ms(1500));
     }
   }
 }

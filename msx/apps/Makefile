@@ -56,7 +56,7 @@ $(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files))
 rs232tst_files = $(call app_files,rs232tst,libraries/extbio/extbio.asm getslt.asm rs232.asm $(MSXDOS) $(SYSTEM_VARS))
 $(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files))
 
-fosiltst_files = $(call app_files,fosiltst,libraries/extbio/extbio.asm $(MSXDOS) xstdio.asm getslt.asm $(FOSSIL))
+fosiltst_files = $(call app_files,fosiltst,libraries/extbio/extbio.asm $(MSXDOS) xstdio.asm getslt.asm $(FOSSIL) $(SYSTEM_VARS))
 $(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
 
 fossilon_files = $(call app_files,fossilon,libraries/extbio/extbio.asm getslt.asm)
