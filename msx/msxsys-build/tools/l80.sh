@@ -23,20 +23,19 @@ echo -e "L80\r\n${@:2}\rN\r\n\r\nbye"  | \
     grep -v "A>\s*\$" | \
     grep --color -E "[0-9]+\s+Undefined Global\(s\)|$"
 
-
-
-if grep -q 'Undefined Global(s)' ${outfile}; then
-  rm -f ${1}
-  exit 1
-fi
-
 if grep -q ' Not Found' ${outfile}; then
   rm -f ${1}
   exit 1
 fi
 
-
 if grep -q '?Out of memory' ${outfile}; then
+  rm -f ${1}
+  exit 1
+fi
+
+FINAL_LINK=$(awk '/\/N/{y=1;next}y' ${outfile})
+
+if echo ${FINAL_LINK} | grep -q 'Undefined Global(s)'; then
   rm -f ${1}
   exit 1
 fi
