@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <system_vars.h>
 
-extbio_info       info_table[4];
+rs232_extbio_info info_table;
 rs232_init_params init_params = {'8', 'N', '1', 'N', 'H', 'N', 'N', 'N', 19200, 19200, 0};
 
 typedef struct {
@@ -30,11 +30,11 @@ int main(const int argc, const unsigned char **argv) {
 
   init_params.receive_baud = init_params.send_baud = i;
 
-  extbio_get_dev_info_table(8, info_table);
+  extbio_get_dev_info_table(8, &info_table);
 
-  printf("Slot ID %02X, Address %p\r\n", info_table[0].slot_id, info_table[0].jump_table);
+  printf("Slot ID %02X, Address %p\r\n", info_table.slot_id, info_table.jump_table);
 
-  rs232_link(&info_table[0]);
+  rs232_link(&info_table);
 
   printf("Linked\r\n");
 

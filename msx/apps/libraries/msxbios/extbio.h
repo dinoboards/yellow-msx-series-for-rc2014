@@ -21,14 +21,22 @@ typedef struct {
   uint8_t slot_id;
   void *  jump_table;
   uint8_t reserved;
-} extbio_info;
+} rs232_extbio_info;
+
+typedef struct {
+  uint8_t slot_id;
+  void *  jump_table;
+  uint8_t number_of_free_segments;
+  uint8_t number_of_segments;
+  uint8_t reserved[3];
+} memmap_extbio_info;
 
 typedef struct {
   uint8_t deviceId;
   uint8_t _reserved;
 } extbio_device_table;
 
-extern void                 extbio_get_dev_info_table(uint8_t device_id, extbio_info *info_table);
+extern void                 extbio_get_dev_info_table(uint8_t device_id, void *info_table);
 extern extbio_device_table *extbio_get_dev(extbio_device_table *table) __z88dk_fastcall;
 
 // RC2014 DRIVER
@@ -38,7 +46,7 @@ extern void *extbio_fossil_install();
 // RS232 DRIVER
 #define RS232_RAW_MODE 4
 
-extern void     rs232_link(extbio_info *p) __z88dk_fastcall;
+extern void     rs232_link(rs232_extbio_info *p) __z88dk_fastcall;
 extern uint8_t  rs232_init(rs232_init_params *) __z88dk_fastcall;
 extern void     rs232_open(uint8_t mode, uint8_t buffer_length, uint8_t *buffer);
 extern void     rs232_close();

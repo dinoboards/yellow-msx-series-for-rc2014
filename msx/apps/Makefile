@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash))
 
 include	Makefile.rules.mk
 
@@ -77,6 +77,10 @@ rtccalb.com.crt_enable_commandline:=1
 esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) $(MSXDOS) xrecv2/crc16.c xrecv2/serial.c xrecv2/utils.c)
 $(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files))
 esp8266.com.crt_enable_commandline:=1
+
+romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.asm)
+$(BIN)romflash.com: $(addprefix $(BIN),$(romflash_files))
+romflash.com.crt_enable_commandline:=1
 
 bin/xrecv.com: bin/xrecv2.com
 	@cp bin/xrecv2.com bin/xrecv.com

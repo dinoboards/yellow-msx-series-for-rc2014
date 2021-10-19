@@ -71,6 +71,8 @@
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
 ./bin/mbrot.c.asm: mbrot.c v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
+./bin/romflash/romflash.c.asm: romflash/romflash.c libraries/msxbios/extbio.h \
+ libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/msx.o: ./msx.asm ./msx.inc
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
@@ -92,5 +94,6 @@
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm
 ./bin/v9958.o: ./v9958.asm ./msx.inc
+./bin/romflash/memmapper.o: ./romflash/memmapper.asm
 ./bin/utils.o: ./utils.asm 
 ./bin/rs232.o: ./rs232.asm ./msx.inc
