@@ -73,6 +73,11 @@ working/%.rel: working/%.mac
 
 $(WRK_DIR)%.hex:
 
+MAINFILES=$(addsuffix .rel,$(addprefix $(WRK_DIR), biohdr slot msxio queuetl msxgrp caset bio msxchr msxinl bashdr f4 bintrp msxexp maclng gengrp advgrp biptrg biprtu bimisc bistrs spcdsk dskcom spcdev basbio msxsts init))
+
+$(MAINFILES): $(addprefix $(WRK_DIR), msx.inc keyint.mac)
+
+$(WRK_DIR)msxchr.rel: $(addprefix $(WRK_DIR), msx.inc keyint.mac chrint.mac chrkor.mac chrrus.mac chrjapv2.mac chrger.mac)
 $(WRK_DIR)bios.rel: $(addprefix $(WRK_DIR), msx.inc keyint.mac chrint.mac chrkor.mac chrrus.mac chrjapv2.mac chrger.mac)
 $(WRK_DIR)basic1.rel: $(addprefix $(WRK_DIR), msx.inc)
 $(WRK_DIR)basic2.rel: $(addprefix $(WRK_DIR), msx.inc)
@@ -87,9 +92,10 @@ working/%.rom: $(addprefix working/, %.hex)
 	@hex2bin $<
 	mv $(basename $@).bin $@
 
-$(WRK_DIR)main.hex: $(addprefix $(WRK_DIR), bios.rel basic1.rel basic2.rel)
+$(WRK_DIR)main.hex: $(MAINFILES)
 	@cd $(WRK_DIR)
-	l80.sh main.hex MAIN/X/E/N/P:0,BIOS,BASIC1,BASIC2
+	l80.sh main.hex "BIOHDR/P:0,SLOT,MSXIO,QUEUETL,MSXGRP,CASET,BIO,MSXCHR,MSXINL\r\nBASHDR,F4,BINTRP,MSXEXP,MACLNG,GENGRP,ADVGRP,BIPTRG,BIPRTU,BIMISC,BISTRS,SPCDSK,DSKCOM,SPCDEV,BASBIO,MSXSTS,INIT\r\nMAIN/X/Y/E/N"
+
 
 $(WRK_DIR)subrom.hex: $(addprefix $(WRK_DIR), subrom.rel)
 	@cd $(WRK_DIR)
