@@ -40,7 +40,19 @@ $(WRK_DIR)msx.inc: base300.inc
 $(WRK_DIR)%.mac: msxsyssrc/$(MSXSYS)/%.mac
 	@unix2dos -f -n "$<" "$@"
 
-working/music.mac: msxsyssrc/music100/music.mac
+working/music100.mac: msxsyssrc/music100/music.mac
+	@unix2dos -f -n "$<" "$@"
+
+working/fmpac1.mac: msxsyssrc/music100/fmpac-1.mac
+	@unix2dos -f -n "$<" "$@"
+
+working/fmpac2.mac: msxsyssrc/music100/fmpac-2.mac
+	@unix2dos -f -n "$<" "$@"
+
+working/fmpac3.mac: msxsyssrc/music100/fmpac-3.mac
+	@unix2dos -f -n "$<" "$@"
+
+working/music410.mac: msxsyssrc/music410/music.mac
 	@unix2dos -f -n "$<" "$@"
 
 $(WRK_DIR)%.mac: msxsyssrc/basekey/%.mac
@@ -87,9 +99,25 @@ $(WRK_DIR)optrom.hex: $(addprefix $(WRK_DIR), optrom.rel)
 	@cd $(WRK_DIR)
 	l80.sh optrom.hex OPTROM/X/E/N/P:4000,OPTROM
 
-working/music.hex: working/music.rel
+working/music100.hex: working/music100.rel
 	@cd working
-	l80.sh music.hex MUSIC/X/E/N/P:4000,MUSIC
+	l80.sh music100.hex MUSIC100/X/E/N/P:4000,MUSIC100
+
+working/fmpac1.hex: working/fmpac1.rel
+	@cd working
+	l80.sh fmpac1.hex FMPAC1/X/E/N/P:4000,FMPAC1
+
+working/fmpac2.hex: working/fmpac2.rel
+	@cd working
+	l80.sh fmpac2.hex FMPAC2/X/E/N/P:4000,FMPAC2
+
+working/fmpac3.hex: working/fmpac3.rel
+	@cd working
+	l80.sh fmpac3.hex FMPAC3/X/E/N/P:4000,FMPAC3
+
+working/music410.hex: working/music410.rel
+	@cd working
+	l80.sh music410.hex MUSIC410/X/E/N/P:4000,MUSIC410
 
 # $(WRK_DIR)music.rom: working/music.rom
 # 	@cp working/music.rom $(WRK_DIR)music.rom
