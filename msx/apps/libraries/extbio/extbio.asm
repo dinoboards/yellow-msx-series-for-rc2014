@@ -36,6 +36,69 @@ _extbio_get_dev_info_table:
 	POP	IX
 	RET
 ;
+; extern uint8_t extbio_memmap_get_variable_table(memmap_extbio_variable_table** );
+;
+; 	PUBLIC	_extbio_memmap_get_variable_table
+; _extbio_memmap_get_variable_table:
+; 	PUSH	IX
+
+; 	LD	A, 0
+; 	LD	E, 1		; FUNCTION 'GET VARIABLE TABLE'
+; 	CALL	EXTBIO
+
+; 	LD	IX, 0
+; 	ADD	IX, SP
+
+; 	LD	E, (IX+4)  	; INFO_TABLE
+; 	LD	D, (IX+5)
+
+; 	EX	DE, HL
+; 	LD	(HL), E
+; 	INC	HL
+; 	LD	(HL), D
+
+; 	LD	L, A
+
+; 	POP	IX
+; 	RET
+;
+; extern uint8_t extbio_memmap_get_jump_table(uint8_t* number_of_segments, uint8_t* number_of_free_segments, void* jump_table);
+;
+; 	PUBLIC	_extbio_memmap_get_jump_table
+; _extbio_memmap_get_jump_table:
+; 	PUSH	IX
+
+; 	LD	B, 0
+; 	LD	C, 0
+; 	LD	A, 0
+; 	LD	E, 2		; FUNCTION 'GET JUMP TABLE'
+; 	CALL	EXTBIO
+
+; 	LD	IX, 0
+; 	ADD	IX, SP
+
+; 	LD	E, (IX+8)  	; jump table
+; 	LD	D, (IX+9)
+; 	EX	DE, HL
+; 	LD	(HL), E
+; 	INC	HL
+; 	LD	(HL), D
+
+; 	LD	L, (IX+6)  	; free segments
+; 	LD	H, (IX+7)
+; 	LD	(HL), A
+
+; 	LD	L, (IX+4)  	; number of segments
+; 	LD	H, (IX+5)
+; 	LD	(HL), C
+
+; 	LD	L, B
+
+; 	POP	IX
+; 	RET
+
+
+;
 ; extern void* extbio_fossil_install()
 ;
 	PUBLIC	_extbio_fossil_install

@@ -54,4 +54,6 @@ extern uint8_t  rs232_sndchr(const char ch) __z88dk_fastcall;
 extern uint16_t rs232_getchr();
 extern uint16_t rs232_loc();
 
+extern void memmap_link(memmap_extbio_info *p) __z88dk_fastcall;
+
 #endif
