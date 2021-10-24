@@ -73,8 +73,8 @@
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
 ./bin/config_request.c.asm: config_request.c v9958.h
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
- libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h
+ romflash/memmapper.h libraries/msxbios/extbio.h \
+ libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/romflashwriter/romflashwriter.o: ./romflashwriter/romflashwriter.asm
