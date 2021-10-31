@@ -20,9 +20,9 @@ jobs:
       - run: ls
       - run: make
       - store_artifacts:
-          path: /bin
+          path: ./bin
       - store_artifacts:
-          path: /msx/bin
+          path: ./msx/bin
 
           # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
