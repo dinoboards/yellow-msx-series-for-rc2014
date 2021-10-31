@@ -17,9 +17,7 @@ jobs:
       - run: git submodule sync
       - run: git submodule update --init --recursive
       - run: echo "A second hello"
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+      - run: docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest make
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
