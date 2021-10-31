@@ -1,6 +1,8 @@
 
 # Yellow MSX for RC2014 ROM Image Builder
 
+[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main)
+
 ### MSX BIOS AND MSX-DOS
 
 This sections contains the software required for the Yellow MSX Series of boards allowing for MSX BIOS bootup.

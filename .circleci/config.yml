@@ -5,7 +5,7 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
+  build:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
@@ -13,17 +13,20 @@ jobs:
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
-      - run: sudo apt install git -y
+      - run: apt update && apt install git -y
       - checkout
       - run: git submodule sync
       - run: git submodule update --init --recursive
-      - run: echo "A second hello"
       - run: ls
       - run: make
+      - store_artifacts:
+          path: ./bin
+      - store_artifacts:
+          path: ./msx/bin
 
-# Invoke jobs via workflows
+          # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  build-all:
     jobs:
-      - say-hello
+      - build
