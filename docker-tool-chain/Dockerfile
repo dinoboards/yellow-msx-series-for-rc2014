@@ -5,7 +5,7 @@
 
 FROM ubuntu:20.04 as STAGE1
 
-LABEL Version="0.0.2" \
+LABEL Version="0.0.4" \
       Date="2021-07-22" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -57,7 +57,7 @@ FROM ubuntu:20.04
 
 RUN apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format && \
+    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=STAGE1 /opt/nodejs /opt/nodejs
