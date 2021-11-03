@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm))
 
 include	Makefile.rules.mk
 
@@ -84,6 +84,23 @@ romflash.com.crt_enable_commandline:=1
 
 bin/xrecv.com: bin/xrecv2.com
 	@cp bin/xrecv2.com bin/xrecv.com
+
+.PHONY: bin/chip8.com
+bin/chip8.com:
+	$(MAKE) --no-print-directory -C chip8 chip8 -j
+	cp ./chip8/bin/chip8.com ./bin/chip8.com
+
+.PHONY: bin/chip8asm.com
+bin/chip8asm.com:
+	$(MAKE) --no-print-directory -C chip8 chip8asm -j
+	cp ./chip8/bin/chip8asm.com ./bin/chip8asm.com
+
+.PHONY: test
+test: chip8test
+
+.PHONY: chip8test
+chip8test:
+	$(MAKE) --no-print-directory -C chip8 test -j
 
 .PHONY: clean
 clean:

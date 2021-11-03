@@ -1,5 +1,5 @@
 
-APPS := dots lines mbrot cpusptst fdisk vramtest extbio rs232tst fosiltst term fossilon xrecv rtccalb esp8266
+APPS := dots lines mbrot cpusptst fdisk vramtest extbio rs232tst fosiltst term fossilon xrecv rtccalb esp8266 chip8 chip8asm
 APP_TARGETS := $(addsuffix .com,$(addprefix ./bin/,$(APPS)))
 
 .PHONY: apps
