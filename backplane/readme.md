@@ -1,4 +1,9 @@
-Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
+## Hackaday Project:
+
+* [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
+* [With Cartridge Extension Board](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014/log/199897-backplane-and-cartridge-extension)
+
+<a href="https://www.tindie.com/products/dinotron/121-backplane-designed-for-rc2014-systems"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
 
 ## Title
 
@@ -47,6 +52,8 @@ The 13th slot is offset slightly from the rest of the slots, to allow for connec
 * 8 Mounting holes
 
 Please note that mounting stand-offs are not supplied.
+
+### What is the 'Yellow MSX Series of Boards'?
 
 These are a series of boards developed to achieve MSX compatibility for [RC2014](https://rc2014.co.uk/) systems.
 
