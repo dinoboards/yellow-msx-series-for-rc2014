@@ -1,12 +1,42 @@
-# 13 Slot 80 lane backplane Designed for RC2014
-
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-A Backplane for RC2014 system, with all 80 lanes available (2x40).
+## Title
+
+12+1 Backplane designed for RC2014 systems
+
+## Brief Description
+
+A Backplane for RC2014 systems, with 80 lanes, ideal for MSX configuration.
+
+### What is it?
+
+A 13 slot backplane for [RC2014](https://rc2014.co.uk/) compatible modules, well suited for the full complement of Yellow MSX Series of Modules designed for [RC2014](https://rc2014.co.uk/).
+
+Primarily focused on the needs for supporting the full set of MSX modules, the 12+1 Backplane, with its 80 lanes and 13 slots, will meet the needs of any large [RC2014](https://rc2014.co.uk/) configurations.
+
+And the 12 on-board yellow power LEDs will quite literally make your RC2014 system glow!
+
+The 13th slot is offset slightly from the rest of the slots, to allow for connecting the MSX Cartridge slot extension***
+
+\*\*\* The MSX Slot extension is still in development - awaiting compatibility testing.
+
+## Full MSX build:
+
+1. RC2014 CPU Module
+2. RC2014 Clock Module
+3. RC2014 SIO/2 Module
+4. RC2014 Compact Flash Module
+5. RC2014 Wifi Module
+6. Yellow MSX Series Memory Module designed for RC2014
+7. Yellow MSX Series Video Module designed for RC2014
+8. Yellow MSX Series Game Module designed for RC2014
+9. Yellow MSX Series RTC Module designed for RC2014
+10. Yellow MSX Series Keyboard/PPI Module designed for RC2014
 
 
-Highlights:
-* 13 RC2014 compatible slots
+### Key features
+
+* 13 RC2014 enhanced compatible slots
 * 13th slot offset an extra 1cm for future extension of the MSX Cartridge module
 * 80 Lanes
 * An optional on-board 5V DC converter
@@ -15,6 +45,18 @@ Highlights:
 * Optional direct 5V in via DC barrel connector
 * 12 5V LEDs between each slot 
 * 8 Mounting holes
+
+Please note that mounting stand-offs are not supplied.
+
+These are a series of boards developed to achieve MSX compatibility for [RC2014](https://rc2014.co.uk/) systems.
+
+The idea is that you can build each board one at a time, test it and play with it under RomWBW - and then once you have the set - load up some MSX games!
+
+This backplane kit will give you the perfect foundation for the RC2014 system. 
+
+More details of the development of the Yellow MSX series of modules can be found on my [hackaday project](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
+
+And for RC2014 details, check out its official site https://rc2014.co.uk/
 
 ## Bill of Materials
 
@@ -29,29 +71,10 @@ Highlights:
 | 1      | 4 Way Screw Terminal    |
 | 1      | Optional DC Converter **          |
 
-
 \* different colours available
 
-\*\* pcb footprint is 7805 compatible - a switch model dc converter can be optionally ordered  
+\*\* pcb footprint is 7805 compatible - a switch model dc converter can be optionally included [muRata OKI-78SR-5/1.5-W36-C](https://www.murata.com/en-sg/products/productdetail?partno=OKI-78SR-5%2F1.5-W36-C)
 
-This backplane, compatible with RC2014 configurations, is well suited for any large RC2014 build outs.  
-
-Its is especially suited for a MSX configuration, with the large slot capacity allowing for full configuration such as:
-
-1. RC2014 CPU Module
-2. RC2014 Clock Module
-3. RC2014 SIO/2 Module
-4. RC2014 Compact Flash Module
-5. RC2014 Wifi Module
-6. Yellow MSX Series Memory Module designed for RC2014
-7. Yellow MSX Series Video Module designed for RC2014
-8. Yellow MSX Series Game Module designed for RC2014
-9. Yellow MSX Series RTC Module designed for RC2014
-10. Yellow MSX Series Keyboard/PPI Module designed for RC2014
-
-The 13th slot if offset slightly from the rest of the slots, to allow space for connecting the MSX Cartridge slot extension***
-
-\*\*\* The MSX Slot extension is still in development - awaiting compatibility testing.
 
 ## Images
 
@@ -61,12 +84,19 @@ Assembled
 
 Top & Bottom
 ---------
-<img src="top-and-bottom.jpg" alt="Assembled" width="100%"/>
+<img src="top-and-bottom.jpg" alt="Top & Bottom" width="100%"/>
 
 Profile
 ---------
-<img src="profile-powered.jpg" alt="Assembled" width="100%"/>
+<img src="profile-powered.jpg" alt="Profile" width="100%"/>
 
+Basic Kit
+---------
+<img src="basic-kit.jpg" alt="Basic Kit" width="100%"/>
+
+Kit Options
+---------
+<img src="options.jpg" alt="Kit Options" width="100%"/>
 
 ## Resources
 
