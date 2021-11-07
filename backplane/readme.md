@@ -49,7 +49,7 @@ The 13th slot is offset slightly from the rest of the slots, to allow for connec
 * 4 way power terminal block for easy extension or alternative powering
 * Optional direct 5V in via DC barrel connector
 * 12 5V LEDs between each slot 
-* 8 Mounting holes
+* 8 3.4mm Mounting holes for M3 fitting
 
 Please note that mounting stand-offs are not supplied.
 
@@ -80,8 +80,11 @@ And for RC2014 details, check out its official site https://rc2014.co.uk/
 
 \* different colours available
 
-\*\* pcb footprint is 7805 compatible - a switch model dc converter can be optionally included [muRata OKI-78SR-5/1.5-W36-C](https://www.murata.com/en-sg/products/productdetail?partno=OKI-78SR-5%2F1.5-W36-C)
+\*\* pcb footprint is 7805 compatible - a non-isolated switching regulator DC converter can be optionally included [muRata OKI-78SR-5/1.5-W36-C](https://www.murata.com/products/productdata/8807037992990/oki-78sr.pdf)  *(7-36V to 5V @ upto 1.5 amps)*
 
+## Disclaimer
+
+Please note that this is a kit, produced by a non-professional (me) for hackers, DIYers' and retro lovers, to tinker with. I will do my best to answer any support questions you may have.
 
 ## Images
 
