@@ -102,12 +102,12 @@ bin/xrecv.com: bin/xrecv2.com
 
 .PHONY: bin/chip8.com
 bin/chip8.com:
-	$(MAKE) --no-print-directory -C chip8 chip8 -j
+	@$(MAKE) --no-print-directory -C chip8 chip8 -j
 	cp ./chip8/bin/chip8.com ./bin/chip8.com
 
 .PHONY: bin/chip8asm.com
 bin/chip8asm.com:
-	$(MAKE) --no-print-directory -C chip8 chip8asm -j
+	@$(MAKE) --no-print-directory -C chip8 chip8asm -j
 	cp ./chip8/bin/chip8asm.com ./bin/chip8asm.com
 
 .PHONY: test
