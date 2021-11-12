@@ -1,0 +1,6 @@
+{
+  "type": "module", 
+  "dependencies": {
+    "crc": "^3.8.0"
+  }
+}
