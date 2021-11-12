@@ -152,9 +152,27 @@ _memmap_get_page_0:
 	LD	L, A
 	RET
 
+	PUBLIC	_memmap_put_page_0
+_memmap_put_page_0:
+	CALL	put_page_0
+	LD	L, A
+	RET
+
 	PUBLIC	_memmap_get_page_1
 _memmap_get_page_1:
 	CALL	get_page_1
+	LD	L, A
+	RET
+
+	PUBLIC	_memmap_put_page_1
+_memmap_put_page_1:
+	CALL	put_page_1
+	LD	L, A
+	RET
+
+	PUBLIC	_memmap_get_page_2
+_memmap_get_page_2:
+	CALL	get_page_2
 	LD	L, A
 	RET
 
@@ -163,15 +181,15 @@ _memmap_put_page_2:
 	LD	A, L
 	JP	put_page_2
 
-	PUBLIC	_memmap_get_page_2
-_memmap_get_page_2:
-	CALL	get_page_2
-	LD	L, A
-	RET
-
 	PUBLIC	_memmap_get_page_3
 _memmap_get_page_3:
 	CALL	get_page_3
+	LD	L, A
+	RET
+
+	PUBLIC	_memmap_put_page_3
+_memmap_put_page_3:
+	CALL	put_page_3
 	LD	L, A
 	RET
 
