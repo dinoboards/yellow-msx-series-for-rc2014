@@ -109,4 +109,4 @@ clean:
 .PHONY: format
 format: SHELL:=/bin/bash
 format:
-	find \( -name "*.c" -o -name "*.h" \) -exec echo "formating {}" \; -exec clang-format -i {} \;
+	find \( -name "*.c" -o -name "*.h" \) -not -path "./chip8/*" -exec echo "formating {}" \; -exec clang-format -i {} \;
