@@ -71,11 +71,13 @@
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
 ./bin/mbrot.c.asm: mbrot.c v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
-./bin/romflash/romflash.c.asm: romflash/romflash.c libraries/msxbios/extbio.h \
- libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
+./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
+ libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h
 ./bin/msx.o: ./msx.asm ./msx.inc
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
+./bin/romflashwriter/romflashwriter.o: ./romflashwriter/romflashwriter.asm
 ./bin/fdisk/fdisk.o: ./fdisk/fdisk.asm
 ./bin/term/print.o: ./term/print.asm
 ./bin/term/msx2ansi.o: ./term/msx2ansi.asm
@@ -94,6 +96,7 @@
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm
 ./bin/v9958.o: ./v9958.asm ./msx.inc
+./bin/romflash/flashloader.o: ./romflash/flashloader.asm 
 ./bin/romflash/memmapper.o: ./romflash/memmapper.asm
 ./bin/utils.o: ./utils.asm 
 ./bin/rs232.o: ./rs232.asm ./msx.inc

@@ -78,8 +78,22 @@ esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/ex
 $(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files))
 esp8266.com.crt_enable_commandline:=1
 
-romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.asm)
-$(BIN)romflash.com: $(addprefix $(BIN),$(romflash_files))
+romflashwriter_files = $(call app_files,romflashwriter)
+$(BIN)romflashwriter/romflashwriter.bin: ./romflashwriter/romflashwriter.asm
+	@mkdir -p $(dir $@)
+	zcc +z80 -startup=0 -SO3 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C000 ./romflashwriter/romflashwriter.asm -o ./bin/romflashwriter/romflashwriter.bin
+	echo "Assembled $< to romflashwriter.bin"
+
+#-pragma-define:CRT_ORG_CODE=0x0C000
+
+$(BIN)romflashwriter/romflashwriter.inc: $(BIN)romflashwriter/romflashwriter.bin
+	@./romflashwriter/export.sh $(BIN)romflashwriter/romflashwriter.bin $(BIN)romflashwriter/romflashwriter.inc
+	echo "exported romflashwriter.bin to romflashwriter.inc"
+
+./bin/romflash/flashloader.o: romflash/flashloader.asm $(BIN)romflashwriter/romflashwriter.inc
+ 
+romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.asm)    
+$(BIN)romflash.com: $(BIN)romflashwriter/romflashwriter.inc $(addprefix $(BIN),$(romflash_files)) 
 romflash.com.crt_enable_commandline:=1
 
 bin/xrecv.com: bin/xrecv2.com

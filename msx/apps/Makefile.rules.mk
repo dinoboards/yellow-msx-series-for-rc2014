@@ -34,7 +34,7 @@ $(BIN)%.m4.o: %.asm.m4; $(assemble)
 $(BIN)%.com:
 	@mkdir -p $(dir $@)
 	$(eval $(notdir $@).crt_enable_commandline ?= 0)
-	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $^ -o $@
+	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $(filter-out %.inc,$^) -o $@
 	echo "Linked $(notdir $@) from $(notdir $^)"
 
 ZSDCPP_FLAGS=-iquote"." -isystem"${ZCCCFG}/../../include/_DEVELOPMENT/sdcc" $(LIBS)

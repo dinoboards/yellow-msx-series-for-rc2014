@@ -166,4 +166,14 @@ SLOT_SEL || A14-A15 | RD4 | RD3 | RD2 | RD1 | RD0 || ROA18 | ROA17 | ROA16 | ROA
 
   3, 3   ||   10    |  -  |  -  |  -  |  -  |  -  ||   1   |   1   |   1   |   1   |   1   | 31 |
 
+
+Rom Address
+
+00000 - 03FFF | SLOT 0   | 0000-3FFF
+04000 - 07FFF | SLOT 0   | 4000-7FFF
+08000 - 0BFFF | SLOT 0   | 8000-0BFF
+0C000 - 0FFFF | SLOT 3-0 | 0000-3FFF
+
+
+FC000 - FFFFF | SLOT 3-3 | 4000-7FFF | 
 */
