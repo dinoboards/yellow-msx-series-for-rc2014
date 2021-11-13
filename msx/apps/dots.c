@@ -1,12 +1,12 @@
 #define __Z88DK_R2L_CALLING_CONVENTION
 #include "config_request.h"
 #include "v9958.h"
+#include <conio.h>
 #include <msxdos.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <conio.h>
 
 uint8_t getRandomSeed() __naked __z88dk_fastcall {
   // clang-format off
@@ -31,7 +31,7 @@ void main() {
 
   srand(getRandomSeed());
   setMode6(lines, mode);
-   setPalette(palette);
+  setPalette(palette);
   clearScreenBank0(4);
   uint8_t c = rand() & 15;
 

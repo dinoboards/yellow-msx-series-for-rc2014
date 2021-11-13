@@ -30,10 +30,8 @@ RGB palette[16] = {
 #define CY_MIN        -2.0
 #define CY_MAX        2.0
 #define IX_MAX        512
-//#define IY_MAX        212
 
-#define PIXEL_WIDTH  ((CX_MAX - CX_MIN) / IX_MAX)
-//#define PIXEL_HEIGHT ((CY_MAX - CY_MIN) / IY_MAX)
+#define PIXEL_WIDTH ((CX_MAX - CX_MIN) / IX_MAX)
 
 #define ESCAPE_RADIUS 2
 /* bail-out value , radius of circle ;  */
