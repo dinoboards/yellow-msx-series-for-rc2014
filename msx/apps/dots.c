@@ -1,10 +1,12 @@
 #define __Z88DK_R2L_CALLING_CONVENTION
+#include "config_request.h"
 #include "v9958.h"
 #include <msxdos.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
 
 uint8_t getRandomSeed() __naked __z88dk_fastcall {
   // clang-format off
@@ -23,35 +25,24 @@ RGB palette[16] = {
 };
 
 void main() {
+
+  const uint8_t mode = getVideoMode();
+  const uint8_t lines = getLineCount();
+
   srand(getRandomSeed());
-  setMode6(212, PAL);
-  // setPalette(palette);
+  setMode6(lines, mode);
+   setPalette(palette);
   clearScreenBank0(4);
   uint8_t c = rand() & 15;
 
-  uint16_t x = 0;
-  uint16_t y = 0;
-  uint16_t offset = 0;
-  uint8_t  i = 0;
-
-  while (true) {
+  for (unsigned int i = 0; i < 40000; i++) {
     if (msxdosDirio(0xFF) != 0)
       break;
-
-    pointSet(x, y, i++ & 15, CMD_LOGIC_IMP);
-
-    x++;
-    x %= 512;
-
-    if (x == 0) {
-      y += 4;
-      if (y >= 212) {
-        offset++;
-        y = offset;
-      }
-      y %= 212;
-    }
+    pointSet(rand() % 512, i % lines, rand() & 15, CMD_LOGIC_IMP);
   }
+
+  while (!kbhit())
+    ;
 
   cleanexit();
 }
