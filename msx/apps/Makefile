@@ -21,6 +21,7 @@ all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpuspts
 
 include	Makefile.rules.mk
 
+CONFIG_REQUEST := config_request.c
 SYSTEM_VARS := libraries/msxbios/system_vars.c
 MSXDOS := libraries/msxdos/msxdos.asm libraries/msxdos/msxdos_set_date.asm libraries/msxdos/msxdos_set_time.asm libraries/msxdos/msxdos_get_time.asm
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
@@ -35,13 +36,13 @@ helloworld_files = $(call app_files,helloworld,$(MSXDOS) $(SYSTEM_VARS))
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files))
 helloworld.com.crt_enable_commandline:=1
 
-dots_files = $(call app_files,dots,$(V9958_DEPS) $(MSXDOS))
+dots_files = $(call app_files,dots,$(V9958_DEPS) $(MSXDOS)  $(CONFIG_REQUEST))
 $(BIN)dots.com: $(addprefix $(BIN),$(dots_files))
 
-lines_files = $(call app_files,lines,$(V9958_DEPS) $(MSXDOS))
+lines_files = $(call app_files,lines,$(V9958_DEPS) $(MSXDOS) $(CONFIG_REQUEST))
 $(BIN)lines.com: $(addprefix $(BIN),$(lines_files))
 
-mbrot_files = $(call app_files,mbrot,$(V9958_DEPS) $(MSXDOS))
+mbrot_files = $(call app_files,mbrot,$(V9958_DEPS) $(MSXDOS)  $(CONFIG_REQUEST))
 $(BIN)mbrot.com: $(addprefix $(BIN),$(mbrot_files))
 
 vramtest_files = $(call app_files,vramtest,$(V9958_DEPS))
