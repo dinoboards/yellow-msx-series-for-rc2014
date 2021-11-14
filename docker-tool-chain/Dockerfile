@@ -5,7 +5,7 @@
 
 FROM ubuntu:20.04 as STAGE1
 
-LABEL Version="0.0.6" \
+LABEL Version="0.0.7" \
       Date="2021-11-03" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -57,7 +57,7 @@ FROM ubuntu:20.04
 
 RUN apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git m4 ssh && \
+    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git m4 ssh xxd && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=STAGE1 /opt/nodejs /opt/nodejs
@@ -69,6 +69,9 @@ COPY --from=STAGE1 /opt/z88dk/include /opt/z88dk/include
 COPY --from=STAGE1 /opt/z88dk/lib /opt/z88dk/lib
 COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_peeph*.* /opt/z88dk/libsrc/_DEVELOPMENT/
 COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_opt*.* /opt/z88dk/libsrc/_DEVELOPMENT/
+COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_iy /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_iy
+COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix
+COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80
 
 ENV Z88DK_PATH="/opt/z88dk" \
     PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.0.0/bin:/opt/hex2bin:/opt/cpm:${PATH}" \
