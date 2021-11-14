@@ -30,28 +30,28 @@ DELAY := libraries/delay/delay.c
 fdisk_files = $(call app_files,fdisk,memmap-override.asm $(MSXDOS) $(SYSTEM_VARS))
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
 
-V9958_DEPS := v9958.c msx.asm v9958.asm
+V9958_DEPS := v9958.c v9958.asm
 
 helloworld_files = $(call app_files,helloworld,$(MSXDOS) $(SYSTEM_VARS))
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files))
 helloworld.com.crt_enable_commandline:=1
 
-dots_files = $(call app_files,dots,$(V9958_DEPS) $(MSXDOS)  $(CONFIG_REQUEST))
+dots_files = $(call app_files,dots,$(V9958_DEPS) $(MSXDOS) $(CONFIG_REQUEST))
 $(BIN)dots.com: $(addprefix $(BIN),$(dots_files))
 
 lines_files = $(call app_files,lines,$(V9958_DEPS) $(MSXDOS) $(CONFIG_REQUEST))
 $(BIN)lines.com: $(addprefix $(BIN),$(lines_files))
 
-mbrot_files = $(call app_files,mbrot,$(V9958_DEPS) $(MSXDOS)  $(CONFIG_REQUEST))
+mbrot_files = $(call app_files,mbrot,$(V9958_DEPS) $(MSXDOS) $(CONFIG_REQUEST))
 $(BIN)mbrot.com: $(addprefix $(BIN),$(mbrot_files))
 
-vramtest_files = $(call app_files,vramtest,$(V9958_DEPS))
+vramtest_files = $(call app_files,vramtest,$(V9958_DEPS) $(MSXDOS))
 $(BIN)vramtest.com: $(addprefix $(BIN),$(vramtest_files))
 
 cpusptst_files = $(call app_files,cpusptst,)
 $(BIN)cpusptst.com: $(addprefix $(BIN),$(cpusptst_files))
 
-extbio_files = $(call app_files,extbio,libraries/extbio/extbio.asm xstdio.asm getslt.asm $(MSXDOS) )
+extbio_files = $(call app_files,extbio,libraries/extbio/extbio.asm xstdio.asm getslt.asm $(MSXDOS))
 $(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files))
 
 rs232tst_files = $(call app_files,rs232tst,libraries/extbio/extbio.asm getslt.asm rs232.asm $(MSXDOS) $(SYSTEM_VARS))

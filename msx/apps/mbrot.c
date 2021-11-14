@@ -11,14 +11,12 @@ see http://en.wikipedia.org/wiki/Portable_pixmap
 to see the file use external application ( graphic viewer)
  */
 #include "config_request.h"
+#include <conio.h>
 #include <math.h>
+#include <msxdos.h>
 #include <stdio.h>
 
-#include <conio.h>
-
 #include "v9958.h"
-
-extern void cleanexit();
 
 RGB palette[16] = {
     {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}, {4, 0, 0}, {5, 0, 0}, {6, 0, 0}, {7, 0, 0}, {8, 0, 0}, {9, 0, 0}, {10, 0, 0}, {11, 0, 0}, {12, 0, 0}, {13, 0, 0}, {14, 0, 0}, {15, 0, 0},
@@ -48,10 +46,16 @@ float Zy2;
 uint16_t iX, iY;
 uint8_t  iteration;
 
-void main() {
+void exit_cleanup() {
+  msxbiosInitxt();
+  msxbiosInitPalette();
+}
 
+void main() {
   const uint8_t mode = getVideoMode();
   const uint8_t lines = getLineCount();
+
+  atexit(exit_cleanup);
 
   setMode6(lines, mode);
   setPalette(palette);
@@ -83,12 +87,10 @@ void main() {
       pointSet(iX, iY, iteration, CMD_LOGIC_IMP);
 
       if (kbhit())
-        cleanexit();
+        exit(0);
     }
   }
 
   while (!kbhit())
     ;
-
-  cleanexit();
 }

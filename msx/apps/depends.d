@@ -1,9 +1,9 @@
 
 ./bin/cpusptst/main.c.asm: cpusptst/main.c
-./bin/dots.c.asm: dots.c v9958.h libraries/msxdos/msxdos.h
+./bin/dots.c.asm: dots.c config_request.h v9958.h libraries/msxdos/msxdos.h
 ./bin/extbio/main.c.asm: extbio/main.c libraries/fossil/fossil.h \
  libraries/msxdos/msxdos.h xstdio.h libraries/msxbios/extbio.h
-./bin/lines.c.asm: lines.c v9958.h
+./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxdos/msxdos.h
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
  esp8266/esp8266.h print.h xrecv2/utils.h libraries/fossil/fossil.h \
  libraries/msxdos/msxdos.h xrecv2/xmodem.h
@@ -31,7 +31,7 @@
  print.h xrecv2/utils.h xrecv2/xmodem.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
  libraries/fossil/fossil.h
-./bin/vramtest.c.asm: vramtest.c v9958.h
+./bin/vramtest.c.asm: vramtest.c v9958.h libraries/msxdos/msxdos.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
 ./bin/fdisk/fdisk.c.asm: fdisk/fdisk.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
@@ -69,12 +69,12 @@
  libraries/msxbios/extbio.h
 ./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h xstdio.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
-./bin/mbrot.c.asm: mbrot.c v9958.h
+./bin/mbrot.c.asm: mbrot.c config_request.h libraries/msxdos/msxdos.h v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
+./bin/config_request.c.asm: config_request.c v9958.h
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
-./bin/msx.o: ./msx.asm ./msx.inc
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/romflashwriter/romflashwriter.o: ./romflashwriter/romflashwriter.asm

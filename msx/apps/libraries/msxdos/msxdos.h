@@ -95,6 +95,7 @@ extern void msxbiosInitxt();
 extern void _msxbiosPosit(uint16_t col_and_row) __z88dk_fastcall;
 #define msxbiosPosit(col, row) _msxbiosPosit(((uint16_t)(col)) * 256 + row)
 extern bool msxbiosBreakX();
+extern void msxbiosInitPalette();
 
 /* MSX work area variables */
 

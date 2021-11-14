@@ -1,4 +1,5 @@
 #include "v9958.h"
+#include <msxdos.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -7,6 +8,11 @@
 uint8_t buffer[BUFFER_SIZE];
 uint8_t buffer2[BUFFER_SIZE];
 uint8_t buffer3[BUFFER_SIZE];
+
+void setTextMode() {
+  msxbiosInitxt();
+  msxbiosInitPalette();
+}
 
 uint8_t conductTest() {
   uint32_t vramAddress = 0x4000;
