@@ -20,12 +20,12 @@ void main() {
   fptr = fopen(pFileName, "rb");
 
   fseek(fptr, 0, SEEK_END); // seek to end of file
-  long size = ftell(fptr); // get current file pointer
+  long size = ftell(fptr);  // get current file pointer
   fseek(fptr, 0, SEEK_SET); // seek back to beginning of file
 
   printf("File size is %ld\r\n", size);
 
-  if(size != 524288L) {
+  if (size != 524288L) {
     printf("Rom image size is invalid - expected 512k\r\n");
     fclose(fptr);
     exit(1);
@@ -36,12 +36,12 @@ void main() {
   uint8_t allocated_segment;
   uint8_t allocated_slot;
 
-  for(int i = 0; i < 32; i++) {
+  for (int i = 0; i < 32; i++) {
     uint8_t success = memmap_allocate_segment(0, 0x0, &allocated_segment, &allocated_slot);
 
     memmap_put_page_2(allocated_segment);
 
-    size_t length = fread((void*)0x8000, 1, 0x4000, fptr);
+    size_t length = fread((void *)0x8000, 1, 0x4000, fptr);
 
     printf("Read block %d %d bytes into segment %d\r\n", i, length, allocated_segment);
   }

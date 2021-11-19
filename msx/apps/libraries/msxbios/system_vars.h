@@ -13,6 +13,7 @@
 #define LINLEN_ADDR __at 0xF3B0
 #define CSRSW_ADDR  __at 0xFCA9
 #define LINL40_ADDR __at 0xF3AE
+#define RG8SAV_ADDR __at 0xFFE7
 
 // FC9E-FC9F: software clock, updated at each VDP interrupt
 extern uint16_t JIFFY_ADDR JIFFY;
@@ -59,5 +60,12 @@ extern uint8_t LINL40_ADDR LINL40;
 #define msxGetPtr GETPNT
 
 #define VDP_FREQUENCY 50
+
+// FFE7-FFF6: storage of VDP 8-23
+extern uint8_t RG8SAV_ADDR RG8SAV[23 - 8];
+
+#define GET_VDP_REGISTER(a) ((a >= 8 && a <= 23) ? RG8SAV[a] : 0)
+
+#define GET_VDP_FREQUENCY() (GET_VDP_REGISTER(9) & 2 ? 60 : 50)
 
 #endif

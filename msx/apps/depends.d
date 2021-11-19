@@ -6,7 +6,8 @@
 ./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxdos/msxdos.h
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
  esp8266/esp8266.h print.h xrecv2/utils.h libraries/fossil/fossil.h \
- libraries/msxdos/msxdos.h xrecv2/xmodem.h
+ libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h \
+ xrecv2/xmodem.h
 ./bin/esp8266/xmodem_diagnostics.c.asm: esp8266/xmodem_diagnostics.c esp8266/features.h \
  esp8266/../xrecv2/xmodem.c esp8266/../xrecv2/xmodem.h \
  esp8266/../xrecv2/crc16.h esp8266/../xrecv2/serial.h \

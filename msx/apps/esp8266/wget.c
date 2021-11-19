@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <system_vars.h>
 #include <unistd.h>
 #include <xmodem.h>
 
@@ -107,6 +108,8 @@ void wget() {
   fptrDiagnostics = fopen("esp8266.txt", "wb");
 #endif
 
+  const int16_t startTime = JIFFY;
+
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
   while (sig = xmodem_receive(sig)) {
     if (msxbiosBreakX())
@@ -176,6 +179,10 @@ void wget() {
 #endif
 
   if (pFileName) {
+    const int16_t  ticks = JIFFY - startTime;
+    const float    totalTime = ((float)ticks / (float)GET_VDP_FREQUENCY());
+    const uint32_t rate = (float)totalFileSize / totalTime;
+
     fclose(fptr);
     remove(pFileName);
     rename(pTempFileName, pFileName);
@@ -185,9 +192,8 @@ void wget() {
       print_str(pFileName);
     else
       print_str("Downloaded");
-    print_str(" ");
-    print_str(uint32_to_string(totalFileSize));
-    print_str(" bytes.\r\n");
+
+    printf(" %ld bytes in %d seconds (%d b/s)\r\n", totalFileSize, (int)totalTime, (int)rate);
   }
 
   return;
