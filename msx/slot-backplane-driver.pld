@@ -10,38 +10,47 @@ Device   g16v8a ;
 
 
 /************* INPUT PINS *********************/
-//PIN  1 = NC;
-PIN  2 = A14;
-PIN  3 = A15;
-PIN  4 = SLT_HIGH;
-PIN  5 = SLT_LOW;
-PIN  6 = !IORQ;
-PIN  7 = !RD;
-PIN  8 = !MREQ;
-PIN  9 = !M1;
+PIN  1 = A14;
+PIN  2 = A15;
+PIN  3 = SLT_HIGH;
+PIN  4 = SLT_LOW;
+PIN  5 = !RD;
+PIN  6 = !WR;
+PIN  7 = !MREQ;
+//PIN  8 = SLT1_BUSDIR;   // ONLY USED FOR BUFFERED BOARD 
+//PIN  9 = SLT2_BUSDIR;   // ONLY USED FOR BUFFERED BOARD
 PIN 10 = GND;
-PIN 11 = !RFSH;
-PIN 12 = SLT1_BUSDIR;
-PIN 13 = SLT2_BUSDIR;
+//PIN 11 = NC;
 
 /**************** OUTPUT PINS *********************/
-PIN 14 = !DATADIR_RD;
-PIN 15 = !SLT_SL2;
-PIN 16 = !SLT_SL1;
-PIN 17 = !CS12;
-PIN 18 = !CS2;
-PIN 19 = !CS1;
+//PIN 12 = NC;
+//PIN 13 = !DATADIR_RD; // ONLY USED FOR BUFFERED BOARD
+PIN 14 = !SLT_SL2;
+PIN 15 = !SLT_SL1;
+PIN 16 = !CS12;
+PIN 17 = !CS2;
+PIN 18 = !CS1;
+//PIN 19 = NC;
 PIN 20 = VCC;
 
-MRW = MREQ & !RFSH;
-READ = MRW & RD;
+//MRW = MREQ & !RFSH;
+//READ = MRW & RD;
+//
+//SLT_SL1 = !SLT_HIGH & SLT_LOW & MRW;
+//SLT_SL2 = SLT_HIGH & !SLT_LOW & MRW;
+//
+//CS1 = !A15 & A14 & RD;
+//CS2 = A15 & !A14 & RD;
+//CS12 = ((!A15 & A14) # (A15 & !A14)) & RD;
+//
+//DATADIR_RD = MRW & RD & (SLT_SL1 # SLT_SL2);
 
-SLT_SL1 = !SLT_HIGH & SLT_LOW & MRW;
-SLT_SL2 = SLT_HIGH & !SLT_LOW & MRW;
 
 CS1 = !A15 & A14 & RD;
 CS2 = A15 & !A14 & RD;
 CS12 = ((!A15 & A14) # (A15 & !A14)) & RD;
 
-DATADIR_RD = MRW & RD & (SLT_SL1 # SLT_SL2);
+MRW = MREQ & (RD # WR);
 
+SLT_SL1 = !SLT_HIGH & SLT_LOW & MRW;
+SLT_SL2 = SLT_HIGH & !SLT_LOW & MRW;
