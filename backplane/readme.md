@@ -23,7 +23,6 @@ And the 12 on-board yellow power LEDs will quite literally make your RC2014 syst
 
 The 13th slot is offset slightly from the rest of the slots, to allow for connecting the MSX Cartridge slot extension***
 
-\*\*\* The MSX Slot extension is still in development - awaiting compatibility testing.
 
 ## Full MSX build:
 
