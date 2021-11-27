@@ -5,7 +5,7 @@
 ;
 ; All the code here is relocated to page 3 location during rominit
 
-SIO_BUFSZ	EQU	32
+SIO_BUFSZ	EQU	150
 
 FOSSIL_JUMP_TABLE:
 	jp	getversion	; Version H.L (H,L packed BCD)
@@ -348,7 +348,7 @@ SIO_INTRCV3:
 	JR	Z, SIO_UPDATE_HEAD_PTR		; ABORT NOW IF RTS IS OFF
 
 	; TEST FOR NEW BYTES FOR A SHORT PERIOD OF TIME
-	LD	B, 40
+	LD	B, 80
 SIO_MORE:
 	IN	A, (CMD_CH)		;
 	RRA				; READY BIT TO CF
