@@ -1,0 +1,69 @@
+100 REM GOSPER, Gospers snowflake
+110 REM
+120 REM MSX Computer Magazine #19, 1987
+130 DIM H1(7), H2(7), IS(10), SS(10), L(10), ALPHA(10)
+140 MLIJN=7
+150 FOR I=1 TO MLIJN
+160   READ H1(I),S$
+170   IF S$="swap" THEN S1$=S1$+CHR$(I)
+180   READ H2(I),S$
+190   IF S$="swap" THEN S2$=S2$+CHR$(I)
+200 NEXT I
+210 DATA  -19, noswap,  -79, swap
+220 DATA  +60,   swap,  +60, noswap
+230 DATA +120,   swap,   +0, noswap
+240 DATA  -60, noswap, +120, noswap
+250 DATA -120, noswap,  +60, swap
+260 DATA   +0, noswap, -120, swap
+270 DATA  -60,   swap,  -60, noswap
+280 '
+290 INPUT "give sign depth 1-5";SM
+300 IF SM<1 OR SM>5 THEN GOTO 290
+310 WX=50: WY=42
+320 S=0: L(S)=120: ALPHA(S)=0
+330 SCREEN 2
+340 GOSUB 440
+350 BEEP
+360 ' The following lines can be enabled by removing the 'marks. That gives a very special effect!
+370 ' LINE (2,2)-(254,190),3,B
+380 ' LINE (WX,190-WY)-(254,190-WY),3
+390 ' LINE (2,190-42)-(50,190-42),3
+400 ' PAINT (15,178),3,3
+410 GOTO 410
+420 END
+430 '
+440 ' the recursive gospers curve routine
+450 '
+460 S=S+1
+470 L(S)=L(S-1)/SQR(7)
+480 ALPHA(S)=ALPHA(S-1)
+490 FOR I=1 TO MLIJN
+500   ALPHA(S)=ALPHA(S)+H1(I)
+510   IF S>=SM THEN GOSUB 730: GOTO 590
+520  'ELSE
+530      SS(S)=INSTR(S1$,CHR$(I)) 'change flag
+540      IF SS(S) THEN GOSUB 630  'swap h1 with h2
+550      IS(S)=I
+560      GOSUB 440
+570      I=IS(S)
+580      IF SS(S) THEN GOSUB 630  'swap h2 with h1
+590   NEXT I
+600 S=S-1
+610 RETURN
+620 '
+630 ' swap h1-h2
+640 '
+650 FOR J=1 TO MLIJN
+660   SWAP H1(J),H2(J)
+670 NEXT J
+680 SWAP S1$,S2$
+690 RETURN
+700 '
+710 ' draw line
+720 '
+730 RA=ALPHA(S)/57.295779513082#
+740 NX=L(S)*COS(RA)+WX
+750 NY=L(S)*SIN(RA)*1.2+WY
+760 LINE (WX,190-WY)-(NX,190-NY),3
+770 WX=NX: WY=NY
+780 RETURN

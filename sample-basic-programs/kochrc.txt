@@ -1,0 +1,48 @@
+100 REM KOCHRC, Koch's sneeuwvlok recursief geprogrammeerd - snowflake programmed recursively
+110 REM
+120 REM MSX Computer Magazine #19, 1987
+130 REM
+140 DIM H1(4), IDX(10), L(10), ALPHA(10)
+150 MLIJN=4
+160 FOR I=1 TO MLIJN
+170   READ H1(I)
+180 NEXT I
+190 DATA 0, +60, -120, +60
+200 '
+210 INPUT "depth 1-5";SM
+220 IF SM<1 OR SM>5 THEN 210
+230 WX=50: WY=50
+250 S=0: L(S)=400: ALPHA(S)=0
+270 SCREEN 7
+290 GOSUB 340
+300 BEEP
+310 GOTO 310
+320 END
+330 '
+340 ' The recursive routine
+350 '
+360 S=S+1
+370 L(S)=L(S-1)/3 'shrink line segment
+380 ALPHA(S)=ALPHA(S-1) 'start angle
+390 FOR I=1 TO MLIJN
+400   ALPHA(S)=ALPHA(S)+H1(I)
+410   IF S>=SM THEN GOSUB 540: GOTO 460
+420  'ELSE
+430      IDX(S)=I
+440      GOSUB 340 'draw itself
+450      I=IDX(S)
+460 NEXT I
+470 S=S-1
+480 RETURN
+490 '
+500 ' draw line
+510 '
+520 '
+530 ' converting polar coordinates to Cartesian (nx, ny) coordinates.
+540 RA=ALPHA(S)/57.296
+550 NX=L(S)*COS(RA)+WX
+560 NY=L(S)*SIN(RA)*1.2+WY
+570 ' msx2 : factor 1.2 wordt 0.6
+580 LINE (WX,190-WY)-(NX,190-NY),3
+590 WX=NX: WY=NY
+600 RETURN

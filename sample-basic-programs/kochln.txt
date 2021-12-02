@@ -1,0 +1,56 @@
+100 REM KOCHLN, Koch's sneeuwvlok lineair geprogrammeerd - snowflake programmed linearly
+110 REM
+120 REM MSX Computer Magazine #19, 1987
+130 REM
+140 SCREEN 7
+150 DIM X(100),Y(100)
+160 ML=20 ' minimum length
+170 S=1.38' scaling fact. y-axis.
+180 PI=3.14159265#
+190 SW=250: SH=180 'screen size
+200 CZ=COS(PI/6)/3
+210 '
+220 ' starting line segment is determined by two coordinates.
+230 X(1)=SW: Y(1)=10
+240 X(2)=8 : Y(2)=10
+250 P=2
+260 '
+270 ' start main loop
+280 '
+290 L=SQR((X(P)-X(P-1))^2+(Y(P)-Y(P-1))^2) 'length of a line segment
+300 '
+310 ' if the line segment is smaller than ML, draw!
+320 ' otherwise the line segment must be broken up again
+330 IF L<ML THEN LINE (X(P),SH-S*Y(P))-(X(P-1),SH-S*Y(P-1)),15: P=P-1 ELSE GOSUB 450
+340 '
+350 ' as long as there are segments (of more than 2 points!) continue the loop!
+360 IF P>1 THEN 290
+370 BEEP
+380 GOTO 380
+390 '
+400 ' the line-breaking routine.
+410 '
+420 ' between the two coordinates (x(p),y(p)) and (x(p-1),y(p-1))
+430 ' three coordinates are added
+440 '
+450 XL=X(P)
+460 YL=Y(P)
+470 XR=X(P-1)
+480 YR=Y(P-1)
+490 C=XR-XL
+500 D=YR-YL
+510 L=SQR(C*C+D*D)*CZ
+520 GD=ATN(D/C)
+530 IF XR<XL THEN L=-L
+540 X(P+3)=XL
+550 Y(P+3)=YL
+560 X(P+2)=C/3+XL
+570 Y(P+2)=D/3+YL
+580 X(P+1)=C/2-L*SIN(GD)+XL
+590 Y(P+1)=D/2+L*COS(GD)+YL
+600 X(P  )=2*C/3+XL
+610 Y(P  )=2*D/3+YL
+620 X(P-1)=XR
+630 Y(P-1)=YR
+640 P=P+3
+650 RETURN

@@ -1,0 +1,40 @@
+10 ' DR4KT3
+20 ' MSX Computer Magazine KK46-5c,  1991
+30 ' Ingezonden door Patrick Storms
+40 '
+50 VDP(9) = VDP(9) OR 32
+60 ON STOP GOSUB 380
+70 STOP ON
+80 Q1 = 0
+90 Q2 = 1
+100 Q3 = 2
+110 Q4 = 3
+120 COLOR 15, 7, 7
+130 SCREEN 7
+140 COLOR = (7, 0, 0, 0)
+150 COLOR = (Q1, 6, 1, 1)
+160 COLOR = (Q2, 1, 6, 1)
+170 COLOR = (Q3, 1, 1, 6)
+180 COLOR = (Q4, 6, 1, 6)
+190 A = 56
+200 B = 206
+210 C = 456
+220 D = 6
+230 FOR K = 0 TO 19
+240   A = A + 20
+250   B = B - 10
+260   C = C - 20
+270   D = D + 10
+280   LINE (A, 6)-(456, D), Q1
+290   LINE -(C, 206), Q2
+300   LINE -(56, B), Q3
+310   LINE -(A, 6), Q4
+320 NEXT K
+330 Q1 = (Q1 + 1) MOD 4
+340 Q2 = (Q2 + 1) MOD 4
+350 Q3 = (Q3 + 1) MOD 4
+360 Q4 = (Q4 + 1) MOD 4
+370 GOTO 190
+380 VDP(9) = VDP(9) AND 223
+390 END
+
