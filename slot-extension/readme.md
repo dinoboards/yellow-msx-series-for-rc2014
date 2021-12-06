@@ -4,7 +4,7 @@
 * [With Cartridge Extension Board](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014/log/199897-backplane-and-cartridge-extension)
 * [Slot Extension Update](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014/log/200617-slot-extension-for-msx-cartridges)
 
-<a href="https://www.tindie.com/products/dinotron/????"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+<a href="https://www.tindie.com/products/dinotron/msx-cartridge-slot-extension-for-rc2014-bus"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
 
 ## Title
 
@@ -28,7 +28,6 @@ Once installed and operating on a MSX configured RC2014, you can boot up origina
 
 Or perhaps you can select the optional MSX Cartridge 16K/32K ROM board and flash your own (or downloaded) game and enjoy the era of instant gaming.
 
-
 ### Key features
 
 * 2 MSX 50pin compatible cartridge slots 
@@ -41,6 +40,10 @@ Please note that mounting stand-offs are not supplied.
 \* Most cartridges do not need or use the 12V lines.  A 5 way screw power terminal is provided if you wish supply the +12V/-12V from an external source.  
 \*\* The supplied ROM is a blank SST39SF040 Flash chip.  You will need an external programmer to flash this chip. 
 
+You will also need a programmer to flash the ROM SST39SF040 -- I have used the [TL866II Plus from XGecu](http://www.xgecu.com/en/). You should be able to source original units your favourite marketplaces, such as AliExpress or ebay.
+
+I suggest you have a look at xgecu's guide at http://www.xgecu.com/en/note.html to help you in identifying counterfeit/clone units - to ensure you get an authentic programmer.
+
 ### What is the 'Yellow MSX Series of Boards'?
 
 These are a series of boards developed to achieve MSX compatibility for [RC2014](https://rc2014.co.uk/) systems.
@@ -50,6 +53,32 @@ The idea is that you can build each board one at a time, test it and play with i
 More details of the development of the Yellow MSX series of modules can be found on my [hackaday project](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
 And for RC2014 details, check out its official site https://rc2014.co.uk/
+
+### Other MSX Modules Required
+
+The MSX Cartridge slot extension is designed to work in a RC2014 with the Yellow MSX Modules for RC2014.  Your RC2014 needs to be able to boot as a MSX system. 
+
+You need at a minimum:
+
+1. Yellow MSX Series Memory Module designed for RC2014
+2. Yellow MSX Series Video Module designed for RC2014 (RGB or Advanced)
+3. Yellow MSX Series Game Module designed for RC2014
+4. Yellow MSX Series Keyboard/PPI Module designed for RC2014
+5. A CPU & Clock
+
+It is recommended that you use a backplane that carries all 8 of the RC2014 user lines - otherwise you will need to map the SLT-HIGH (USER-6) and SLT-LOW (USER-2) signals from the PPI module to both the Memory and the Slot Extension.  You will also need to ensure there is sufficient space for attaching the slot extension.
+
+The **12+1 Backplane designed for RC2014 systems** carries the required lines and has been fully tested.
+
+If are using a backplane such as the 12+1 Backplane, you can short the corresponding jumpers on the board for sound and SLT-LOW and SLT-HIGH signals.   Otherwise you need to construct a bus for the SLT-xxx lines between the slot-extension, PPI and Memory modules.  (And any other future board that might need the SLT-xxx signals).
+
+### Testing status:
+
+I have tested this slot extension with a limited set of MSX Cartridges.  It has been successfully tested with 3 different MSX1 original cartridges from the 80s, the recent 2021 release of *Mutants from the Deep* from https://www.msxcartridgeshop.com/ and the MegaFlashRom SD Flash unit.  
+
+The MegaFlashRom worked only after manually flashing the onboard ROM of the Memory module to remove NEXTOR/MSX-DOS kernel (a software compatibility issue as at this time, not yet resolved).
+
+It also has been successfully tested with the optional 16K/32K ROM Cartridge module. 
 
 ### Bill of Materials for Slot Extension
 
@@ -95,21 +124,26 @@ Assembled
 ---------
 <img src="assembled.jpg" alt="Assembled" width="100%"/>
 
-Top & Bottom
+Assembled
 ---------
-<img src="top-and-bottom.jpg" alt="Top & Bottom" width="100%"/>
+<img src="cartridge.jpg" alt="cartridge" width="100%"/>
 
 Profile
 ---------
-<img src="profile-powered.jpg" alt="Profile" width="100%"/>
+<img src="profile-powered.jpg" alt="Profile Powered" width="100%"/>
+<img src="profile.jpg" alt="Profile" width="100%"/>
 
 Basic Kit
 ---------
 <img src="basic-kit.jpg" alt="Basic Kit" width="100%"/>
 
-Kit Options
+Cartridge Kit
 ---------
-<img src="options.jpg" alt="Kit Options" width="100%"/>
+<img src="cartridge-kit.jpg" alt="Cartridge Kit" width="100%"/>
+
+Optional +12V/-12V DC Converter
+---------
+<img src="dc-converter.jpg" alt="DC Converter" width="100%"/>
 
 ## Resources
 
