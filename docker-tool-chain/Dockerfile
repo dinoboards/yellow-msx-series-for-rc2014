@@ -5,8 +5,8 @@
 
 FROM ubuntu:20.04 as STAGE1
 
-LABEL Version="0.0.7" \
-      Date="2021-11-03" \
+LABEL Version="0.0.8" \
+      Date="2021-12-17" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
 
@@ -55,9 +55,10 @@ RUN tar -xzf "/tmp/node.tar.gz" -C /opt && \
 
 FROM ubuntu:20.04
 
-RUN apt update -y && \
+RUN sed -i 's/http:\/\/us./http:\/\/au./g' /etc/apt/sources.list && \
+    apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git m4 ssh xxd && \
+    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git m4 ssh xxd wget ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=STAGE1 /opt/nodejs /opt/nodejs

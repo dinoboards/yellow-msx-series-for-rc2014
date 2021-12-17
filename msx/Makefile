@@ -7,7 +7,7 @@ MAKEFLAGS += --no-builtin-rules
 # Example of MSX_JED_CDWIN exported environment variable
 # MSX_JED_CDWIN="u: && cd \\home\\jane\\<path to project>\\msx &&"
 
-all: rom-image-pal rom-image-ntsc msxsysromimages bin/music100.rom bin/music410.rom apps bin/rcmusic.rom
+all: mfr rom-image-pal rom-image-ntsc msxsysromimages bin/music100.rom bin/music410.rom apps bin/rcmusic.rom
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/turbo-cpu-mwait.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
 
@@ -44,11 +44,20 @@ INCLUDED_ROOT 	:= AUTOEXEC.BAT SROM.COM SROM.TXT SROM.INI
 nextor: $(addprefix nextor/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor/extras/system/,$(INCLUDED_SYSTEM))  $(addprefix nextor/extras/,$(INCLUDED_ROOT)) #nextor/extras/roms/pacman.rom
 	@mkdir -p ./bin
 	cd nextor/source
-	BUILD_TYPE=cbios $(MAKE) nextor-2.1.1.rc2014.rom -O -j --no-print-directory
+	BUILD_TYPE=cbios $(MAKE) nextor-2.1.1.rc2014.rom -O -j --no-print-directory -f Makefile-rc2014.mk
 	cp -u ../bin/nextor-2.1.1.rc2014.rom ../../bin
 
+.PHONY: mfr
+mfr:
+	@mkdir -p ./bin
+	cd nextor/source
+	BUILD_TYPE=cbios $(MAKE) ../bin/mfr.nextor-2.1.1.rom -O -j --no-print-directory -f Makefile-rc2014.mk
+	cp -u ../bin/mfr.nextor-2.1.1.rom ../../bin
+	BUILD_TYPE=cbios $(MAKE) ../bin/mfr.dsk --no-print-directory -f Makefile-rc2014.mk
+	cp -u ../bin/mfr.dsk ../../bin
+
 install-prereq:
-	@(cd nextor/source && $(MAKE) install-prereq --no-print-directory)
+	@(cd nextor/source && $(MAKE) install-prereq --no-print-directory) -f Makefile-rc2014.mk
 	(cd rc2014-extended && $(MAKE) install-prereq --no-print-directory)
 
 .PHONY: rom-image-pal
@@ -91,7 +100,7 @@ clean:
 	(cd msxsys-build && $(MAKE) --no-print-directory clean)
 	$(MAKE) -C cbios --no-print-directory clean
 	$(MAKE) -C ./rc2014-extended --no-print-directory clean
-	cd nextor/source && $(MAKE) --no-print-directory clean
+	cd nextor/source && $(MAKE) --no-print-directory clean -f Makefile-rc2014.mk
 	rm -rf nextor/extras/*
 
 ## Tools
