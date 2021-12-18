@@ -145,7 +145,7 @@ These binaries are for flashing onto the SST39SF040 ROM for the MSX Memory Modul
 | main.rom                    | Main 32K MSXSRCSYS ROM                                       | 0000-7FFF |       0       |      0      |
 | optrom.rom                  | MSXSRCSYS OPT or Logo ROM                                    | 4000-7FFF |               |             |
 | subrom.rom                  | MSXSRCSYS SUB ROM                                            | 0000-3FFF |      3-0      |     3-0     |
-| nextor-2.1.1.rc2014.rom     | Nextor ROM Image                                             | 4000-7FFF |       2       |     3-3     |
+| rc2014.nextor-2.1.1.rom     | Nextor ROM Image                                             | 4000-7FFF |       2       |     3-3     |
 | rc2014-extended.rom         | Custom Extended BIOS implementation for RC2014 platform      | 8000-CFFF |      3-3      |     3-3     |
 | dots.com                    | Testing tool                                                 |           |               |             |
 | extbio.com                  | Testing tool                                                 |           |               |             |
@@ -209,7 +209,7 @@ Provides for general control signals.
 ### Special Magic numbers
 
 ```
-Makefile: dd conv=notrunc status=none if=./nextor/bin/nextor-2.1.1-alpha2.rc2014.rom  of=bin/ymsx-pal.rom bs=16k count=**27** seek=4
+Makefile: dd conv=notrunc status=none if=./nextor/bin/rc2014.nextor-2.1.1.rom  of=bin/ymsx-pal.rom bs=16k count=**27** seek=4
 
 Makefile-main.mk:	dd if=/dev/zero of=rc2014-driver-with-sectors.bin bs=16k count=**19** seek=0
 

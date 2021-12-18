@@ -127,4 +127,4 @@ working/music410.hex: working/music410.rel
 	l80.sh music410.hex MUSIC410/X/E/N/P:4000,MUSIC410
 
 clean:
-	rm -rf ./working
+	@rm -rf ./working
