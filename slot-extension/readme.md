@@ -74,11 +74,53 @@ If are using a backplane such as the 12+1 Backplane, you can short the correspon
 
 ### Testing status:
 
-I have tested this slot extension with a limited set of MSX Cartridges.  It has been successfully tested with 3 different MSX1 original cartridges from the 80s, the recent 2021 release of *Mutants from the Deep* from https://www.msxcartridgeshop.com/ and the MegaFlashRom SD Flash unit.  
-
-The MegaFlashRom worked only after manually flashing the onboard ROM of the Memory module to remove NEXTOR/MSX-DOS kernel (a software compatibility issue as at this time, not yet resolved).
+I have tested this slot extension with a limited set of MSX Cartridges.  It has been successfully tested with 3 different MSX1 original cartridges from the 80s, the recent 2021 release of *Mutants from the Deep* from https://www.msxcartridgeshop.com/ and the MegaFlashROM SD Flash unit.  
 
 It also has been successfully tested with the optional 16K/32K ROM Cartridge module. 
+
+#### MegaFlashROM
+
+Operating this cartridge is possible, but it requires the NEXTOR kernel and disk images to be updated.  
+
+The version of NEXTOR currently supplied in the MegaFlashROM, is version 2.1.0.  The version built for the Yellow MSX Memory module, is 2.1.1 (beta). 
+
+Although NEXTOR can operator with 2 kernel systems active, there seems to be a compatibility issue with these 2 versions.
+
+The process below, details how to update the kernel and disk images in the MegaFlashROM to a compatible new version.
+
+> Please note, MegaFlashROM requires the a version MSX-BASIC/BIOS.  It is not compatible with CBIOS, the version of the ROM supplied with the MSX Module.  See the file [msx/README.md](../msx/README.md) for details on updating your main ROM image. 
+
+> At this stage, you also need the Compact Flash module working in your MSX platform, to store the new MegaFlashROM images - These files are currently too large for the RamDisk.  (There is an item on my backlog to remove the need for the CompactFlash module)
+
+**You need to update your Yellow MSX module's ROM image to a full system image (containing MSX-BASIC), from the releases section of the repo, dated after 2021-12-21.**
+
+When you first boot up your system, with the MegaFlashROM installed, NEXTOR should boot, but any attempt to access drives A: and B:, will return an error.
+
+You will need to download into your system onto your Compact Flash drive, the following files:
+
+* `opfxsd.com` from https://www.msxcartridgeshop.com/bin/opfxsd.zip
+* `mfr.dsk` (from the releases section of this repo)
+* `mfr.nextor-2.1.1.rom` (rename it to short file name such as `mfr.com`) (also from the release section of this repo)
+
+then execute the following at the MSXDOS command prompt:
+
+```
+opfxsd mfr.rom /i
+opfxsd mfr.dsk /id
+```
+
+After that, if you reboot your system, you should boot into Mega Flash Rom's system - with access to all drives.
+
+If you wish to reset your MegaFlashROM, follow the official process to restore your system.
+
+1. Download the file https://www.msxcartridgeshop.com/bin/kernel.zip
+2. Copy the KERNEL.DAT on a newly blank SD card (file must be copied without fragmentation)
+3. Place SD card in your cartridge
+4. reboot your system, holding the UP arrow key
+5. Choose option F4 - Install SD kernel
+
+
+### Compatibility Update
 
 ### Bill of Materials for Slot Extension
 
