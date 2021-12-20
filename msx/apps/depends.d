@@ -59,6 +59,7 @@
 ./bin/print.c.asm: print.c print.h
 ./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
+./bin/muflash/main.c.asm: muflash/main.c libraries/msxdos/msxdos.h
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
 ./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
@@ -84,6 +85,7 @@
 ./bin/term/msx2ansi.o: ./term/msx2ansi.asm
 ./bin/term/screen.o: ./term/screen.asm
 ./bin/memmap-override.o: ./memmap-override.asm
+./bin/muflash/slot_helpers.o: ./muflash/slot_helpers.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm

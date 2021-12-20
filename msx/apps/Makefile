@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash))
 
 include	Makefile.rules.mk
 
@@ -96,6 +96,10 @@ $(BIN)romflashwriter/romflashwriter.inc: $(BIN)romflashwriter/romflashwriter.bin
 romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.asm)    
 $(BIN)romflash.com: $(BIN)romflashwriter/romflashwriter.inc $(addprefix $(BIN),$(romflash_files)) 
 romflash.com.crt_enable_commandline:=1
+
+muflash_files = $(call app_files,muflash,)
+$(BIN)muflash.com: $(addprefix $(BIN),$(muflash_files))
+muflash.com.crt_enable_commandline:=1
 
 bin/xrecv.com: bin/xrecv2.com
 	@cp bin/xrecv2.com bin/xrecv.com
