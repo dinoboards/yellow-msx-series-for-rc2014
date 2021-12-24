@@ -259,7 +259,7 @@ J4C64	EQU	04C64H
 
 D4000:	DEFB	"AB"
         DEFW	0
-        DEFW	I4082
+        DEFW	ROM_STATEMENT
         DEFW	0
         DEFW	0
         DEFS	6,0
@@ -363,6 +363,7 @@ I4076:	EX	AF,AF'
 
 D4080:	DEFW	I5000			; address statement handler
 
+ROM_STATEMENT:
 I4082:	PUSH	HL
         LD	HL,I.FD89
         LD	DE,I40B3
