@@ -1,6 +1,13 @@
 
 
 PROBE_HARDWARE:
+	LD	DE, MSG.CPU
+	CALL	PRINT
+	CALL	CPU_PROBE_SPEED
+
+	LD	DE, MSG.NEWLINE
+	CALL	PRINT
+
 	LD	DE, MSG.SIO
 	CALL	PRINT
 
@@ -56,6 +63,12 @@ GAME_NOT_FOUND:
 	LD	DE, MSG.NEWLINE
 	JP	PRINT
 
+MSG.CPU
+	DB	"CPU              ", 0
+
+MSG.MHZ
+	DB	"Mhz", 13, 10, 0
+
 MSG.SIO
 	DB	"SIO/2 Module:    ", 0
 
@@ -70,7 +83,7 @@ MSG.GAME
 
 MSG.PRESENT
 	DB	"PRESENT"
-	
+
 MSG.NEWLINE
 	DB	13, 10, 0
 
@@ -100,7 +113,6 @@ RP5RTC_PROBE:
 	CP	0Ah
 	RET
 
-; 
 MSX_MUSIC_PROBE:
 	CALL	MSX_MUSIC_SET_SLOT
 	PUSH	HL
@@ -193,3 +205,79 @@ GAME_PROBE:
 	CP	$55
 	EI
 	RET
+
+; Basic ROM version
+; 7 6 5 4 3 2 1 0
+; | | | | +-+-+-+-- Character set
+; | | | |           0 = Japanese, 1 = International (ASCII), 2=Korean
+; | +-+-+---------- Date format
+; |                 0 = Y-M-D, 1 = M-D-Y, 2 = D-M-Y
+; +---------------- Default interrupt frequency
+;                   0 = 60Hz, 1 = 50Hz
+IDBYT1	EQU	$002B
+
+
+CPU_PROBE_SPEED:
+	LD	DE, 0
+	LD	HL, JIFFY
+
+CPU_PROBE_1:
+	EI
+	HALT	;// WAIT FOR HOPEFULLY A VDP INT
+	LD	A, (HL)
+
+CPU_PROBE_2:			; 25T States, 3M
+	INC	DE		; 6T, 1M
+	CP	(HL)		; 7T, 1M
+	JR	Z, CPU_PROBE_2	; 12T, 1M
+
+	ld	C, 6
+	LD	A, (IDBYT1)
+	AND	$80
+	JR	Z, CPU_PROBE_3
+
+	LD	C, 5
+CPU_PROBE_3
+	CALL	DE_MULT_C
+	LD	A, H
+
+	LD	DE, MSG.SPD_3_5_MHZ_M1
+	CP	$34
+	JP	C, PRINT
+
+	LD	DE, MSG.SPD_3_5_MHZ
+	CP	$50
+	JP	C, PRINT
+
+	LD	DE, MSG.SPD_7_4_MHZ_M1
+	CP	$70
+	JP	C, PRINT
+
+	LD	DE, MSG.SPD_7_4_MHZ
+	CP	$A0
+	JP	C, PRINT
+
+	LD	DE, MSG.SPD_20_MHZ_3_WAIT
+	CP	$D0
+	JP	C, PRINT
+
+	LD	DE, MSG.SPD_20_MHZ_1_WAIT
+	JP	PRINT
+
+MSG.SPD_3_5_MHZ_M1:
+	DB	"3.5Mhz (M1)", 0
+
+MSG.SPD_3_5_MHZ:
+	DB	"3.5Mhz", 0
+
+MSG.SPD_7_4_MHZ_M1:
+	DB	"7.4Mhz (M1)", 0
+
+MSG.SPD_7_4_MHZ:
+	DB	"7.4Mhz", 0
+
+MSG.SPD_20_MHZ_3_WAIT:
+	DB	"20Mhz (3 WAIT)", 0
+
+MSG.SPD_20_MHZ_1_WAIT:
+	DB	"20Mhz (1 WAIT)", 0
