@@ -4,23 +4,12 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-# Example of MSX_JED_CDWIN exported environment variable
-# MSX_JED_CDWIN="u: && cd \\home\\jane\\<path to project>\\msx &&"
-
 all: nextor-mfr apps msxsysromimages rom-image-pal rom-image-ntsc bin/music100.rom bin/music410.rom bin/rcmusic.rom
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/turbo-cpu-mwait.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
 
 bin/%.jed:
-	@cd $$(wslpath "$$(wslvar USERPROFILE)")
-	if [[ -z $${MSX_JED_CDWIN+x} ]]; then
-		echo "JEDS files are compiled under windows using WINCUPL using build-jed.bat."
-		if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-			echo "To assembly thru this makefile on WSL - you need to assign MSX_JED_CDWIN env var."
-		fi
-		exit 1
-	fi
-	cmd.exe /C "$(MSX_JED_CDWIN) build-jed.bat $(basename $<)"
+	./build-jed.sh $<
 
 bin/mem-selector.jed: mem-selector.pld
 bin/rom-mapper.jed: rom-mapper.pld

@@ -5,7 +5,7 @@
 
 FROM ubuntu:20.04 as STAGE1
 
-LABEL Version="0.0.8" \
+LABEL Version="0.0.9" \
       Date="2021-12-17" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -55,11 +55,21 @@ RUN tar -xzf "/tmp/node.tar.gz" -C /opt && \
 
 FROM ubuntu:20.04
 
-RUN sed -i 's/http:\/\/us./http:\/\/au./g' /etc/apt/sources.list && \
+ARG DEBIAN_FRONTEND=noninteractive
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/ubuntu/archive/|g' /etc/apt/sources.list && \
+    dpkg --add-architecture i386 && \
     apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git m4 ssh xxd wget ca-certificates && \
+    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git m4 ssh xxd wget ca-certificates gnupg2 software-properties-common && \
+    wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add -
+
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F && \
+    apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' && \
+    apt update -y && \
+    apt install -y wine32 && \
     rm -rf /var/lib/apt/lists/*
+
+COPY Wincupl/Shared /opt/wincupl
 
 COPY --from=STAGE1 /opt/nodejs /opt/nodejs
 COPY --from=STAGE1 /opt/sdcc-4.0.0 /opt/sdcc-4.0.0
@@ -81,5 +91,7 @@ ENV Z88DK_PATH="/opt/z88dk" \
 RUN adduser --disabled-password --gecos "" builder
 
 COPY bashrc /home/builder/.bashrc
+
+RUN su builder -c "wine cmd.exe /C dir"
 
 WORKDIR /src/
