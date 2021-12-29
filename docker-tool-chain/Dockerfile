@@ -5,7 +5,7 @@
 
 FROM ubuntu:20.04 as STAGE1
 
-LABEL Version="0.0.9" \
+LABEL Version="0.0.10" \
       Date="2021-12-17" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -68,6 +68,11 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F && \
     apt update -y && \
     apt install -y wine32 && \
     rm -rf /var/lib/apt/lists/*
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && \
+    apt-add-repository https://cli.github.com/packages && \
+    apt update && \
+    apt install -y gh
 
 COPY Wincupl/Shared /opt/wincupl
 
