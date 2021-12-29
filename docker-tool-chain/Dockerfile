@@ -5,7 +5,7 @@
 
 FROM ubuntu:20.04 as STAGE1
 
-LABEL Version="0.0.10" \
+LABEL Version="0.0.11" \
       Date="2021-12-17" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -73,6 +73,8 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && 
     apt-add-repository https://cli.github.com/packages && \
     apt update && \
     apt install -y gh
+
+RUN apt install -y zip
 
 COPY Wincupl/Shared /opt/wincupl
 
