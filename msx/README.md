@@ -71,9 +71,8 @@ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}
 
 The docker run command is complex, so to make it easier, make an alias entry (typically in something like `~/.bash_aliases`)
 
-
 ```
-alias msxmake="docker run -v \${PWD}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:0.0.12 make"
+alias msxmake="docker run -v \${PWD}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest make"
 ```
 
 There after, you can treat the alias as an alternative make command eg:
@@ -83,7 +82,8 @@ msxmake clean
 msxmake apps
 ````
 
-> Please note, that the docker tool chain can not build the JED files, as currently, that can only be done in windows.
+If you prefer to avoid using Docker, the following sections describe a more native build process.
+
 ## Building the binaries manually
 
 The Makefile in this directory can orchestrate the building of all binary units required for the RC2014 MSX system.
@@ -157,19 +157,17 @@ These binaries are for flashing onto the SST39SF040 ROM for the MSX Memory Modul
 
 See Also [Apps and Utils for MSX on RC2014](./docs/apps.md)
 
-## Building your own custom image
+## Building your own custom ROM images
 
 This section describes how you can create your own custom MSX Rom image that includes MSX BASIC.
 
 After verifying you have been able to build as per the instruction above, you can follow these steps for your custom build:
 
-1. Update the file [msx/msxsys-build/base300.inc](./msxsys-build/base300.inc) to enable or disable language, refresh rates, etc, for your specific requirements.
-
-2. If you would like to include any files in the embedded floppy image, simply copy them to `nextor/extras` directory*
+1. If you would like to include any files in the embedded floppy image, simply copy them to `nextor/extras` directory*
 
 2. run `make` (or the docker `msxmake` alias) and ensure no assembly errors are raised.
 
-3. Flash the *msxsyssrc-rc2014-<country>-without-rtc.rom* file onto your ROM.
+3. Flash the appropriate ROM image - *msxsyssrc-rc2014-\<country\>-without-rtc.rom* or *msxsyssrc-rc2014-\<country\>-with-rtc.rom*.
 
 4. Boot up your new system.
 
@@ -177,13 +175,13 @@ After verifying you have been able to build as per the instruction above, you ca
 
 ## Building the JED files:
 
-The PLD logic required for the [ATF22V10](https://ww1.microchip.com/downloads/en/DeviceDoc/doc0735.pdf) chip.
+Some modules, use Programmable Logic Device chips (PLD) - in particular there are 2 types used across various MSX modules.  The [ATF22V10](https://ww1.microchip.com/downloads/en/DeviceDoc/doc0735.pdf) chip and variants of [ATF16V8x](https://ww1.microchip.com/downloads/en/devicedoc/atmel-0425-pld-atf16v8c-datasheet.pdf).
 
-For building the `memory.jed` files, you need to have [Wincupl](https://www.microchip.com/en-us/products/fpgas-and-plds/spld-cplds/pld-design-resources) to compile the PLD logic (Windows or wine).
+Microchip's [Wincupl](https://www.microchip.com/en-us/products/fpgas-and-plds/spld-cplds/pld-design-resources) is used to compile PLD to JED files.  The JED files can then be, using a programmer such as the [TL866II Plus from XGecu](http://www.xgecu.com/en/) flashed/programmed into the chips.
 
-You will also need a programmer to code the chip -- I have used the [TL866II Plus from XGecu](http://www.xgecu.com/en/).  Make sure you select the IC type of `ATF22V10C(UES)` to ensure all fuses are applied.
+> For the ATF22V10C PLDS, make sure you select the IC type of `ATF22V10C(UES)` to ensure all fuses are applied.  For the ATF16V8x chips, make sure you choose the correct version (ATF16V8B or ATF16V8C).   I found out the hard way that other ATF22V10C types listed will for the most part work - but a few fuses will not be applied, and your CPLD will be slightly wrong
 
-> I found out the hard way that other ATF22V10C types listed will for the most part work - but a few fuses will not be applied, and your CPLD will be slightly wrong
+You can use the `build-jed.bat` to assist with compiling the PLD files.
 
 `build-jed.bat <filename without extension>`
 
@@ -204,7 +202,7 @@ Provided rom address mapping.  See the rom-mapper.pld for details on the bank/ad
 
 Provides for general control signals.
 
-
+There are also other pld files for other modules - including the V9958 Video Module and the cartridge slot extension.
 
 ### Special Magic numbers
 
