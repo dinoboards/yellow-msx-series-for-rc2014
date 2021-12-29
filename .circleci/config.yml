@@ -17,12 +17,14 @@ jobs:
       - run: git submodule sync
       - run: git submodule update --init --recursive
       - run: ls
-      - run: make release-build
+      - run: make release-notes release-build
       - run: (cd ./msx/apps/chip8/ && make test -j)
       - store_artifacts:
           path: ./bin
       - store_artifacts:
           path: ./msx/bin
+      - store_artifacts:
+          path: ./release
 
           # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows

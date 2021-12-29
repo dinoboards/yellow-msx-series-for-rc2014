@@ -17,7 +17,7 @@ release-notes:
 	@rm -rf ./release
 	mkdir -p ./release
 	version=$$(date +%y-%m-%d)
-	last_release=$$(gh release list --limit 1 | grep Latest | cut -f1 | tr -d \")
+	last_release=$$(gh release list --limit 10 | grep Latest | cut -f1 | tr -d \")
 	echo -e $${last_release}
 	relfile=./release/release-$${version}.md
 	rm -f $${relfile}
