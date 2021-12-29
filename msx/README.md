@@ -73,7 +73,7 @@ The docker run command is complex, so to make it easier, make an alias entry (ty
 
 
 ```
-alias msxmake="docker run -v \${PWD}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:0.0.11 make"
+alias msxmake="docker run -v \${PWD}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:0.0.12 make"
 ```
 
 There after, you can treat the alias as an alternative make command eg:

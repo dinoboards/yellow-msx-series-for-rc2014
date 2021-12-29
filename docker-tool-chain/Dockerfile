@@ -5,7 +5,7 @@
 
 FROM ubuntu:20.04 as STAGE1
 
-LABEL Version="0.0.11" \
+LABEL Version="0.0.12" \
       Date="2021-12-17" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -60,21 +60,15 @@ RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/
     dpkg --add-architecture i386 && \
     apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git m4 ssh xxd wget ca-certificates gnupg2 software-properties-common && \
-    wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add -
-
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F && \
+    apt install -y --no-install-recommends mtools dos2unix pasmo build-essential dosfstools clang-format git m4 ssh xxd wget ca-certificates gnupg2 software-properties-common zip && \
+    wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add - && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F && \
     apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' && \
-    apt update -y && \
-    apt install -y wine32 && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && \
     apt-add-repository https://cli.github.com/packages && \
-    apt update && \
-    apt install -y gh
-
-RUN apt install -y zip
+    apt update -y && \
+    apt install -y wine32 gh && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY Wincupl/Shared /opt/wincupl
 

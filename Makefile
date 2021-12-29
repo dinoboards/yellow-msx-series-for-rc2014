@@ -35,7 +35,7 @@ release: release-build release-notes
 		current_draft_release=$$(gh release list | grep Draft | cut -f3 | head -n1)
 		gh release delete --yes $${current_draft_release}
 	fi
-	gh release create --draft -F ./release/release-$${version}.md -t \"$${version}\" $${version} release/*
+	gh release create --draft -F ./release/release-$${version}.md -t "$${version}" $${version} release/*
 
 .PHONY: release-build
 release-build:

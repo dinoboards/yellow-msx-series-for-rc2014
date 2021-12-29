@@ -10,14 +10,13 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: vipoo/yellow-msx-rc2014-tool-chain:0.0.11
+      - image: vipoo/yellow-msx-rc2014-tool-chain:0.0.12
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
       - run: git submodule sync
       - run: git submodule update --init --recursive
-      - run: ls
       - run: make release
       - run: (cd ./msx/apps/chip8/ && make test -j)
       - store_artifacts:
