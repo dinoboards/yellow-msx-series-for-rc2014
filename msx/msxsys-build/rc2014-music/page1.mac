@@ -52,6 +52,8 @@ FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
 ; F806-F856: workarea when executing numeric operators
 HOLD8		EQU     0F806H
 
+MBCVRT	EQU	517AH	; convert to DAC to new type
+
         ORG	4000H
 X.0000	EQU	0000H	; JCS-I
 I.0001	EQU	0001H	; ----I
@@ -1592,20 +1594,68 @@ I5116	EQU	$-2
         RET
 ;	-----------------
 
+KEYWRD	MACRO	X,Y
+G	ASET	0
+Q	ASET	0
+        IRPC	D,<X>
+        IF	G EQ 0
+G	ASET	1
+        ELSE
+        IF	Q NE 0
+        IF	Q EQ " "
+        DEFB	0FFH
+        ELSE
+        DEFB	Q
+        ENDIF
+        ENDIF
+Q	ASET	"&D"
+        ENDIF
+        ENDM
+        DEFB	Q+128
+        DEFW	Y
+        ENDM
+
+
 
 I5125:
 	DEFB	000h, 01Eh, 023h, 01Dh, 01Dh, 01Dh, 01Dh, 01Dh, 041h, 01Dh, 047h, 057h, 061h, 01Dh, 01Dh, 0F1h
 	DEFB	01Dh, 097h, 0AEh, 0CDh, 01Dh, 0DFh
 
-I513B:
-	DEFB	055h, 044h, 052h, 045h, 0C7h, 098h, 054h, 050h, 050h, 045h
-	DEFB	04Eh, 044h, 0FFh, 04Dh, 0CBh, 0B1h, 052h, 050h, 045h, 045h, 0CBh, 0B1h, 052h, 050h, 04Fh, 04Bh
-	DEFB	0C5h, 0B1h, 052h, 0FFh, 047h, 0CDh, 058h, 054h, 0FFh, 04Fh, 04Eh, 054h, 0FFh, 04Dh, 0CBh, 0B1h
-	DEFB	052h, 04Fh, 050h, 059h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h, 04Fh, 04Eh, 056h, 0D0h, 0B1h, 052h
-	DEFB	04Fh, 04Eh, 056h, 0C1h, 0B1h
 
-I517A:
-	DEFB	052h, 0FFh, 04Eh, 04Dh, 0CBh, 0B1h, 052h, 0FFh, 045h, 059h, 0FFh
+I513B:
+	KEYWRD	<AUDREG>, ?5498
+	; DEFB	055h, 044h, 052h, 045h, 0C7h, 098h, 054h
+
+        KEYWRD	<APPEND MK>, C52B1
+	; DEFB	050h, 050h, 045h, 04Eh, 044h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
+
+        KEYWRD	<APEEK>, C52B1
+	; DEFB	050h, 045h, 045h, 0CBh, 0B1h, 052h
+
+        KEYWRD	<APOKE>, C52B1
+	; DEFB	050h, 04Fh, 04Bh, 0C5h, 0B1h, 052h
+
+	DEFB	0FFh
+
+	KEYWRD	<BGM>, C5458
+	; DEFB	047h, 0CDh, 058h, 054h,
+
+	DEFB	0FFh
+
+BOB:
+	KEYWRD	<CONT MK>, C52B1
+	; DEFB	04Fh, 04Eh, 054h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
+
+        KEYWRD	<COPY PCM>, C52B1
+	; DEFB	04Fh, 050h, 059h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h,
+
+        KEYWRD	<CONVP>, C52B1
+	; DEFB	04Fh, 04Eh, 056h, 0D0h, 0B1h, 052h
+
+        KEYWRD	<CONVA>, C52B1
+	; DEFB	04Fh, 04Eh, 056h, 0C1h, 0B1h
+
+	DEFB	0FFh, 04Eh, 04Dh, 0CBh, 0B1h, 052h, 0FFh, 045h, 059h, 0FFh
 	DEFB	04Fh, 0CEh, 0B1h, 052h, 045h, 059h, 0FFh, 04Fh, 046h, 0C6h, 0B1h, 052h, 0FFh, 04Fh, 041h, 044h
 	DEFB	0FFh, 050h, 043h, 0CDh, 0B1h, 052h, 0FFh, 04Bh, 0FFh, 056h, 04Fh, 049h, 043h, 0C5h, 0B1h, 052h
 	DEFB	04Bh, 0FFh, 056h, 045h, 0CCh, 0B1h, 052h, 04Bh, 0FFh, 056h, 04Fh, 0CCh, 0B1h, 052h, 04Bh, 0FFh
@@ -5382,7 +5432,7 @@ C679B:	LD	IX,I5EA4
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67A1:	LD	IX,I517A
+C67A1:	LD	IX, MBCVRT
         JR	J67D7
 ;	-----------------
 
