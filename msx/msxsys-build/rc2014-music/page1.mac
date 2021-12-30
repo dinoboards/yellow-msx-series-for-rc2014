@@ -52,7 +52,17 @@ FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
 ; F806-F856: workarea when executing numeric operators
 HOLD8		EQU     0F806H
 
-MBCVRT	EQU	517AH	; convert to DAC to new type
+; MSX BASIC BIOS ROUTINES
+MBCVRT		EQU	517AH	; convert to DAC to new type
+
+; Input:	 HL <-- Starting address of the expression in text
+; Output:  HL <-- Next address of expression
+; 	 A, E <-- Result of expression evaluation
+; 		  (A and E contains the same value.)
+; Purpose: Evaluate an expression and make 1-byte integer output. When the
+; result is beyond the range of 1-byte integer type, an "Illegal function call"
+; error occurs and the execution returns to BASIC command level.
+MBGETBYT	EQU	0521CH	; Evaluate an expression in 1-byte integer type.
 
         ORG	4000H
 X.0000	EQU	0000H	; JCS-I
@@ -1642,12 +1652,11 @@ I513B:
 
 	DEFB	0FFh
 
-BOB:
 	KEYWRD	<CONT MK>, C52B1
 	; DEFB	04Fh, 04Eh, 054h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
 
         KEYWRD	<COPY PCM>, C52B1
-	; DEFB	04Fh, 050h, 059h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h,
+	; DEFB	04Fh, 050h, 059h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
 
         KEYWRD	<CONVP>, C52B1
 	; DEFB	04Fh, 04Eh, 056h, 0D0h, 0B1h, 052h
@@ -1655,24 +1664,109 @@ BOB:
         KEYWRD	<CONVA>, C52B1
 	; DEFB	04Fh, 04Eh, 056h, 0C1h, 0B1h
 
-	DEFB	0FFh, 04Eh, 04Dh, 0CBh, 0B1h, 052h, 0FFh, 045h, 059h, 0FFh
-	DEFB	04Fh, 0CEh, 0B1h, 052h, 045h, 059h, 0FFh, 04Fh, 046h, 0C6h, 0B1h, 052h, 0FFh, 04Fh, 041h, 044h
-	DEFB	0FFh, 050h, 043h, 0CDh, 0B1h, 052h, 0FFh, 04Bh, 0FFh, 056h, 04Fh, 049h, 043h, 0C5h, 0B1h, 052h
-	DEFB	04Bh, 0FFh, 056h, 045h, 0CCh, 0B1h, 052h, 04Bh, 0FFh, 056h, 04Fh, 0CCh, 0B1h, 052h, 04Bh, 0FFh
-	DEFB	054h, 045h, 04Dh, 050h, 0CFh, 0B1h, 052h, 04Bh, 0FFh, 053h, 054h, 041h, 0D4h, 0B1h, 052h, 04Bh
-	DEFB	0FFh, 050h, 043h, 0CDh, 0B1h, 052h, 055h, 053h, 049h, 0C3h, 0ECh, 052h, 0FFh, 045h, 043h, 0FFh
-	DEFB	04Dh, 0CBh, 0B1h, 052h, 045h, 043h, 04Dh, 04Fh, 0C4h, 0B1h, 052h, 045h, 043h, 0FFh, 050h, 043h
-	DEFB	0CDh, 0B1h, 052h, 0FFh, 054h, 04Fh, 050h, 0CDh, 08Bh, 054h, 045h, 054h, 0FFh, 050h, 043h, 0CDh
-	DEFB	0B1h, 052h, 041h, 056h, 045h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h, 059h, 04Eh, 054h, 048h, 0C5h
-	DEFB	0B1h, 052h, 0FFh, 052h, 041h, 04Eh, 053h, 050h, 04Fh, 053h, 0C5h, 035h, 055h, 045h, 04Dh, 050h
-	DEFB	045h, 0D2h, 041h, 055h, 0FFh, 04Fh, 049h
+	DEFB	0FFh
 
-I521C:
-	DEFB	043h, 0C5h, 0EEh, 055h, 04Fh, 049h, 043h, 045h, 0FFh
-	DEFB	043h, 04Fh, 050h, 0D9h, 07Eh, 056h, 0FFh, 04Ch, 041h, 0D9h, 046h, 057h, 04Ch, 041h, 059h, 0FFh
-	DEFB	050h, 043h, 0CDh, 0B1h, 052h, 043h, 04Dh, 0FFh, 046h, 052h, 045h, 0D1h, 0B1h, 052h, 043h, 04Dh
-	DEFB	0FFh, 056h, 04Fh, 0CCh, 0B1h, 052h, 04Ch, 041h, 059h, 0FFh, 04Dh, 0CBh, 0B1h, 052h, 049h, 054h
-	DEFB	043h, 0C8h, 029h, 055h, 0FFh
+	KEYWRD	<INMK>, C52B1
+	; DEFB	04Eh, 04Dh, 0CBh, 0B1h, 052h
+
+	DEFB	0FFh
+
+	KEYWRD	<KEY ON>, C52B1
+	; DEFB	045h, 059h, 0FFh, 04Fh, 0CEh, 0B1h, 052h
+
+        KEYWRD	<KEY OFF>, C52B1
+	; DEFB	045h, 059h, 0FFh, 04Fh, 046h, 0C6h, 0B1h, 052h
+
+	DEFB	0FFh
+
+	KEYWRD	<LOAD PCM>, C52B1
+	; DEFB	04Fh, 041h, 044h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
+
+	DEFB	0FFh
+
+	KEYWRD	<MK VOICE>, C52B1
+	; DEFB	04Bh, 0FFh, 056h, 04Fh, 049h, 043h, 0C5h, 0B1h, 052h
+
+        KEYWRD	<MK VEL>, C52B1
+	; DEFB	04Bh, 0FFh, 056h, 045h, 0CCh, 0B1h, 052h
+
+        KEYWRD	<MK VOL>, C52B1
+	; DEFB	04Bh, 0FFh, 056h, 04Fh, 0CCh, 0B1h, 052h,
+
+        KEYWRD	<MK TEMPO>, C52B1
+	; DEFB	04Bh, 0FFh, 054h, 045h, 04Dh, 050h, 0CFh, 0B1h, 052h
+
+        KEYWRD	<MK STAT>, C52B1
+	; DEFB	04Bh, 0FFh, 053h, 054h, 041h, 0D4h, 0B1h, 052h
+
+        KEYWRD	<MK PCM>, C52B1
+	; DEFB	04Bh, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
+
+        KEYWRD	<MUSIC>, J52EC
+	; DEFB	055h, 053h, 049h, 0C3h, 0ECh, 052h
+
+	DEFB	0FFh
+
+	KEYWRD	<REC MK>, C52B1
+	; DEFB	045h, 043h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
+
+        KEYWRD	<RECMOD>, C52B1
+	; DEFB	045h, 043h, 04Dh, 04Fh, 0C4h, 0B1h, 052h
+
+        KEYWRD	<REC PCM>, C52B1
+	; DEFB	045h, 043h, 0FFh, 050h, 043h,, 0CDh, 0B1h, 052h
+
+	DEFB	0FFh
+
+	KEYWRD	<STOPM>, C548B
+	; DEFB	054h, 04Fh, 050h, 0CDh, 08Bh, 054h
+
+        KEYWRD	<SET PCM>, C52B1
+	; DEFB	045h, 054h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
+
+        KEYWRD	<SAVE PCM>, C52B1
+	; DEFB	041h, 056h, 045h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
+
+        KEYWRD	<SYNTHE>, C52B1
+	; DEFB	059h, 04Eh, 054h, 048h, 0C5h, 0B1h, 052h
+
+	DEFB	0FFh
+
+	KEYWRD	<TRANSPOSE>, C5535
+	; DEFB	052h, 041h, 04Eh, 053h, 050h, 04Fh, 053h, 0C5h, 035h, 055h
+
+        KEYWRD	<TEMPER>, J5541
+	; DEFB	045h, 04Dh, 050h, 045h, 0D2h, 041h, 055h,
+
+	DEFB	0FFh
+
+	KEYWRD	<VOICE>, C55EE
+	; DEFB	04Fh, 049h, 043h, 0C5h, 0EEh, 055h
+
+        KEYWRD	<VOICE COPY>, C567E
+	; DEFB	04Fh, 049h, 043h, 045h, 0FFh, 043h, 04Fh, 050h, 0D9h, 07Eh, 056h
+
+	DEFB	0FFh
+
+	KEYWRD	<PLAY>, C5746
+	; DEFB	04Ch, 041h, 0D9h, 046h, 057h,
+
+        KEYWRD	<PLAY PCM>, C52B1
+	; DEFB	04Ch, 041h, 059h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
+
+        KEYWRD	<PCM FREQ>, C52B1
+	; DEFB	043h, 04Dh, 0FFh, 046h, 052h, 045h, 0D1h, 0B1h, 052h
+
+        KEYWRD	<PCM VOL>, C52B1
+	; DEFB	043h, 04Dh, 0FFh, 056h, 04Fh, 0CCh, 0B1h, 052h
+
+        KEYWRD	<PLAY MK>,C52B1
+	; DEFB	04Ch, 041h, 059h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
+
+        KEYWRD	<PITCH>, C5529
+	; DEFB	049h, 054h, 043h, 0C8h, 029h, 055h
+
+	DEFB	0FFh
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2145,15 +2239,18 @@ J551F:	LD	HL,D.F7F8
 J5524:	LD	B,00H
         LDIR
         RET
+
 ;	-----------------
-?5529:	CALL	C5465
+;	PITCH STATEMENT
+C5529:	CALL	C5465
         PUSH	HL
         CALL	C6B50
         POP	HL
         JP	C,C6770
         RET
+
 ;	-----------------
-?5535:	CALL	C5465
+C5535:	CALL	C5465
         PUSH	HL
         CALL	C6BDA
         POP	HL
@@ -2291,7 +2388,7 @@ C55E9:	CALL	C67A7
         ADD	HL,HL
         RET
 ;	-----------------
-?55EE:	CALL	C67A7
+C55EE:	CALL	C67A7
         JR	Z,J5604
         LD	E,(HL)
         PUSH	AF
@@ -2403,7 +2500,7 @@ J5677:	ADD	IX,BC
         POP	BC
         RET
 ;	-----------------
-?567E:	CALL	C67A7
+C567E:	CALL	C67A7
         JR	Z,J5650
         PUSH	BC
         LD	D,(HL)
@@ -2542,7 +2639,7 @@ C5732:	LD	A,L
         ADD	HL,DE
         RET
 ;	-----------------
-?5746:	CALL	C52B4
+C5746:	CALL	C52B4
         LD	A,(D.F991)
         CP	E
         JP	C,C6770
@@ -5475,7 +5572,7 @@ C67BB:	LD	IX,I542F
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67C1:	LD	IX,I521C
+C67C1:	LD	IX, MBGETBYT
         JR	J67D7
 ;	-----------------
 J67C7:	LD	IX,I4601
