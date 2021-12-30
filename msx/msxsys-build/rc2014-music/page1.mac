@@ -52,6 +52,11 @@ FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
 ; F806-F856: workarea when executing numeric operators
 HOLD8		EQU     0F806H
 
+; F55E-F65F: used in direct modus to store the ASCII codes of the line, or simulary
+; for INPUT or LINE INPUT BASIC statements
+BUF            EQU     0F55EH
+
+; ======================================
 ; MSX BASIC BIOS ROUTINES
 MBCVRT		EQU	517AH	; convert to DAC to new type
 
@@ -97,49 +102,18 @@ C$2F8A	EQU	2F8AH	; -C---
 I$351E	EQU	351EH	; ----I
 I$381E	EQU	381EH	; ----I
 D$3C00	EQU	3C00H	; --S--
-D$3CFF	EQU	3CFFH	; --S--
 
 I73E8	EQU	73E8H
 
 J$8007	EQU	8007H	; J----
 I$8010	EQU	8010H	; ----I
-J$8333	EQU	8333H	; J----
-D$8500	EQU	8500H	; --S--
-I$900A	EQU	900AH	; ----I
-I$900B	EQU	900BH	; ----I
 I$A001	EQU	0A001H	; ----I
-C$A20C	EQU	0A20CH	; -C---
-I$A306	EQU	0A306H	; ----I
 C$AF63	EQU	0AF63H	; -C---
-I.B200	EQU	0B200H	; ----I
-I$B408	EQU	0B408H	; ----I
-I$B615	EQU	0B615H	; ----I
-I$BA0B	EQU	0BA0BH	; ----I
-I.C011	EQU	0C011H	; ----I
-I$CA0E	EQU	0CA0EH	; ----I
-J$CDFF	EQU	0CDFFH	; J----
-I$D200	EQU	0D200H	; ----I
-I$D220	EQU	0D220H	; ----I
 D$D460	EQU	0D460H	; ---L-
-C$D800	EQU	0D800H	; -C---
-I$D90E	EQU	0D90EH	; ----I
-C$DF1D	EQU	0DF1DH	; -C---
-I$E300	EQU	0E300H	; ----I
 I$E50C	EQU	0E50CH	; ----I
-J$EC05	EQU	0EC05H	; J----
-J$ECFF	EQU	0ECFFH	; J----
-D$ED00	EQU	0ED00H	; --S--
-C$F080	EQU	0F080H	; -C---
-I$F200	EQU	0F200H	; ----I
 D$F349	EQU	0F349H	; --S--
 I$F404	EQU	0F404H	; ----I
 D$F41C	EQU	0F41CH	; ---L-
-J$F421	EQU	0F421H	; J----
-I$F4D2	EQU	0F4D2H	; ----I
-J$F4F4	EQU	0F4F4H	; J----
-I$F500	EQU	0F500H	; ----I
-C$F502	EQU	0F502H	; -C---
-D.F55E	EQU	0F55EH	; --SLI
 D.F55F	EQU	0F55FH	; --SLI
 D.F560	EQU	0F560H	; --S-I
 D.F561	EQU	0F561H	; ---LI
@@ -1899,14 +1873,14 @@ J52EC:	PUSH	HL
         CALL	C50C6
         CALL	Z,C5009
         LD	HL,I52E0
-        LD	DE,D.F55E
+        LD	DE, BUF
         LD	BC,C.000C
         LDIR
         POP	HL
         CALL	C54E7
         JR	Z,J536F
         PUSH	HL
-        LD	HL,D.F55E
+        LD	HL, BUF
         LD	DE,D.F55F
         LD	BC,I.000B
         LD	(HL),00H
@@ -1955,7 +1929,7 @@ J5355:	JP	NC,C6770
         JR	Z,J5364
         DJNZ	J5348
 J5364:	LD	A,C
-        LD	(D.F55E),A
+        LD	(BUF),A
         POP	BC
 J5369:	CALL	C55E9
         JP	NZ,J676D
@@ -1970,7 +1944,7 @@ J536F:	PUSH	HL
         ADD	A,(HL)
         INC	HL
         LD	D,A
-        LD	A,(D.F55E)
+        LD	A,(BUF)
         LD	B,A
         OR	A
         JR	Z,J5389
@@ -2013,10 +1987,10 @@ J53AF:	POP	DE
         LD	(D$F81B),A
         XOR	A
         LD	(D.F85F),A
-        LD	HL,D.F55E
+        LD	HL, BUF
         LD	(D$F860),HL
         LD	HL,D.F560
-        LD	(D.F55E),HL
+        LD	(BUF),HL
         LD	(HL),A
         LD	HL, HOLD8
         JP	J67C7
@@ -2034,7 +2008,7 @@ BASINITLN	EQU	$-BASINITSCPT
 ;	     Outputs ________________________
 
 C5407:	DI
-        LD	HL,D.F55E
+        LD	HL, BUF
         LD	A,(HL)
         LD	(D.F984),A
         INC	HL
@@ -2438,7 +2412,7 @@ J5621:	CALL	C67A7
 ;	     Outputs ________________________
 
 C5632:	PUSH	HL
-        LD	HL,D.F55E
+        LD	HL, BUF
 J5636:	LD	A,(HL)
         CP	0FFH
         JR	Z,J5662
@@ -2506,7 +2480,7 @@ C567E:	CALL	C67A7
         LD	D,(HL)
         CCF
         SBC	A,A
-        LD	(D.F55E),A
+        LD	(BUF),A
         LD	(D.F55F),DE
         LD	(D.F561),BC
         CALL	C67A7
@@ -2525,7 +2499,7 @@ J56AD:	CALL	C67A7
         ADD	HL,HL
         JP	NZ,J676D
         PUSH	HL
-        LD	HL,D.F55E
+        LD	HL, BUF
         LD	A,(D.F563)
         AND	(HL)
         JR	NZ,J56DE
@@ -2596,7 +2570,7 @@ C56F9:	LD	A,(D.F563)
         RET	NZ
         LD	HL,I.F9F9
 J570D:	PUSH	HL
-        LD	A,(D.F55E)
+        LD	A,(BUF)
         LD	HL,(D.F55F)
         OR	A
         JR	NZ,J5725
@@ -5309,7 +5283,7 @@ C6696:	CP	25H	; "%"
 ;	     Outputs ________________________
 
 C66A4:	CALL	C6614
-        LD	DE,D.F55E
+        LD	DE, BUF
         PUSH	DE
         LD	B,28H	; "("
         CALL	C668F
