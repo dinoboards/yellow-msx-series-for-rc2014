@@ -80,9 +80,7 @@ I.0612	EQU	0612H	; ----I
 I$061E	EQU	061EH	; ----I
 I$071E	EQU	071EH	; ----I
 I$0900	EQU	0900H	; ----I
-I$0D08	EQU	0D08H	; ----I
 I$0D1E	EQU	0D1EH	; ----I
-J$0D74	EQU	0D74H	; J----
 I$0E10	EQU	0E10H	; ----I
 I$0E11	EQU	0E11H	; ----I
 C$0E41	EQU	0E41H	; -C---
@@ -126,7 +124,6 @@ J$8007	EQU	8007H	; J----
 I$8010	EQU	8010H	; ----I
 J$8333	EQU	8333H	; J----
 D$8500	EQU	8500H	; --S--
-J$8908	EQU	8908H	; J----
 I$900A	EQU	900AH	; ----I
 I$900B	EQU	900BH	; ----I
 I$A001	EQU	0A001H	; ----I
@@ -135,7 +132,6 @@ I$A306	EQU	0A306H	; ----I
 C$AF63	EQU	0AF63H	; -C---
 I.B200	EQU	0B200H	; ----I
 I$B408	EQU	0B408H	; ----I
-C$B60B	EQU	0B60BH	; -C---
 I$B615	EQU	0B615H	; ----I
 I$BA0B	EQU	0BA0BH	; ----I
 I.C011	EQU	0C011H	; ----I
@@ -6255,12 +6251,12 @@ C6A4A:	PUSH	BC
         RET
 ;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
+;	  Subroutine set octave and F-number OPLL
+;	     Inputs  IX = channel table
 ;	     Outputs ________________________
 
 C6A78:	LD	L,(IX+5)
-        LD	H,(IX+6)
+        LD	H,(IX+6)	; transpose/pitch
         LD	E,(IX+3)
         LD	D,(IX+4)
         ADD	HL,DE
@@ -6354,48 +6350,30 @@ J6B11:	OR	H
         RRA
         LD	H,A
         RR	L
-        LD	C,(IX)
+        LD	C,(IX)			; F-number LSB register
         LD	B,L
-        CALL	C6DB5
+        CALL	C6DB5			; write OPLL register with validation
         LD	A,C
-        ADD	A,10H	; 16
+        ADD	A,10H
         LD	C,A
-        CALL	C6DE0
-        AND	30H	; "0"
-        OR	H
+        CALL	C6DE0			; read OPLL register with validation
+        AND	30H			; leave sustian, key alone
+        OR	H			; set octave and F-number
         LD	B,A
-        CALL	C6DB5
+        CALL	C6DB5			; write OPLL register with validation
         RET
 ;	-----------------
-I6B2C:	NOP
-        EX	AF,AF'
-        LD	A,C
-        LD	A,C
-        EX	AF,AF'
-        ADD	A,C
-        JP	M,J$8908
-        ADD	A,E
-        ADD	HL,BC
-        SUB	C
-        INC	D
-        LD	A,(BC)
-        SBC	A,C
-        XOR	L
-        LD	A,(BC)
-        AND	E
-        LD	D,B
-        DEC	BC
-        XOR	H
-        CALL	M,C$B60B
-        OR	D
-        INC	C
-        JP	NZ,J$0D74
-        CALL	C$0E41
-        EXX
-        LD	A,(DE)
-        RRCA
-        AND	50H	; "P"
-C6B50	EQU	$-1
+
+I6B2C:
+	DB	000h, 008h, 079h, 079h, 008h, 081h, 0FAh, 008h, 089h, 083h, 009h, 091h, 014h, 00Ah, 099h, 0ADh
+	DB	00Ah, 0A3h, 050h, 00Bh, 0ACh, 0FCh, 00Bh, 0B6h, 0B2h, 00Ch, 0C2h, 074h, 00Dh, 0CDh, 041h, 00Eh
+	DB	0D9h, 01Ah, 00Fh
+
+;	  Subroutine set pitch
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C6B50:	LD	D, B
         LD	E,C
         CALL	C6B62
         RET	C
@@ -6509,7 +6487,7 @@ J6BBC:	LD	(D$3C00),A
         CP	E
         NOP
 
-;	  Subroutine __________________________
+;	  Subroutine set transpose
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
