@@ -13,54 +13,67 @@
 
         .Z80
         ASEG
+
+; Function : Reads the value of an address in another slot
+; Input    : A  - ExxxSSPP  Slot-ID
+;            │        ││└┴─ Primary slot number (00-11)
+;            │        └┴─── Secondary slot number (00-11)
+;            └───────────── Expanded slot (0 = no, 1 = yes)
+;            HL - Address to read
+; Output   : A  - Contains the value of the read address
+; Registers: AF, C, DE
+; Remark   : This routine turns off the interupt, but won't turn it on again
+RDSLT	EQU	0000CH		; Read memory from an optional slot
+
+; Function : Executes inter-slot call.
+; Input    : IY - High byte with slot ID, see RDSLT
+;            IX - The address that will be called
+; Remark   : Variables can never be given in alternative registers or IX and IY
+CALSLT	EQU	0001CH
+
+; Function : Switches indicated slot at indicated page on perpetually
+; Input    : A - Slot ID, see RDSLT
+;            H - Bit 6 and 7 must contain the page number (00-11)
+ENASLT	EQU	0024H	; -C---
+
+IDBYT1	EQU	002BH
+; Basic ROM version
+; 7 6 5 4 3 2 1 0
+; | | | | +-+-+-+-- Character set
+; | | | |           0 = Japanese, 1 = International (ASCII), 2=Korean
+; | +-+-+---------- Date format
+; |                 0 = Y-M-D, 1 = M-D-Y, 2 = D-M-Y
+; +---------------- Default interrupt frequency
+;                   0 = 60Hz, 1 = 50Hz
+
+
+FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
+
+
         ORG	4000H
 X.0000	EQU	0000H	; JCS-I
 I.0001	EQU	0001H	; ----I
 C.0008	EQU	0008H	; -C--I
 I.0009	EQU	0009H	; ----I
-C.000A	EQU	000AH	; -C---
 I.000B	EQU	000BH	; ----I
 C.000C	EQU	000CH	; -C--I
-C.000E	EQU	000EH	; -C---
 C.0010	EQU	0010H	; -C--I
-I$0015	EQU	0015H	; ----I
-C.0018	EQU	0018H	; -C---
 I$001B	EQU	001BH	; ----I
 C.001C	EQU	001CH	; -C--I
 C.0020	EQU	0020H	; -C--I
-ENASLT	EQU	0024H	; -C---
 I.0025	EQU	0025H	; ----I
 I.0027	EQU	0027H	; ----I
-C$0028	EQU	0028H	; -C---
-I$002B	EQU	002BH	; ----I
-C.0030	EQU	0030H	; -C--I
-I$0037	EQU	0037H	; ----I
-C.0038	EQU	0038H	; -C---
 I$003A	EQU	003AH	; ----I
 I.003D	EQU	003DH	; ----I
-C.0040	EQU	0040H	; -C--I
 I$0048	EQU	0048H	; ----I
-C.0070	EQU	0070H	; JC---
-I$007B	EQU	007BH	; ----I
-DBUF	EQU	0080H	; -C--I
-I$0083	EQU	0083H	; ----I
 I$008B	EQU	008BH	; ----I
 I$0090	EQU	0090H	; ----I
 D$0099	EQU	0099H	; ---L-
-I$00A0	EQU	00A0H	; ----I
-J$00F4	EQU	00F4H	; J----
 I$00FF	EQU	00FFH	; ----I
-J.0100	EQU	0100H	; J---I
-I$0110	EQU	0110H	; ----I
 I$013E	EQU	013EH	; ----I
-I$0146	EQU	0146H	; ----I
 I.01C8	EQU	01C8H	; ----I
-C$01F5	EQU	01F5H	; -C---
 I$021E	EQU	021EH	; ----I
-J$0314	EQU	0314H	; J----
-J$0318	EQU	0318H	; J----
 I$0327	EQU	0327H	; ----I
-I$04F0	EQU	04F0H	; ----I
 C$0500	EQU	0500H	; -C---
 I$051E	EQU	051EH	; ----I
 I$0529	EQU	0529H	; ----I
@@ -181,7 +194,6 @@ I$F900	EQU	0F900H	; ----I
 D.F956	EQU	0F956H	; --SL-
 C.F975	EQU	0F975H	; -C--I
 I$F976	EQU	0F976H	; ----I
-D.F97A	EQU	0F97AH	; --S--
 D.F97C	EQU	0F97CH	; --SL-
 D.F97D	EQU	0F97DH	; --SL-
 D.F97F	EQU	0F97FH	; --SL-
@@ -259,147 +271,54 @@ J4C64	EQU	04C64H
 
 D4000:	DEFB	"AB"
         DEFW	0
-        DEFW	ROM_STATEMENT
+        DEFW	RCMUSIC_BASIC
         DEFW	0
         DEFW	0
         DEFS	6,0
 
         DEFS	8,0
 
-I4018:	DEFB	"APRL"
-        DEFB	"OPLL"
-
-
-; BIOS for fmpac bank switching
-
-J4020:	JP	J4064
-?4023:	JP	J405E
-?4026:	JP	J4048
-?4029:	JP	C402F
-C402C:	JP	J403D
-
-;	  Subroutine read byte from fmpac bank
-;	     Inputs  HL = adres, E = bank
-;	     Outputs A = data
-
-C402F:	PUSH	BC
-        LD	BC,D7FF7
-        LD	A,(BC)
-        EX	AF,AF'
-        LD	A,E
-        LD	(BC),A
-        LD	A,(HL)
-        EX	AF,AF'
-        LD	(BC),A
-        EX	AF,AF'
-        POP	BC
-        RET
-
-;	  Subroutine read word from fmpac bank
-;	     Inputs  HL = adres, E = bank
-;	     Outputs HL = data
-
-J403D:	CALL	C402F
-        LD	D,A
-        INC	HL
-        CALL	C402F
-        LD	H,A
-        LD	L,D
-        RET
-
-;	  Subroutine transfer to/from fmpac bank
-;	     Inputs  HL = source, DE = dest, BC = lenght, bank on stack
-;	     Outputs HL = data
-
-J4048:	LD	A,(D7FF7)
-        EX	AF,AF'
-        EXX
-        POP	HL
-        POP	DE
-        PUSH	DE
-        PUSH	HL
-        LD	A,E
-        EXX
-        LD	(D7FF7),A
-        EX	DE,HL
-        LDIR
-        EX	AF,AF'
-        LD	(D7FF7),A
-        RET
-
-;	  Subroutine start routine in fmpac bank
-;	     Inputs  E = bank, BC = adres
-;	     Outputs depends
-
-J405E:	PUSH	BC
-        EXX
-        POP	HL
-        JP	J4064
-
-;	  Subroutine start routine in fmpac bank
-;	     Inputs  E' = bank, HL' = adres
-;	     Outputs depends
-
-J4064:	EXX
-        EX	AF,AF'
-        LD	A,(D7FF7)
-        PUSH	AF
-        LD	A,E
-        LD	(D7FF7),A
-        LD	DE,I4076
-        PUSH	DE
-        PUSH	HL
-        EX	AF,AF'
-        EXX
-        RET
-
-I4076:	EX	AF,AF'
-        POP	AF
-        LD	(D7FF7),A
-        EX	AF,AF'
-        RET
+I4018:	DEFB	"APRLOPLL"
 
         DEFS	04080H-$,0
 
-D4080:	DEFW	I5000			; address statement handler
-
-ROM_STATEMENT:
-I4082:	PUSH	HL
-        LD	HL,I.FD89
-        LD	DE,I40B3
-J4089:	LD	A,(DE)
+RCMUSIC_BASIC:
+	EI
+	PUSH	HL
+        LD	HL, I.FD89
+        LD	DE, MUSIC_VER
+IS_VER:	LD	A, (DE)
+	OR	A
+	JR	Z, BASIC_VER_STATEMENT
         CP	(HL)
         INC	HL
         INC	DE
-        JR	NZ,J40A6
-        AND	A
-        JR	NZ,J4089
-        POP	HL
-        LD	A,(X5006)
-        INC	A			; 0FFH on 5006H ?
-        CALL	NZ,X5006		; nope, stop background music
-        LD	E,1			; bank 1
-        LD	HL,D4080
-        CALL	C402C			; read word from fmpac bank
-        EXX
-        JP	J4020			; start routine in fmpac bank
+        JR	Z, IS_VER
+	POP	HL
+        JP	ROM_STATEMENT
 
-J40A6:	POP	HL
-        LD	DE,(D4080)
-        LD	A,D
-        AND	E
-        INC	A			; statement handler adres FFFFH ?
-        PUSH	DE
-        RET	NZ			; nope, then start it!
-        POP	DE
-        SCF
-        RET				; statement not recognized, quit
+BASIC_VER_STATEMENT:
+CHPUT          equ     00A2h
 
-I40B3:	DEFB	"FMPAC",0
+	LD	a, '3'
+	CALL	CHPUT
+	EI
 
-        DEFS	04100H-$,0
+	POP	HL
+	OR	A
+	RET
 
-        DEFB	"V1.3 1988 04 26",0
+MUSIC_VER:	DEFB	"MUSIC_VER", 0
+
+        DEFS	040C0H-$, 0
+	DW	1
+	DW	2
+
+        DEFS	04100H-$, 0
+
+        DEFB	"V1.0 2021 12 30", 0
+
+        DEFS	04110H-$,0
 
         JP	J4140		; WRTOPL
 ?4113:	JP	J417B		; INIOPL
@@ -1546,7 +1465,7 @@ C5054:	PUSH	BC
 J505D:	PUSH	AF
         PUSH	BC
         PUSH	DE
-        CALL	C.000C
+        CALL	RDSLT
         EI
         POP	DE
         POP	BC
@@ -1667,6 +1586,7 @@ C50CE:	PUSH	AF
         POP	AF
         RET
 ;	-----------------
+ROM_STATEMENT:
 J50EB:	EI
         PUSH	HL
         LD	HL,I.FD89
@@ -4157,7 +4077,7 @@ C5EB0:	LD	A,(HL)
         LD	B,00H
         CALL	C5BF3
         PUSH	HL
-        LD	DE,(D.F97A)
+        LD	DE, (FREQ_FACTOR)
         CALL	C5BD5
         EX	DE,HL
         EX	(SP),HL
@@ -5201,13 +5121,13 @@ J64AE:	SCF
         ADD	HL,DE
         LD	(D.F99B),HL
         LD	A,(D.FCC1)
-        LD	HL,I$002B
-        CALL	C.000C
+        LD	HL, IDBYT1
+        CALL	RDSLT
         AND	80H
-        LD	HL,I$3840
-        JR	Z,J64E0
-        LD	HL,I$2EE0
-J64E0:	LD	(D.F97A),HL
+        LD	HL, 14400 		; LOAD FOR 60HZ SYSTEMS (120*4*60)/2
+        JR	Z, J64E0 
+        LD	HL, 12000		; LOAD FOR 50HZ SYSTEMS (120*4*50)/2
+J64E0:	LD	(FREQ_FACTOR), HL
         RET
 ;	-----------------
 I64E4:	LD	A,A
@@ -5819,7 +5739,7 @@ I67D0	EQU	$-1
 
 C67D3:	LD	IX,I67D0
 J67D7:	LD	IY,(D$FCC0)
-        CALL	C.001C
+        CALL	CALSLT
         EI
         RET
 ;	-----------------
@@ -6775,9 +6695,9 @@ C6C9F:	LD	A,C
         CCF
         RET	C
         PUSH	HL
-        CP	0AH	; 10 
+        CP	0AH
         JR	C,J6CAD
-        ADD	A,6EH	; "n"
+        ADD	A,6EH	
         JR	J6CB2
 ;	-----------------
 J6CAD:	ADD	A,A
@@ -6803,136 +6723,48 @@ J6CC8:	LD	A,(HL)
         POP	HL
         AND	A
         RET
-;	-----------------
-I6CD2:	POP	AF
-        INC	D
-        EI
-        JP	PO,J$EC05
-        RRCA
-        OR	19H
-        NOP
-        RST	20H
-        LD	A,(BC)
-        LD	A,(DE)
-        ADD	IX,BC
-        DEC	(HL)
-        RST	30H
-        INC	HL
-        AND	12H	; 18 
-        CALL	NC,C$2C00
-        XOR	1EH
-        DEC	B
-        LD	A,(BC)
-        RRCA
-        DEC	B
-        ADD	HL,DE
-        NOP
-        INC	D
-        LD	A,(BC)
-        NOP
-        INC	D
-        LD	A,(BC)
-        LD	E,05H	; 5 
-        LD	A,(BC)
-        RRCA
-        DEC	B
-        ADD	HL,DE
-        NOP
-        INC	D
-        LD	A,(BC)
-        NOP
-        INC	D
-        EI
-        NOP
-        OR	0AH	; 10 
-        NOP
-        OR	0AH	; 10 
-        NOP
-        DEC	B
-        CALL	PE,C$0500
-        EI
-        LD	A,(DE)
-        LD	BC,I.0B09
-        RST	30H
-        DEC	D
-        LD	BC,I.0612
-J6D16	EQU	$-1
-        NOP
-        DJNZ	J6D16
-        LD	A,(DE)
-        LD	BC,I.0B09
-        DEC	B
-        DEC	D
-        LD	BC,I.0612
-        NOP
-        DJNZ	J6D30
-        RRCA
-        NOP
-        DEC	B
-        LD	A,(BC)
-        EI
-        INC	D
-        EI
-        LD	A,(BC)
-        DEC	B
-        NOP
-J6D30:	RRCA
-        OR	1AH
-        RET	M
-        ADD	HL,BC
-        DAA
-        RST	30H
-        INC	HL
-        DI
-        LD	(DE),A
-        DEFB	0FDH		; << Illegal Op Code Byte >>
-;	-----------------
-        NOP
-        INC	L
-        XOR	00H
-        DEFB	0,0,0,0,0,0,0,0,0,0,0
-        ADD	HL,HL
-        CALL	C,C5233
-        DEC	B
-        INC	H
-        RST	10H
-        LD	L,0E1H
-        NOP
-        LD	D,(HL)
-        LD	A,(BC)
-        ADD	HL,HL
-        CALL	C,C5233
-        DEC	B
-        INC	H
-        RST	10H
-        LD	L,0E1H
-        NOP
-        LD	D,(HL)
 
-;	  Subroutine __________________________
+
+I6CD2:	DEFB	0F1H,014H,0FBH,0E2H,005H,0ECH,00FH,0F6H,019H,000H,0E7H,00AH
+        DEFB	01AH,0DDH,009H,035H,0F7H,023H,0E6H,012H,0D4H,000H,02CH,0EEH
+        DEFB	01EH,005H,00AH,00FH,005H,019H,000H,014H,00AH,000H,014H,00AH
+        DEFB	01EH,005H,00AH,00FH,005H,019H,000H,014H,00AH,000H,014H,0FBH
+        DEFB	000H,0F6H,00AH,000H,0F6H,00AH,000H,005H,0ECH,000H,005H,0FBH
+        DEFB	01AH,001H,009H,00BH,0F7H,015H,001H,012H,006H,000H,010H,0FCH
+        DEFB	01AH,001H,009H,00BH,005H,015H,001H,012H,006H,000H,010H,00AH
+        DEFB	00FH,000H,005H,00AH,0FBH,014H,0FBH,00AH,005H,000H,00FH,0F6H
+        DEFB	01AH,0F8H,009H,027H,0F7H,023H,0F3H,012H,0FDH,000H,02CH,0EEH
+        DEFB	000H,000H,000H,000H,000H,000H,000H,000H,000H,000H,000H,000H
+
+	DEFB	029H,0DCH,033H,052H,005H,024H,0D7H,02EH
+        DEFB	0E1H,000H,056H,00AH,029H,0DCH,033H,052H
+        DEFB	005H,024H,0D7H,02EH,0E1H,000H,056H
+
+;	  Subroutine reset OPLL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6D61:	XOR	A
+C6D61:	XOR	A			; value
         LD	C,00H
-        LD	B,08H	; 8 
-        CALL	C6D7B
-J6D69:	LD	C,0EH	; 14 
-        LD	B,0BH	; 11 
-        CALL	C6D7B
-        LD	C,20H	; " "
-        LD	B,09H	; 9 
-        CALL	C6D7B
+        LD	B,08H
+        CALL	C6D7B			; write OPLL register 0-7
+J6D69:	LD	C,0EH	 
+        LD	B,0BH	 
+        CALL	C6D7B			; write OPLL register 14-24
+        LD	C,20H	
+        LD	B,09H	
+        CALL	C6D7B			; write OPLL register 32-41
         LD	C,30H	; "0"
         LD	B,09H	; 9 
+					; write OPLL register 48-57
 
-;	  Subroutine __________________________
+;	  Subroutine write OPLL register range
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C6D7B:	PUSH	BC
         LD	B,A
-        CALL	C6DB5
+        CALL	C6DB5			; write OPLL register with validation
         EI
         POP	BC
         INC	C
