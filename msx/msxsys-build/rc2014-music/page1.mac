@@ -54,7 +54,30 @@ HOLD8		EQU     0F806H
 
 ; F55E-F65F: used in direct modus to store the ASCII codes of the line, or simulary
 ; for INPUT or LINE INPUT BASIC statements
-BUF            EQU     0F55EH
+BUF		EQU     0F55EH
+
+; disksystem bottom (lowest address used by the disksystem)
+HIMSAV		EQU	0F349H
+
+
+; FC4A-FC4B: highest address of the RAM memory that is not reserved by
+; the OS; string area, filebuffers and stack are below this address
+; initialized at startup and not changed normally
+HIMEM		EQU	0FC4AH
+
+; Original Buffers for sound queues.  Repurposed by MSX-MUSIC
+; VOICAQ		EQU	0F975H           ; Voice A queue
+; VOICBQ		EQU	0F9F5H           ; Voice B queue
+; VOICCQ		EQU	0FA75H           ; Voice C queue
+;
+MUSCWRK		EQU	0F97DH
+
+; F41C-F41D: line number of current BASIC line being executed, in direct modus this
+; contains $FFFF (ini:$FFFF)
+CURLIN		EQU	0F41CH
+
+; F6BE-F6BF: line number of last program break, reset at 0 at any program change
+OLDLIN		EQU	0F6BEH
 
 ; ======================================
 ; MSX BASIC BIOS ROUTINES
@@ -111,9 +134,7 @@ I$A001	EQU	0A001H	; ----I
 C$AF63	EQU	0AF63H	; -C---
 D$D460	EQU	0D460H	; ---L-
 I$E50C	EQU	0E50CH	; ----I
-D$F349	EQU	0F349H	; --S--
 I$F404	EQU	0F404H	; ----I
-D$F41C	EQU	0F41CH	; ---L-
 D.F55F	EQU	0F55FH	; --SLI
 D.F560	EQU	0F560H	; --S-I
 D.F561	EQU	0F561H	; ---LI
@@ -123,7 +144,6 @@ D$F566	EQU	0F566H	; ---L-
 C.F5DE	EQU	0F5DEH	; -C--I
 D.F663	EQU	0F663H	; ---LI
 D.F6A5	EQU	0F6A5H	; --S--
-D$F6BE	EQU	0F6BEH	; --S--
 D.F6C6	EQU	0F6C6H	; --SL-
 I$F7F6	EQU	0F7F6H	; ----I
 D.F7F8	EQU	0F7F8H	; --S-I
@@ -137,7 +157,6 @@ D.F956	EQU	0F956H	; --SL-
 C.F975	EQU	0F975H	; -C--I
 I$F976	EQU	0F976H	; ----I
 D.F97C	EQU	0F97CH	; --SL-
-D.F97D	EQU	0F97DH	; --SL-
 D.F97F	EQU	0F97FH	; --SL-
 D.F980	EQU	0F980H	; --S-I
 D.F981	EQU	0F981H	; --S-I
@@ -188,7 +207,6 @@ D.FB41	EQU	0FB41H	; --S-I
 D$FB66	EQU	0FB66H	; --S--
 D$FB8B	EQU	0FB8BH	; --S--
 D$FBB1	EQU	0FBB1H	; ---L-
-D.FC4A	EQU	0FC4AH	; --SL-
 D$FC9B	EQU	0FC9BH	; ---L-
 D$FCC0	EQU	0FCC0H	; ---L-
 D.FCC1	EQU	0FCC1H	; ---LI
@@ -1956,24 +1974,24 @@ J5389:	ADD	A,D
         CP	0AH	; 10
         JR	NC,J5355
         CALL	C67CD
-        LD	HL,(D.FC4A)
+        LD	HL, (HIMEM)
         CALL	C50C6
         JR	NZ,J53AF
         LD	DE,I$0327
         AND	A
         SBC	HL,DE
-        LD	(D.FC4A),HL
-        LD	(D.F97D),HL
+        LD	(HIMEM), HL
+        LD	(MUSCWRK), HL
         LD	A,(H.PHYD)
         CP	0C9H
         JR	Z,J53AF
-        LD	(D$F349),HL
+        LD	(HIMSAV), HL
 J53AF:	POP	DE
         LD	SP,HL
         PUSH	DE
         CALL	C5407
-        LD	HL,(D$F41C)
-        LD	(D$F6BE),HL
+        LD	HL, (CURLIN)
+        LD	(OLDLIN), HL
         LD	HL, BASINITSCPT
         LD	DE, HOLD8
         LD	BC, BASINITLN
@@ -4945,7 +4963,7 @@ J64AE:	SCF
         CALL	C5486
         LD	A,(HL)
         LD	(D.F994),A
-        LD	HL,(D.F97D)
+        LD	HL, (MUSCWRK)
         LD	DE,X.0000
         ADD	HL,DE
         LD	(D.F99B),HL
@@ -4989,7 +5007,7 @@ C64EE:	CALL	C6789
         LD	(D.F995),HL
         LD	A,(D.F991)
         LD	B,A
-        LD	HL,(D.F97D)
+        LD	HL, (MUSCWRK)
         LD	DE,I$0048
         ADD	HL,DE
         EX	DE,HL
@@ -5601,7 +5619,7 @@ C67E7:	LD	H,00H
         LD	A,E
         LD	DE,I.01C8
         ADD	HL,DE
-        LD	DE,(D.F97D)
+        LD	DE, (MUSCWRK)
         ADD	HL,DE
         OR	A
         JR	Z,J6825
@@ -5698,7 +5716,7 @@ J6867:	LD	HL,D.F997
         OR	A
         JR	Z,J6888
         LD	B,A
-        LD	HL,(D.F97D)
+        LD	HL, (MUSCWRK)
         LD	DE,I.01C8
         ADD	HL,DE
         LD	DE,I.0027
