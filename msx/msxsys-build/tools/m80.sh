@@ -10,7 +10,7 @@ function finish {
 
 trap finish EXIT
 
-cpm --exec M80 /Z =$1 | tee "${outfile}" | \
+cpm --exec M80 /L/Z =$1 | tee "${outfile}" | \
   grep --color=always -E "\?File not found|$" |  \
   grep --color=always -E "[0-9]+\s+Fatal\serror\(s\)|$" | \
   grep --color=always -E "^Unterminated REPT/IRP/IRPC/MACRO|$" | \

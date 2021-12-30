@@ -81,40 +81,9 @@ I$061E	EQU	061EH	; ----I
 I$071E	EQU	071EH	; ----I
 I$0900	EQU	0900H	; ----I
 I$0D1E	EQU	0D1EH	; ----I
-I$0E10	EQU	0E10H	; ----I
-I$0E11	EQU	0E11H	; ----I
-C$0E41	EQU	0E41H	; -C---
-I$1101	EQU	1101H	; ----I
-I$1111	EQU	1111H	; ----I
-J.1113	EQU	1113H	; J---I
-C$1513	EQU	1513H	; -C---
-I$1571	EQU	1571H	; ----I
-I$1671	EQU	1671H	; ----I
-I$19F4	EQU	19F4H	; ----I
-I$1C56	EQU	1C56H	; ----I
-D$2006	EQU	2006H	; --S--
-I$2007	EQU	2007H	; ----I
-I$2009	EQU	2009H	; ----I
-I$2015	EQU	2015H	; ----I
-I$2017	EQU	2017H	; ----I
-C$201B	EQU	201BH	; -C---
-I$2020	EQU	2020H	; ----I
-D$2080	EQU	2080H	; --S--
-I$2089	EQU	2089H	; ----I
-I$21FA	EQU	21FAH	; ----I
-I$2303	EQU	2303H	; ----I
-D$2400	EQU	2400H	; --S--
-C$2C00	EQU	2C00H	; -C---
-I$2EE0	EQU	2EE0H	; ----I
 C$2F8A	EQU	2F8AH	; -C---
-I$3003	EQU	3003H	; ----I
-C$3033	EQU	3033H	; -C---
-I$30F4	EQU	30F4H	; ----I
-I$332E	EQU	332EH	; ----I
-I$3430	EQU	3430H	; ----I
 I$351E	EQU	351EH	; ----I
 I$381E	EQU	381EH	; ----I
-I$3840	EQU	3840H	; ----I
 D$3C00	EQU	3C00H	; --S--
 D$3CFF	EQU	3CFFH	; --S--
 
@@ -1590,13 +1559,13 @@ J50EB:	EI
         SCF
         RET	Z
 J5104:	CALL	C510F
-        CALL	C510D
+        CALL	C510D		; CALL (DE)
         EI
         OR	A
         RET
 ;	-----------------
 
-;	  Subroutine __________________________
+;	  Subroutine CALL (DE)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -6374,7 +6343,7 @@ I6B2C:
 ;	     Outputs ________________________
 
 C6B50:	LD	D, B
-        LD	E,C
+        LD	E, C
         CALL	C6B62
         RET	C
         LD	(D.F99D),DE
@@ -6403,89 +6372,140 @@ C6B62:	LD	HL,0FE34H
         LD	D,(HL)
         RET
 ;	-----------------
-I6B76:	RST	00H
-        CP	0D2H
-        CP	0DDH
-        CP	0E7H
-        CP	0F2H
-        CP	0FDH
-        CP	07H	; 7
-        RST	38H
-        LD	(DE),A
-        RST	38H
-        DEC	E
-        RST	38H
-        DAA
-        RST	38H
-        LD	(D$3CFF),A
-        RST	38H
-        LD	B,A
-        RST	38H
-        LD	D,C
-        RST	38H
-        LD	E,H
-        RST	38H
-        LD	H,(HL)
-        RST	38H
-        LD	(HL),C
-        RST	38H
-        LD	A,E
-        RST	38H
-        ADD	A,L
-        RST	38H
-        SUB	B
-        RST	38H
-        SBC	A,D
-        RST	38H
-        AND	H
-        RST	38H
-        XOR	A
-        RST	38H
-        CP	C
-        RST	38H
-        JP	J$CDFF
-;	-----------------
-?6BA9:	RST	38H
-        RET	C
-        RST	38H
-        JP	PO,J$ECFF
-        RST	38H
-        OR	0FFH
-        DEFB	0,0
-        LD	A,(BC)
-        NOP
-        INC	D
-        NOP
-        LD	E,00H
-        JR	Z,J6BBC
-J6BBC:	LD	(D$3C00),A
-        NOP
-        LD	B,(HL)
-        NOP
-        LD	D,B
-        NOP
-        LD	E,D
-        NOP
-        LD	H,H
-        NOP
-        LD	L,L
-        NOP
-        LD	(HL),A
-        NOP
-        ADD	A,C
-        NOP
-        ADC	A,E
-        NOP
-        SUB	L
-        NOP
-        SBC	A,(HL)
-        NOP
-        XOR	B
-        NOP
-        OR	D
-        NOP
-        CP	E
-        NOP
+I6B76:	DEFW	0FEC7H
+        DEFW	0FED2H
+        DEFW	0FEDDH
+        DEFW	0FEE7H
+        DEFW	0FEF2H
+        DEFW	0FEFDH
+        DEFW	0FF07H
+        DEFW	0FF12H
+        DEFW	0FF1DH
+        DEFW	0FF27H
+        DEFW	0FF32H
+        DEFW	0FF3CH
+        DEFW	0FF47H
+        DEFW	0FF51H
+        DEFW	0FF5CH
+        DEFW	0FF66H
+        DEFW	0FF71H
+        DEFW	0FF7BH
+        DEFW	0FF85H
+        DEFW	0FF90H
+        DEFW	0FF9AH
+        DEFW	0FFA4H
+        DEFW	0FFAFH
+        DEFW	0FFB9H
+        DEFW	0FFC3H
+        DEFW	0FFCDH
+        DEFW	0FFD8H
+        DEFW	0FFE2H
+        DEFW	0FFECH
+        DEFW	0FFF6H
+        DEFW	0000H
+        DEFW	000AH
+        DEFW	0014H
+        DEFW	001EH
+        DEFW	0028H
+        DEFW	0032H
+        DEFW	003CH
+        DEFW	0046H
+        DEFW	0050H
+        DEFW	005AH
+        DEFW	0064H
+        DEFW	006DH
+        DEFW	0077H
+        DEFW	0081H
+        DEFW	008BH
+        DEFW	0095H
+        DEFW	009EH
+        DEFW	00A8H
+        DEFW	00B2H
+        DEFW	00BBH
+
+; I6B76:	RST	00H
+;         CP	0D2H
+;         CP	0DDH
+;         CP	0E7H
+;         CP	0F2H
+;         CP	0FDH
+;         CP	07H	; 7
+;         RST	38H
+;         LD	(DE),A
+;         RST	38H
+;         DEC	E
+;         RST	38H
+;         DAA
+;         RST	38H
+;         LD	(D$3CFF),A
+;         RST	38H
+;         LD	B,A
+;         RST	38H
+;         LD	D,C
+;         RST	38H
+;         LD	E,H
+;         RST	38H
+;         LD	H,(HL)
+;         RST	38H
+;         LD	(HL),C
+;         RST	38H
+;         LD	A,E
+;         RST	38H
+;         ADD	A,L
+;         RST	38H
+;         SUB	B
+;         RST	38H
+;         SBC	A,D
+;         RST	38H
+;         AND	H
+;         RST	38H
+;         XOR	A
+;         RST	38H
+;         CP	C
+;         RST	38H
+;         JP	J$CDFF
+; ;	-----------------
+; ?6BA9:	RST	38H
+;         RET	C
+;         RST	38H
+;         JP	PO,J$ECFF
+;         RST	38H
+;         OR	0FFH
+;         DEFB	0,0
+;         LD	A,(BC)
+;         NOP
+;         INC	D
+;         NOP
+;         LD	E,00H
+;         JR	Z,J6BBC
+; J6BBC:	LD	(D$3C00),A
+;         NOP
+;         LD	B,(HL)
+;         NOP
+;         LD	D,B
+;         NOP
+;         LD	E,D
+;         NOP
+;         LD	H,H
+;         NOP
+;         LD	L,L
+;         NOP
+;         LD	(HL),A
+;         NOP
+;         ADD	A,C
+;         NOP
+;         ADC	A,E
+;         NOP
+;         SUB	L
+;         NOP
+;         SBC	A,(HL)
+;         NOP
+;         XOR	B
+;         NOP
+;         OR	D
+;         NOP
+;         CP	E
+;         NOP
 
 ;	  Subroutine set transpose
 ;	     Inputs  ________________________
