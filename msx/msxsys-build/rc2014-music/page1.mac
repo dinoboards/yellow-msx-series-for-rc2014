@@ -83,7 +83,8 @@ PROCNM		EQU	0FD89H
 
 ; ======================================
 ; MSX BASIC BIOS ROUTINES
-MBCVRT		EQU	517AH	; convert to DAC to new type
+; MAINROM ---- convert to DAC to new type
+MBCVRT		EQU	517AH
 
 ; Input:	 HL <-- Starting address of the expression in text
 ; Output:  HL <-- Next address of expression
@@ -95,9 +96,89 @@ MBCVRT		EQU	517AH	; convert to DAC to new type
 MBGETBYT	EQU	0521CH	; Evaluate an expression in 1-byte integer type.
 
 
-; This is the Interpreter error handler, all error generators transfer to here with an error code in register E. 
+; This is the Interpreter error handler, all error generators transfer to here with an error code in register E.
 HERRO		EQU	0406FH
 
+; MAINROM ---- This routine frees any storage occupied by the string whose descriptor address is contained in DAC
+FRESTR		EQU	067D0H
+
+; MAINROM ---- This routine is used by the file I/O handlers to close every I/O buffer. Register pair BC is set to 6B24H, register A is loaded with the contents of MAXFIL and all buffers closed (6BE7H).
+CLOSEIO		EQU	06C1CH
+
+; MAINROM ----- Evaluate an expression un 2-byte integer type.
+; Input:	 HL <-- Starting address of the expression in text
+; Output:  HL <-- Address after the expression
+; 	 DE <-- Result of evaluation of the expression
+; Purpose: Evaluate an expression and make output in integer type (INT). When
+; the result is beyond the range of 2-byte integer type, an "Ovwrflow" error
+; occurs and the system returns to the BASIC command level.
+FRMQNT 		EQU	0542FH
+
+; MAINROM ---- Evaluate an expression in text
+; Input:	 HL <-- Starting address of the expression in text
+; Output:  HL <-- Address after the expression
+; 	 [VALTYP (F663H)] <-- Value 2, 3, 4 or 8 according to the expression
+; 	 [DAC (F7F6H)]	  <-- Result of the evaluation of the expression
+; Purpose: Evaluate an expression and make output according to its type.
+FRMEVL		EQU	04C64H
+
+; MAINROM ---- Extract one character from text
+; Input:	 HL <-- Address pointing to text
+; Output:  HL <-- Address of the extracted character
+; 	 A  <-- Extracted character
+; 	 Z  flag <-- ON at the end of line (: or 00H)
+; 	 CY flag <-- ON if 0 to 9
+; Purpose: Extract one character from the text at (HL + 1). Spaces are skipped.
+CHRGTR		EQU	04666H
+
+
+; MAIN ROM .................. PSG initialization
+; Input:	---
+; Output: 	---
+; Function:	initializes PSG registers and does the initial settings of
+; 		the work area in which PLAY statement of BASIC is executed.
+GICINI		EQU	00090H
+
+; MAINROM ----- This routine is used by the Factor Evaluator to return the current value of a Variable.
+; The Variable is first located 5EA4H.
+; If it is a string Variable its address is placed in DAC to point to the descriptor.
+; Otherwise the contents of the Variable are copied to DAC (2F08).
+VARVAL		EQU	04E9BH
+
+
+; MAINROM ---- This routine is used by the file I/O handlers to analyze a filespec such as "`A:FILENAME.BAS`".
+; The filespec consists of three parts, the device, the filename and the type extension. On entry register
+; pair HL points to the start of the filespec in the program text. On exit register D holds the device code,
+; the filename is in positions zero to seven of [FILNAM] and the type extension in positions eight to ten.
+; Any unused positions are filled with spaces.
+; The filespec string is evaluated (4C64H) and its storage freed (67D0H), if the string is of zero length
+; a "`Bad file name`" error is generated (6E6BH). The device name is parsed (6F15H) and successive
+; characters taken from the filespec and placed in [FILNAM] until the string is exhausted, a "." character
+; is found or [FILNAM] is full. A "`Bad file name`" error is generated (6E6BH) if the filespec contains any
+; control characters, that is those whose value is smaller than 20H. If the filespec contains a type
+; extension a "`Bad file name`" error is generated (6E6BH) if it is longer than three characters or if the
+; filename is longer than eight characters. If no type extension is present the filename may be any length,
+; extra characters are simply ignored.
+FILESPEC	EQU	06A0EH
+
+; MAINROM ---- Obtain the address for the storage of a variable
+; 			  (see Figure 2.16).
+; Input:	 HL <-- Starting address of the variable name in text
+; 		[SUBFLG (F6A5H)] <-- 0: Simple variable,
+; 				     other than 0: array variable
+; Output:  HL <-- Address after the variable name
+; 	 DE <-- Address where the contents of the objective variable
+; 		is stored
+; Purpose: Obtain the address for the storage of a variable (or an array
+; variable). Allocation of the area is also done when the area for the
+; objective variable has not been allocated. When the value of [SUBFLG] is set
+; to other than 0, the starting address of the array is obtained, other than
+; individual elements of the array.
+PTRGET		EQU	05EA4h
+
+; ========================================
+; MACROS
+;
 ; Enforce PC to AMNT alignment, error if PC is larger than requested
 ALIGNCHK	MACRO	AMNT
 NEWPC		ASET	AMNT-$
@@ -148,7 +229,6 @@ I$003A	EQU	003AH	; ----I
 I.003D	EQU	003DH	; ----I
 I$0048	EQU	0048H	; ----I
 I$008B	EQU	008BH	; ----I
-I$0090	EQU	0090H	; ----I
 I$00FF	EQU	00FFH	; ----I
 I$013E	EQU	013EH	; ----I
 I.01C8	EQU	01C8H	; ----I
@@ -262,10 +342,6 @@ I$FFF6	EQU	0FFF6H	; ----I
 I$FFF7	EQU	0FFF7H	; ----I
 X.FFFF	EQU	0FFFFH	; JCS-I
 
-
-I4E9B	EQU	04E9BH
-I4666	EQU	04666H
-J4C64	EQU	04C64H
 
 D4000:	DEFB	"AB"
         DEFW	0
@@ -2014,7 +2090,6 @@ J5423:	JR	Z,J542D
 ;	-----------------
 J542D:	ADD	HL,HL
         RL	A
-I542F	EQU	$-1
         LD	L,H
         LD	H,A
         LD	A,B
@@ -3875,7 +3950,7 @@ C5E94:	CALL	C5E82
         CALL	C6651
         POP	BC
 J5EA2:	LD	A,40H	; "@"
-I5EA4:	CP	E
+	CP	E
         JR	C,J5F17
         CALL	C5C41
         OR	E
@@ -5480,13 +5555,15 @@ HANDLE_ERROR:
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6789:	LD	IX,I$0090
+C6789:	LD	IX, GICINI
         JR	J67D7
 ;	-----------------
-J678F:	LD	IX,I4E9B
+
+J678F:	LD	IX, VARVAL
         JR	J67D7
 ;	-----------------
-?6795:	LD	IX,I6A0E
+
+?6795:	LD	IX, FILESPEC
         JR	J67D7
 ;	-----------------
 
@@ -5494,7 +5571,7 @@ J678F:	LD	IX,I4E9B
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C679B:	LD	IX,I5EA4
+C679B:	LD	IX, PTRGET
         JR	J67D7
 ;	-----------------
 
@@ -5521,7 +5598,7 @@ C67A7:	LD	A,(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67AF:	LD	IX,I4666
+C67AF:	LD	IX, CHRGTR
         JR	J67D7
 ;	-----------------
 
@@ -5529,7 +5606,7 @@ C67AF:	LD	IX,I4666
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67B5:	LD	IX,J4C64
+C67B5:	LD	IX, FRMEVL
         JR	J67D7
 ;	-----------------
 
@@ -5537,7 +5614,7 @@ C67B5:	LD	IX,J4C64
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67BB:	LD	IX,I542F
+C67BB:	LD	IX, FRMQNT
         JR	J67D7
 ;	-----------------
 
@@ -5556,8 +5633,7 @@ J67C7:	LD	IX,I4601
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67CD:	LD	IX,I6C1C
-I67D0	EQU	$-1
+C67CD:	LD	IX, CLOSEIO
         JR	J67D7
 ;	-----------------
 
@@ -5565,7 +5641,7 @@ I67D0	EQU	$-1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67D3:	LD	IX,I67D0
+C67D3:	LD	IX, FRESTR
 J67D7:	LD	IY,(D$FCC0)
         CALL	CALSLT
         EI
@@ -6348,7 +6424,7 @@ C6C0F:	LD	A,D
         LD	H,E
         LD	L,00H
         LD	DE,I640F
-I6C1C:	ADD	HL,HL
+	ADD	HL,HL
         RLA
         CP	D
         JR	C,J6C24
