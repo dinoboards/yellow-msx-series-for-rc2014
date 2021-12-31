@@ -92,6 +92,24 @@ MBCVRT		EQU	517AH	; convert to DAC to new type
 ; error occurs and the execution returns to BASIC command level.
 MBGETBYT	EQU	0521CH	; Evaluate an expression in 1-byte integer type.
 
+
+; This is the Interpreter error handler, all error generators transfer to here with an error code in register E. 
+HERRO		EQU	0406FH
+
+; Enforce PC to AMNT alignment, error if PC is larger than requested
+ALNCHK	MACRO	AMNT
+NEWPC	ASET	AMNT-$
+	DEFS	AMNT-$
+
+IF2
+IFF (NEWPC+100) GE 100
+!!! ALIGNMENT FAILED
+BOB GE 0
+ENDIF
+ENDIF
+	ENDM
+
+
         ORG	4000H
 X.0000	EQU	0000H	; JCS-I
 I.0001	EQU	0001H	; ----I
@@ -224,7 +242,6 @@ I$FFF7	EQU	0FFF7H	; ----I
 X.FFFF	EQU	0FFFFH	; JCS-I
 
 
-I406F	EQU	0406FH
 I4E9B	EQU	04E9BH
 I4666	EQU	04666H
 J4C64	EQU	04C64H
@@ -1503,7 +1520,7 @@ I50B9:	RST	30H
 
 
 C50BE:	PUSH	HL
-        CALL	C50CE
+        CALL	GETSLTWRK
         SET	0,(HL)
         POP	HL
         RET
@@ -1514,7 +1531,7 @@ C50BE:	PUSH	HL
 ;	     Outputs ________________________
 
 C50C6:	PUSH	HL
-        CALL	C50CE
+        CALL	GETSLTWRK
         BIT	0,(HL)
         POP	HL
         RET
@@ -1524,7 +1541,8 @@ C50C6:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C50CE:	PUSH	AF
+GETSLTWRK:
+	PUSH	AF
         PUSH	DE
         CALL	C554C
         AND	0FH	; 15
@@ -1625,7 +1643,7 @@ I5125:
 
 
 I513B:
-	KEYWRD	<AUDREG>, ?5498
+	KEYWRD	<AUDREG>, BASAUDREG
 	; DEFB	055h, 044h, 052h, 045h, 0C7h, 098h, 054h
 
         KEYWRD	<APPEND MK>, C52B1
@@ -2135,8 +2153,13 @@ C548B:	CALL	C54E7
         POP	HL
         OR	A
         RET
-;	-----------------
-?5498:	CALL	C55E4
+
+;	  Subroutine BASIC HANDLER FOR AUDREG
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+BASAUDREG:
+	CALL	C55E4
         CALL	C67C1
         PUSH	DE
         CALL	C55DF
@@ -5474,25 +5497,32 @@ C6758:	LD	HL,(D.F99B)
         LD	B,00H
         ADD	HL,BC
         RET
-;	-----------------
-J6764:	LD	E,33H	; "3"
-        LD	BC,I$351E
-        LD	BC,I$381E
-        LD	BC,I$021E
-J676D	EQU	$-2
-        LD	BC,I$051E
-C6770	EQU	$-2
-        LD	BC,I$0D1E
-J6773	EQU	$-2
-        LD	BC,I$061E
-        LD	BC,I$071E
-J6779	EQU	$-2
-        CALL	C50C6
+
+; 	-----------------
+J6764:	LD	E, 33H			; INTERNAL ERROR
+	JR	HANDLE_ERROR
+
+J676D:	LD	E, 02H			; SYNTAX ERROR
+	JR	HANDLE_ERROR
+
+C6770:	LD	E, 05H			; ILLEGAL FUNCTION CALL
+	JR	HANDLE_ERROR
+
+J6773:	LD	E, 0DH			; TYPE MISMATCH
+	JR	HANDLE_ERROR
+
+J6779:	LD	E,07H			;OUT OF MEMORY
+
+HANDLE_ERROR:
+        CALL	C50C6		; test some kind of bit?
         PUSH	DE
-        CALL	NZ,C658D
+        CALL	NZ, C658D
         POP	DE
-        LD	IX,I406F
+        LD	IX, HERRO
         JR	J67D7
+
+	ALNCHK	06789H
+
 ;	-----------------
 
 ;	  Subroutine __________________________
