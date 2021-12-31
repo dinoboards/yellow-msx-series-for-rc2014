@@ -81,6 +81,10 @@ OLDLIN		EQU	0F6BEH
 
 PROCNM		EQU	0FD89H
 
+; FCC1-FCC4: Information for each primary slot. The most significant bit is
+; set if the primary slot is found to be expanded.
+EXPTBL		EQU	0FCC1H
+
 ; ======================================
 ; MSX BASIC BIOS ROUTINES
 ; MAINROM ---- convert to DAC to new type
@@ -175,6 +179,12 @@ FILESPEC	EQU	06A0EH
 ; to other than 0, the starting address of the array is obtained, other than
 ; individual elements of the array.
 PTRGET		EQU	05EA4h
+
+; MAINROM ---- Execute a text
+; Input:	 HL <-- Address of the text to be executed
+; Output:  ----
+; Purpose: Execute a text.
+NEWSTT		EQU	04601H
 
 ; ========================================
 ; MACROS
@@ -1178,7 +1188,6 @@ J45F3:	AND	0FH	; 15
         ADD	A,B
         CALL	C416C
         AND	0FH	; 15
-I4601	EQU	$-1
         OR	C
         LD	E,A
         LD	A,2FH	; "/"
@@ -1669,7 +1678,7 @@ J50EB:	EI
         POP	HL
         RET	C
         PUSH	HL
-        LD	HL,J52EC
+        LD	HL,BASMUSIC
         OR	A
         SBC	HL,DE
         POP	HL
@@ -1743,7 +1752,7 @@ BASICMDS_A:
 	DEFB	0FFh
 
 BASICMDS_B:
-	KEYWRD	<BGM>, C5458
+	KEYWRD	<BGM>, BASBGM
 	; DEFB	047h, 0CDh, 058h, 054h,
 
 BASICMDS_C:
@@ -1759,7 +1768,7 @@ BASICMDS_L:
 	DEFB	0FFh
 
 BASICMDS_M:
-        KEYWRD	<MUSIC>, J52EC
+        KEYWRD	<MUSIC>, BASMUSIC
 	; DEFB	055h, 053h, 049h, 0C3h, 0ECh, 052h
 
 BASICMDS_N:
@@ -1768,25 +1777,25 @@ BASICMDS_R:
 	DEFB	0FFh
 
 BASICMDS_S:
-	KEYWRD	<STOPM>, C548B
+	KEYWRD	<STOPM>, BASSTOPM
 	; DEFB	054h, 04Fh, 050h, 0CDh, 08Bh, 054h
 
 	DEFB	0FFh
 
 BASICMDS_T:
-	KEYWRD	<TRANSPOSE>, C5535
+	KEYWRD	<TRANSPOSE>, BASTRANSPOSE
 	; DEFB	052h, 041h, 04Eh, 053h, 050h, 04Fh, 053h, 0C5h, 035h, 055h
 
-        KEYWRD	<TEMPER>, J5541
+        KEYWRD	<TEMPER>, BASTEMPER
 	; DEFB	045h, 04Dh, 050h, 045h, 0D2h, 041h, 055h,
 
 	DEFB	0FFh
 
 BASICMDS_V:
-	KEYWRD	<VOICE>, C55EE
+	KEYWRD	<VOICE>, BASVOICE
 	; DEFB	04Fh, 049h, 043h, 0C5h, 0EEh, 055h
 
-        KEYWRD	<VOICE COPY>, C567E
+        KEYWRD	<VOICE COPY>, BASVOICECOPY
 	; DEFB	04Fh, 049h, 043h, 045h, 0FFh, 043h, 04Fh, 050h, 0D9h, 07Eh, 056h
 
 BASICMDS_Q:
@@ -1794,10 +1803,10 @@ BASICMDS_U:
 	DEFB	0FFh
 
 BASICMDS_P:
-	KEYWRD	<PLAY>, C5746
+	KEYWRD	<PLAY>, BASPLAY
 	; DEFB	04Ch, 041h, 0D9h, 046h, 057h
 
-        KEYWRD	<PITCH>, C5529
+        KEYWRD	<PITCH>, BASPITCH
 	; DEFB	049h, 054h, 043h, 0C8h, 029h, 055h
 
 	DEFB	0FFh
@@ -1887,7 +1896,7 @@ J52A5:	LD	A,(DE)
 	ALIGNCHK 052B4H
 
 C52B4:	CALL	C55E4
-        JP	C67C1
+        JP	BRMMBGETBYT
 ;	-----------------
 ?52BA:	CALL	C54E7
         JP	NZ,J676D
@@ -1907,10 +1916,10 @@ C52C1:	PUSH	BC
         JR	J52D7
 ;	-----------------
 ?52CD:	CALL	C55E4
-        CALL	C67BB
+        CALL	BRMFRMQNT
         PUSH	DE
         CALL	C55DF
-J52D7:	CALL	C67BB
+J52D7:	CALL	BRMFRMQNT
 J52DA:	CALL	C55E9
         POP	BC
         LD	A,E
@@ -1926,7 +1935,8 @@ I52E0:	DEFB	3
 ;	     Outputs ________________________
 
 
-J52EC:	PUSH	HL
+BASMUSIC:
+	PUSH	HL
         CALL	C50C6
         CALL	Z,C5009
         LD	HL,I52E0
@@ -1946,7 +1956,7 @@ J52EC:	PUSH	HL
         CALL	C55E4
         CP	","
         JR	Z,J532A
-        CALL	C67C1
+        CALL	BRMMBGETBYT
         CP	02H	; 2
         JP	NC,C6770
         LD	(D.F55F),A
@@ -1956,7 +1966,7 @@ J52EC:	PUSH	HL
 J532A:	CALL	C55DF
         CP	","
         JR	Z,J533F
-        CALL	C67C1
+        CALL	BRMMBGETBYT
         OR	A
         JR	NZ,J5355
         LD	(D.F560),A
@@ -1970,7 +1980,7 @@ J533F:	LD	B,09H	; 9
         LD	C,00H
 J5348:	CALL	C55DF
         PUSH	BC
-        CALL	C67C1
+        CALL	BRMMBGETBYT
         POP	BC
         OR	A
         JR	Z,J5355
@@ -2012,7 +2022,7 @@ J5385:	ADD	A,(HL)
 J5389:	ADD	A,D
         CP	0AH	; 10
         JR	NC,J5355
-        CALL	C67CD
+        CALL	BRMCLOSEIO
         LD	HL, (HIMEM)
         CALL	C50C6
         JR	NZ,J53AF
@@ -2050,7 +2060,7 @@ J53AF:	POP	DE
         LD	(BUF),HL
         LD	(HL),A
         LD	HL, HOLD8
-        JP	J67C7
+        JP	BRMNEWSTT
 ;	-----------------
 
 BASINITSCPT:
@@ -2116,7 +2126,7 @@ J5446:	EX	DE,HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5458:	CALL	C52C1
+BASBGM:	CALL	C52C1
         CP	02H	; 2
         JP	NC,C6770
         DEC	A
@@ -2129,13 +2139,13 @@ C5458:	CALL	C52C1
 ;	     Outputs ________________________
 
 C5465:	CALL	C55E4
-        CALL	C67BB
+        CALL	BRMFRMQNT
         LD	A,(HL)
         CP	29H	; ")"
         PUSH	DE
         JR	Z,J5477
         CALL	C55DF
-        CALL	C67BB
+        CALL	BRMFRMQNT
 J5477:	CALL	C55E9
         POP	BC
         LD	A,E
@@ -2166,7 +2176,8 @@ C5486:	ADD	A,L
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C548B:	CALL	C54E7
+BASSTOPM:
+	CALL	C54E7
         JP	NZ,J676D
         PUSH	HL
         CALL	C658D
@@ -2180,17 +2191,17 @@ C548B:	CALL	C54E7
 
 BASAUDREG:
 	CALL	C55E4
-        CALL	C67C1
+        CALL	BRMMBGETBYT
         PUSH	DE
         CALL	C55DF
-        CALL	C67C1
+        CALL	BRMMBGETBYT
         PUSH	DE
         LD	A,(HL)
         CP	29H	; ")"
         LD	E,00H
         JR	Z,J54B3
         CALL	C55DF
-        CALL	C67C1
+        CALL	BRMMBGETBYT
 J54B3:	CALL	C55E9
         LD	A,E
         OR	A
@@ -2209,8 +2220,9 @@ J54B3:	CALL	C55E9
 
 C54C5:	LD	A,01H	; 1
         LD	(D.F6A5),A
-        CALL	C679B
-        JP	NZ,C6770
+        CALL	BRMPTRGET
+
+	       JP	NZ,C6770
         LD	(D.F6A5),A
         LD	A,(D.F663)
         CP	03H	; 3
@@ -2234,8 +2246,10 @@ C54C5:	LD	A,01H	; 1
 ;	     Outputs ________________________
 
 C54E7:	DEC	HL
-        JP	C67AF
+        JP	BRMCHRGTR
+
 ;	-----------------
+
 J54EB:	CALL	C54F3
         POP	HL
         CALL	C55E9
@@ -2257,13 +2271,13 @@ C54F3:	LD	(D.F7F8),HL
         JP	NZ,J6773
         LD	(HL),02H	; 2
         PUSH	DE
-        CALL	C67A1
+        CALL	BRMMBCVRT
         LD	C,08H	; 8
         JR	J5519
 ;	-----------------
 J5511:	LD	(HL),02H	; 2
         PUSH	DE
-        CALL	C67A1
+        CALL	BRMMBCVRT
         LD	C,04H	; 4
 J5519:	POP	DE
         LD	HL,I$F7F6
@@ -2277,7 +2291,8 @@ J5524:	LD	B,00H
 
 ;	-----------------
 ;	PITCH STATEMENT
-C5529:	CALL	C5465
+BASPITCH:
+	CALL	C5465
         PUSH	HL
         CALL	C6B50
         POP	HL
@@ -2285,14 +2300,16 @@ C5529:	CALL	C5465
         RET
 
 ;	-----------------
-C5535:	CALL	C5465
+BASTRANSPOSE:
+	CALL	C5465
         PUSH	HL
         CALL	C6BDA
         POP	HL
         JP	C,C6770
         RET
 ;	-----------------
-J5541:	CALL	C52C1
+BASTEMPER:
+	CALL	C52C1
         LD	C,A
         CALL	C6C9F
         JP	C,C6770
@@ -2423,7 +2440,8 @@ C55E9:	CALL	C67A7
         ADD	HL,HL
         RET
 ;	-----------------
-C55EE:	CALL	C67A7
+BASVOICE:
+	CALL	C67A7
         JR	Z,J5604
         LD	E,(HL)
         PUSH	AF
@@ -2535,7 +2553,8 @@ J5677:	ADD	IX,BC
         POP	BC
         RET
 ;	-----------------
-C567E:	CALL	C67A7
+BASVOICECOPY:
+	CALL	C67A7
         JR	Z,J5650
         PUSH	BC
         LD	D,(HL)
@@ -2578,13 +2597,13 @@ C56C5:	CP	40H	; "@"
         JR	Z,J56D5
         CP	0F3H
         JR	NZ,J56E1
-        CALL	C67AF
-        LD	DE,I$00FF
+        CALL	BRMCHRGTR
+	LD	DE,I$00FF
         SCF
         RET
 ;	-----------------
-J56D5:	CALL	C67AF
-        CALL	C67C1
+J56D5:	CALL	BRMCHRGTR
+	CALL	BRMMBGETBYT
         CP	40H	; "@"
         RET	C
 J56DE:	JP	C6770
@@ -2674,7 +2693,8 @@ C5732:	LD	A,L
         ADD	HL,DE
         RET
 ;	-----------------
-C5746:	CALL	C52B4
+BASPLAY:
+	CALL	C52B4
         LD	A,(D.F991)
         CP	E
         JP	C,C6770
@@ -2683,8 +2703,9 @@ C5746:	CALL	C52B4
         CALL	C5760
         EX	(SP),HL
         CALL	C55DF
-        CALL	C679B
-        EX	(SP),HL
+        CALL	BRMPTRGET
+
+	       EX	(SP),HL
         JP	J54EB
 ;	-----------------
 
@@ -2786,8 +2807,8 @@ J57D3:	LDDR				; move 1 word up
 
 C57D9:	CP	"#"
         JR	NZ,J57F8
-        CALL	C67AF
-        CALL	C67C1
+	CALL	BRMCHRGTR
+	CALL	BRMMBGETBYT
         PUSH	AF
         CALL	C55DF
         POP	AF
@@ -2852,10 +2873,10 @@ J583D:	PUSH	HL
         LD	BC,I.0025
         LDIR
         POP	HL
-        CALL	C67B5
+        CALL	BRMFRMEVL
         EX	(SP),HL
         PUSH	HL
-        CALL	C67D3
+        CALL	BRMFRESTR
         CALL	C6834
         LD	A,E
         OR	A
@@ -2892,8 +2913,8 @@ J585E:	POP	AF
         CP	B
         JR	C,J58A8
         DEC	HL
-        CALL	C67AF
-        JR	Z,J5892
+        CALL	BRMCHRGTR
+	JR	Z,J5892
         PUSH	BC
         CALL	C55DF
         JR	J583D
@@ -2912,8 +2933,8 @@ J5892:	LD	A,B
         CP	B
         JR	NC,J5892
 J58A8:	DEC	HL
-        CALL	C67AF
-        JP	NZ,J676D
+        CALL	BRMCHRGTR
+	JP	NZ,J676D
         PUSH	HL
 J58B0:	XOR	A
 J58B1:	PUSH	AF
@@ -5035,7 +5056,8 @@ I64E4:	LD	A,A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C64EE:	CALL	C6789
+C64EE:	CALL	BRMGICINI
+
         DI
         XOR	A
         LD	(D.F999),A
@@ -5137,7 +5159,7 @@ C659A:	DEC	A
         POP	AF
         JR	C659A
 ;	-----------------
-J65A6:	CALL	C67D3
+J65A6:	CALL	BRMFRESTR
         CALL	C6834
         LD	B,C
         LD	C,D
@@ -5545,7 +5567,7 @@ HANDLE_ERROR:
         CALL	NZ, C658D
         POP	DE
         LD	IX, HERRO
-        JR	J67D7
+        JR	CALMAINRM
 
 	ALIGNCHK	06789H
 
@@ -5555,32 +5577,40 @@ HANDLE_ERROR:
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6789:	LD	IX, GICINI
-        JR	J67D7
+BRMGICINI:
+	LD	IX, GICINI
+        JR	CALMAINRM
+
 ;	-----------------
 
 J678F:	LD	IX, VARVAL
-        JR	J67D7
+        JR	CALMAINRM
+
 ;	-----------------
 
 ?6795:	LD	IX, FILESPEC
-        JR	J67D7
+        JR	CALMAINRM
+
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C679B:	LD	IX, PTRGET
-        JR	J67D7
+BRMPTRGET:
+	LD	IX, PTRGET
+        JR	CALMAINRM
+
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67A1:	LD	IX, MBCVRT
-        JR	J67D7
+BRMMBCVRT:
+	LD	IX, MBCVRT
+        JR	CALMAINRM
+
 ;	-----------------
 
 ;	  Subroutine __________________________
@@ -5598,51 +5628,65 @@ C67A7:	LD	A,(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67AF:	LD	IX, CHRGTR
-        JR	J67D7
+BRMCHRGTR:
+	LD	IX, CHRGTR
+        JR	CALMAINRM
+
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67B5:	LD	IX, FRMEVL
-        JR	J67D7
+BRMFRMEVL:
+	LD	IX, FRMEVL
+        JR	CALMAINRM
+
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67BB:	LD	IX, FRMQNT
-        JR	J67D7
+BRMFRMQNT:
+	LD	IX, FRMQNT
+        JR	CALMAINRM
+
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67C1:	LD	IX, MBGETBYT
-        JR	J67D7
-;	-----------------
-J67C7:	LD	IX,I4601
-        JR	J67D7
+BRMMBGETBYT:
+	LD	IX, MBGETBYT
+        JR	CALMAINRM
+
 ;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+BRMNEWSTT:
+	LD	IX, NEWSTT
+        JR	CALMAINRM
 
-C67CD:	LD	IX, CLOSEIO
-        JR	J67D7
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67D3:	LD	IX, FRESTR
-J67D7:	LD	IY,(D$FCC0)
+BRMCLOSEIO:
+	LD	IX, CLOSEIO
+	JR	CALMAINRM
+;	-----------------
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+BRMFRESTR:
+	LD	IX, FRESTR
+CALMAINRM:
+	LD	IY, (EXPTBL-1)		; LD IYH, (EXPTBL)
         CALL	CALSLT
         EI
         RET
