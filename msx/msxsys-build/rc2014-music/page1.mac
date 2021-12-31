@@ -111,6 +111,26 @@ ENDIF
 ENDIF
 		ENDM
 
+KEYWRD	MACRO	X,Y
+G	ASET	0
+Q	ASET	0
+        IRPC	D,<X>
+        IF	G EQ 0
+G	ASET	1
+        ELSE
+        IF	Q NE 0
+        IF	Q EQ " "
+        DEFB	0FFH
+        ELSE
+        DEFB	Q
+        ENDIF
+        ENDIF
+Q	ASET	"&D"
+        ENDIF
+        ENDM
+        DEFB	Q+128
+        DEFW	Y
+        ENDM
 
         ORG	4000H
 X.0000	EQU	0000H	; JCS-I
@@ -1615,28 +1635,6 @@ I5116	EQU	$-2
         RET
 ;	-----------------
 
-KEYWRD	MACRO	X,Y
-G	ASET	0
-Q	ASET	0
-        IRPC	D,<X>
-        IF	G EQ 0
-G	ASET	1
-        ELSE
-        IF	Q NE 0
-        IF	Q EQ " "
-        DEFB	0FFH
-        ELSE
-        DEFB	Q
-        ENDIF
-        ENDIF
-Q	ASET	"&D"
-        ENDIF
-        ENDM
-        DEFB	Q+128
-        DEFW	Y
-        ENDM
-
-
 BASICCMDSIDX:
 	DEFB	BASICMDS_A-BASICMDS
 	DEFB	BASICMDS_B-BASICMDS
@@ -1666,115 +1664,36 @@ BASICMDS_A:
 	KEYWRD	<AUDREG>, BASAUDREG
 	; DEFB	055h, 044h, 052h, 045h, 0C7h, 098h, 054h
 
-        ; KEYWRD	<APPEND MK>, C52B1
-	; ; DEFB	050h, 050h, 045h, 04Eh, 044h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
-
-        ; KEYWRD	<APEEK>, C52B1
-	; ; DEFB	050h, 045h, 045h, 0CBh, 0B1h, 052h
-
-        ; KEYWRD	<APOKE>, C52B1
-	; ; DEFB	050h, 04Fh, 04Bh, 0C5h, 0B1h, 052h
-
 	DEFB	0FFh
 
 BASICMDS_B:
 	KEYWRD	<BGM>, C5458
 	; DEFB	047h, 0CDh, 058h, 054h,
 
-	DEFB	0FFh
-
 BASICMDS_C:
-	; KEYWRD	<CONT MK>, C52B1
-	; ; DEFB	04Fh, 04Eh, 054h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
-
-        ; KEYWRD	<COPY PCM>, C52B1
-	; ; DEFB	04Fh, 050h, 059h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
-
-        ; KEYWRD	<CONVP>, C52B1
-	; ; DEFB	04Fh, 04Eh, 056h, 0D0h, 0B1h, 052h
-
-        ; KEYWRD	<CONVA>, C52B1
-	; ; DEFB	04Fh, 04Eh, 056h, 0C1h, 0B1h
-
 BASICMDS_D:
 BASICMDS_E:
 BASICMDS_F:
 BASICMDS_G:
 BASICMDS_H:
-	; DEFB	0FFh
-
 BASICMDS_I:
-	; KEYWRD	<INMK>, C52B1
-	; ; DEFB	04Eh, 04Dh, 0CBh, 0B1h, 052h
-
 BASICMDS_J:
-	; DEFB	0FFh
-
 BASICMDS_K:
-	; KEYWRD	<KEY ON>, C52B1
-	; ; DEFB	045h, 059h, 0FFh, 04Fh, 0CEh, 0B1h, 052h
-
-        ; KEYWRD	<KEY OFF>, C52B1
-	; ; DEFB	045h, 059h, 0FFh, 04Fh, 046h, 0C6h, 0B1h, 052h
-
-	; DEFB	0FFh
-
 BASICMDS_L:
-	; KEYWRD	<LOAD PCM>, C52B1
-	; ; DEFB	04Fh, 041h, 044h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
-
 	DEFB	0FFh
 
 BASICMDS_M:
-	; KEYWRD	<MK VOICE>, C52B1
-	; ; DEFB	04Bh, 0FFh, 056h, 04Fh, 049h, 043h, 0C5h, 0B1h, 052h
-
-        ; KEYWRD	<MK VEL>, C52B1
-	; ; DEFB	04Bh, 0FFh, 056h, 045h, 0CCh, 0B1h, 052h
-
-        ; KEYWRD	<MK VOL>, C52B1
-	; ; DEFB	04Bh, 0FFh, 056h, 04Fh, 0CCh, 0B1h, 052h,
-
-        ; KEYWRD	<MK TEMPO>, C52B1
-	; ; DEFB	04Bh, 0FFh, 054h, 045h, 04Dh, 050h, 0CFh, 0B1h, 052h
-
-        ; KEYWRD	<MK STAT>, C52B1
-	; ; DEFB	04Bh, 0FFh, 053h, 054h, 041h, 0D4h, 0B1h, 052h
-
-        ; KEYWRD	<MK PCM>, C52B1
-	; ; DEFB	04Bh, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
-
         KEYWRD	<MUSIC>, J52EC
 	; DEFB	055h, 053h, 049h, 0C3h, 0ECh, 052h
 
 BASICMDS_N:
 BASICMDS_O:
-	DEFB	0FFh
-
 BASICMDS_R:
-	; KEYWRD	<REC MK>, C52B1
-	; ; DEFB	045h, 043h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
-
-        ; KEYWRD	<RECMOD>, C52B1
-	; ; DEFB	045h, 043h, 04Dh, 04Fh, 0C4h, 0B1h, 052h
-
-        ; KEYWRD	<REC PCM>, C52B1
-	; ; DEFB	045h, 043h, 0FFh, 050h, 043h,, 0CDh, 0B1h, 052h
-
 	DEFB	0FFh
 
 BASICMDS_S:
 	KEYWRD	<STOPM>, C548B
 	; DEFB	054h, 04Fh, 050h, 0CDh, 08Bh, 054h
-
-        ; KEYWRD	<SET PCM>, C52B1
-	; ; DEFB	045h, 054h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
-
-        ; KEYWRD	<SAVE PCM>, C52B1
-	; ; DEFB	041h, 056h, 045h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
-
-        ; KEYWRD	<SYNTHE>, C52B1
-	; ; DEFB	059h, 04Eh, 054h, 048h, 0C5h, 0B1h, 052h
 
 	DEFB	0FFh
 
@@ -1800,19 +1719,7 @@ BASICMDS_U:
 
 BASICMDS_P:
 	KEYWRD	<PLAY>, C5746
-	; DEFB	04Ch, 041h, 0D9h, 046h, 057h,
-
-        ; KEYWRD	<PLAY PCM>, C52B1
-	; ; DEFB	04Ch, 041h, 059h, 0FFh, 050h, 043h, 0CDh, 0B1h, 052h
-
-        ; KEYWRD	<PCM FREQ>, C52B1
-	; ; DEFB	043h, 04Dh, 0FFh, 046h, 052h, 045h, 0D1h, 0B1h, 052h
-
-        ; KEYWRD	<PCM VOL>, C52B1
-	; ; DEFB	043h, 04Dh, 0FFh, 056h, 04Fh, 0CCh, 0B1h, 052h
-
-        ; KEYWRD	<PLAY MK>,C52B1
-	; ; DEFB	04Ch, 041h, 059h, 0FFh, 04Dh, 0CBh, 0B1h, 052h
+	; DEFB	04Ch, 041h, 0D9h, 046h, 057h
 
         KEYWRD	<PITCH>, C5529
 	; DEFB	049h, 054h, 043h, 0C8h, 029h, 055h
