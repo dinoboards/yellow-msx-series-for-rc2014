@@ -32,6 +32,10 @@ CODE_BUF	EQU	BUF+128
 ; F6BE-F6BF: line number of last program break, reset at 0 at any program change
 OLDLIN		EQU	0F6BEH
 
+; F6C6-F6C7: address of first free byte not used for storage of code or variables
+; (ini: $8003)
+STREND		EQU	0F6C6H
+
 ; F806-F856: workarea when executing numeric operators
 HOLD8		EQU     0F806H
 
@@ -315,7 +319,6 @@ D.F564	EQU	0F564H	; ---L-
 D$F566	EQU	0F566H	; ---L-
 D.F663	EQU	0F663H	; ---LI
 D.F6A5	EQU	0F6A5H	; --S--
-D.F6C6	EQU	0F6C6H	; --SL-
 I$F7F6	EQU	0F7F6H	; ----I
 D.F7F8	EQU	0F7F8H	; --S-I
 D$F80B	EQU	0F80BH	; --S--
@@ -1714,38 +1717,37 @@ J50EB:	EI
 	CALL	C50C6
 	SCF
 	RET	Z
-J5104:	CALL	C510F
-	CALL	C510D		; CALL (DE)
+J5104:	CALL	MEMCHK
+	CALL	CALL_DE
 	EI
 	OR	A
 	RET
 ;	-----------------
 
-;	  Subroutine CALL (DE)
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	  CALL (DE)
 
-C510D:	PUSH	DE
+CALL_DE:
+	PUSH	DE
 	RET
 ;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Check if sufficient memory available
+;	Throws OUT_OF_MEMORY is not
+;	HL & DE protected
 
-C510F:	PUSH	HL
+MEMCHK:	PUSH	HL
 	PUSH	DE
-	LD	HL,I$FD00
-	ADD	HL,SP
-	JP	NC,J6779
-I5116	EQU	$-2
-	LD	DE,(D.F6C6)
+	LD	HL, -768
+	ADD	HL, SP
+	JP	NC, ERROUTOFMEMORY
+	LD	DE, (STREND)
 	OR	A
-	SBC	HL,DE
-	JP	C,J6779
+	SBC	HL, DE
+	JP	C, ERROUTOFMEMORY
 	POP	DE
 	POP	HL
 	RET
+
 ;	-----------------
 
 BASICCMDSIDX:
@@ -2796,7 +2798,7 @@ I57A0:	DEFB	" "
 ;	     Outputs ________________________
 
 
-C57A1:	CALL	C510F
+C57A1:	CALL	MEMCHK
 	CALL	C57D9
 	PUSH	HL
 	LD	A,(D.F97C)
@@ -5588,7 +5590,7 @@ J6773:	LD	E, 0DH			; TYPE MISMATCH
 	JR	HANDLE_ERROR
 
 ERROUTOFMEMORY:
-J6779:	LD	E,07H			;OUT OF MEMORY
+	LD	E,07H			;OUT OF MEMORY
 
 HANDLE_ERROR:
 	CALL	C50C6			; test some kind of bit?
@@ -5868,7 +5870,7 @@ J6888:	LD	HL,(D.F98F)
 ;	     Outputs ________________________
 
 C6894:	PUSH	HL
-	LD	HL,(D.F6C6)
+	LD	HL,(STREND)
 	LD	B,00H
 	ADD	HL,BC
 	ADD	HL,BC
@@ -5883,7 +5885,7 @@ C6894:	PUSH	HL
 	ADD	HL,SP
 	POP	HL
 	RET	C
-J68AB:	JP	J6779
+J68AB:	JP	ERROUTOFMEMORY
 ;	-----------------
 
 ;	  Subroutine __________________________
