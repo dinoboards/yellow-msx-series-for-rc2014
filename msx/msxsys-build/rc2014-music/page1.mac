@@ -124,7 +124,6 @@ CALSLT	EQU	0001CH
 ;            H - Bit 6 and 7 must contain the page number (00-11)
 ENASLT	EQU	0024H	; -C---
 
-IDBYT1	EQU	002BH
 ; Basic ROM version
 ; 7 6 5 4 3 2 1 0
 ; | | | | +-+-+-+-- Character set
@@ -133,7 +132,7 @@ IDBYT1	EQU	002BH
 ; |                 0 = Y-M-D, 1 = M-D-Y, 2 = D-M-Y
 ; +---------------- Default interrupt frequency
 ;                   0 = 60Hz, 1 = 50Hz
-
+IDBYT1	EQU	002BH
 
 ; MAINROM ---- convert to DAC to new type
 MBCVRT		EQU	517AH
@@ -5414,7 +5413,7 @@ J66C3:	CP	3BH	; ";"
 J66CA:	DJNZ	J66B2
 J66CC:	CALL	ERRILLEGALFNCALL
 J66CF:	POP	HL
-	JP	J678F
+	JP	BRMVARVAL
 ;	-----------------
 J66D3:	CALL	C66A4
 	CALL	CODE_BUF
@@ -5598,19 +5597,14 @@ HANDLE_ERROR:
 
 	ALIGNCHK	06789H
 
-	;	-----------------
-
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-
+;	  PSG initialization
 BRMGICINI:
 	LD	IX, GICINI
 	JR	CALMAINRM
 
-;	-----------------
-
-J678F:	LD	IX, VARVAL
+;	Return the current value of a basic variable.
+BRMVARVAL:
+	LD	IX, VARVAL
 	JR	CALMAINRM
 
 ;	-----------------
@@ -5618,21 +5612,16 @@ J678F:	LD	IX, VARVAL
 ?6795:	LD	IX, FILESPEC
 	JR	CALMAINRM
 
-;	-----------------
-
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-
+;	Obtain the address for the storage of a basic variable
+;	  Inputs: 
+;		(HL = address of variable name, SUBFLG = variable type)
+;	  Outputs: (HL = Address after variable name, DE = Address of contents of variable)
 BRMPTRGET:
 	LD	IX, PTRGET
 	JR	CALMAINRM
 
-;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Convert to DAC to new type
 
 BRMMBCVRT:
 	LD	IX, MBCVRT
@@ -5651,64 +5640,59 @@ C67A7:	LD	A,(HL)
 	INC	HL
 	EX	(SP),HL
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Extract one character from the text at (HL + 1). Spaces are skipped.
+;	  Inputs: (HL = Address pointing to text)
+;	  Outputs: (HL = Address of the extracted char, A = Extracted char, Z flag ON if at the end of line, CY flag ON if digit)
 
 BRMCHRGTR:
 	LD	IX, CHRGTR
 	JR	CALMAINRM
 
-;	-----------------
-
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Evaluate expression and convert output according to its type.
+;	  Inputs: (HL = address of expression in text)
+;	  Outputs: (HL = address after expression, VALTYP = value type, DAC = evaluated result)
 
 BRMFRMEVL:
 	LD	IX, FRMEVL
 	JR	CALMAINRM
 
-;	-----------------
-
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
+;	Evaluate expression and convert to 16 bit int
+;	  Inputs: (HL = address of expression in text)
+;	  Outputs: (HL = address after expression, DE = evaluted result)
+;	  If value is beyond range throw an "Overflow" error
 
 BRMFRMQNT:
 	LD	IX, FRMQNT
 	JR	CALMAINRM
 
-;	-----------------
-
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Evaluate expression and convert to 8 bit int
+;	  Inputs: (HL = address of expression in text)
+;	  Outputs: (HL = address after expression, A & E = evaluted result)
+;	  If value is beyond range throw an "Overflow" error
 
 BRMMBGETBYT:
 	LD	IX, MBGETBYT
 	JR	CALMAINRM
 
-;	-----------------
+; 	Execute a a basic script text
+;	  Inputs: (HL = address of the text to be executed)
 
 BRMNEWSTT:
 	LD	IX, NEWSTT
 	JR	CALMAINRM
 
-;	-----------------
-
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Close all IO buffers	
 
 BRMCLOSEIO:
 	LD	IX, CLOSEIO
 	JR	CALMAINRM
-;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Free any storage occupied by the string
+;	  Inputs: (DAC = descriptor address)
 
 BRMFRESTR:
 	LD	IX, FRESTR
