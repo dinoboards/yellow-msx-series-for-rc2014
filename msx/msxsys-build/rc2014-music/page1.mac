@@ -80,6 +80,9 @@ MCLLEN		EQU	0FB3BH
 ; FB3C-FB3D: address of string being parsed (also used by DRAW)
 MCLPTR		EQU	0FB3CH
 
+; FB40: count of the # of PLAY statements parsed, but not executed yet
+PLYCNT		EQU	0FB40H
+
 ; FC4A-FC4B: highest address of the RAM memory that is not reserved by
 ; the OS; string area, filebuffers and stack are below this address
 ; initialized at startup and not changed normally
@@ -360,7 +363,6 @@ D$FA89	EQU	0FA89H	; ---L-
 I.FAB7	EQU	0FAB7H	; ----I
 D.FB39	EQU	0FB39H	; --SL-
 MUSICF	EQU	0FB3FH	; --SLI
-D.FB40	EQU	0FB40H	; --S-I
 D.FB41	EQU	0FB41H	; --S-I
 D$FB66	EQU	0FB66H	; --S--
 D$FB8B	EQU	0FB8BH	; --S--
@@ -3071,58 +3073,57 @@ J5957:	EI
 	POP	AF
 	INC	A
 	LD	HL,PVOICE_CNT
-	CP	(HL)
-	JP	C,J58B1
+	CP	(HL)			; number of playvoices
+	JP	C,J58B1			; next playvoice
 	DI
-	CALL	C63B1
-	JR	Z,J598F
+	CALL	C63B1			; check if CTRL-STOP
+	JR	Z,J598F			; yep,
 	LD	A,(PRSCNT)
-	RLCA
-	JR	C,J5978
+	RLCA				; b7 set ?
+	JR	C,J5978			; yep, music dequeing already started
 	LD	HL,D.F997
 	INC	(HL)
 	LD	A,(HL)
-	LD	(D.FB40),A
-	CALL	C683D
+	LD	(PLYCNT),A		; increase PLYCNT
+	CALL	C683D			; start music dequeuing
 J5978:	EI
 	LD	HL,PRSCNT
-	SET	7,(HL)
+	SET	7,(HL)			; b7 set
 	LD	A,(HL)
 	LD	HL,D.F993
-	CP	(HL)
-	JP	NZ,J58B0
+	CP	(HL)			; last playvoice ?
+	JP	NZ,J58B0		; nope, start again
 	LD	A,(D.F998)
-	OR	A
-	CALL	NZ,C639D
-	JR	NC,J5993
-J598F:	CALL	C658D
+	OR	A			; background music ?
+	CALL	NZ,C639D		; nope, wait until played
+	JR	NC,J5993		; not CTRL-STOP, quit
+J598F:	CALL	C658D			; stop background music
 	EI
 J5993:	POP	HL
 	RET
-;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Put end byte in queue (EI)
+;	  Inputs:  ________________________
+;	  Outputs: ________________________
 
 C5995:	LD	A,(PRSCNT)
 	INC	A
-	LD	(PRSCNT),A
-	LD	E,0FFH
+	LD	(PRSCNT),A		; an other string is completed
+	LD	E,0FFH			; end of data byte
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Put byte in queue.
+;	  Inputs:  (E = byte)
+;	  Outputs: (________________________)
 
 C599E:	PUSH	HL
 	PUSH	BC
 J59A0:	PUSH	DE
-	LD	A,(VOICEN)
+	LD	A,(VOICEN)		; current playvoice
 	DI
-	CALL	C66F9
+	CALL	C66F9			; put in voice queue
 	EI
 	POP	DE
-	JR	Z,J59A0
+	JR	Z,J59A0			; queue full, wait
 J59AC:	POP	BC
 	POP	HL
 	RET
@@ -3133,21 +3134,21 @@ J59AC:	POP	BC
 ;	     Outputs ________________________
 
 C59AF:	LD	HL,VOICEN
-	LD	A,(OPL_PVOICE_CNT)
+	LD	A,(OPL_PVOICE_CNT)	; number of OPLL playvoices
 	DEC	A
-	CP	(HL)
-	RET	NZ
+	CP	(HL)			; current playvoice = last OPLL playvoice ?
+	RET	NZ			; nope, quit
 	LD	A,(D.F97F)
 	LD	HL,D.F980
-	CP	(HL)
-	RET	Z
-	LD	(HL),A
+	CP	(HL)			; last PLAY statement to the same device as current ?
+	RET	Z			; yep, quit
+	LD	(HL),A			; new status
 	LD	A,88H
 	OR	(HL)
-	LD	E,A
+	LD	E,A			; 88H for MUSIC/PSG, 89H for MIDI
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
+;	  Put byte in queue (DI)
+;	     Inputs  E = byte
 ;	     Outputs ________________________
 
 C59C5:	PUSH	HL
@@ -5817,7 +5818,7 @@ C683D:	DI
 	LD	A,L
 	OR	H
 	RET	NZ
-	LD	HL,D.FB40
+	LD	HL,PLYCNT
 	OR	(HL)
 	JR	Z,J6867
 	DEC	(HL)
