@@ -2964,9 +2964,9 @@ J58B1:	PUSH	AF
 	LD	A,(PVOICE_CNT)		; number of playvoices
 	SUB	C
 	SUB	4
-	LD	HL,I59E2		; MCL for PSG
-	JR	C,J58D0
-	LD	HL,I5C70
+	LD	HL, MCL_FOR_PSG		; jump table for Macro Language parser
+	JR	C, J58D0
+	LD	HL, MCL_FOR_OPLL		; MCL for OPLL
 	JR	NZ,J58D0
 	LD	A,(D.F98E)
 	AND	01H	; 1
@@ -3164,7 +3164,7 @@ VQC_IS_AT_CAPACITIY:
 	RET
 
 ;	-----------------
-I59E2:
+ MCL_FOR_PSG:
 	DEFB	"A"
 	DEFW	C5B1D
 	DEFB	"M"+128
@@ -3629,48 +3629,50 @@ J5C5A:	CALL	C661A
 J5C6A:	CALL	C6640
 J5C6D:	JP	J5AB3
 ;	-----------------
-I5C70:	LD	B,C
-	DEFB	0EDH		; << Illegal Op Code Byte >>
-;	-----------------
-	LD	E,L
-	LD	H,11H	; 17
-	LD	E,A
-	LD	A,E
-	LD	A,(DE)
-	LD	E,A
-	SUB	(IY+95)
-	EXX
-	SCF
-	LD	E,L
-	CALL	Z,C5A80
-	POP	DE
-	SBC	A,L
-	LD	E,L
-	SUB	64H	; "d"
-	LD	E,L
-	RST	08H
-	AND	(HL)
-	LD	E,D
-	LD	A,0ABH
-	LD	E,L
-	INC	A
-	CP	B
-	LD	E,L
-	JP	C,J5D61
-	LD	E,B
-	IN	A,(66H)
-	JP	NC,J5DC3
-	ADC	A,0E0H
-	LD	E,L
-	CALL	NC,C5A99
-	LD	B,B
-	XOR	D
-	LD	E,H
-	CALL	C5D8E
-	OUT	(95H),A
-	LD	E,L
-	NOP
-	CALL	C6614
+
+MCL_FOR_OPLL:
+	DEFB	"A"
+	DEFW	C5DED
+        DEFB	"&"
+	DEFW	C5F11
+        DEFB	"{"
+	DEFW	C5F1A
+        DEFB	"}"+128
+	DEFW	C5F96
+        DEFB	"Y"+128
+	DEFW	C5D37
+        DEFB	"L"+128
+	DEFW	C5A80
+        DEFB	"Q"+128
+	DEFW	C5D9D
+        DEFB	"V"+128
+	DEFW	C5D64
+        DEFB	"O"+128
+	DEFW	C5AA6
+        DEFB	">"
+	DEFW	C5DAB
+        DEFB	"<"
+	DEFW	C5DB8
+        DEFB	"Z"+128
+	DEFW	J5D61
+        DEFB	"X"
+	DEFW	C66DB
+        DEFB	"R"+128
+	DEFW	J5DC3
+        DEFB	"N"+128
+	DEFW	C5DE0
+        DEFB	"T"+128
+	DEFW	C5A99
+        DEFB	"@"
+	DEFW	C5CAA
+        DEFB	"M"+128
+	DEFW	C5D8E
+        DEFB	"S"+128
+	DEFW	C5D95
+	DEFB	00
+
+	ALIGNCHK 05CAAH
+C5CAA:	CALL	C6614
 	CP	56H	; "V"
 	JR	Z,J5CDD
 	CP	57H	; "W"
@@ -3757,7 +3759,7 @@ C5D27:	CP	2BH	; "+"
 	CCF
 	RET
 ;	-----------------
-?5D37:	JR	NC,J5D61
+C5D37:	JR	NC,J5D61
 	LD	A,E
 	CALL	C6DF3
 	JR	C,J5D61
@@ -3781,7 +3783,7 @@ C5D27:	CP	2BH	; "+"
 ;	-----------------
 J5D61:	JP	ERRILLEGALFNCALL
 ;	-----------------
-?5D64:	JR	C,J5D68
+C5D64:	JR	C,J5D68
 	LD	E,08H	; 8
 J5D68:	CALL	C5C41
 	LD	A,E
@@ -3817,12 +3819,12 @@ C5D8E:	RET	NC
 	RET	NZ
 J5D92:	JP	ERRILLEGALFNCALL
 ;	-----------------
-?5D95:	LD	A,E
+C5D95:	LD	A,E
 	CP	10H	; 16
 	JR	NC,J5D92
 	JP	C5C41
 ;	-----------------
-?5D9D:	JR	C,J5DA1
+C5D9D:	JR	C,J5DA1
 	LD	E,08H	; 8
 J5DA1:	LD	A,E
 	CP	09H	; 9
@@ -3863,14 +3865,14 @@ J5DC7:	CALL	C5C41
 	PUSH	HL
 	JP	J5EA2
 ;	-----------------
-?5DE0:	JR	NC,J5D92
+C5DE0:	JR	NC,J5D92
 	CALL	C5C41
 	LD	A,E
 	CP	61H	; "a"
 	JR	C,J5E07
 	JP	ERRILLEGALFNCALL
 ;	-----------------
-?5DED:	CALL	C5AF6
+C5DED:	CALL	C5AF6
 	LD	L,0FH	; 15
 	CALL	C67E4
 	LD	D,0CH	; 12
@@ -4060,13 +4062,13 @@ C5F02:	PUSH	BC
 	POP	BC
 	RET
 ;	-----------------
-?5F11:	LD	E,87H
+C5F11:	LD	E,87H
 	POP	BC
 	JP	J5E75
 ;	-----------------
 J5F17:	JP	ERRILLEGALFNCALL
 ;	-----------------
-?5F1A:	LD	L,09H	; 9
+C5F1A:	LD	L,09H	; 9
 	CALL	C67E4
 	LD	A,(HL)
 	JR	NZ,J5F17
@@ -4134,7 +4136,7 @@ J5F6F:	LD	A,40H	; "@"
 	LD	(D.FB3C),HL
 	RET
 ;	-----------------
-?5F96:	LD	L,09H	; 9
+C5F96:	LD	L,09H	; 9
 	CALL	C67E4
 	LD	A,(HL)
 	OR	A
