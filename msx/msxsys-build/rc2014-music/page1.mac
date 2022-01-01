@@ -270,6 +270,24 @@ Q	ASET	"&D"
 	DEFW	Y
 	ENDM
 
+
+; Voice Buffer Structure
+VCBUF		EQU	0
+VCBUF_DURATION	EQU	0		; 2 byte duration counter
+VCBUF_STRLEN	EQU	2		; 1 byte string length
+VCBUF_STRADDR	EQU	3		; 2 byte string address
+VCBUF_STCKDATA	EQU	5		; 2 byte stack ptr
+VCBUF_PCKLEN	EQU	7		; 1 byte music packet length
+VCBUF_PACKET	EQU	8		; 7 byte music packet
+VCBUF_OCTAVE	EQU	15		; 1 byte octave
+VCBUF_LENGTH	EQU	16		; 1 byte length
+VCBUF_TEMPO	EQU	17		; 1 byte tempo
+VCBUF_VOLUME	EQU	18		; 1 byte volume
+VCBUF_ENVPERIOD	EQU	19		; 1 byte envelope period
+VCBUF_STACKSTRT	EQU	20		; stack
+VCBUF_STACKEND	EQU	36
+VCBUF_UNKNOWN	EQU	38		; division??
+
 	ORG	4000H
 I.0001	EQU	0001H	; ----I
 C.0008	EQU	0008H	; -C--I
@@ -2862,7 +2880,7 @@ J57F8:	XOR	A
 J5804:	PUSH	BC
 	LD	A,B
 	DEC	A
-	CALL	C67E0			; get pointer to stringlength in voicebuffer
+	CALL	GET_CURVC_STRLEN	; get pointer to stringlength in voicebuffer
 	LD	DE,I57A0
 	LD	(HL), 1			; stringlength=1
 	INC	HL
@@ -2921,7 +2939,7 @@ J585E:	POP	AF
 	LD	(IX),A			; nothing to correct
 	POP	AF			; playvoice
 	PUSH	AF
-	CALL	C67E0			; get pointer to stringlength in voicebuffer
+	CALL	GET_CURVC_STRLEN	; get pointer to stringlength in voicebuffer
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
@@ -2991,7 +3009,7 @@ J58D0:	LD	(MCLTAB),HL
 	CALL	VQC_IS_AT_CAPACITIY	; less then 8 bytes free in voice queue ?
 	JP	C,J5957			; yep, skip to the next voice
 	LD	A,B
-	CALL	C67E0			; get pointer to stringlength in voicebuffer
+	CALL	GET_CURVC_STRLEN	; get pointer to stringlength in voicebuffer
 	LD	A,(HL)
 	OR	A			; playstring length 0 ?
 	JP	Z,J5957			; yep, skip to the next voice
@@ -3007,8 +3025,8 @@ J58D0:	LD	(MCLTAB),HL
 	LD	D,(HL)			; stack data address
 	INC	HL
 	PUSH	HL
-	LD	L,24H
-	CALL	C67E4			; get pointer in current voicebuffer
+	LD	L, VCBUF_STACKEND
+	CALL	GET_CURVC_BUFADDR	; get pointer in current voicebuffer
 	PUSH	HL			; top of voicebuffer stack
 	LD	HL,(SAVSP)
 	DEC	HL
@@ -3028,7 +3046,7 @@ J590F:	LD	A,(MCLLEN)
 	JR	NZ,J5918		; nope, skip the end byte
 J5915:	CALL	C5995			; put end byte in queue
 J5918:	LD	A,(VOICEN)		; current playvoice
-	CALL	C67E0			; get pointer to stringlength in voicebuffer
+	CALL	GET_CURVC_STRLEN	; get pointer to stringlength in voicebuffer
 	LD	A,(MCLLEN)
 	LD	(HL),A
 	INC	HL
@@ -3053,8 +3071,8 @@ J5918:	LD	A,(VOICEN)		; current playvoice
 	AND	L
 	OR	H
 	JP	NZ,ERRILLEGALFNCALL	; illegal function call
-	LD	L,24H
-	CALL	C67E4			; get pointer in current voicebuffer
+	LD	L, VCBUF_STACKEND
+	CALL	GET_CURVC_BUFADDR	; get pointer in current voicebuffer
 	POP	BC
 	DEC	BC
 	CALL	C6827			; copy
@@ -3229,8 +3247,8 @@ J5A41:	LD	A,0FH	; 15
 	CP	E
 	JR	C,J5A96
 J5A46:	CALL	C5C41
-	LD	L,12H	; 18
-	CALL	C67E4
+	LD	L, VCBUF_VOLUME
+	CALL	GET_CURVC_BUFADDR
 	LD	A,40H	; "@"
 	AND	(HL)
 	OR	E
@@ -3249,8 +3267,8 @@ C5A54:	LD	A,E
 	LD	E,A
 J5A5A:	OR	D
 	JR	Z,J5A96
-	LD	L,13H	; 19
-	CALL	C67E4
+	LD	L, VCBUF_ENVPERIOD
+	CALL	GET_CURVC_BUFADDR
 	PUSH	HL
 	LD	A,(HL)
 	INC	HL
@@ -3286,8 +3304,8 @@ C5A80:	JR	C,J5A84
 J5A84:	LD	A,E
 	CP	41H	; "A"
 	JR	NC,J5A96
-	LD	L,10H	; 16
-J5A8B:	CALL	C67E4
+	LD	L, VCBUF_LENGTH
+J5A8B:	CALL	GET_CURVC_BUFADDR
 	CALL	C5C41
 	OR	E
 	JR	Z,J5A96
@@ -3330,8 +3348,8 @@ J5AB9:	XOR	A
 	JR	NC,J5A96
 J5AC4:	LD	HL, 0
 	PUSH	HL
-	LD	L,10H	; 16
-	CALL	C67E4
+	LD	L, VCBUF_LENGTH
+	CALL	GET_CURVC_BUFADDR
 	PUSH	HL
 	INC	HL
 	INC	HL
@@ -3396,8 +3414,8 @@ J5B1B:	DEC	C
 
 
 C5B1D:	CALL	C5AF6			; get notenumber
-	LD	L,0FH
-	CALL	C67E4			; get pointer in current voicebuffer
+	LD	L, VCBUF_OCTAVE
+	CALL	GET_CURVC_BUFADDR	; get pointer in current voicebuffer
 	LD	E,(HL)			; octave
 	LD	B,00H
 	LD	HL,I5A16
@@ -3422,8 +3440,8 @@ J5B41:	ADC	A,E
 	SUB	E
 	LD	D,A
 	PUSH	DE
-	LD	L,10H
-	CALL	C67E4			; get pointer in current voicebuffer
+	LD	L, VCBUF_LENGTH
+	CALL	GET_CURVC_BUFADDR	; get pointer in current voicebuffer
 	LD	C,(HL)			; length
 	PUSH	HL
 	CALL	C661A			; get MCL char
@@ -3490,8 +3508,8 @@ J5B97	EQU	$-1
 	LD	(HL),E
 	INC	C
 	INC	C
-J5BA2:	LD	L,07H
-	CALL	C67E4			; get pointer in current voicebuffer
+J5BA2:	LD	L, VCBUF_PCKLEN
+	CALL	GET_CURVC_BUFADDR	; get pointer in current voicebuffer
 	LD	(HL),C			; size of music packet
 	LD	A,C
 	SUB	02H
@@ -3844,8 +3862,8 @@ J5DA1:	LD	A,E
 	LD	L,26H	; "&"
 	JP	J5A8B
 ;	-----------------
-C5DAB:	LD	L,0FH	; 15
-	CALL	C67E4
+C5DAB:	LD	L, VCBUF_OCTAVE
+	CALL	GET_CURVC_BUFADDR
 	LD	A,(HL)
 	INC	A
 	CP	09H	; 9
@@ -3853,8 +3871,8 @@ C5DAB:	LD	L,0FH	; 15
 	LD	(HL),A
 	RET
 ;	-----------------
-C5DB8:	LD	L,0FH	; 15
-	CALL	C67E4
+C5DB8:	LD	L, VCBUF_OCTAVE
+	CALL	GET_CURVC_BUFADDR
 	LD	A,(HL)
 	DEC	A
 	JR	Z,J5D92
@@ -3872,8 +3890,8 @@ J5DC7:	CALL	C5C41
 	PUSH	AF
 	LD	HL,I5E11
 	PUSH	HL
-	LD	L,10H	; 16
-	CALL	C67E4
+	LD	L, VCBUF_LENGTH
+	CALL	GET_CURVC_BUFADDR
 	PUSH	HL
 	JP	J5EA2
 ;	-----------------
@@ -3885,8 +3903,8 @@ C5DE0:	JR	NC,J5D92
 	JP	ERRILLEGALFNCALL
 ;	-----------------
 C5DED:	CALL	C5AF6
-	LD	L,0FH	; 15
-	CALL	C67E4
+	LD	L, VCBUF_OCTAVE
+	CALL	GET_CURVC_BUFADDR
 	LD	D,0CH	; 12
 	LD	B,(HL)
 	LD	A,0F4H
@@ -3912,8 +3930,8 @@ I5E11:	PUSH	HL
 	CALL	C6640
 	POP	AF
 	JR	Z,J5E61
-J5E20:	LD	L,26H	; "&"
-	CALL	C67E4
+J5E20:	LD	L, VCBUF_UNKNOWN
+	CALL	GET_CURVC_BUFADDR
 	LD	A,(HL)
 	CP	08H	; 8
 	JR	Z,J5E61
@@ -3976,14 +3994,14 @@ J5E75:	CALL	C59C5
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5E82:	LD	L,09H	; 9
-	CALL	C67E4
+C5E82:	LD	L, VCBUF_PACKET+1
+	CALL	GET_CURVC_BUFADDR
 	LD	C,(HL)
 	LD	A,C
 	OR	A
 	PUSH	AF
-	LD	L,10H	; 16
-	CALL	C67E4
+	LD	L, VCBUF_LENGTH
+	CALL	GET_CURVC_BUFADDR
 	POP	AF
 	RET	NZ
 	LD	C,(HL)
@@ -4080,8 +4098,8 @@ C5F11:	LD	E,87H
 ;	-----------------
 J5F17:	JP	ERRILLEGALFNCALL
 ;	-----------------
-C5F1A:	LD	L,09H	; 9
-	CALL	C67E4
+C5F1A:	LD	L, VCBUF_PACKET+1
+	CALL	GET_CURVC_BUFADDR
 	LD	A,(HL)
 	JR	NZ,J5F17
 	LD	C,00H
@@ -4112,8 +4130,8 @@ J5F42:	CP	7DH	; "}"
 	POP	BC
 	JR	J5F2F
 ;	-----------------
-J5F55:	LD	L,10H	; 16
-	CALL	C67E4
+J5F55:	LD	L, VCBUF_LENGTH
+	CALL	GET_CURVC_BUFADDR
 	LD	E,(HL)
 	LD	D,00H
 	CALL	C661A
@@ -4138,8 +4156,8 @@ J5F6F:	LD	A,40H	; "@"
 	CP	41H	; "A"
 	JR	NC,J5F17
 	PUSH	AF
-	LD	L,09H	; 9
-	CALL	C67E4
+	LD	L, VCBUF_PACKET+1
+	CALL	GET_CURVC_BUFADDR
 	POP	AF
 	LD	(HL),A
 	POP	AF
@@ -4148,8 +4166,8 @@ J5F6F:	LD	A,40H	; "@"
 	LD	(MCLPTR),HL
 	RET
 ;	-----------------
-C5F96:	LD	L,09H	; 9
-	CALL	C67E4
+C5F96:	LD	L, VCBUF_PACKET+1
+	CALL	GET_CURVC_BUFADDR
 	LD	A,(HL)
 	OR	A
 	JR	Z,J5FCE
@@ -4225,8 +4243,8 @@ J6003:	INC	C
 	PUSH	BC
 	LD	HL,I601F
 	PUSH	HL
-	LD	L,10H	; 16
-	CALL	C67E4
+	LD	L, VCBUF_LENGTH
+	CALL	GET_CURVC_BUFADDR
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4349,8 +4367,8 @@ J60CA:	RET
 
 C60CB:	LD	(D.F99A),A
 	DI
-	LD	L,00H
-	CALL	C67E7
+	LD	L, VCBUF_DURATION
+	CALL	GET_VC_BUFADDR
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
@@ -4844,7 +4862,7 @@ C6388:	PUSH	HL
 
 C6396:	LD	A,(D.F99A)
 	DI
-	JP	C67E7
+	JP	GET_VC_BUFADDR
 ;	-----------------
 
 ;	  Subroutine __________________________
@@ -5120,8 +5138,8 @@ J6519:	PUSH	BC
 J653D:	PUSH	BC
 	LD	A,B
 	DEC	A
-	LD	L,00H
-	CALL	C67E7
+	LD	L, VCBUF
+	CALL	GET_VC_BUFADDR
 	EX	DE,HL
 	LD	HL,I6566
 	LD	BC,I.0027
@@ -5158,9 +5176,9 @@ I6566:
 	DEFB	120				; +17, tempo
 	DEFB	8				; +18, volume
 	DEFW	0				; +19, envelope period
-	DEFB	0,0,0				; stack
-	DEFB	0,0,0,0,0,0,0,0
-	DEFB	0,0,0,0,0,0,8
+	DEFB	0,0,0				; +20, stack
+	DEFB	0,0,0,0,0,0,0,0			; +23
+	DEFB	0,0,0,0,0,0,8			; +31
 
 ;	 Stop background music
 ;	   Inputs:  ________________________
@@ -5701,27 +5719,28 @@ CALMAINRM:
 	CALL	CALSLT
 	EI
 	RET
-;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Get pointer to stringlength in voicebuffer
+;	  Inputs  ________________________
+;	  Outputs: (HL = address of string length value)
 
-C67E0:	LD	L,02H	; 2
-	JR	C67E7
-;	-----------------
+GET_CURVC_STRLEN:
+	LD	L, VCBUF_STRLEN
+	JR	GET_VC_BUFADDR
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Get pointer in current voicebuffer
+;	  Inputs: (L = offset)
+;	  Outputs (HL = address within voice buffer+offset)
 
-C67E4:	LD	A,(VOICEN)
+GET_CURVC_BUFADDR:
+	LD	A, (VOICEN)
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Get pointer in voicebuffer
+;	  Inputs: (A = voicebuffer, L = offset)
+;	  Outputs: (HL = address within voice buffer)
 
-C67E7:	LD	H,00H
+GET_VC_BUFADDR:
+	LD	H,00H
 	PUSH	DE
 	LD	E,A
 	LD	A,(PVOICE_CNT)
