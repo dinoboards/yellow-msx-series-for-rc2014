@@ -1601,7 +1601,7 @@ J5073:	POP	AF
 	INC	A
 	RET
 
-J5078:	CALL	C50C6
+J5078:	CALL	GET_MSX_INIT
 	RET	Z
 	JP	C658D
 ;	-----------------
@@ -1611,9 +1611,9 @@ J5078:	CALL	C50C6
 ;	     Outputs ________________________
 
 C507F:	DI
-	CALL	C50C6
+	CALL	GET_MSX_INIT
 	RET	NZ
-	CALL	C50BE
+	CALL	SET_MSX_INIT
 	LD	HL,H.TIMI
 	LD	DE,J.F9BB
 	PUSH	HL
@@ -1651,32 +1651,28 @@ I50B9:	RST	30H
 	RET
 
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Set MSX MUSIC initialised bit flag
 
-
-C50BE:	PUSH	HL
+SET_MSX_INIT:
+	PUSH	HL
 	CALL	GETSLTWRK
-	SET	0,(HL)
+	SET	0, (HL)
 	POP	HL
 	RET
 ;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	  Get MSX MUSIC initialised bit flag
+;	    Outputs: (NZ -> is initialised, Z -> is not initialised)
 
-C50C6:	PUSH	HL
+GET_MSX_INIT:
+	PUSH	HL
 	CALL	GETSLTWRK
-	BIT	0,(HL)
+	BIT	0, (HL)
 	POP	HL
 	RET
-;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Get my SLTWRK entry
+;	  Outputs: (HL => slot work area address)
 
 GETSLTWRK:
 	PUSH	AF
@@ -1700,7 +1696,7 @@ GETSLTWRK:
 	POP	DE
 	POP	AF
 	RET
-;	-----------------
+
 ROM_STATEMENT:
 J50EB:	EI
 	PUSH	HL
@@ -1714,7 +1710,7 @@ J50EB:	EI
 	SBC	HL,DE
 	POP	HL
 	JR	Z,J5104
-	CALL	C50C6
+	CALL	GET_MSX_INIT
 	SCF
 	RET	Z
 J5104:	CALL	MEMCHK
@@ -1968,7 +1964,7 @@ I52E0:	DEFB	3
 
 BASMUSIC:
 	PUSH	HL
-	CALL	C50C6
+	CALL	GET_MSX_INIT
 	CALL	Z,C5009
 	LD	HL,I52E0
 	LD	DE, BUF
@@ -2055,7 +2051,7 @@ J5389:	ADD	A,D
 	JR	NC,J5355
 	CALL	BRMCLOSEIO
 	LD	HL, (HIMEM)
-	CALL	C50C6
+	CALL	GET_MSX_INIT
 	JR	NZ,J53AF
 	LD	DE,I$0327
 	AND	A
@@ -5593,7 +5589,7 @@ ERROUTOFMEMORY:
 	LD	E,07H			;OUT OF MEMORY
 
 HANDLE_ERROR:
-	CALL	C50C6			; test some kind of bit?
+	CALL	GET_MSX_INIT
 	PUSH	DE
 	CALL	NZ, C658D
 	POP	DE
