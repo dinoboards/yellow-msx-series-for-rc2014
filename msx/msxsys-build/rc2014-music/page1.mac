@@ -14,6 +14,56 @@
 	.Z80
 	ASEG
 
+; ==================================
+; MSX SYSTEM VARIABLES
+
+; disksystem bottom (lowest address used by the disksystem)
+HIMSAV		EQU	0F349H
+
+; F41C-F41D: line number of current BASIC line being executed, in direct modus this
+; contains $FFFF (ini:$FFFF)
+CURLIN		EQU	0F41CH
+
+; F55E-F65F: used in direct modus to store the ASCII codes of the line, or simulary
+; for INPUT or LINE INPUT BASIC statements
+BUF		EQU     0F55EH
+
+; F6BE-F6BF: line number of last program break, reset at 0 at any program change
+OLDLIN		EQU	0F6BEH
+
+; F806-F856: workarea when executing numeric operators
+HOLD8		EQU     0F806H
+
+FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
+
+; Original Buffers for sound queues.  Repurposed by MSX-MUSIC
+; VOICAQ		EQU	0F975H           ; Voice A queue
+; VOICBQ		EQU	0F9F5H           ; Voice B queue
+; VOICCQ		EQU	0FA75H           ; Voice C queue
+;
+MUSCWRK		EQU	0F97DH
+
+; Music Que Pointer?
+; pointer to  12 * 6 bytes
+D.F99B		EQU	0F99BH
+
+; FB38: # of voice currently being parsed (0-2)
+VOICEN		EQU	0FB38H
+
+; FC4A-FC4B: highest address of the RAM memory that is not reserved by
+; the OS; string area, filebuffers and stack are below this address
+; initialized at startup and not changed normally
+HIMEM		EQU	0FC4AH
+
+; FCC1-FCC4: Information for each primary slot. The most significant bit is
+; set if the primary slot is found to be expanded.
+EXPTBL		EQU	0FCC1H
+
+PROCNM		EQU	0FD89H
+
+; ======================================
+; MSX BASIC BIOS ROUTINES
+
 ; Function : Reads the value of an address in another slot
 ; Input    : A  - ExxxSSPP  Slot-ID
 ;            │        ││└┴─ Primary slot number (00-11)
@@ -47,49 +97,6 @@ IDBYT1	EQU	002BH
 ;                   0 = 60Hz, 1 = 50Hz
 
 
-FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
-
-; F806-F856: workarea when executing numeric operators
-HOLD8		EQU     0F806H
-
-; F55E-F65F: used in direct modus to store the ASCII codes of the line, or simulary
-; for INPUT or LINE INPUT BASIC statements
-BUF		EQU     0F55EH
-
-; disksystem bottom (lowest address used by the disksystem)
-HIMSAV		EQU	0F349H
-
-
-; FC4A-FC4B: highest address of the RAM memory that is not reserved by
-; the OS; string area, filebuffers and stack are below this address
-; initialized at startup and not changed normally
-HIMEM		EQU	0FC4AH
-
-; Original Buffers for sound queues.  Repurposed by MSX-MUSIC
-; VOICAQ		EQU	0F975H           ; Voice A queue
-; VOICBQ		EQU	0F9F5H           ; Voice B queue
-; VOICCQ		EQU	0FA75H           ; Voice C queue
-;
-MUSCWRK		EQU	0F97DH
-
-; F41C-F41D: line number of current BASIC line being executed, in direct modus this
-; contains $FFFF (ini:$FFFF)
-CURLIN		EQU	0F41CH
-
-; F6BE-F6BF: line number of last program break, reset at 0 at any program change
-OLDLIN		EQU	0F6BEH
-
-PROCNM		EQU	0FD89H
-
-; FCC1-FCC4: Information for each primary slot. The most significant bit is
-; set if the primary slot is found to be expanded.
-EXPTBL		EQU	0FCC1H
-
-; FB38: # of voice currently being parsed (0-2)
-VOICEN		EQU	0FB38H
-
-; ======================================
-; MSX BASIC BIOS ROUTINES
 ; MAINROM ---- convert to DAC to new type
 MBCVRT		EQU	517AH
 
@@ -307,7 +314,6 @@ D.F997	EQU	0F997H	; --S-I
 D.F998	EQU	0F998H	; --SL-
 D.F999	EQU	0F999H	; --S-I
 D.F99A	EQU	0F99AH	; --SL-
-D.F99B	EQU	0F99BH	; --SL-
 D.F99D	EQU	0F99DH	; ---L-
 D.F99F	EQU	0F99FH	; ---L-
 D.F9A1	EQU	0F9A1H	; ---L-
@@ -3126,18 +3132,19 @@ J59C7:	PUSH	DE
 	JR	J59C7
 ;	-----------------
 
-;	  Subroutine __________________________
+;	  Subroutine less then 8 bytes free in voice queue
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C59D5:	LD	A,(VOICEN)
+C59D5:	LD	A, (VOICEN)		; current playvoice
 	PUSH	BC
 	DI
-	CALL	C6741
+	CALL	C6741			; get free space voice queue
 	EI
 	POP	BC
-	CP	08H	; 8
+	CP	8
 	RET
+
 ;	-----------------
 I59E2:	LD	B,C
 	DEC	E
@@ -5507,31 +5514,29 @@ C6730:	PUSH	BC
 	INC	HL
 	LD	(HL),D
 	RET
-;	-----------------
 
-;	  Subroutine __________________________
+;	  Subroutine get free space voice queue
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6741:	CALL	C6750
-	LD	A,B
-	INC	A
+C6741:	CALL	C6750			; get voice queue control and put/get pos
+	LD	A, B
+	INC	A			; put pos +1
 	INC	HL
-	AND	(HL)
-	LD	B,A
-	LD	A,C
+	AND	(HL)			; warp around
+	LD	B, A
+	LD	A, C
 	SUB	B
 	AND	(HL)
-	LD	L,A
-	LD	H,00H
+	LD	L, A
+	LD	H, 0
 	RET
-;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
+;	  Subroutine get voice queue control and put/get pos
+;	     Inputs  A = playvoice
 ;	     Outputs ________________________
 
-C6750:	CALL	C6758
+C6750:	CALL	C6758			; get voice queue control
 	LD	B,(HL)
 	INC	HL
 	LD	C,(HL)
@@ -5539,18 +5544,18 @@ C6750:	CALL	C6758
 	RET
 ;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
+;	  Subroutine get voice queue control
+;	     Inputs  A = playvoice
 ;	     Outputs ________________________
 
-C6758:	LD	HL,(D.F99B)
-	ADD	A,A
-	LD	B,A
-	ADD	A,A
-	ADD	A,B
-	LD	C,A
-	LD	B,00H
-	ADD	HL,BC
+C6758:	LD	HL, (D.F99B)
+	ADD	A, A
+	LD	B, A
+	ADD	A, A
+	ADD	A, B
+	LD	C, A
+	LD	B, 0		; *6
+	ADD	HL, BC
 	RET
 
 ; 	-----------------
