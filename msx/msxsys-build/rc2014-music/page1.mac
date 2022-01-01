@@ -4430,7 +4430,7 @@ C613F:	PUSH	HL
 	POP	HL
 	RET
 ;	-----------------
-?6147:	CALL	C6388
+C6147:	CALL	C6388
 	RET	Z
 	OR	A
 	JP	M,J60F2
@@ -4605,10 +4605,10 @@ J6235:	LD	E,A
 	LD	A,E
 	ADD	A,A
 	EX	DE,HL
-	ADD	A,4EH	; "N"
+	ADD	A, LOW I624E
 	LD	L,A
 	LD	A,00H
-	ADC	A,62H	; "b"
+	ADC	A, HIGH I624E
 	LD	H,A
 	LD	C,(HL)
 	INC	HL
@@ -4617,34 +4617,33 @@ J6235:	LD	E,A
 	PUSH	BC
 	RET
 ;	-----------------
-?624E:	LD	L,(HL)
-	LD	H,D
-	LD	(HL),C
-	LD	H,D
-	SBC	A,(HL)
-	LD	H,D
-	XOR	H
-	LD	H,D
-	OR	A
-	LD	H,D
-	POP	BC
-	LD	H,D
-	JR	J62BF
-;	-----------------
-?625C:	LD	B,A
-	LD	H,C
-	LD	H,H
-	LD	H,D
-	LD	H,(HL)
-	LD	H,D
-	CALL	P,C$AF63
-	LD	BC,I$013E
+
+I624E:
+	DEFW	C626E			; 080H
+	DEFW	C6271			; 081H, volume
+	DEFW	C629E			; 082H, register
+	DEFW	C62AC			; 083H, duration
+	DEFW	C62B7			; 084H, voice
+	DEFW	C62C1			; 085H, volume
+	DEFW	C6318			; 086H, rhythm
+	DEFW	C6147			; 087H, "&"
+	DEFW	C6264			; 088H, use MUSIC/PSG
+	DEFW	C6266
+	DEFW	C63F4
+
+C6264:
+	XOR	A
+	DEFB	1			; LD BC, 0013EH
+
+C6266:
+	LD	A,1
 	LD	(D.F981),A
 	JP	J60EE
+
 ;	-----------------
-?626E:	JP	C6177
+C626E:	JP	C6177
 ;	-----------------
-?6271:	PUSH	HL
+C6271:	PUSH	HL
 	CALL	C619C
 	POP	HL
 	JR	NC,J627D
@@ -4669,16 +4668,20 @@ J628B:	PUSH	HL
 	ADD	A,03H	; 3
 	CALL	C62F9
 	JR	J6287
+
+;	Packet 082H
+;	  Inputs:  ________________________
+;	  Outputs: ________________________
+
+C629E:	PUSH	HL
+	CALL	C6388			; get from voice queue serviced
+	LD	C,A			; register
+	CALL	C6388			; get from voice queue serviced
+	LD	B,A			; data
+	CALL	C6DB5			; write OPLL register with validation
+	JR	J6287			; get next music packet
 ;	-----------------
-?629E:	PUSH	HL
-	CALL	C6388
-	LD	C,A
-	CALL	C6388
-	LD	B,A
-	CALL	C6DB5
-	JR	J6287
-;	-----------------
-?62AC:	CALL	C6388
+C62AC:	CALL	C6388
 	LD	C,A
 	CALL	C6388
 	LD	(HL),A
@@ -4686,13 +4689,13 @@ J628B:	PUSH	HL
 	LD	(HL),C
 	RET
 ;	-----------------
-?62B7:	PUSH	HL
+C62B7:	PUSH	HL
 	CALL	C6388
 	LD	C,A
 	CALL	C61B2
 J62BF:	JR	J6287
 ;	-----------------
-?62C1:	CALL	C613F
+C62C1:	CALL	C613F
 	JP	NZ,J63D1
 	PUSH	HL
 	CALL	C619C
@@ -4747,7 +4750,7 @@ J6300:	PUSH	HL
 	CALL	C632F
 	JP	J6287
 ;	-----------------
-?6318:	PUSH	HL
+C6318:	PUSH	HL
 	LD	L,0CH	; 12
 	CALL	C6396
 	CALL	C6388
@@ -4921,7 +4924,7 @@ J63EF:	LD	B,06H	; 6
 	LD	D,C
 	JR	C63BF
 ;	-----------------
-?63F4:	CALL	C6388
+C63F4:	CALL	C6388
 	LD	D,A
 	LD	B,07H	; 7
 	JR	C63BF
