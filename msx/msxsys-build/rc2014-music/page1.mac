@@ -5049,7 +5049,7 @@ J64AE:	SCF
 	DJNZ	J64AE
 	LD	(D.F98F),HL
 	LD	A,(OPL_PVOICE_CNT)
-	LD	HL,I64E4
+	LD	HL, QUE_LENGTH_TABLE
 	CALL	C5486
 	LD	A,(HL)
 	LD	(D.F994),A
@@ -5066,17 +5066,11 @@ J64AE:	SCF
 	LD	HL, 12000		; LOAD FOR 50HZ SYSTEMS (120*4*50)/2
 J64E0:	LD	(FREQ_FACTOR), HL
 	RET
-;	-----------------
-I64E4:	LD	A,A
-	CCF
-	CCF
-	CCF
-	RRA
-	RRA
-	RRA
-	RRA
-	RRA
-	RRA
+
+QUE_LENGTH_TABLE:
+	DEFB	127			; 0 OPLL playvoices, use 128 bytes queues
+        DEFB	63,63,63		; 1-3 OPLL playvoices, use 64 bytes queues
+        DEFB	31,31,31,31,31,31	; 4-9 OPLL playvoices, use 32 bytes queues
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -5594,7 +5588,7 @@ ERROUTOFMEMORY:
 J6779:	LD	E,07H			;OUT OF MEMORY
 
 HANDLE_ERROR:
-	CALL	C50C6		; test some kind of bit?
+	CALL	C50C6			; test some kind of bit?
 	PUSH	DE
 	CALL	NZ, C658D
 	POP	DE
