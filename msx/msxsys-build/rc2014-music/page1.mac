@@ -35,6 +35,12 @@ OLDLIN		EQU	0F6BEH
 ; F806-F856: workarea when executing numeric operators
 HOLD8		EQU     0F806H
 
+; F956-F957: start address of a jumptable for subcommands
+; contained in a string variable, used for both PLAY and DRAW
+; where this systemvar points to either the PLAY or the DRAW
+; table
+MCLTAB		EQU	0F956H
+
 FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
 
 ; Original Buffers for sound queues.  Repurposed by MSX-MUSIC
@@ -62,8 +68,17 @@ VOICE_CTRL_BUF	EQU	0F99BH
 ;  bit 1-0: number of parsed strings (0-3)
 PRSCNT		EQU	0FB35H
 
+; FB36-FB37: storage of stack
+SAVSP		EQU	0FB36H
+
 ; FB38: # of voice currently being parsed (0-2)
 VOICEN		EQU	0FB38H
+
+; FB3B: size of string being parsed (also used by DRAW)
+MCLLEN		EQU	0FB3BH
+
+; FB3C-FB3D: address of string being parsed (also used by DRAW)
+MCLPTR		EQU	0FB3CH
 
 ; FC4A-FC4B: highest address of the RAM memory that is not reserved by
 ; the OS; string area, filebuffers and stack are below this address
@@ -306,7 +321,6 @@ D$F81B	EQU	0F81BH	; --S--
 D.F85F	EQU	0F85FH	; --SL-
 D$F860	EQU	0F860H	; --S--
 I$F900	EQU	0F900H	; ----I
-D.F956	EQU	0F956H	; --SL-
 C.F975	EQU	0F975H	; -C--I
 I$F976	EQU	0F976H	; ----I
 D.F97C	EQU	0F97CH	; --SL-
@@ -344,10 +358,7 @@ I.FA27	EQU	0FA27H	; ----I
 I$FA87	EQU	0FA87H	; ----I
 D$FA89	EQU	0FA89H	; ---L-
 I.FAB7	EQU	0FAB7H	; ----I
-D.FB36	EQU	0FB36H	; --SL-
 D.FB39	EQU	0FB39H	; --SL-
-D.FB3B	EQU	0FB3BH	; --SLI
-D.FB3C	EQU	0FB3CH	; --SL-
 MUSICF	EQU	0FB3FH	; --SLI
 D.FB40	EQU	0FB40H	; --S-I
 D.FB41	EQU	0FB41H	; --S-I
@@ -2884,7 +2895,7 @@ J582C:	LD	(D.F97F),A
 J5833:	PUSH	HL
 	LD	HL, -10
 	ADD	HL,SP
-	LD	(D.FB36),HL
+	LD	(SAVSP),HL
 	POP	HL
 	PUSH	AF
 J583D:	PUSH	HL
@@ -2974,32 +2985,32 @@ J58B1:	PUSH	AF
 	AND	01H			; in drum mode ?
 	JR	Z,J58D0			; nope, FM playvoice
 	LD	HL, MCL_FOR_DRUMS	; yep, drum playvoice, use MCL for drums
-J58D0:	LD	(D.F956),HL
+J58D0:	LD	(MCLTAB),HL
 	LD	A,C
 	LD	B,A
-	CALL	VQC_IS_AT_CAPACITIY
-	JP	C,J5957
+	CALL	VQC_IS_AT_CAPACITIY	; less then 8 bytes free in voice queue ?
+	JP	C,J5957			; yep, skip to the next voice
 	LD	A,B
-	CALL	C67E0
+	CALL	C67E0			; get pointer to stringlength in voicebuffer
 	LD	A,(HL)
-	OR	A
-	JP	Z,J5957
-	LD	(D.FB3B),A
+	OR	A			; playstring length 0 ?
+	JP	Z,J5957			; yep, skip to the next voice
+	LD	(MCLLEN),A		; length of playstring
 	INC	HL
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	INC	HL
-	LD	(D.FB3C),DE
+	LD	(MCLPTR),DE		; pointer to playstring
 	LD	E,(HL)
 	INC	HL
-	LD	D,(HL)
+	LD	D,(HL)			; stack data address
 	INC	HL
 	PUSH	HL
-	LD	L,24H	; "$"
-	CALL	C67E4
-	PUSH	HL
-	LD	HL,(D.FB36)
+	LD	L,24H
+	CALL	C67E4			; get pointer in current voicebuffer
+	PUSH	HL			; top of voicebuffer stack
+	LD	HL,(SAVSP)
 	DEC	HL
 	POP	BC
 	DI
@@ -3009,44 +3020,44 @@ J58D0:	LD	(D.F956),HL
 	LD	L,C
 	LD	SP,HL
 	EI
-	CALL	C59AF
-	JP	J65C6
+	CALL	C59AF			; update output device status
+	JP	J65C6			; start MCL parser
 ;	-----------------
-J590F:	LD	A,(D.FB3B)
-	OR	A
-	JR	NZ,J5918
-J5915:	CALL	C5995
-J5918:	LD	A,(VOICEN)
-	CALL	C67E0
-	LD	A,(D.FB3B)
+J590F:	LD	A,(MCLLEN)
+	OR	A			; parsed the whole playstring ?
+	JR	NZ,J5918		; nope, skip the end byte
+J5915:	CALL	C5995			; put end byte in queue
+J5918:	LD	A,(VOICEN)		; current playvoice
+	CALL	C67E0			; get pointer to stringlength in voicebuffer
+	LD	A,(MCLLEN)
 	LD	(HL),A
 	INC	HL
-	LD	DE,(D.FB3C)
+	LD	DE,(MCLPTR)
 	LD	(HL),E
 	INC	HL
-	LD	(HL),D
+	LD	(HL),D			; update playstring
 	LD	HL, 0
 	ADD	HL,SP
 	EX	DE,HL
-	LD	HL,(D.FB36)
+	LD	HL,(SAVSP)
 	DI
-	LD	SP,HL
+	LD	SP,HL			; restore stackpointer
 	POP	BC
 	POP	BC
 	POP	BC
 	PUSH	HL
 	OR	A
-	SBC	HL,DE
-	JR	Z,J5955
+	SBC	HL,DE			; stack clear ?
+	JR	Z,J5955			; yep,
 	LD	A,0F0H
 	AND	L
 	OR	H
-	JP	NZ,ERRILLEGALFNCALL
-	LD	L,24H	; "$"
-	CALL	C67E4
+	JP	NZ,ERRILLEGALFNCALL	; illegal function call
+	LD	L,24H
+	CALL	C67E4			; get pointer in current voicebuffer
 	POP	BC
 	DEC	BC
-	CALL	C6827
+	CALL	C6827			; copy
 	POP	HL
 	DEC	HL
 	LD	(HL),B
@@ -4075,9 +4086,9 @@ C5F1A:	LD	L,09H	; 9
 	LD	A,(HL)
 	JR	NZ,J5F17
 	LD	C,00H
-	LD	HL,(D.FB3C)
+	LD	HL,(MCLPTR)
 	PUSH	HL
-	LD	A,(D.FB3B)
+	LD	A,(MCLLEN)
 	PUSH	AF
 J5F2C:	CALL	C6614
 J5F2F:	CP	4EH	; "N"
@@ -4133,9 +4144,9 @@ J5F6F:	LD	A,40H	; "@"
 	POP	AF
 	LD	(HL),A
 	POP	AF
-	LD	(D.FB3B),A
+	LD	(MCLLEN),A
 	POP	HL
-	LD	(D.FB3C),HL
+	LD	(MCLPTR),HL
 	RET
 ;	-----------------
 C5F96:	LD	L,09H	; 9
@@ -5186,15 +5197,15 @@ J65A6:	CALL	BRMFRESTR
 	PUSH	BC
 	PUSH	DE
 J65B9:	POP	AF
-	LD	(D.FB3B),A
+	LD	(MCLLEN),A
 	POP	HL
 	LD	A,H
 	OR	L
 	JP	Z,J5915
-	LD	(D.FB3C),HL
+	LD	(MCLPTR),HL
 J65C6:	CALL	C661A
 	JR	Z,J65B9
-	LD	HL,(D.F956)
+	LD	HL,(MCLTAB)
 	CP	41H	; "A"
 	JR	C,J65D6
 	CP	48H	; "H"
@@ -5257,15 +5268,15 @@ C6614:	CALL	C661A
 ;	     Outputs ________________________
 
 C661A:	PUSH	HL
-J661B:	LD	HL,D.FB3B
+J661B:	LD	HL,MCLLEN
 	LD	A,(HL)
 	OR	A
 	JR	Z,J664C
 	DEC	(HL)
-	LD	HL,(D.FB3C)
+	LD	HL,(MCLPTR)
 	LD	A,(HL)
 	INC	HL
-	LD	(D.FB3C),HL
+	LD	(MCLPTR),HL
 	CP	20H	; " "
 	JR	Z,J661B
 	POP	HL
@@ -5293,11 +5304,11 @@ C6637:	CP	61H	; "a"
 ;	     Outputs ________________________
 
 C6640:	PUSH	HL
-	LD	HL,D.FB3B
+	LD	HL,MCLLEN
 	INC	(HL)
-	LD	HL,(D.FB3C)
+	LD	HL,(MCLPTR)
 	DEC	HL
-	LD	(D.FB3C),HL
+	LD	(MCLPTR),HL
 J664C:	POP	HL
 	RET
 ;	-----------------
@@ -5408,10 +5419,10 @@ J66D3:	CALL	C66A4
 	RET
 ;	-----------------
 C66DB:	CALL	C66A4
-	LD	A,(D.FB3B)
+	LD	A,(MCLLEN)
 	OR	A
 	JP	NZ,ERRILLEGALFNCALL
-	LD	HL,(D.FB3C)
+	LD	HL,(MCLPTR)
 	EX	(SP),HL
 	PUSH	AF
 	LD	C,02H	; 2
