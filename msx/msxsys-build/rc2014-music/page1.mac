@@ -1926,6 +1926,7 @@ J52A5:	LD	A,(DE)
 C52B4:	CALL	C55E4
 	JP	BRMMBGETBYT
 ;	-----------------
+
 ?52BA:	CALL	C54E7
 	JP	NZ,J676D
 	RET
@@ -5142,32 +5143,38 @@ J6551:	XOR	A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6556:	LD	A,(DRUM_MODE)
-	AND	01H	; 1
-	RET	Z
-	LD	A,(D6570)
+C6556:	LD	A, (DRUM_MODE)
+	AND	01H				; in drum mode ?
+	RET	Z				; nope, quit
+	LD	A, (I6566+10)
 	LD	E,A
-	LD	A,1FH
+	LD	A, 1FH
 	CALL	C632F
 	RET
 ;	-----------------
-I6566:	DEFB	0,0,0,0,0,0,0,0,0,0
-D6570:	LD	C,00H
-	DEFB	0,0,0
-	INC	B
-	INC	B
-	LD	A,B
-	EX	AF,AF'
-	DEFB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	EX	AF,AF'
+I6566:
+	DEFW	0				; +0 , duration counter
+	DEFB	0				; +2 , stringlength
+	DEFW	0				; +3 , stringadres
+	DEFW	0				; +5 , stackdata
+	DEFB	0				; +7 , music packet length
+	DEFB	0,0,14,0,0,0,0			; +8 , music packet
+	DEFB	4				; +15, octave
+	DEFB	4				; +16, length
+	DEFB	120				; +17, tempo
+	DEFB	8				; +18, volume
+	DEFW	0				; +19, envelope period
+	DEFB	0,0,0				; stack
+	DEFB	0,0,0,0,0,0,0,0
+	DEFB	0,0,0,0,0,0,8
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	 Stop background music
+;	   Inputs:  ________________________
+;	   Outputs: ________________________
 
 C658D:	CALL	C64EE
 	CALL	C6556
-	LD	A,(OPL_PVOICE_CNT)
+	LD	A, (OPL_PVOICE_CNT)		; number of OPLL playvoices
 	CALL	C659A
 	RET
 ;	-----------------
