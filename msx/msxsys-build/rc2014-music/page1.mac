@@ -290,7 +290,6 @@ VCBUF_UNKNOWN	EQU	38		; division??
 
 	ORG	4000H
 I.0001	EQU	0001H	; ----I
-C.0008	EQU	0008H	; -C--I
 I.0009	EQU	0009H	; ----I
 I.000B	EQU	000BH	; ----I
 C.000C	EQU	000CH	; -C--I
@@ -898,16 +897,16 @@ J43B8:	LD	A,(HL)
 	CALL	C4150
 	JP	J43B8
 
-I43C5:	DEFB 00EH,020H			; enable rhythm
-	DEFB 016H,020H			; channel 6, f-number lsb
-	DEFB 017H,050H			; channel 7, f-number lsb
-	DEFB 018H,0C0H			; channel 8, f-number lsb
-	DEFB 026H,005H			; channel 6, sustain off, key off, octave 2, b8 f-number=1
-	DEFB 027H,005H			; channel 7, sustain off, key off, octave 2, b8 f-number=1
-	DEFB 028H,001H			; channel 8, sustain off, key off, octave 0, b8 f-number=1
-	DEFB 036H,003H			; channel 6, instrument 0, volume 3
-	DEFB 037H,033H			; channel 7, instrument 3, volume 3
-	DEFB 038H,033H			; channel 8, instrument 3, volume 3
+I43C5:	DEFB 00EH, 020H			; enable rhythm
+	DEFB 016H, 020H			; channel 6, f-number lsb
+	DEFB 017H, 050H			; channel 7, f-number lsb
+	DEFB 018H, 0C0H			; channel 8, f-number lsb
+	DEFB 026H, 005H			; channel 6, sustain off, key off, octave 2, b8 f-number=1
+	DEFB 027H, 005H			; channel 7, sustain off, key off, octave 2, b8 f-number=1
+	DEFB 028H, 001H			; channel 8, sustain off, key off, octave 0, b8 f-number=1
+	DEFB 036H, 003H			; channel 6, instrument 0, volume 3
+	DEFB 037H, 033H			; channel 7, instrument 3, volume 3
+	DEFB 038H, 033H			; channel 8, instrument 3, volume 3
 	DEFB 0FFH
 
 ;	  Subroutine MSTOP
@@ -3498,7 +3497,7 @@ J5B64:	POP	HL
 	INC	C
 	INC	C
 	CP	0E1H
-J5B97	EQU	$-1
+J5B97	EQU	$-1			; POP HL
 	POP	DE
 	LD	A,D
 	OR	E			; rest ?
@@ -4392,7 +4391,6 @@ J60EE:	CALL	C6388
 	RET	Z
 J60F2:	INC	A
 	JP	Z,J6208
-C60F5	EQU	$-1
 	DEC	A
 	JP	M,J6235
 	PUSH	HL
@@ -5631,7 +5629,7 @@ BRMVARVAL:
 	JR	CALMAINRM
 
 ;	Obtain the address for the storage of a basic variable
-;	  Inputs: 
+;	  Inputs:
 ;		(HL = address of variable name, SUBFLG = variable type)
 ;	  Outputs: (HL = Address after variable name, DE = Address of contents of variable)
 BRMPTRGET:
@@ -5703,7 +5701,7 @@ BRMNEWSTT:
 	LD	IX, NEWSTT
 	JR	CALMAINRM
 
-;	Close all IO buffers	
+;	Close all IO buffers
 
 BRMCLOSEIO:
 	LD	IX, CLOSEIO
@@ -5997,59 +5995,55 @@ J691F:	LD	A,10H	; 16
 	XOR	A
 	RET
 ;	-----------------
-I6928:	RST	38H
-	LD	(BC),A
-	LD	A,(BC)
-	NOP
-	INC	BC
-	INC	B
-	DEC	B
-	LD	B,09H	; 9
-	JR	NC,J694B
-	LD	C,10H	; 16
-	RLA
-	LD	HL,I$E50C
-C6938	EQU	$-1
-	LD	L,C
-	CALL	C5732
-	CALL	C6942
-	POP	HL
-	RET
-;	-----------------
+
+I6928:
+	DEFB	0FFh, 002h, 00Ah, 000h, 003h, 004h, 005h, 006h
+	DEFB	009h, 030h, 018h, 00Eh, 010h, 017h, 021h, 00CH
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6942:	LD	DE,C.0008
+C6938:	PUSH	HL
+	LD	L,C			; software instrument
+	CALL	C5732			; get pointer to software instrument data
+	CALL	C6942			; program OPLL instrument 0
+	POP	HL
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C6942:	LD	DE, 8
 	ADD	HL,DE
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	LD	(IX+7),E
-J694B	EQU	$-2
 	LD	(IX+8),D
 	PUSH	IX
 	LD	IX,I.FA27
-	LD	B,09H	; 9
+	LD	B,9
 J6958:	PUSH	BC
 	LD	A,(IX)
-	ADD	A,20H	; " "
+	ADD	A,20H
 	LD	C,A
-	CALL	C6DE0
+	CALL	C6DE0			; read OPLL register with validation
 	RRCA
 	RRCA
 	RRCA
 	RRCA
-	AND	0FH	; 15
-	JR	NZ,J6970
+	AND	0FH			; sustain and key
+	JR	NZ,J6970		; one of then on,
 	LD	(IX+7),E
 	LD	(IX+8),D
-J6970:	LD	BC,C.0010
+J6970:	LD	BC, 16
 	ADD	IX,BC
 	POP	BC
-	DJNZ	J6958
+	DJNZ	J6958			; next channel
 	POP	IX
 	LD	A,(HL)
 	LD	DE,6
@@ -6058,48 +6052,48 @@ J6970:	LD	BC,C.0010
 	RRCA
 	LD	D,A
 	LD	B,(HL)
-	LD	C,00H
-	CALL	C6DB5
+	LD	C, 0
+	CALL	C6DB5			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
-	LD	C,02H	; 2
-	CALL	C6DB5
+	LD	C, 2
+	CALL	C6DB5			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
-	LD	C,04H	; 4
-	CALL	C6DB5
+	LD	C, 4
+	CALL	C6DB5			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
-	LD	C,06H	; 6
-	CALL	C6DB5
+	LD	C, 6
+	CALL	C6DB5			; write OPLL register with validation
 	INC	HL
 	INC	HL
 	INC	HL
 	INC	HL
 	INC	HL
 	LD	B,(HL)
-	LD	C,01H	; 1
-	CALL	C6DB5
+	LD	C, 1
+	CALL	C6DB5			; write OPLL register with validation
 	INC	HL
 	LD	A,(HL)
 	AND	0C0H
 	OR	D
 	LD	D,A
-	LD	C,03H	; 3
-	CALL	C6DE0
+	LD	C, 3
+	CALL	C6DE0			; read OPLL register with validation
 	AND	18H
 	OR	D
 	LD	B,A
-	CALL	C6DB5
+	CALL	C6DB5			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
-	LD	C,05H	; 5
-	CALL	C6DB5
+	LD	C, 5
+	CALL	C6DB5			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
-	LD	C,07H	; 7
-	CALL	C6DB5
-	LD	C,00H
+	LD	C, 7
+	CALL	C6DB5			; write OPLL register with validation
+	LD	C,0			; instrument 0 (programable)
 	RET
 ;	-----------------
 
