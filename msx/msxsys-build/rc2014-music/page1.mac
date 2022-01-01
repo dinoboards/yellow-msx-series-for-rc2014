@@ -2887,15 +2887,15 @@ J5833:	PUSH	HL
 	PUSH	AF
 J583D:	PUSH	HL
 	LD	HL, I577B
-	LD	DE, CODE_BUF 
-	LD	BC, I57A0-I577B 
+	LD	DE, CODE_BUF
+	LD	BC, I57A0-I577B
 	LDIR				; install convert DAC to integer routine in BUF
 	POP	HL
 	CALL	BRMFRMEVL		; evaluate expression
 	EX	(SP), HL		; save basicpointer, get playvoice
 	PUSH	HL
 	CALL	BRMFRESTR		; free temporary string
-	CALL	C6834			
+	CALL	C6834
 	LD	A,E
 	OR	A
 	JR	NZ,J585E
@@ -2949,20 +2949,22 @@ J5892:	LD	A,B
 	INC	B			; next playvoice
 	LD	A,(PVOICE_CNT)		; number of playvoices
 	DEC	A
-	CP	B
-	JR	NC,J5892
+	CP	B			; any playvoices left ?
+	JR	NC,J5892		; yep,
+
 J58A8:	DEC	HL
-	CALL	BRMCHRGTR
-	JP	NZ,J676D
+	CALL	BRMCHRGTR		; end of statement ?
+	JP	NZ,J676D		; nope, error
+
 	PUSH	HL
-J58B0:	XOR	A
+J58B0:	XOR	A			; start with playvoice 0
 J58B1:	PUSH	AF
-	LD	(VOICEN),A
+	LD	(VOICEN),A		; current playvoice
 	LD	C,A
-	LD	A,(PVOICE_CNT)
+	LD	A,(PVOICE_CNT)		; number of playvoices
 	SUB	C
-	SUB	04H	; 4
-	LD	HL,I59E2
+	SUB	4
+	LD	HL,I59E2		; MCL for PSG
 	JR	C,J58D0
 	LD	HL,I5C70
 	JR	NZ,J58D0
@@ -3162,75 +3164,53 @@ VQC_IS_AT_CAPACITIY:
 	RET
 
 ;	-----------------
-I59E2:	LD	B,C
-	DEC	E
-	LD	E,E
-	CALL	C5A54
-	SUB	3DH	; "="
-	LD	E,D
-	OUT	(76H),A
-	LD	E,D
-	ADC	A,0DAH
-	LD	E,D
-	RST	08H
-	AND	(HL)
-	LD	E,D
-	JP	NC,J5AB5
-	CALL	NC,C5A99
-	CALL	Z,C5A80
-	LD	E,B
-	IN	A,(66H)
-	LD	A,0ABH
-	LD	E,L
-	INC	A
-	CP	B
-	LD	E,L
-	EXX
-	INC	B
-	LD	E,H
-	POP	DE
-	LD	A,(DE)
-	LD	E,H
-	LD	B,B
-	ADD	HL,HL
-	LD	E,H
-	LD	H,03H	; 3
-	LD	E,H
-	JP	C,J5C25
-	NOP
-I5A16:	DJNZ	J5A2A
-	INC	D
-	LD	D,00H
-	NOP
-	LD	(BC),A
-	INC	B
-	LD	B,08H	; 8
-	LD	A,(BC)
-	LD	A,(BC)
-	INC	C
-	LD	C,10H	; 16
-I5A25:	LD	E,L
-	DEC	C
-	SBC	A,H
-	INC	C
-	RST	20H
-J5A2A:	DEC	BC
-	INC	A
-	DEC	BC
-	SBC	A,E
-	LD	A,(BC)
-	LD	(BC),A
-	LD	A,(BC)
-	LD	(HL),E
-	ADD	HL,BC
-	EX	DE,HL
-	EX	AF,AF'
-	LD	L,E
-	EX	AF,AF'
-	JP	P,J$8007
-	RLCA
-	INC	D
-	RLCA
+I59E2:
+	DEFB	"A"
+	DEFW	C5B1D
+	DEFB	"M"+128
+	DEFW	C5A54
+	DEFB	"V"+128
+	DEFW	C5A3D
+	DEFB	"S"+128
+	DEFW	C5A76
+	DEFB	"N"+128
+	DEFW	C5ADA
+	DEFB	"O"+128
+	DEFW	C5AA6
+	DEFB	"R"+128
+	DEFW	J5AB5
+	DEFB	"T"+128
+	DEFW	C5A99
+	DEFB	"L"+128
+	DEFW	C5A80
+	DEFB	"X"
+	DEFW	C66DB
+	DEFB	">"
+	DEFW	C5DAB
+	DEFB	"<"
+	DEFW	C5DB8
+	DEFB	"Y"+128
+	DEFW	C5C04
+	DEFB	"Q"+128
+	DEFW	C5C1A
+	DEFB	"@"
+	DEFW	C5C29
+	DEFB	"&"
+	DEFW	C5C03
+	DEFB	"Z"+128
+	DEFW	J5C25
+	DEFB	00
+
+I5A16:
+	DEFB	010h, 012h, 014h, 016h, 000h, 000h, 002h, 004h, 006h, 008h, 00Ah, 00Ah, 00Ch, 00Eh, 010h
+
+I5A25:
+	DEFB	05Dh, 00Dh, 09Ch, 00Ch, 0E7h, 00Bh, 03Ch, 00Bh, 09Bh, 00Ah, 002h, 00Ah, 073h, 009h
+	DEFB	0EBh, 008h, 06Bh, 008h, 0F2h, 007h, 080h, 007h, 014h, 007h
+
+	ALIGNCHK	05A3DH
+
+C5A3D:
 	JR	C,J5A41
 	LD	E,08H	; 8
 J5A41:	LD	A,0FH	; 15
@@ -3277,7 +3257,7 @@ J5A5A:	OR	D
 	LD	(HL),A
 	RET
 ;	-----------------
-?5A76:	LD	A,E
+C5A76:	LD	A,E
 	CP	10H	; 16
 	JR	NC,J5A96
 	OR	10H	; 16
@@ -3317,7 +3297,7 @@ J5A9D:	LD	A,E
 	LD	L,11H	; 17
 	JR	J5A8B
 ;	-----------------
-?5AA6:	JR	C,J5AAA
+C5AA6:	JR	C,J5AAA
 	LD	E,04H	; 4
 J5AAA:	LD	A,E
 	CP	09H	; 9
@@ -3350,7 +3330,7 @@ J5AC4:	LD	HL, 0
 	DEC	HL
 	JR	J5B58
 ;	-----------------
-?5ADA:	JR	NC,J5A96
+C5ADA:	JR	NC,J5A96
 	CALL	C5C41
 	OR	E
 	JR	Z,J5AC4
@@ -3403,7 +3383,7 @@ J5B1B:	DEC	C
 ;	     Outputs ________________________
 
 
-?5B1D:	CALL	C5AF6			; get notenumber
+C5B1D:	CALL	C5AF6			; get notenumber
 	LD	L,0FH
 	CALL	C67E4			; get pointer in current voicebuffer
 	LD	E,(HL)			; octave
@@ -3583,10 +3563,11 @@ MUL_BC_BY_A_1:
 MUL_BC_BY_A_2:
 	DEC	E
 	JP	NZ, MUL_BC_BY_A_1
+C5C03:
 	RET
 
 ;	-----------------
-?5C04:	JR	NC,J5C44
+C5C04:	JR	NC,J5C44
 	LD	A,E
 	CP	0C9H
 	JR	NC,J5C44
@@ -3597,7 +3578,7 @@ MUL_BC_BY_A_2:
 	CALL	C664E
 	JR	C5C41
 ;	-----------------
-?5C1A:	JR	C,J5C1E
+C5C1A:	JR	C,J5C1E
 	LD	E,08H	; 8
 J5C1E:	LD	A,E
 	CP	09H	; 9
@@ -3607,7 +3588,7 @@ J5C1E:	LD	A,E
 J5C25:	JR	NC,J5C44
 	JR	C5C41
 ;	-----------------
-?5C29:	CALL	C6614
+C5C29:	CALL	C6614
 	CP	56H	; "V"
 	JR	Z,J5C47
 	CP	57H	; "W"
@@ -3849,7 +3830,7 @@ J5DA1:	LD	A,E
 	LD	L,26H	; "&"
 	JP	J5A8B
 ;	-----------------
-?5DAB:	LD	L,0FH	; 15
+C5DAB:	LD	L,0FH	; 15
 	CALL	C67E4
 	LD	A,(HL)
 	INC	A
@@ -3858,7 +3839,7 @@ J5DA1:	LD	A,E
 	LD	(HL),A
 	RET
 ;	-----------------
-?5DB8:	LD	L,0FH	; 15
+C5DB8:	LD	L,0FH	; 15
 	CALL	C67E4
 	LD	A,(HL)
 	DEC	A
@@ -5430,7 +5411,7 @@ J66D3:	CALL	C66A4
 	EX	DE,HL
 	RET
 ;	-----------------
-?66DB:	CALL	C66A4
+C66DB:	CALL	C66A4
 	LD	A,(D.FB3B)
 	OR	A
 	JP	NZ,ERRILLEGALFNCALL
