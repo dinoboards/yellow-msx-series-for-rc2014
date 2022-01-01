@@ -43,9 +43,17 @@ FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
 ;
 MUSCWRK		EQU	0F97DH
 
+; number of OPLL playvoices
+PLAYVOICE_COUNT	EQU	0F992H
+
 ; Music Que Pointer?
 ; pointer to  12 * 6 bytes
 VOICE_CTRL_BUF	EQU	0F99BH
+
+; FB35: status about the parsing of a PLAY string
+;  bit 7: only one time parsed; 1 = yes
+;  bit 1-0: number of parsed strings (0-3)
+PRSCNT		EQU	0FB35H
 
 ; FB38: # of voice currently being parsed (0-2)
 VOICEN		EQU	0FB38H
@@ -60,6 +68,7 @@ HIMEM		EQU	0FC4AH
 EXPTBL		EQU	0FCC1H
 
 PROCNM		EQU	0FD89H
+
 
 ; ======================================
 ; MSX BASIC BIOS ROUTINES
@@ -306,7 +315,6 @@ I.F985	EQU	0F985H	; ----I
 D.F98E	EQU	0F98EH	; --SLI
 D.F98F	EQU	0F98FH	; --SL-
 D.F991	EQU	0F991H	; --SLI
-D.F992	EQU	0F992H	; --SL-
 D.F993	EQU	0F993H	; --S-I
 D.F994	EQU	0F994H	; --SLI
 D.F995	EQU	0F995H	; --SL-
@@ -333,7 +341,6 @@ I.FA27	EQU	0FA27H	; ----I
 I$FA87	EQU	0FA87H	; ----I
 D$FA89	EQU	0FA89H	; ---L-
 I.FAB7	EQU	0FAB7H	; ----I
-D.FB35	EQU	0FB35H	; --SLI
 D.FB36	EQU	0FB36H	; --SL-
 D.FB39	EQU	0FB39H	; --SL-
 D.FB3B	EQU	0FB3BH	; --SLI
@@ -2764,7 +2771,7 @@ I577B:	LD	A,(D.F97C)
 ;	-----------------
 I57A0:	DEFB	" "
 
-;	  Subroutine PLAY statement
+;	  Subroutine H.PLAY handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -2805,66 +2812,68 @@ J57D3:	LDDR				; move 1 word up
 	RET
 
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Handle PLAY statement
+;	  Inputs:  ________________________
+;	  Outputs: ________________________
 
-C57D9:	CP	"#"
-	JR	NZ,J57F8
-	CALL	BRMCHRGTR
-	CALL	BRMMBGETBYT
+C57D9:	CP	"#"			; play device specified ?
+	JR	NZ,J57F8		; nope, use PSG
+	CALL	BRMCHRGTR		; read "#" char
+	CALL	BRMMBGETBYT		; evaluate byte operand
 	PUSH	AF
-	CALL	C55DF
+	CALL	C55DF			; check for ","
 	POP	AF
-	OR	A			; PLAY#0 ?
-	JR	Z,J57F8		; yep, PSG
+	OR	A			; PLAY #0 ?
+	JR	Z,J57F8			; yep, PSG
 	DEC	A
-	JR	Z,J57F2
-	SUB	03H	; 3
-	JR	C,J582B
+	JR	Z,J57F2			; 1, for MIDI
+	SUB	3
+	JR	C,J582B			; 2-3, for OPLL/PSG
 J57F2:	JP	ERRILLEGALFNCALL
-;	-----------------
-?57F5:	INC	A
+
+	; DEAD CODE - NO MIDI SUPPORT
+	INC	A			; set PLAY MIDI flag (NOT IMPLEMENTED)
 	JR	J582C
-;	-----------------
+
 J57F8:	XOR	A
-	LD	(D.F97F),A
+	LD	(D.F97F),A		; reset PLAY MIDI flag????
 	PUSH	HL
-	LD	A,(D.F992)
-	OR	A
-	JR	Z,J5821
+	LD	A,(PLAYVOICE_COUNT)
+	OR	A			; no OPLL playvoices initialized ?
+	JR	Z,J5821			; yep, skip
 	LD	B,A
 J5804:	PUSH	BC
 	LD	A,B
 	DEC	A
-	CALL	C67E0
+	CALL	C67E0			; get pointer to stringlength in voicebuffer
 	LD	DE,I57A0
-	LD	(HL),01H	; 1
+	LD	(HL), 1			; stringlength=1
 	INC	HL
 	LD	(HL),E
 	INC	HL
-	LD	(HL),D
+	LD	(HL),D			; pointer to special nothing string
 	INC	HL
 	LD	D,H
-	LD	E,L
-	LD	BC,C.001C
+	LD	E,L			; stack data
+	LD	BC, 28
 	ADD	HL,BC
 	EX	DE,HL
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
 	POP	BC
-	DJNZ	J5804
+	DJNZ	J5804			; next OPLL playvoice
 J5821:	POP	HL
 	XOR	A
-	LD	(D.FB35),A
-	LD	A,(D.F992)
+	LD	(PRSCNT),A		; no strings are completed
+	LD	A,(PLAYVOICE_COUNT)	; start with the first PSG playvoice
 	JR	J5833
+
 ;	-----------------
 J582B:	XOR	A
 J582C:	LD	(D.F97F),A
 	XOR	A
-	LD	(D.FB35),A
+	LD	(PRSCNT),A
 J5833:	PUSH	HL
 	LD	HL,I$FFF6
 	ADD	HL,SP
@@ -3046,7 +3055,7 @@ J5957:	EI
 	DI
 	CALL	C63B1
 	JR	Z,J598F
-	LD	A,(D.FB35)
+	LD	A,(PRSCNT)
 	RLCA
 	JR	C,J5978
 	LD	HL,D.F997
@@ -3055,7 +3064,7 @@ J5957:	EI
 	LD	(D.FB40),A
 	CALL	C683D
 J5978:	EI
-	LD	HL,D.FB35
+	LD	HL,PRSCNT
 	SET	7,(HL)
 	LD	A,(HL)
 	LD	HL,D.F993
@@ -3075,9 +3084,9 @@ J5993:	POP	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5995:	LD	A,(D.FB35)
+C5995:	LD	A,(PRSCNT)
 	INC	A
-	LD	(D.FB35),A
+	LD	(PRSCNT),A
 	LD	E,0FFH
 
 ;	  Subroutine __________________________
@@ -3103,7 +3112,7 @@ J59AC:	POP	BC
 ;	     Outputs ________________________
 
 C59AF:	LD	HL,VOICEN
-	LD	A,(D.F992)
+	LD	A,(PLAYVOICE_COUNT)
 	DEC	A
 	CP	(HL)
 	RET	NZ
@@ -4363,7 +4372,7 @@ C60CB:	LD	(D.F99A),A
 	OR	E
 	RET	NZ
 	INC	HL
-J60E3:	LD	A,(D.F992)
+J60E3:	LD	A,(PLAYVOICE_COUNT)
 	LD	B,A
 	LD	A,(D.F99A)
 	CP	B
@@ -4921,7 +4930,7 @@ J63EF:	LD	B,06H	; 6
 	LD	B,07H	; 7
 	JR	C63BF
 ;	-----------------
-J63FC:	LD	A,(D.F992)
+J63FC:	LD	A,(PLAYVOICE_COUNT)
 	LD	B,A
 	LD	A,(D.F99A)
 	SUB	B
@@ -5032,7 +5041,7 @@ C6489:	XOR	A
 J6498:	BIT	1,(HL)
 	JR	Z,J649D
 	INC	A
-J649D:	LD	(D.F992),A
+J649D:	LD	(PLAYVOICE_COUNT),A
 	ADD	A,03H	; 3
 	LD	(D.F991),A
 	LD	B,A
@@ -5043,7 +5052,7 @@ J64AE:	SCF
 	ADC	HL,HL
 	DJNZ	J64AE
 	LD	(D.F98F),HL
-	LD	A,(D.F992)
+	LD	A,(PLAYVOICE_COUNT)
 	LD	HL,I64E4
 	CALL	C5486
 	LD	A,(HL)
@@ -5114,7 +5123,7 @@ J6519:	PUSH	BC
 	ADD	HL,DE
 	EX	DE,HL
 	DJNZ	J6519
-	LD	A,(D.F992)
+	LD	A,(PLAYVOICE_COUNT)
 	OR	A
 	JR	Z,J6551
 	LD	B,A
@@ -5163,7 +5172,7 @@ D6570:	LD	C,00H
 
 C658D:	CALL	C64EE
 	CALL	C6556
-	LD	A,(D.F992)
+	LD	A,(PLAYVOICE_COUNT)
 	CALL	C659A
 	RET
 ;	-----------------
@@ -5834,7 +5843,7 @@ J6867:	LD	HL,D.F997
 	OR	A
 	RET	Z
 	DEC	(HL)
-	LD	A,(D.F992)
+	LD	A,(PLAYVOICE_COUNT)
 	OR	A
 	JR	Z,J6888
 	LD	B,A
