@@ -44,8 +44,11 @@ FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
 ;
 MUSCWRK		EQU	0F97DH
 
+; b0 set if in drum mode
+DRUM_MODE	EQU	0F98EH
+
 ; number of playvoices
-PVOICE_CNT	EQU	0F991H	; number of playvoices
+PVOICE_CNT	EQU	0F991H
 
 ; number of OPLL playvoices
 OPL_PVOICE_CNT	EQU	0F992H
@@ -314,7 +317,6 @@ D.F982	EQU	0F982H	; --SL-
 D.F983	EQU	0F983H	; --SL-
 D.F984	EQU	0F984H	; --SLI
 I.F985	EQU	0F985H	; ----I
-D.F98E	EQU	0F98EH	; --SLI
 D.F98F	EQU	0F98FH	; --SL-
 D.F993	EQU	0F993H	; --S-I
 D.F994	EQU	0F994H	; --SLI
@@ -2116,7 +2118,7 @@ J542D:	ADD	HL,HL
 	LD	L,H
 	LD	H,A
 	LD	A,B
-	LD	(D.F98E),A
+	LD	(DRUM_MODE),A
 	AND	01H	; 1
 	JR	Z,J5446
 	SRL	H
@@ -2407,13 +2409,13 @@ J558E:	LD	A,C
 	ADD	IX,DE
 	INC	C
 J55B2:	DJNZ	J558E
-	LD	A,(D.F98E)
+	LD	A,(DRUM_MODE)
 	AND	01H	; 1
 	CALL	NZ,C6D86
 	LD	C,09H	; 9
 	CALL	C6C9F
 	LD	IX,I.FA27
-	LD	A,(D.F98E)
+	LD	A,(DRUM_MODE)
 	AND	01H	; 1
 	LD	B,09H	; 9
 	JR	Z,J55D0
@@ -2964,14 +2966,14 @@ J58B1:	PUSH	AF
 	LD	A,(PVOICE_CNT)		; number of playvoices
 	SUB	C
 	SUB	4
-	LD	HL, MCL_FOR_PSG		; jump table for Macro Language parser
+	LD	HL, MCL_FOR_PSG		; jump table for Macro Language parser PSG
 	JR	C, J58D0
-	LD	HL, MCL_FOR_OPLL		; MCL for OPLL
+	LD	HL, MCL_FOR_OPLL	; jump table for Macro Language parser OPLL
 	JR	NZ,J58D0
-	LD	A,(D.F98E)
-	AND	01H	; 1
-	JR	Z,J58D0
-	LD	HL,I5FA2
+	LD	A,(DRUM_MODE)
+	AND	01H			; in drum mode ?
+	JR	Z,J58D0			; nope, FM playvoice
+	LD	HL, MCL_FOR_DRUMS	; yep, drum playvoice, use MCL for drums
 J58D0:	LD	(D.F956),HL
 	LD	A,C
 	LD	B,A
@@ -3796,7 +3798,7 @@ J5D70:	LD	C,A
 	POP	BC
 	JP	J5E75
 ;	-----------------
-?5D7B:	JR	C,J5D7F
+C5D7B:	JR	C,J5D7F
 	LD	E,08H	; 8
 J5D7F:	CALL	C5C41
 	LD	A,E
@@ -4144,47 +4146,39 @@ C5F96:	LD	L,09H	; 9
 	LD	(HL),00H
 	RET
 ;	-----------------
-I5FA2:	LD	B,D
-	POP	DE
-	LD	E,A
-	LD	D,E
-	POP	DE
-	LD	E,A
-	LD	C,L
-	POP	DE
-	LD	E,A
-	LD	B,E
-	POP	DE
-	LD	E,A
-	LD	C,B
-	POP	DE
-	LD	E,A
-	JP	NC,J5DC3
-	LD	B,B
-	LD	HL,(D$D460)
-	SBC	A,C
-	LD	E,D
-	EXX
-	SCF
-	LD	E,L
-	SUB	7BH	; "{"
-	LD	E,L
-	LD	E,B
-	IN	A,(66H)
-	NOP
-I5FC4:	LD	B,D
-	LD	D,E
-	LD	C,L
-	LD	B,E
-	LD	C,B
-	DJNZ	J5FD3
-	INC	B
-	LD	(BC),A
-	LD	BC,070C3H	; 01 C3 70
-J5FCE	EQU	$-2
-	LD	H,A		; 67H
-	LD	BC, 0	; 01 00 00
-J5FD3	EQU	$-1
+
+MCL_FOR_DRUMS:
+	DEFB	"B"
+	DEFW	J5FD1
+	DEFB	"S"
+	DEFW	J5FD1
+	DEFB	"M"
+	DEFW	J5FD1
+	DEFB	"C"
+	DEFW	J5FD1
+	DEFB	"H"
+	DEFW	J5FD1
+	DEFB	"R"+128
+	DEFW	J5DC3
+	DEFB	"@"
+	DEFW	C602A
+	DEFB	"T"+128
+	DEFW	C5A99
+	DEFB	"Y"+128
+	DEFW	C5D37
+	DEFB	"V"+128
+	DEFW	C5D7B
+	DEFB	"X"
+	DEFW	C66DB
+	DEFB	00
+
+I5FC4:
+	DEFB	"B","S","M","C","H"
+	DEFB	010H, 008H, 004H, 002H, 001H
+
+J5FCE:	JP	06770H
+
+J5FD1:	LD	BC, 0
 	CALL	C6640
 J5FD7:	CALL	C6614
 	CALL	C5D27
@@ -4241,7 +4235,7 @@ I601F:	POP	BC
 	LD	E,B
 	JP	J5E6D
 ;	-----------------
-?602A:	CALL	C6614
+C602A:	CALL	C6614
 	CP	56H	; "V"
 	JP	Z,J5CDD
 	CP	41H	; "A"
@@ -4494,7 +4488,7 @@ C619F:	LD	HL,D.F984
 	CCF
 	RET	NC
 	PUSH	AF
-	LD	A,(D.F98E)
+	LD	A,(DRUM_MODE)
 	DEC	A
 	JR	Z,J61AE
 	POP	AF
@@ -5023,7 +5017,7 @@ C6480:	DI
 C6489:	XOR	A
 	LD	(D.F998),A
 	LD	A,(D.F984)
-	LD	HL,D.F98E
+	LD	HL,DRUM_MODE
 	BIT	0,(HL)
 	JR	Z,J6498
 	INC	A
@@ -5136,7 +5130,7 @@ J6551:	XOR	A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6556:	LD	A,(D.F98E)
+C6556:	LD	A,(DRUM_MODE)
 	AND	01H	; 1
 	RET	Z
 	LD	A,(D6570)
