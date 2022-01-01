@@ -45,7 +45,7 @@ MUSCWRK		EQU	0F97DH
 
 ; Music Que Pointer?
 ; pointer to  12 * 6 bytes
-D.F99B		EQU	0F99BH
+VOICE_CTRL_BUF	EQU	0F99BH
 
 ; FB38: # of voice currently being parsed (0-2)
 VOICEN		EQU	0FB38H
@@ -2958,7 +2958,7 @@ J58B1:	PUSH	AF
 J58D0:	LD	(D.F956),HL
 	LD	A,C
 	LD	B,A
-	CALL	C59D5
+	CALL	VQC_IS_AT_CAPACITIY
 	JP	C,J5957
 	LD	A,B
 	CALL	C67E0
@@ -3132,14 +3132,15 @@ J59C7:	PUSH	DE
 	JR	J59C7
 ;	-----------------
 
-;	  Subroutine less then 8 bytes free in voice queue
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Current voice's queue has less then 8 bytes free
+;	  Inputs  ________________________
+;	  Outputs (Flag C is SET if true)
 
-C59D5:	LD	A, (VOICEN)		; current playvoice
+VQC_IS_AT_CAPACITIY:
+	LD	A, (VOICEN)		; current playvoice
 	PUSH	BC
 	DI
-	CALL	C6741			; get free space voice queue
+	CALL	VQ_GET_FREE		; get free space voice queue
 	EI
 	POP	BC
 	CP	8
@@ -3511,7 +3512,7 @@ J5BC5:	LD	E,(HL)			; data
 	INC	HL
 	CALL	C599E			; put byte in queue (EI)
 	DJNZ	J5BC5			; next byte
-	CALL	C59D5			; less then 8 bytes free in voice queue ?
+	CALL	VQC_IS_AT_CAPACITIY	; less then 8 bytes free in voice queue ?
 	JP	C,J590F			; yep, stop parsing
 	JP	J65C6			; start MCL parser
 ;	-----------------
@@ -3955,7 +3956,7 @@ J5E70:	LD	E,L
 	CALL	C59C5
 	LD	E,H
 J5E75:	CALL	C59C5
-	CALL	C59D5
+	CALL	VQC_IS_AT_CAPACITIY
 	EI
 	JP	C,J590F
 	JP	J65C6
@@ -5050,7 +5051,7 @@ J64AE:	SCF
 	LD	HL, (MUSCWRK)
 	LD	DE, 0
 	ADD	HL,DE
-	LD	(D.F99B),HL
+	LD	(VOICE_CTRL_BUF),HL
 	LD	A,(D.FCC1)
 	LD	HL, IDBYT1
 	CALL	RDSLT
@@ -5438,7 +5439,7 @@ I66F2:	XOR	A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C66F9:	CALL	C6750
+C66F9:	CALL	VQ_GET_CTRL_POS
 	LD	A,B
 	INC	A
 	INC	HL
@@ -5468,7 +5469,7 @@ C66F9:	CALL	C6750
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6714:	CALL	C6750
+C6714:	CALL	VQ_GET_CTRL_POS
 	LD	A,C
 	CP	B
 	RET	Z
@@ -5500,7 +5501,7 @@ C6714:	CALL	C6750
 ;	     Outputs ________________________
 
 C6730:	PUSH	BC
-	CALL	C6758
+	CALL	VQ_GET_CTRL_ADDR
 	LD	(HL),B
 	INC	HL
 	LD	(HL),B
@@ -5515,11 +5516,12 @@ C6730:	PUSH	BC
 	LD	(HL),D
 	RET
 
-;	  Subroutine get free space voice queue
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Get free space voice queue
+;	  Inputs:  (A = playvoice)
+;	  Outputs: (A = count of free bytes, HL = count of free bytes)
 
-C6741:	CALL	C6750			; get voice queue control and put/get pos
+VQ_GET_FREE:
+	CALL	VQ_GET_CTRL_POS			; get voice queue control and put/get pos
 	LD	A, B
 	INC	A			; put pos +1
 	INC	HL
@@ -5532,11 +5534,12 @@ C6741:	CALL	C6750			; get voice queue control and put/get pos
 	LD	H, 0
 	RET
 
-;	  Subroutine get voice queue control and put/get pos
-;	     Inputs  A = playvoice
-;	     Outputs ________________________
+;	Get voice queue control and put/get pos
+;	 Inputs:  (A = playvoice)
+;	 Outputs ________________________
 
-C6750:	CALL	C6758			; get voice queue control
+VQ_GET_CTRL_POS:
+	CALL	VQ_GET_CTRL_ADDR			; get voice queue control
 	LD	B,(HL)
 	INC	HL
 	LD	C,(HL)
@@ -5544,17 +5547,18 @@ C6750:	CALL	C6758			; get voice queue control
 	RET
 ;	-----------------
 
-;	  Subroutine get voice queue control
-;	     Inputs  A = playvoice
-;	     Outputs ________________________
+;	Get voice queue control
+;	  Inputs:  (A = playvoice)
+;	  Outputs: (HL = voice queue control address)
 
-C6758:	LD	HL, (D.F99B)
-	ADD	A, A
+VQ_GET_CTRL_ADDR:
+	LD	HL, (VOICE_CTRL_BUF)
+	ADD	A, A		; HL = HL * A * 6
 	LD	B, A
 	ADD	A, A
 	ADD	A, B
 	LD	C, A
-	LD	B, 0		; *6
+	LD	B, 0
 	ADD	HL, BC
 	RET
 
@@ -5567,9 +5571,8 @@ ERRSYNTAX:
 J676D:	LD	E, 02H			; SYNTAX ERROR
 	JR	HANDLE_ERROR
 
-; 123456789012345
 ERRILLEGALFNCALL:
-ERRILLEGALFNCALL:	LD	E, 05H			; ILLEGAL FUNCTION CALL
+	LD	E, 05H			; ILLEGAL FUNCTION CALL
 	JR	HANDLE_ERROR
 
 ERRTYPEMISMATCH:
