@@ -85,6 +85,9 @@ PROCNM		EQU	0FD89H
 ; set if the primary slot is found to be expanded.
 EXPTBL		EQU	0FCC1H
 
+; FB38: # of voice currently being parsed (0-2)
+VOICEN		EQU	0FB38H
+
 ; ======================================
 ; MSX BASIC BIOS ROUTINES
 ; MAINROM ---- convert to DAC to new type
@@ -224,7 +227,6 @@ Q	ASET	"&D"
 	ENDM
 
 	ORG	4000H
-X.0000	EQU	0000H	; JCS-I
 I.0001	EQU	0001H	; ----I
 C.0008	EQU	0008H	; -C--I
 I.0009	EQU	0009H	; ----I
@@ -327,7 +329,6 @@ D$FA89	EQU	0FA89H	; ---L-
 I.FAB7	EQU	0FAB7H	; ----I
 D.FB35	EQU	0FB35H	; --SLI
 D.FB36	EQU	0FB36H	; --SL-
-D.FB38	EQU	0FB38H	; --SLI
 D.FB39	EQU	0FB39H	; --SL-
 D.FB3B	EQU	0FB3BH	; --SLI
 D.FB3C	EQU	0FB3CH	; --SL-
@@ -349,7 +350,6 @@ H.PLAY	EQU	0FFC5H	; ----I
 
 I$FFE0	EQU	0FFE0H	; ----I
 I$FFF6	EQU	0FFF6H	; ----I
-I$FFF7	EQU	0FFF7H	; ----I
 X.FFFF	EQU	0FFFFH	; JCS-I
 
 
@@ -1958,7 +1958,7 @@ BASMUSIC:
 	JR	Z,J532A
 	CALL	BRMMBGETBYT
 	CP	02H	; 2
-	JP	NC,C6770
+	JP	NC,ERRILLEGALFNCALL
 	LD	(D.F55F),A
 	LD	A,(HL)
 	CP	")"
@@ -1985,7 +1985,7 @@ J5348:	CALL	C55DF
 	OR	A
 	JR	Z,J5355
 	CP	9+1
-J5355:	JP	NC,C6770
+J5355:	JP	NC,ERRILLEGALFNCALL
 	EX	(SP),HL
 	LD	(HL),A
 	INC	HL
@@ -2089,7 +2089,7 @@ C5407:	DI
 	LD	B,(HL)
 	INC	HL
 	LD	A,(HL)
-	LD	HL,X.0000
+	LD	HL, 0
 	OR	A
 J5423:	JR	Z,J542D
 	SCF
@@ -2128,7 +2128,7 @@ J5446:	EX	DE,HL
 
 BASBGM:	CALL	C52C1
 	CP	02H	; 2
-	JP	NC,C6770
+	JP	NC,ERRILLEGALFNCALL
 	DEC	A
 	LD	(D.F998),A
 	RET
@@ -2205,12 +2205,12 @@ BASAUDREG:
 J54B3:	CALL	C55E9
 	LD	A,E
 	OR	A
-	JP	NZ,C6770
+	JP	NZ,ERRILLEGALFNCALL
 	POP	DE
 	POP	BC
 	LD	B,E
 	CALL	C6DB5
-	JP	C,C6770
+	JP	C,ERRILLEGALFNCALL
 	RET
 ;	-----------------
 
@@ -2221,12 +2221,11 @@ J54B3:	CALL	C55E9
 C54C5:	LD	A,01H	; 1
 	LD	(D.F6A5),A
 	CALL	BRMPTRGET
-
-	       JP	NZ,C6770
+	JP	NZ,ERRILLEGALFNCALL
 	LD	(D.F6A5),A
 	LD	A,(D.F663)
 	CP	03H	; 3
-	JP	Z,C6770
+	JP	Z,ERRILLEGALFNCALL
 	EX	DE,HL
 	ADD	HL,BC
 	DEC	HL
@@ -2296,7 +2295,7 @@ BASPITCH:
 	PUSH	HL
 	CALL	C6B50
 	POP	HL
-	JP	C,C6770
+	JP	C,ERRILLEGALFNCALL
 	RET
 
 ;	-----------------
@@ -2305,14 +2304,14 @@ BASTRANSPOSE:
 	PUSH	HL
 	CALL	C6BDA
 	POP	HL
-	JP	C,C6770
+	JP	C,ERRILLEGALFNCALL
 	RET
 ;	-----------------
 BASTEMPER:
 	CALL	C52C1
 	LD	C,A
 	CALL	C6C9F
-	JP	C,C6770
+	JP	C,ERRILLEGALFNCALL
 	RET
 ;	-----------------
 
@@ -2482,7 +2481,7 @@ J5621:	CALL	C67A7
 	LD	A,0FFH
 	LD	(DE),A
 	CALL	C5632
-	JP	C,C6770
+	JP	C,ERRILLEGALFNCALL
 	RET
 ;	-----------------
 
@@ -2606,7 +2605,7 @@ J56D5:	CALL	BRMCHRGTR
 	CALL	BRMMBGETBYT
 	CP	40H	; "@"
 	RET	C
-J56DE:	JP	C6770
+J56DE:	JP	ERRILLEGALFNCALL
 ;	-----------------
 J56E1:	CALL	C56EF
 	LD	A,E
@@ -2697,15 +2696,14 @@ BASPLAY:
 	CALL	C52B4
 	LD	A,(D.F991)
 	CP	E
-	JP	C,C6770
+	JP	C,ERRILLEGALFNCALL
 	LD	A,E
 	PUSH	HL
 	CALL	C5760
 	EX	(SP),HL
 	CALL	C55DF
 	CALL	BRMPTRGET
-
-	       EX	(SP),HL
+	EX	(SP),HL
 	JP	J54EB
 ;	-----------------
 
@@ -2818,7 +2816,7 @@ C57D9:	CP	"#"
 	JR	Z,J57F2
 	SUB	03H	; 3
 	JR	C,J582B
-J57F2:	JP	C6770
+J57F2:	JP	ERRILLEGALFNCALL
 ;	-----------------
 ?57F5:	INC	A
 	JR	J582C
@@ -2920,7 +2918,7 @@ J585E:	POP	AF
 	JR	J583D
 ;	-----------------
 J5892:	LD	A,B
-	LD	(D.FB38),A
+	LD	(VOICEN),A
 	PUSH	BC
 	PUSH	HL
 	CALL	C59AF
@@ -2938,7 +2936,7 @@ J58A8:	DEC	HL
 	PUSH	HL
 J58B0:	XOR	A
 J58B1:	PUSH	AF
-	LD	(D.FB38),A
+	LD	(VOICEN),A
 	LD	C,A
 	LD	A,(D.F991)
 	SUB	C
@@ -2993,7 +2991,7 @@ J590F:	LD	A,(D.FB3B)
 	OR	A
 	JR	NZ,J5918
 J5915:	CALL	C5995
-J5918:	LD	A,(D.FB38)
+J5918:	LD	A,(VOICEN)
 	CALL	C67E0
 	LD	A,(D.FB3B)
 	LD	(HL),A
@@ -3002,7 +3000,7 @@ J5918:	LD	A,(D.FB38)
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
-	LD	HL,X.0000
+	LD	HL, 0
 	ADD	HL,SP
 	EX	DE,HL
 	LD	HL,(D.FB36)
@@ -3018,7 +3016,7 @@ J5918:	LD	A,(D.FB38)
 	LD	A,0F0H
 	AND	L
 	OR	H
-	JP	NZ,C6770
+	JP	NZ,ERRILLEGALFNCALL
 	LD	L,24H	; "$"
 	CALL	C67E4
 	POP	BC
@@ -3083,7 +3081,7 @@ C5995:	LD	A,(D.FB35)
 C599E:	PUSH	HL
 	PUSH	BC
 J59A0:	PUSH	DE
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	DI
 	CALL	C66F9
 	EI
@@ -3098,7 +3096,7 @@ J59AC:	POP	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C59AF:	LD	HL,D.FB38
+C59AF:	LD	HL,VOICEN
 	LD	A,(D.F992)
 	DEC	A
 	CP	(HL)
@@ -3119,7 +3117,7 @@ C59AF:	LD	HL,D.FB38
 C59C5:	PUSH	HL
 	PUSH	BC
 J59C7:	PUSH	DE
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	DI
 	CALL	C66F9
 	POP	DE
@@ -3132,7 +3130,7 @@ J59C7:	PUSH	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C59D5:	LD	A,(D.FB38)
+C59D5:	LD	A,(VOICEN)
 	PUSH	BC
 	DI
 	CALL	C6741
@@ -3281,7 +3279,7 @@ J5A8B:	CALL	C67E4
 	LD	(HL),A
 	RET
 ;	-----------------
-J5A96:	JP	C6770
+J5A96:	JP	ERRILLEGALFNCALL
 ;	-----------------
 
 ;	  Subroutine __________________________
@@ -3315,7 +3313,7 @@ J5AB9:	XOR	A
 	JR	Z,J5A96
 	CP	41H	; "A"
 	JR	NC,J5A96
-J5AC4:	LD	HL,X.0000
+J5AC4:	LD	HL, 0
 	PUSH	HL
 	LD	L,10H	; 16
 	CALL	C67E4
@@ -3376,59 +3374,64 @@ J5B10:	DEC	C
 J5B1A:	DEC	C
 J5B1B:	DEC	C
 	RET
-;	-----------------
-?5B1D:	CALL	C5AF6
-	LD	L,0FH	; 15
-	CALL	C67E4
-	LD	E,(HL)
+
+;	  Subroutine PSG MCL "ABCDEFG"
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+
+?5B1D:	CALL	C5AF6			; get notenumber
+	LD	L,0FH
+	CALL	C67E4			; get pointer in current voicebuffer
+	LD	E,(HL)			; octave
 	LD	B,00H
 	LD	HL,I5A16
 	ADD	HL,BC
-	LD	C,(HL)
+	LD	C,(HL)			; offset
 J5B2D:	LD	HL,I5A25
 	ADD	HL,BC
-	LD	A,E
+	LD	A,E			; octave
 	LD	E,(HL)
 	INC	HL
-	LD	D,(HL)
+	LD	D,(HL)			; tone divider
 J5B35:	DEC	A
 	JR	Z,J5B41
 	SRL	D
 	RR	E
 	JR	J5B35
 ;	-----------------
-J5B3E:	CALL	C6770
+J5B3E:	CALL	ERRILLEGALFNCALL
 J5B41:	ADC	A,E
 	LD	E,A
 	ADC	A,D
 	SUB	E
 	LD	D,A
 	PUSH	DE
-	LD	L,10H	; 16
-	CALL	C67E4
-	LD	C,(HL)
+	LD	L,10H
+	CALL	C67E4			; get pointer in current voicebuffer
+	LD	C,(HL)			; length
 	PUSH	HL
-	CALL	C661A
-	JR	Z,J5B64
+	CALL	C661A			; get MCL char
+	JR	Z,J5B64			; end of string, use default length
 	PUSH	BC
-	CALL	C6651
+	CALL	C6651			; evaluate number in MCL
 	POP	BC
 J5B58:	LD	A,40H	; "@"
-	CP	E
-	JR	C,J5B3E
-	CALL	C5C41
-	OR	E
+	CP	E			; length specified 0-64
+	JR	C,J5B3E			; nope, illegal function call
+	CALL	C5C41			; check for byte value
+	OR	E			; yep, use default length
 	JR	Z,J5B64
 	LD	C,E
 J5B64:	POP	HL
-	INC	HL
+	INC	HL			; points to tempo
 	PUSH	HL
-	CALL	C5EB0
+	CALL	C5EB0			; get duration
 	EX	DE,HL
-	LD	BC,I$FFF7
+	LD	BC, -9
 	POP	HL
 	PUSH	HL
-	ADD	HL,BC
+	ADD	HL,BC			; points to music packet
 	LD	(HL),D
 	INC	HL
 	LD	(HL),E
@@ -3436,24 +3439,24 @@ J5B64:	POP	HL
 	LD	C,02H	; 2
 	EX	(SP),HL
 	INC	HL
-	LD	E,(HL)
+	LD	E,(HL)			; volume
 	LD	A,E
-	AND	0BFH
+	AND	0BFH			; clear envelope flag
 	LD	(HL),A
 	EX	(SP),HL
 	LD	A,80H
 	OR	E
-	LD	(HL),A
+	LD	(HL),A			; amplitude block
 	INC	HL
 	INC	C
 	EX	(SP),HL
 	LD	A,E
-	AND	40H	; "@"
-	JR	Z,J5B97
+	AND	40H			; envelope changed ?
+	JR	Z,J5B97			; nope,
 	INC	HL
 	LD	E,(HL)
 	INC	HL
-	LD	D,(HL)
+	LD	D,(HL)			; envelope
 	POP	HL
 	LD	(HL),D
 	INC	HL
@@ -3465,18 +3468,18 @@ J5B64:	POP	HL
 J5B97	EQU	$-1
 	POP	DE
 	LD	A,D
-	OR	E
-	JR	Z,J5BA2
+	OR	E			; rest ?
+	JR	Z,J5BA2			; yep, skip frequency block
 	LD	(HL),D
 	INC	HL
 	LD	(HL),E
 	INC	C
 	INC	C
-J5BA2:	LD	L,07H	; 7
-	CALL	C67E4
-	LD	(HL),C
+J5BA2:	LD	L,07H
+	CALL	C67E4			; get pointer in current voicebuffer
+	LD	(HL),C			; size of music packet
 	LD	A,C
-	SUB	02H	; 2
+	SUB	02H
 	RRCA
 	RRCA
 	RRCA
@@ -3485,8 +3488,8 @@ J5BA2:	LD	L,07H	; 7
 	LD	(HL),A
 	DEC	HL
 	LD	A,D
-	OR	E
-	JR	NZ,J5BC2
+	OR	E			; rest ?
+	JR	NZ,J5BC2		; nope,
 	PUSH	HL
 	LD	A,(D.FB39)
 	OR	80H
@@ -3495,60 +3498,70 @@ J5BA2:	LD	L,07H	; 7
 	LD	(HL),A
 	POP	HL
 J5BC2:	POP	DE
-	LD	B,(HL)
+	LD	B,(HL)			; size
 	INC	HL
-J5BC5:	LD	E,(HL)
+J5BC5:	LD	E,(HL)			; data
 	INC	HL
-	CALL	C599E
-	DJNZ	J5BC5
-	CALL	C59D5
-	JP	C,J590F
-	JP	J65C6
+	CALL	C599E			; put byte in queue (EI)
+	DJNZ	J5BC5			; next byte
+	CALL	C59D5			; less then 8 bytes free in voice queue ?
+	JP	C,J590F			; yep, stop parsing
+	JP	J65C6			; start MCL parser
 ;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	  Subroutine divide
+;	     Inputs  DE = param, HL = divider
+;	     Outputs HL = remainer, DE = result
 
-C5BD5:	LD	B,H
+	ALIGNCHK	05BD5H
+DIV_DE_BY_HL:
+	LD	B,H
 	LD	C,L
 	XOR	A
 	LD	H,A
 	LD	L,A
 	PUSH	HL
 	SBC	HL,BC
-	EX	DE,HL
+	EX	DE,HL			; DE = -param1
 	ADD	HL,HL
 	LD	A,H
 	LD	C,L
-	POP	HL
-	LD	B,10H	; 16
-J5BE4:	ADC	HL,HL
+	POP	HL			; HL = 0
+	LD	B,10H
+DIV_DE_BY_HL_1:
+	ADC	HL,HL
 	ADD	HL,DE
-	JR	C,J5BEB
+	JR	C,DIV_DE_BY_HL_2
 	SBC	HL,DE
-J5BEB:	RL	C
+DIV_DE_BY_HL_2:
+	RL	C
 	RLA
-	DJNZ	J5BE4
+	DJNZ	DIV_DE_BY_HL_1
 	LD	D,A
 	LD	E,C
 	RET
 ;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	  Subroutine multiply
+;	     Inputs  BC and A________________________
+;	     Outputs HL = BC * A
 
-C5BF3:	LD	E,08H	; 8
-	LD	HL,X.0000
-J5BF8:	ADD	HL,HL
+MUL_BC_BY_A:
+	LD	E, 8
+	LD	HL, 0
+
+MUL_BC_BY_A_1:
+	ADD	HL, HL
 	RLA
-	JR	NC,J5BFF
-	ADD	HL,BC
-	ADC	A,00H
-J5BFF:	DEC	E
-	JP	NZ,J5BF8
+	JR	NC, MUL_BC_BY_A_2
+	ADD	HL, BC
+	ADC	A, 0
+
+MUL_BC_BY_A_2:
+	DEC	E
+	JP	NZ, MUL_BC_BY_A_1
 	RET
+
 ;	-----------------
 ?5C04:	JR	NC,J5C44
 	LD	A,E
@@ -3590,7 +3603,7 @@ J5C25:	JR	NC,J5C44
 C5C41:	LD	A,D
 	OR	A
 	RET	Z
-J5C44:	JP	C6770
+J5C44:	JP	ERRILLEGALFNCALL
 ;	-----------------
 J5C47:	CALL	C661A
 	RET	Z
@@ -3666,7 +3679,7 @@ I5C70:	LD	B,C
 	CP	40H	; "@"
 	JR	NC,J5D06
 	LD	C,A
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	CALL	C619F
 	JR	NC,J5CD3
 	LD	A,C
@@ -3699,7 +3712,7 @@ J5CFD:	POP	DE
 	LD	E,83H
 	JP	J5E6D
 ;	-----------------
-J5D06:	JP	C6770
+J5D06:	JP	ERRILLEGALFNCALL
 ;	-----------------
 
 ;	  Subroutine __________________________
@@ -3762,7 +3775,7 @@ C5D27:	CP	2BH	; "+"
 	POP	BC
 	JP	J5E75
 ;	-----------------
-J5D61:	JP	C6770
+J5D61:	JP	ERRILLEGALFNCALL
 ;	-----------------
 ?5D64:	JR	C,J5D68
 	LD	E,08H	; 8
@@ -3798,7 +3811,7 @@ C5D8E:	RET	NC
 	LD	A,E
 	OR	D
 	RET	NZ
-J5D92:	JP	C6770
+J5D92:	JP	ERRILLEGALFNCALL
 ;	-----------------
 ?5D95:	LD	A,E
 	CP	10H	; 16
@@ -3851,7 +3864,7 @@ J5DC7:	CALL	C5C41
 	LD	A,E
 	CP	61H	; "a"
 	JR	C,J5E07
-	JP	C6770
+	JP	ERRILLEGALFNCALL
 ;	-----------------
 ?5DED:	CALL	C5AF6
 	LD	L,0FH	; 15
@@ -3889,7 +3902,7 @@ J5E20:	LD	L,26H	; "&"
 	POP	DE
 	PUSH	DE
 	LD	B,A
-	LD	HL,X.0000
+	LD	HL, 0
 J5E30:	ADD	HL,DE
 	DJNZ	J5E30
 	SRL	H
@@ -3986,17 +3999,17 @@ J5EAF:	INC	HL
 
 C5EB0:	LD	A,(HL)
 	LD	B,00H
-	CALL	C5BF3
+	CALL	MUL_BC_BY_A
 	PUSH	HL
 	LD	DE, (FREQ_FACTOR)
-	CALL	C5BD5
+	CALL	DIV_DE_BY_HL
 	EX	DE,HL
 	EX	(SP),HL
 	LD	B,05H	; 5
 J5EC2:	SRL	H
 	RR	L
 	DJNZ	J5EC2
-	CALL	C5BD5
+	CALL	DIV_DE_BY_HL
 	CALL	C5F02
 	LD	L,(IX)
 	LD	H,00H
@@ -4035,7 +4048,7 @@ J5F01:	RET
 ;	     Outputs ________________________
 
 C5F02:	PUSH	BC
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	LD	C,A
 	LD	B,00H
 	LD	IX,I$FA19
@@ -4047,7 +4060,7 @@ C5F02:	PUSH	BC
 	POP	BC
 	JP	J5E75
 ;	-----------------
-J5F17:	JP	C6770
+J5F17:	JP	ERRILLEGALFNCALL
 ;	-----------------
 ?5F1A:	LD	L,09H	; 9
 	CALL	C67E4
@@ -4100,7 +4113,7 @@ J5F6F:	LD	A,40H	; "@"
 	LD	A,C
 	LD	B,D
 	LD	C,E
-	CALL	C5BF3
+	CALL	MUL_BC_BY_A
 	OR	H
 	JR	NZ,J5F17
 	LD	A,L
@@ -4164,7 +4177,7 @@ I5FC4:	LD	B,D
 	LD	BC,070C3H	; 01 C3 70
 J5FCE	EQU	$-2
 	LD	H,A		; 67H
-	LD	BC,X.0000	; 01 00 00
+	LD	BC, 0	; 01 00 00
 J5FD3	EQU	$-1
 	CALL	C6640
 J5FD7:	CALL	C6614
@@ -4245,7 +4258,7 @@ I601F:	POP	BC
 	POP	BC
 	JP	J5E75
 ;	-----------------
-J6058:	JP	C6770
+J6058:	JP	ERRILLEGALFNCALL
 ;	-----------------
 J605B:	PUSH	AF
 	DI
@@ -5017,7 +5030,7 @@ J649D:	LD	(D.F992),A
 	LD	B,A
 	OR	80H
 	LD	(D.F993),A
-	LD	HL,X.0000
+	LD	HL, 0
 J64AE:	SCF
 	ADC	HL,HL
 	DJNZ	J64AE
@@ -5028,7 +5041,7 @@ J64AE:	SCF
 	LD	A,(HL)
 	LD	(D.F994),A
 	LD	HL, (MUSCWRK)
-	LD	DE,X.0000
+	LD	DE, 0
 	ADD	HL,DE
 	LD	(D.F99B),HL
 	LD	A,(D.FCC1)
@@ -5190,7 +5203,7 @@ J65D6:	ADD	A,A
 	LD	C,A
 J65D8:	LD	A,(HL)
 	ADD	A,A
-J65DA:	CALL	Z,C6770
+J65DA:	CALL	Z,ERRILLEGALFNCALL
 	CP	C
 	JR	Z,J65E5
 	INC	HL
@@ -5309,7 +5322,7 @@ C6651:	CP	3DH	; "="
 	PUSH	DE
 	JR	C664E
 ;	-----------------
-J6664:	LD	DE,X.0000
+J6664:	LD	DE, 0
 J6667:	CP	2CH	; ","
 	JR	Z,C6640
 	CP	3BH	; ";"
@@ -5318,7 +5331,7 @@ J6667:	CP	2CH	; ","
 	JR	NC,C6640
 	CP	30H	; "0"
 	JR	C,C6640
-	LD	HL,X.0000
+	LD	HL, 0
 	LD	B,0AH	; 10
 J667B:	ADD	HL,DE
 	JR	C,J66CC
@@ -5385,7 +5398,7 @@ J66C3:	CP	3BH	; ";"
 	JR	Z,J66CF
 	CALL	C6614
 J66CA:	DJNZ	J66B2
-J66CC:	CALL	C6770
+J66CC:	CALL	ERRILLEGALFNCALL
 J66CF:	POP	HL
 	JP	J678F
 ;	-----------------
@@ -5397,7 +5410,7 @@ J66D3:	CALL	C66A4
 ?66DB:	CALL	C66A4
 	LD	A,(D.FB3B)
 	OR	A
-	JP	NZ,C6770
+	JP	NZ,ERRILLEGALFNCALL
 	LD	HL,(D.FB3C)
 	EX	(SP),HL
 	PUSH	AF
@@ -5551,7 +5564,7 @@ J676D:	LD	E, 02H			; SYNTAX ERROR
 
 ; 123456789012345
 ERRILLEGALFNCALL:
-C6770:	LD	E, 05H			; ILLEGAL FUNCTION CALL
+ERRILLEGALFNCALL:	LD	E, 05H			; ILLEGAL FUNCTION CALL
 	JR	HANDLE_ERROR
 
 ERRTYPEMISMATCH:
@@ -5704,7 +5717,7 @@ C67E0:	LD	L,02H	; 2
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C67E4:	LD	A,(D.FB38)
+C67E4:	LD	A,(VOICEN)
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
