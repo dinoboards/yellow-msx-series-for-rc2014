@@ -44,8 +44,8 @@ MSX_MUSIC_SET_PAGE:
 ;
 ; SET PAGE 1 TO MSX-MUSIC SLOT (3-1)
 ;
-	PUBLIC	_msxMusicSetSlot
-_msxMusicSetSlot:
+; Output: H -> original slot, L -> original sub slot
+;
 MSX_MUSIC_SET_SLOT:
 	IN	A, (PSL_STAT)
 	LD	H, A			; STORE CURRENT SLOTS ASSIGNMENTS IN D
@@ -115,6 +115,9 @@ MSX_MUSIC_BYTE_PROGRAM:
 _msxMusicEraseROM:
 	DI
 
+	ld b,b
+	jr $+2
+
 	CALL	MSX_MUSIC_SET_SLOT
 	LD	(current_page_slots), HL
 
@@ -159,49 +162,147 @@ WAIT_FOR_ERASE:
 	EI
 	RET
 
-	PUBLIC	_msxMusicWriteFirst16KROM
+	PUBLIC	_msxMusicWrite4KPage
 ;
-; void _msxMusicWriteFirst16KROM
+; void msxMusicWrite4KPage(uint8_t page, uint8_t buffer[4096])
 ;
-; WRITE sequence to first 16k
+; WRITE sequence byte program
 ;  5555H=AAH, 2AAAH=55H, 5555H=A0H, ADDR=Data
 
-_msxMusicWriteFirst16KROM:
-	DI
+_msxMusicWrite4KPage:
+	PUSH	IX
+	LD	IX, 0
+	ADD	IX, SP
+
+	DI				; do we need this?
 
 	CALL	MSX_MUSIC_SET_SLOT
 	LD	(current_page_slots), HL
 
-	LD	HL, 0x8000
-	LD	DE, 0x4000
-	; write just 16K bytes (one bank)
-LOOP:
+	LD	A, (IX+4) 		; page
+	AND	3			; calculate 4K address start within the MSX Slot Page 1 (0x4000-0x7FFF)
+	ADD	4
+	RLCA
+	RLCA
+	RLCA
+	RLCA
+	LD	D, A
+	LD	E, 0			; DE will be 0x4000, 0x5000, 0x6000 or 0x7000
+
+	LD	L, (IX+5)  		; buffer (source addres)
+	LD	H, (IX+6)		; into HL
+	LD	BC, 0x1000		; loop counter - 4K
+LOOPWR:
 	PUSH	HL
 	PUSH	DE
+	PUSH	BC
 
 	CALL	MSX_MUSIC_BYTE_PROGRAM
-	LD	L, 0			
-	CALL	MSX_MUSIC_SET_PAGE
-	
-	POP	DE
+
+	LD	A, (IX+4) 		; page
+	SRL	A			; divide by 4
+	SRL	A
+	LD	L, A
+	CALL	MSX_MUSIC_SET_PAGE	; address the required page
+
+	POP	BC			; restore counter
+	POP	DE			; restore source and destination
 	POP	HL
-	
-	LD	A, (HL)
+
+	LD	A, (HL)			; copy data and increment
 	LD	(DE), A
 	INC	HL
 	INC	DE
 
-	LD	A, D
-	CP	0x80	
-	JR	NZ, LOOP
-	
-	LD	L, 0				;
+	DEC	BC
+	LD	A, B
+	OR	C
+	JR	NZ, LOOPWR
+
+	LD	L, 0				; restore page of MSX-MUSIC rom
 	CALL	MSX_MUSIC_SET_PAGE
 
 	LD	HL, (current_page_slots)
 	CALL	MSX_MUSIC_RESTORE_SLOT
 
 	EI
+	POP	IX
+	RET
+
+; extern bool     msxMusicVerify4KPage(uint8_t page, uint8_t buffer[4096]);  // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
+
+	PUBLIC	_msxMusicVerify4KPage
+
+_msxMusicVerify4KPage:
+	PUSH	IX
+	LD	IX, 0
+	ADD	IX, SP
+
+	DI				; do we need this?
+
+	CALL	MSX_MUSIC_SET_SLOT
+	LD	(current_page_slots), HL
+
+	LD	A, (IX+4) 		; page
+	AND	3			; calculate 4K address start within the MSX Slot Page 1 (0x4000-0x7FFF)
+	ADD	4
+	RLCA
+	RLCA
+	RLCA
+	RLCA
+	LD	D, A
+	LD	E, 0			; DE will be 0x4000, 0x5000, 0x6000 or 0x7000
+
+	LD	L, (IX+5)  		; buffer (source addres)
+	LD	H, (IX+6)		; into HL
+	LD	BC, 0x1000		; loop counter - 4K
+LOOPRD:
+	PUSH	HL
+	PUSH	DE
+	PUSH	BC
+
+	LD	A, (IX+4) 		; page
+	SRL	A			; divide by 4
+	SRL	A
+	LD	L, A
+	CALL	MSX_MUSIC_SET_PAGE	; address the required page
+
+	POP	BC			; restore counter
+	POP	DE			; restore source and destination
+	POP	HL
+
+	LD	A, (DE)			; compare data and increment
+	CP	(HL)			; same?
+	JR	NZ, VERIFY_FAIL		; jump to abort
+	INC	HL
+	INC	DE
+
+	DEC	BC
+	LD	A, B
+	OR	C
+	JR	NZ, LOOPRD
+
+	LD	L, 0				; restore page of MSX-MUSIC rom
+	CALL	MSX_MUSIC_SET_PAGE
+
+	LD	HL, (current_page_slots)
+	CALL	MSX_MUSIC_RESTORE_SLOT
+
+	LD	HL, 1				; return TRUE
+	EI
+	POP	IX
+	RET
+
+VERIFY_FAIL:
+	LD	L, 0				; restore page of MSX-MUSIC rom
+	CALL	MSX_MUSIC_SET_PAGE
+
+	LD	HL, (current_page_slots)
+	CALL	MSX_MUSIC_RESTORE_SLOT
+
+	LD	HL, 0				; return FALSE
+	EI
+	POP	IX
 	RET
 
 	SECTION bss_compiler
