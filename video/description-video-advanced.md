@@ -96,7 +96,7 @@ The components for both the PAL and NTSC versions are included.
 
 ### Construction notes
 
-Please note that due to the finer pitch pins of the V9958, the soldering of this board requires a little more finesse than the typical RC2014 through-hole based boards.  If you have built a few boards already, then you should be fine.  It's recommended that a finer pitch soldering tip be used as it can be easy to accidently bridge some of the pins.
+Please note that due to the finer pitch pins of the V9958, the soldering of this board requires a little more finesse than the typical RC2014 through-hole based boards.  If you have built a few boards already, then you should be fine.  It's recommended that a finer pitch soldering tip be used as it can be easy to accidentally bridge some of the pins.
 
 Extra care needed when inserting the V9958 into its socket - there are lots of pins, take your time to avoid bending pins.
 
