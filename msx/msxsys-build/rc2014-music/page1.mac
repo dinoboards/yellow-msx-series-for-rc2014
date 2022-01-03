@@ -132,7 +132,12 @@ ENASLT	EQU	0024H	; -C---
 ; |                 0 = Y-M-D, 1 = M-D-Y, 2 = D-M-Y
 ; +---------------- Default interrupt frequency
 ;                   0 = 60Hz, 1 = 50Hz
-IDBYT1	EQU	002BH
+IDBYT1		EQU	002BH
+
+; Function:	displays the character
+; Input:	A for the character code to be displayed
+; Output:	none
+CHPUT		EQU	00A2h
 
 ; MAINROM ---- convert to DAC to new type
 MBCVRT		EQU	517AH
@@ -411,45 +416,50 @@ D4000:	DEFB	"AB"
 
 I4018:	DEFB	"APRLOPLL"
 
-	DEFS	04080H-$,0
+	ALIGNCHK 04080H
 
 RCMUSIC_BASIC:
 	EI
 	PUSH	HL
 	LD	HL, PROCNM
-	LD	DE, MUSIC_VER
+	LD	DE, KEYWRD_MUSIC_VER
 IS_VER:	LD	A, (DE)
 	OR	A
-	JR	Z, BASIC_VER_STATEMENT
+	JR	Z, BASMUSICVER
 	CP	(HL)
 	INC	HL
 	INC	DE
 	JR	Z, IS_VER
-	POP	HL
-	JP	ROM_STATEMENT
+	JP	ROM_STATEMENT2
 
-BASIC_VER_STATEMENT:
-CHPUT          equ     00A2h
-
-	LD	a, '3'
+BASMUSICVER:
+	LD	DE, MUSIC_VERSION_STR
+PRINT_VER:
+	LD	A, (DE)
+	OR	A
+	JR	Z, PRINT_VER_DONE
 	CALL	CHPUT
 	EI
+	INC	DE
+	JR	PRINT_VER
 
+PRINT_VER_DONE:
 	POP	HL
 	OR	A
 	RET
 
-MUSIC_VER:	DEFB	"MUSIC_VER", 0
+	ALIGNCHK 040C0H
 
-	DEFS	040C0H-$, 0
-	DW	1
 	DW	2
+	DW	0
 
-	DEFS	04100H-$, 0
+	ALIGNCHK 04100H
 
-	DEFB	"V1.0 2021 12 30", 0
+MUSIC_VERSION_STR:
+	DEFB	"V2.0 2021 12 30", 0
 
-	DEFS	04110H-$,0
+	ALIGNCHK 04110H
+
 
 	JP	J4140		; WRTOPL
 ?4113:	JP	J417B		; INIOPL
@@ -1541,7 +1551,7 @@ I4C00:	DEFB	11H,11H,20H,20H,0FFH,0B2H,0F4H,0F4H
 ;	+6	stop background music
 ;	+9	enable and reset OPLL
 
-I5000:	JP	J50EB
+I5000:	JP	ROM_STATEMENT
 J5003:	JP	J605B
 X5006:	JP	J5078
 C5009:	LD	HL,C.F975
@@ -1716,6 +1726,7 @@ GETSLTWRK:
 ROM_STATEMENT:
 J50EB:	EI
 	PUSH	HL
+ROM_STATEMENT2:
 	LD	HL,PROCNM
 	CALL	C525A
 	POP	HL
@@ -1853,8 +1864,12 @@ BASICMDS_P:
 
 	DEFB	0FFh
 
+KEYWRD_MUSIC_VER:
+	DEFB	"MUSIC VER", 0
+
 	ALIGNCHK	0525AH
-;	  Subrou	tine __________________________
+
+;	  Subroutine __________________________
 ;	     Inputs  	________________________
 ;	     Outputs ________________________
 
