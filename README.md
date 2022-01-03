@@ -57,6 +57,24 @@ See the [README file here](./memory/README.md)
 
 Kit available at [Tindie](https://www.tindie.com/products/dinotron/msx-memory-board-for-rc2014) store
 
+#### YM2413 MSX-Music Module Designed for RC2014
+
+See the [README file here](./music/README.md)
+
+Kit available at [Tindie](https://www.tindie.com/products/dinotron/ym2413-msx-music-module-designed-for-rc2014) store
+
+#### MSX Cartridge Slot Extension for RC2014 Bus
+
+See the [README file here](./slot-extension/readme.md)
+
+Kit available at [Tindie](https://www.tindie.com/products/dinotron/msx-cartridge-slot-extension-for-rc2014-bus) store
+
+#### 12+1 Backplane designed for RC2014 systems
+
+See the [README file here](./backplane/readme.md)
+
+Kit available at [Tindie](https://www.tindie.com/products/dinotron/121-backplane-designed-for-rc2014-systems) store
+
 #### Integrating the ESP8266 Wifi Module
 
 Click [here](./wifi/README.md) for instructions on integrating the stock RC2014 ESP8266 wifi module into your MSX build.
@@ -68,7 +86,6 @@ Kits are available from the official RC2014 stores at [z80Kits](https://z80kits.
 
 * Incorporate existing RC2014 boards, such as Floppy, IDE, Flash storage, Serial etc into a MSX system.
 * Cassette Interface
-* Cartridge slots
 * Others....
 
 ## Cloning this repo

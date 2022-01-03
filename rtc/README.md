@@ -2,6 +2,8 @@
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
+<a href="https://www.tindie.com/products/dinotron/msx-rp5c01-rtc-and-msx-f4-board-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+
 This module is part of the Yellow MSX series of modules to give your RC2014, MSX compatibility, providing two key capabilities:
 
 * A RTC based on the RP5C01 chip, as per the MSX2 specification.

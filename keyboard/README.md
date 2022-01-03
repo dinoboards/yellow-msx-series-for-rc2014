@@ -2,6 +2,8 @@
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
+<a href="https://www.tindie.com/products/dinotron/msx-keyboard-designed-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+
 The MSX keyboard, is a full size MSX compatible keyboard design for RC2014 system with the PPI interface board
 
 The keyboard connects to the PPI, via a 16 way IDC connection.

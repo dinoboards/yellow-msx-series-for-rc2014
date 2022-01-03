@@ -1,3 +1,8 @@
+## Hackaday Project:
+
+* [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
+
+<a href="https://www.tindie.com/products/dinotron/ym2413-msx-music-module-designed-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
 
 ## Title
 
@@ -228,7 +233,7 @@ PCB Back
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-Kits available at: https://www.tindie.com/products/dinotron/?????
+Kits available at: https://www.tindie.com/products/dinotron/ym2413-msx-music-module-designed-for-rc2014/
 
 * https://arduinoplusplus.wordpress.com/2020/02/22/making-music-with-a-yamaha-ym2413-synthesizer-part-2/
 * https://arduinoplusplus.wordpress.com/2020/03/07/making-music-with-a-yamaha-ym2413-synthesizer-part-3/

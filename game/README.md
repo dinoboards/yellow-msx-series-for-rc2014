@@ -2,6 +2,8 @@
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
+<a href="https://www.tindie.com/products/dinotron/ym2149-msx-game-board-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+
 The YM2149 sound and controller board, designed for RC2014 systems, is part of planned series of boards, to provide full MSX2+ compliance.
 
 Highlights:
@@ -10,7 +12,6 @@ Highlights:
 * optional additional audio input lines, for mixing into the audio out.
 
 A video of it in operation with the V9958 Video board at: https://youtu.be/dUCEZpBlxgY
-
 
 ## Bill of Materials
 
@@ -52,8 +53,6 @@ A video of it in operation with the V9958 Video board at: https://youtu.be/dUCEZ
 
 The tune.com cp/m distributed with RomWBW works just find with the board - as it has the standard MSX ports.
 
-For a standard RC2014 (RomWBW, cp/m) - the only code I have that utilises the sound and controller is the chip8 intpreter - with an appropriate configuration file to map the controller inputs to one of the hex keypad inputs of a chip8 game.
-https://github.com/vipoo/rc2014-chip8
 
 ## Port Mapping
 
@@ -75,6 +74,28 @@ The following table describes the registers of the PSG:
 | 8-10	| Amplitude control |
 | 11-13	| Envelope generator control |
 | 14-15	| I/O ports A & B |
+
+## Images
+
+Assembled
+---------
+<img src="images/assembled.jpg" alt="Assembled" width="100%"/>
+
+Kit
+---------
+<img src="images/kit.jpg" alt="Kit" width="100%"/>
+
+PCB Front
+---------
+<img src="images/pcb-front.jpg" alt="PCB front" width="100%"/>
+
+PCB Back
+---------
+<img src="images/pcb-back.jpg" alt="PCB back" width="100%"/>
+
+Installed
+---------
+<img src="images/installed.jpg" alt="Installed" width="100%"/>
 
 ## Resources
 
