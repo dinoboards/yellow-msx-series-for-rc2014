@@ -5,13 +5,15 @@ YM2413 MSX-Music Module Designed for RC2014
 
 ## Brief Description
 
-Explore the world of early music synthesis sound chips - Yamaha's YM2413 OPLL (FM synthesis) as used in the MSX-MUSIC standard.
+Give your RC2014 MSX build MSX-Music OPLL Sounds
 
 ### Description
 
+Explore the world of mid 80s music synthesis sound chips - Yamaha's YM2413 OPLL (FM synthesis) as used in the MSX-MUSIC standard.
+
 ### What is it?
 
-This is a kit based around the YM2413 OPLL (FM synthesis) sound chip, and designed to be compatible with the MSX-MUSIC standard.  Adding the amazing advanced music generation of Yamaha's OPLL (FM synthesis) YM2413 chip to your RC2014 build, and propel your ears into the new era of 80's sounds.
+This is a kit based around the YM2413 OPLL (FM synthesis) sound chip, and designed to be compatible with the MSX-MUSIC standard.  Add the amazing advanced music generation of Yamaha's OPLL (FM synthesis) YM2413 chip to your RC2014 build, and propel your ears into the new era of 80's sounds.
 
 The OPLL was especially made for the MSX system. It provides 9 channels of FM sound without drums or 6 channels FM sound with 5 FM drums.
 
@@ -29,7 +31,7 @@ A video of the board in operation: https://www.youtube.com/watch?v=Sx03ejKu43Y
 
 ### Key features:
 
-* YM2413 onboard chip
+* Yamaha's YM2413 OPLL (FM synthesis) music chip
 * Mix in the audio from the Yellow MSX Game module
 * Onboard ROM, with MSX-MUSIC basic extensions and bios implemented
 * Full SST39SF040 ROM (re)flashing with MSX-DOS flash utility
@@ -46,9 +48,44 @@ More details can be found on my [hackaday project](https://hackaday.io/project/1
 
 ### What's included in this kit
 
-The full kits includes everything you need (PCB, capacitors, IC sockets, and the ICs).  The YM2149 are used or old as new stock, tested in circuit by me before shipping.
+The full kits includes everything you need (PCB, capacitors, IC sockets, connectors, and the ICs).  The YM2149 are used or old as new stock, tested in circuit by me before shipping.
 
 The SST39SF040 ROM is supplied flashed with MSX-MUSIC extensions for MSX BASIC.
+
+### Bill of Materials
+
+|Count   | Name  |
+|:------:|-------|
+|  1     | PCB |
+|  1     | 3.5mm audio socket|
+|  2     |1uF Electrolytic Capacitors|
+|  7     |0.1uF Ceramic Capacitors|
+|  2     |33pF Ceramic Capacitors|
+|  2     |22pF Ceramic Capacitors|
+|  1     |1nF Ceramic Capacitor|
+|  1     |4.7  Electrolytic Capacitors|
+|  1     | 1x2 Right Angle Header |
+|  1     | 1K Ω Resistor | 
+|  1     | 100K Ω Resistor | 
+|  4     | 2K2 Ω Resistor | 
+|  1     | 169K Ω Resistor | 
+|  2     | 22K Ω Resistor | 
+|  1     | Yamaha YM2413 |
+|  1     | 74HCT273|
+|  1     | 74HCT138 |
+|  1     | 74HCT32 |
+|  1     | 74HCT21 |
+|  1     | SST39SF040 512K NOR Flash ROM |
+|  1     | TL071IP opamp |
+|  1     | TC7660 charge pump |
+|  1     | 3.579545MHz crystal |
+|  1     | 32 POS IC SOCKET |
+|  1     | 20 POS IC SOCKET |
+|  1     | 18 POS IC SOCKET |
+|  2     | 16 POS IC SOCKET |
+|  2     | 14 POS IC SOCKET |
+|  2     | 8 POS IC SOCKET |
+
 
 ### What else do I need to make this work?
 
@@ -56,8 +93,30 @@ The SST39SF040 ROM is supplied flashed with MSX-MUSIC extensions for MSX BASIC.
 
 * The onboard MSX-MUSIC basic extensions, requires your main Memory board has MSX-BASIC installed.  The MSX-MUSIC programming feature can be used to create a new main ROM.
 
-\* The onboard ROM can only be access when running your RC2014 in full MSX configuration.
+\* The onboard ROM can only be accessed when running your RC2014 in full MSX configuration.
 
+### Port Mapping
+
+The board uses the standard IO addresses for MSX systems.
+
+| Port |	Description|
+|------|-------------|
+| $7C	(w) | YM2413 register index  |
+| $7D	(w) | YM2413 register data  |
+
+### Rom page selection
+
+The onboard ROM is wired to SLOT 3-1 and is expected to be mapped to page 1 (addresses: 0x4000-0x7FFF).
+
+On power-up and reset, the SST39SF040 ROM's first 16K bank will be mapped to this page.  To change the bank, you can write to address: 
+
+`0x7DF7 in PAGE 1`
+
+or write to address
+
+`0xE000 in PAGE 3.`
+
+> If SLOT 3-1 is mapped into page 3 (0xC000-0xFFFF), only the page selection register will respond to write operations - the ROM will not be selected for read or write operations for page 3 addresses.  This enables selecting addressing of the ROM address lines, without conflicting with the SST39SF040's write program commands. 
 
 ## Software
 
@@ -104,7 +163,7 @@ You can naturally re-flash the SST39SF040 ROM chips using your favourite externa
 
 Or you can use the inherent capabilities of the MSX-MUSIC module to update its own image using the `muflash.com` MSX-DOS utility.
 
-To update the image on the onboard ROM to a later version of MSX-BASIC -- follow these steps:
+To update the image on the ROM to a later version -- follow these steps:
 
 1. Download (or assembly your own version) from the github's release page, https://github.com/vipoo/yellow-msx-series-for-rc2014/releases, the file `msx-rc2014-XX-XX-XX.zip`
 2. Extract the `rcmusic.rom` and `muflash.com` files from this zip file
