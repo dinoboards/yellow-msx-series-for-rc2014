@@ -2,7 +2,7 @@
 #include "print.h"
 #include <stdbool.h>
 
-const char *pFileName;
+const char *flash_file_name;
 
 uint8_t abort_with_help() {
   printf("Usage:  muflash <filename>\r\n\r\n"
@@ -25,9 +25,9 @@ uint8_t arg_help_msg(const uint8_t i, const char **argv) {
 
 uint8_t arg_file_name(const uint8_t i, const char **argv) {
   if (argv[i][0] != '/') {
-    if (pFileName)
+    if (flash_file_name)
       return abort_with_help();
-    pFileName = argv[i];
+    flash_file_name = argv[i];
     return i + 1;
   }
 
@@ -61,6 +61,6 @@ void process_cli_arguments(const int argc, const char **argv) {
     abort_with_invalid_arg_msg(i, argv);
   }
 
-  if (pFileName == NULL)
+  if (flash_file_name == NULL)
     abort_with_missing_file_name_msg();
 }

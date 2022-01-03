@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern const char *pFileName;
+extern const char *flash_file_name;
 
 void process_cli_arguments(const int argc, const char **argv);
 

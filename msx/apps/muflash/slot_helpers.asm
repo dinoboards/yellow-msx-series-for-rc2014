@@ -106,13 +106,13 @@ MSX_MUSIC_BYTE_PROGRAM:
 
 	RET
 
-	PUBLIC	_msxMusicEraseROM
+	PUBLIC	_msx_music_erase_ROM
 ;
-; void msxMusicEraseROM()
+; void msx_music_erase_ROM()
 ;
 ; APPLY THE COMMAND SEQUENCE TO ERASE THE ROM
 ; 5555H=AAH, 2AAAH=55H, 5555H=80H, 5555H=AAH, 2AAAH=55H, 5555H=10H
-_msxMusicEraseROM:
+_msx_music_erase_ROM:
 	DI
 
 	ld b,b
@@ -162,14 +162,14 @@ WAIT_FOR_ERASE:
 	EI
 	RET
 
-	PUBLIC	_msxMusicWrite4KPage
+	PUBLIC	_msx_music_write_4K_page
 ;
-; void msxMusicWrite4KPage(uint8_t page, uint8_t buffer[4096])
+; void msx_music_write_4K_page(uint8_t page, uint8_t buffer[4096])
 ;
 ; WRITE sequence byte program
 ;  5555H=AAH, 2AAAH=55H, 5555H=A0H, ADDR=Data
 
-_msxMusicWrite4KPage:
+_msx_music_write_4K_page:
 	PUSH	IX
 	LD	IX, 0
 	ADD	IX, SP
@@ -229,11 +229,11 @@ LOOPWR:
 	POP	IX
 	RET
 
-; extern bool     msxMusicVerify4KPage(uint8_t page, uint8_t buffer[4096]);  // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
+; extern bool     msx_music_verify_4K_page(uint8_t page, uint8_t buffer[4096]);  // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
 
-	PUBLIC	_msxMusicVerify4KPage
+	PUBLIC	_msx_music_verify_4K_page
 
-_msxMusicVerify4KPage:
+_msx_music_verify_4K_page:
 	PUSH	IX
 	LD	IX, 0
 	ADD	IX, SP

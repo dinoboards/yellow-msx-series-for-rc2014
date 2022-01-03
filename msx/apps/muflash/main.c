@@ -1,52 +1,75 @@
 #include "arguments.h"
+#include <conio.h>
 #include <msxdos.h>
 #include <stdio.h>
 
-extern void msxMusicEraseROM();
-extern void msxMusicWrite4KPage(uint8_t page, uint8_t buffer[4096]);  // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
-extern bool msxMusicVerify4KPage(uint8_t page, uint8_t buffer[4096]); // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
+extern void msx_music_erase_ROM();
+extern void msx_music_write_4K_page(const uint8_t page, const uint8_t buffer[4096]);  // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
+extern bool msx_music_verify_4K_page(const uint8_t page, const uint8_t buffer[4096]); // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
 
-extern uint16_t msxMusicSetSlot();
-extern void     msxMusicRestoreSlot(uint16_t slot_assignment) __z88dk_fastcall;
-extern uint16_t spike();
-extern void     msxMusicSetPage(uint8_t p) __z88dk_fastcall;
+uint8_t __at 0x8000 buffer[4096]; // Must not be within page1 (0x4000-0x7FFF) as that is where the ROM will be mapped.
 
-uint8_t __at 0x8000 buffer[1024 * 16];
-
-static uint8_t *ptr;
 static uint16_t slot_assignment;
-static FILE *   pFile;
-static size_t   length;
+static FILE *   file;
+
+const uint8_t progress_bar_length = 20;
+
+void exit_cleanup() { fclose(file); }
 
 void main(const int argc, const unsigned char **argv) {
 
   process_cli_arguments(argc, argv);
 
-  pFile = fopen(pFileName, "rb");
+  file = fopen(flash_file_name, "rb");
 
-  if (!pFile) {
-    printf("Unable to open file '%s'\r\n", pFileName);
+  if (!file) {
+    printf("Unable to open file '%s'\r\n", flash_file_name);
     exit(1);
   }
 
-  length = fread(buffer, 1, 16 * 1024, pFile);
+  atexit(exit_cleanup);
 
-  fclose(pFile);
+  fseek(file, 0L, SEEK_END);
+  const unsigned long sz = ftell(file);
+  const uint8_t       number_of_pages = (sz / 4096) + 1;
 
-  printf("Flashing %lu bytes to MSX-MUSIC onboard ROM ", (unsigned long)length);
+  printf("Flashing %lu bytes (%d 4K blocks) to MSX-MUSIC onboard ROM.  Proceed (Y/n)\r\n", sz, number_of_pages);
+  const char ch = getch();
 
-  msxMusicEraseROM();
+  if (ch != 'Y')
+    return;
 
-  for (uint8_t i = 0; i <= 3; i++) {
-    uint8_t *p = &buffer[i * 0x1000];
-    msxMusicWrite4KPage(i, p);
-    if (!msxMusicVerify4KPage(i, p))
+  msx_music_erase_ROM();
+
+  rewind(file);
+
+  unsigned long length = fread(buffer, 1, 4096, file);
+
+  uint8_t page_index = 0;
+  printf("\r\n");
+
+  while (length > 0) {
+    msx_music_write_4K_page(page_index, buffer);
+    if (!msx_music_verify_4K_page(page_index, buffer))
       goto error;
+    page_index++;
 
-    printf(".");
+    uint8_t completed_range = page_index * progress_bar_length / number_of_pages;
+
+    printf("\r\x15");
+    printf("[");
+    uint8_t x = 0;
+    for (; x < completed_range; x++)
+      printf(".");
+    for (; x < progress_bar_length; x++)
+      printf(" ");
+    printf("] %dKB written", (page_index * 4));
+
+    length = fread(buffer, 1, 4096, file);
   }
 
-  printf("\r\nFlash completed.  Please reset now.\r\n");
+  printf("\r\n\r\nFlash completed.  Please reset now.\r\n");
+
   return;
 
 error:
