@@ -20,8 +20,18 @@ This V9958 chip, was produced by Yamaha in the late 80s and was an update to the
 * Easy prototyping to various V9958 pins such as the colour bus, clock and other syncing signals.
 
 <table>
-  <tr><td><img src="./pictures/rgb-pcb-front-v2.2.4.jpg" width="100%"/></td><td><img src="./pictures/rgb-pcb-rear-v2.2.4.jpg" width="88%"/></td></tr>
-  <tr><td><img src="./pictures/video-rgb-v2.2.4.jpg" width="100%"/>V2.2.4</td><td><img src="./pictures/video-rgb-profile.jpg" width="100%"/></td></tr>
+  <tr>
+    <td><a href="pictures/rgb-pcb-front-v2.2.4.jpg"><img src="./pictures/rgb-pcb-front-v2.2.4.jpg" width="100%"/></a></td>
+    <td><a href="pictures/rgb-pcb-rear-v2.2.4.jpg"><img src="./pictures/rgb-pcb-rear-v2.2.4.jpg" width="88%"/></a></td>
+  </tr>
+  <tr>
+    <td><a href="pictures/video-rgb-v2.2.4.jpg"><img src="./pictures/video-rgb-v2.2.4.jpg" width="100%"/></a>V2.2.4</td>
+    <td><a href="pictures/video-rgb-profile.jpg"><img src="./pictures/video-rgb-profile.jpg" width="100%"/></a></td>
+  </tr>
+  <tr>
+    <td><a href="pictures/rgb-top-with-low-esr.jpg"><img src="./pictures/rgb-top-with-low-esr.jpg" width="100%"/></a></td>
+    <td><a href="pictures/rgb-profile-with-low-esr.jpg"><img src="./pictures/rgb-profile-with-low-esr.jpg" width="100%"/></a></td>
+  </tr>
 </table>
 
 ### DSUB pin out
