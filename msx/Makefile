@@ -4,7 +4,7 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-all: nextor-mfr apps msxsysromimages rom-image-pal rom-image-ntsc bin/music100.rom bin/music410.rom bin/rcmusic.rom
+all: nextor-mfr apps msxsysromimages rom-image-pal rom-image-ntsc bin/music100.rom bin/music410.rom bin/rcmusic.rom bin/bbcbasic.com
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/turbo-cpu-mwait.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
 
@@ -228,3 +228,6 @@ release:
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*
 	cd ./bin && tar -czvf ../../release/msx-rc2014-$${version}.tar.gz *
 
+bin/bbcbasic.com: $(wildcard bbcbasic-z80/*)
+	@$(MAKE) -C bbcbasic-z80 --no-print-directory
+	cp -u bbcbasic-z80/bin/bbcbasic.com $@
