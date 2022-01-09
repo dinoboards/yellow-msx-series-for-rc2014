@@ -14,6 +14,15 @@
 	.Z80
 	ASEG
 
+; YM2413 Register selector port
+OPLREG		EQU	07CH
+
+; YM2413 Data port
+OPLDAT		EQU	07DH
+
+; PPI-register A - Primary slot select register.
+PPI_SLTREG	EQU	0A8H
+
 ; ==================================
 ; MSX SYSTEM VARIABLES
 
@@ -29,6 +38,19 @@ CURLIN		EQU	0F41CH
 BUF		EQU	0F55EH
 CODE_BUF	EQU	BUF+128
 
+; F663: workarea for evaluation of expressions; contains type of last evaluated
+; expression; the value of the expression is in DAC, possible values of VALTYP:
+; 2: integer
+; 3: string
+; 4: normal real
+; 8: double real
+VALTYP		EQU	0F663H
+
+; F6A5: switch indicating if a variable is allowed to be an array variable.
+; This is e.g. not allowed for the loop variable of a FOR statement
+; 0 = allowed, 1 = not allowed
+SUBFLG		EQU	0F6A5H
+
 ; F6BE-F6BF: line number of last program break, reset at 0 at any program change
 OLDLIN		EQU	0F6BEH
 
@@ -36,8 +58,26 @@ OLDLIN		EQU	0F6BEH
 ; (ini: $8003)
 STREND		EQU	0F6C6H
 
+; F7F6-F805: workarea when executing numeric operators; intermediate
+; results are stored here; also used for parameter transfer when using
+; the USR functions; VALTYPE then contains the type, and the value is
+; stored like this:
+; typename  type  where
+; integer   2     F7F8-F7F9
+; string    3     F7F8-F7F9 (address descriptor)
+; single    4     F7F6-F7F9
+; double    8     F7F6-F7FD
+DAC		EQU	0F7F6H
+
 ; F806-F856: workarea when executing numeric operators
 HOLD8		EQU	0F806H
+
+; F85F: # of filedescriptors reserved minus 1
+; this is also the maximum number of open files possible
+MAXFIL		EQU	0F85FH
+
+; F860-F861: start address of the file information table
+FILTAB		EQU	0F860H
 
 ; F956-F957: start address of a jumptable for subcommands
 ; contained in a string variable, used for both PLAY and DRAW
@@ -46,6 +86,9 @@ HOLD8		EQU	0F806H
 MCLTAB		EQU	0F956H
 
 FREQ_FACTOR	EQU	0F97AH	; (120*4*int freq)/2
+
+; slotid MSX-MUSIC
+MUSCSLID	EQU	0F97CH
 
 ; Original Buffers for sound queues.  Repurposed by MSX-MUSIC
 ; VOICAQ		EQU	0F975H		; Voice A queue
@@ -67,6 +110,40 @@ OPL_PVOICE_CNT	EQU	0F992H
 ; pointer to  12 * 6 bytes
 VOICE_CTRL_BUF	EQU	0F99BH
 
+; duration PSG playvoice 0
+PSGDUV0		EQU	0F9AFH
+
+; duration PSG playvoice 1
+PSGDUV1		EQU	0F9B1H
+
+; duration PSG playvoice 2
+PSGDUV2		EQU	0F9B3H
+
+; old H.TIMI
+O.TIMI		EQU	0F9BBH
+
+; F9C0-#F9F8 : copy of YM2413 register values
+OPRGSAV		EQU	0F9C0H
+
+; programable instrument 63
+I.F9F9		EQU	0F9F9H
+
+; corrector for interrupt resolution for every playvoice
+I$FA19		EQU	0FA19H
+
+; ; request service
+D.FA26		EQU	0FA26H
+
+; 16 bytes ? for 9
+I.FA27		EQU	0FA27H
+
+I$FA87		EQU	0FA87H
+
+D$FA89		EQU	0FA89H
+
+; 5 bytes drums
+I.FAB7		EQU	0FAB7H
+
 ; FB35: status about the parsing of a PLAY string
 ;  bit 7: only one time parsed; 1 = yes
 ;  bit 1-0: number of parsed strings (0-3)
@@ -78,23 +155,50 @@ SAVSP		EQU	0FB36H
 ; FB38: # of voice currently being parsed (0-2)
 VOICEN		EQU	0FB38H
 
+; FB39-FB3A: storage of volume of a muted voice
+SAVVOL		EQU	0FB39H
+
 ; FB3B: size of string being parsed (also used by DRAW)
 MCLLEN		EQU	0FB3BH
 
 ; FB3C-FB3D: address of string being parsed (also used by DRAW)
 MCLPTR		EQU	0FB3CH
 
+; FB3F: flag indicating which queues are active
+; bit 2 = queue 2; 1 = active
+; bit 1 = queue 1; 1 = active
+; bit 0 = queue 0; 1 = active
+MUSICF		EQU	0FB3FH
+
 ; FB40: count of the # of PLAY statements parsed, but not executed yet
 PLYCNT		EQU	0FB40H
+
+; FB41-FB65: Voice Control Block for voice A (queue 0)
+VCBA		EQU	0FB41H
+; FB66-FB8A: Voice Control Block for voice B (queue 1)
+VCBB		EQU	0FB66H
+; FB8B-FBAF: Voice Control Block for voice C (queue 2)
+VCBC		EQU	0FB8BH
+
+; FBB1: switch indicating if the current BASIC program is in a ROM
+; 0 = no; 1 = yes
+BASROM		EQU	0FBB1H
 
 ; FC4A-FC4B: highest address of the RAM memory that is not reserved by
 ; the OS; string area, filebuffers and stack are below this address
 ; initialized at startup and not changed normally
 HIMEM		EQU	0FC4AH
 
+; FC9B: STOP indication
+; 0 = nothing; 3 = CTRL+STOP, 4 = STOP
+INTFLG		EQU	0FC9BH
+
 ; FCC1-FCC4: Information for each primary slot. The most significant bit is
 ; set if the primary slot is found to be expanded.
 EXPTBL		EQU	0FCC1H
+
+; 2 bytes per slot per page work area for applications
+SLTWRK		EQU	0FD09H
 
 PROCNM		EQU	0FD89H
 
@@ -307,30 +411,17 @@ I.003D	EQU	003DH	; ----I
 I$0048	EQU	0048H	; ----I
 I$008B	EQU	008BH	; ----I
 I$00FF	EQU	00FFH	; ----I
-I$013E	EQU	013EH	; ----I
 I.01C8	EQU	01C8H	; ----I
-I$021E	EQU	021EH	; ----I
 I$0327	EQU	0327H	; ----I
-I$051E	EQU	051EH	; ----I
 I$0529	EQU	0529H	; ----I
-I.0612	EQU	0612H	; ----I
-I$061E	EQU	061EH	; ----I
-I$071E	EQU	071EH	; ----I
 I$0900	EQU	0900H	; ----I
-I$0D1E	EQU	0D1EH	; ----I
 C$2F8A	EQU	2F8AH	; -C---
-I$351E	EQU	351EH	; ----I
 I$381E	EQU	381EH	; ----I
-D$3C00	EQU	3C00H	; --S--
 
 I73E8	EQU	73E8H
 
-J$8007	EQU	8007H	; J----
 I$8010	EQU	8010H	; ----I
 I$A001	EQU	0A001H	; ----I
-C$AF63	EQU	0AF63H	; -C---
-D$D460	EQU	0D460H	; ---L-
-I$E50C	EQU	0E50CH	; ----I
 I$F404	EQU	0F404H	; ----I
 D.F55F	EQU	0F55FH	; --SLI
 D.F560	EQU	0F560H	; --S-I
@@ -338,19 +429,12 @@ D.F561	EQU	0F561H	; ---LI
 D.F563	EQU	0F563H	; --SL-
 D.F564	EQU	0F564H	; ---L-
 D$F566	EQU	0F566H	; ---L-
-D.F663	EQU	0F663H	; ---LI
-D.F6A5	EQU	0F6A5H	; --S--
-I$F7F6	EQU	0F7F6H	; ----I
 D.F7F8	EQU	0F7F8H	; --S-I
 D$F80B	EQU	0F80BH	; --S--
 D$F813	EQU	0F813H	; --S--
 D$F81B	EQU	0F81BH	; --S--
-D.F85F	EQU	0F85FH	; --SL-
-D$F860	EQU	0F860H	; --S--
-I$F900	EQU	0F900H	; ----I
 C.F975	EQU	0F975H	; -C--I
 I$F976	EQU	0F976H	; ----I
-D.F97C	EQU	0F97CH	; --SL-
 D.F97F	EQU	0F97FH	; --SL-
 D.F980	EQU	0F980H	; --S-I
 D.F981	EQU	0F981H	; --S-I
@@ -370,32 +454,6 @@ D.F99D	EQU	0F99DH	; ---L-
 D.F99F	EQU	0F99FH	; ---L-
 D.F9A1	EQU	0F9A1H	; ---L-
 I$F9A3	EQU	0F9A3H	; ----I
-D.F9AF	EQU	0F9AFH	; --S-I
-D$F9B1	EQU	0F9B1H	; --S--
-D$F9B3	EQU	0F9B3H	; --S--
-J.F9BB	EQU	0F9BBH	; J---I
-I.F9C0	EQU	0F9C0H	; ----I
-I$F9F6	EQU	0F9F6H	; ----I
-I.F9F9	EQU	0F9F9H	; ----I
-I$FA08	EQU	0FA08H	; ----I
-I$FA19	EQU	0FA19H	; ----I
-I$FA20	EQU	0FA20H	; ----I
-D.FA26	EQU	0FA26H	; --SL-
-I.FA27	EQU	0FA27H	; ----I
-I$FA87	EQU	0FA87H	; ----I
-D$FA89	EQU	0FA89H	; ---L-
-I.FAB7	EQU	0FAB7H	; ----I
-D.FB39	EQU	0FB39H	; --SL-
-MUSICF	EQU	0FB3FH	; --SLI
-D.FB41	EQU	0FB41H	; --S-I
-D$FB66	EQU	0FB66H	; --S--
-D$FB8B	EQU	0FB8BH	; --S--
-D$FBB1	EQU	0FBB1H	; ---L-
-D$FC9B	EQU	0FC9BH	; ---L-
-D$FCC0	EQU	0FCC0H	; ---L-
-D.FCC1	EQU	0FCC1H	; ---LI
-I$FD00	EQU	0FD00H	; ----I
-I.FD09	EQU	0FD09H	; ----I
 
 H.TIMI	EQU	0FD9FH	; ----I
 H.PHYD	EQU	0FFA7H	; ---L-
@@ -460,14 +518,13 @@ MUSIC_VERSION_STR:
 
 	ALIGNCHK 04110H
 
-
-	JP	J4140		; WRTOPL
-?4113:	JP	J417B		; INIOPL
-?4116:	JP	J42CE		; MSTART
-?4119:	JP	J43DA		; MSTOP
-?411C:	JP	J4430		; RDDATA
-?411F:	JP	J4447		; OPLDRV
-?4122:	JP	J473B		; TSTBGM
+	JP	WRTOPL		; WRTOPL
+	JP	INIOPL		; INIOPL
+	JP	MSTART		; MSTART
+	JP	MSTOP		; MSTOP
+	JP	RDATA		; RDDATA
+	JP	OPLDRV		; OPLDRV
+	JP	TSTBGM		; TSTBGM
 ?4125:	RET
 ?4126:	DEFW	I4726
 
@@ -485,13 +542,12 @@ I4128:	DEFB	0ABH, 0
 	DEFB	043H, 1
 
 ;	  Subroutine WRTOPL
-;	     Inputs  ________________________
+;	     Inputs  A = OPLL register, E = data
 ;	     Outputs ________________________
-
-J4140:	OUT	(7CH), A
+WRTOPL:	OUT	(OPLREG), A
 	PUSH	AF
 	LD	A, E
-	OUT	(7DH), A
+	OUT	(OPLDAT), A
 	EX	(SP), HL
 	EX	(SP), HL
 	EX	(SP), HL
@@ -514,10 +570,10 @@ C4150:	PUSH	IY
 	LD	E, A
 	ADD	IY, DE
 	POP	DE
-	OUT	(7CH), A
+	OUT	(OPLREG), A
 	PUSH	AF
 	LD	A, E
-	OUT	(7DH), A
+	OUT	(OPLDAT), A
 	LD	(IY), A
 	EX	(SP), HL
 	EX	(SP), HL
@@ -548,13 +604,13 @@ C416C:	PUSH	HL
 ;	     Inputs  HL = workarea
 ;	     Outputs ________________________
 
-J417B:	DI
+INIOPL:	DI
 	LD	A, L
 	AND	0FEH
 	LD	L, A
 	PUSH	HL
 	LD	BC, 4000H
-	CALL	C41DC
+	CALL	MYSLTWRK
 	POP	BC
 	LD	A, (HL)
 	AND	01H
@@ -603,72 +659,72 @@ J41D4:	CALL	C4150
 	EI
 	RET
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-
-C41DC:	CALL	C41F6
-	AND	0FH	; 15
+;	Subroutine get SLTWRK entry
+;	  Inputs BC = address (for page)
+;	  Outputs ________________________
+MYSLTWRK:
+	CALL	GETSLT
+	AND	0FH
 	LD	L, A
 	RLCA
 	RLCA
 	RLCA
 	RLCA
-	AND	30H	; "0"
+	AND	30H
 	OR	L
-	AND	3CH	; "<"
-	OR	01H	; 1
+	AND	3CH
+	OR	01H
 	RLCA
 	LD	E, A
 	LD	D, 00H
-	LD	HL, I.FD09
+	LD	HL, SLTWRK
 	ADD	HL, DE
 	RET
 ;	-----------------
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	Subroutine get slotid
+;	  Inputs  BC = adres (for page)
+;	  Outputs ________________________
 
-C41F6:	PUSH	BC
+GETSLT:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	LD	A, B
+	LD	A, B			; get A15/A14 page indicator of BC
+	RLCA				; convert to 0-3 page number
 	RLCA
-	RLCA
-	AND	03H	; 3
-	LD	B, A
-	IN	A, (0A8H)
-	CALL	C4226
-	AND	03H	; 3
-	LD	E, A
-	LD	D, 00H
-	LD	HL, D.FCC1
+	AND	3
+	LD	B, A			; store page number in B
+	IN	A, (PPI_SLTREG)		; read SLOT REGISTER (aka RSLREG)
+	CALL	C4226			; move current slot id to bits 1 and 0
+	AND	3			; mask out the other slots
+	LD	E, A			; store current slot id in E
+	LD	D, 0
+	LD	HL, EXPTBL		; add current slot id to EXPTBL
 	ADD	HL, DE
-	LD	A, (HL)
+	LD	A, (HL)			; get extended slot bit
 	AND	80H
-	OR	E
-	JP	P, J4222
+	OR	E			; mask in current slot id
+	JP	P, GETSLT2		; dont if not extended
 	LD	E, A
+	INC	HL			; increment HL to SLTTBL
 	INC	HL
 	INC	HL
 	INC	HL
-	INC	HL
-	LD	A, (HL)
+	LD	A, (HL)			; load SLTTBL
 	RLCA
 	RLCA
 	CALL	C4226
-	AND	0CH	; 12
+	AND	12
 	OR	E
-J4222:	POP	HL
+GETSLT2:
+	POP	HL
 	POP	DE
 	POP	BC
 	RET
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-
+;	  Subroutine shift slot id for page B into lowest bits
+;	     Inputs  A slot ids, B page number
+;	     Outputs A rotated such that slot id is in lowest bits
 C4226:	INC	B
 	DEC	B
 	RET	Z
@@ -690,7 +746,7 @@ C4230:	LD	HL, I4243
 	LD	BC, I$008B
 	LDIR				; copy detect routine in workarea
 	LD	BC, 4000H
-	CALL	C41F6			; slotid of this MSX-MUSIC
+	CALL	GETSLT			; slotid of this MSX-MUSIC
 	JP	(IY)
 
 I4243:	PUSH	AF			; save slotid of this MSX-MUSIC
@@ -725,7 +781,7 @@ J4272:	POP	AF
 	RET
 
 I427A:	EX	DE, HL
-	LD	HL, D.FCC1
+	LD	HL, EXPTBL
 	LD	C, 0
 	LD	B, 4
 J4282:	PUSH	BC
@@ -781,15 +837,15 @@ I42C6:	DEFB	"APRLOPLL"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J42CE:	DI
+MSTART:	DI
 	PUSH	HL
 	PUSH	AF
-	LD	BC, 4000H
-	CALL	C41DC
+	LD	BC, 4000H		; page 1
+	CALL	MYSLTWRK		; get SLTWRK entry
 	LD	A, (HL)
 	INC	HL
-	LD	H, (HL)
-	AND	0FEH
+	LD	H, (HL)			; de-reference
+	AND	0FEH			; mask out bit 0
 	LD	L, A
 	PUSH	HL
 	POP	IY
@@ -923,9 +979,9 @@ I43C5:	DEFB 00EH, 020H			; enable rhythm
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J43DA:	DI
+MSTOP:	DI
 	LD	BC, 4000H
-	CALL	C41DC
+	CALL	MYSLTWRK
 	LD	A, (HL)
 	INC	HL
 	LD	H, (HL)
@@ -969,7 +1025,7 @@ J4410:	LD	(IX+2), 00H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J4430:	PUSH	BC
+RDATA:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	EX	DE, HL
@@ -978,7 +1034,7 @@ J4430:	PUSH	BC
 	ADD	HL, HL
 	ADD	HL, HL
 	ADD	HL, HL
-	LD	BC, I4C00
+	LD	BC, INSTRUMENT_PROFILES
 	ADD	HL, BC
 	LD	BC, 8
 	LDIR
@@ -991,14 +1047,14 @@ J4430:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J4447:	PUSH	AF
+OPLDRV:	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	PUSH	IX
 	PUSH	IY
 	LD	BC, 4000H
-	CALL	C41DC
+	CALL	MYSLTWRK
 	LD	A, (HL)
 	INC	HL
 	LD	H, (HL)
@@ -1290,7 +1346,7 @@ C463B:	INC	A
 	ADD	HL, HL
 	ADD	HL, HL
 	ADD	HL, HL
-	LD	DE, I4C00
+	LD	DE, INSTRUMENT_PROFILES
 	ADD	HL, DE
 	LD	A, 07H	; 7
 J4649:	DEC	HL
@@ -1436,7 +1492,7 @@ J471F:	ADD	A, E
 	RET
 
 I4726:	OR	A
-	JP	Z, J43DA			; MSTOP
+	JP	Z, MSTOP			; MSTOP
 	DEC	A
 	ADD	A, A
 	LD	D, 00H
@@ -1448,16 +1504,16 @@ I4726:	OR	A
 	LD	H, (HL)
 	LD	L, A
 	LD	A, B
-	JP	J42CE			; MSTART
+	JP	MSTART			; MSTART
 
 ;	  Subroutine TSTBGM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J473B:	PUSH	BC
+TSTBGM:	PUSH	BC
 	PUSH	HL
 	LD	BC, 4000H
-	CALL	C41DC
+	CALL	MYSLTWRK
 	LD	A, (HL)
 	INC	HL
 	LD	H, (HL)
@@ -1474,10 +1530,11 @@ J473B:	PUSH	BC
 
 
 ; Table with 64 software instruments
-; each entry has 8 bytes, these are the registervalues for OPLL register 7 - 0
+; each entry has 8 bytes, these are the register values for OPLL register 7 - 0
 ; so register 7 is first stored and then downwards
 
-I4C00:	DEFB	11H, 11H, 20H, 20H, 0FFH, 0B2H, 0F4H, 0F4H
+INSTRUMENT_PROFILES:
+	DEFB	11H, 11H, 20H, 20H, 0FFH, 0B2H, 0F4H, 0F4H
 	DEFB	30H, 10H, 20H, 20H, 0FBH, 0B2H, 0F3H, 0F3H
 	DEFB	61H, 61H, 20H, 20H, 0B4H, 56H, 17H, 17H
 	DEFB	31H, 31H, 20H, 20H, 43H, 43H, 26H, 26H
@@ -1552,7 +1609,7 @@ I4C00:	DEFB	11H, 11H, 20H, 20H, 0FFH, 0B2H, 0F4H, 0F4H
 ;	+9	enable and reset OPLL
 
 I5000:	JP	ROM_STATEMENT
-J5003:	JP	J605B
+J5003:	JP	KEYINT
 X5006:	JP	J5078
 C5009:	LD	HL, C.F975
 	LD	DE, I$F976
@@ -1564,7 +1621,7 @@ J5018:	PUSH	BC
 	LD	A, 4
 	SUB	B
 	LD	C, A
-	LD	HL, D.FCC1
+	LD	HL, EXPTBL
 	CALL	C5486
 	LD	A, (HL)
 	ADD	A, A
@@ -1641,39 +1698,39 @@ C507F:	DI
 	RET	NZ
 	CALL	SET_MSX_INIT
 	LD	HL, H.TIMI
-	LD	DE, J.F9BB
+	LD	DE, O.TIMI
 	PUSH	HL
-	CALL	C50AE
-	LD	HL, I50B9
-	POP	DE
-	CALL	C50AE
+	CALL	LDIR5
+	LD	HL, JMPKEYINT
+	POP	DE				; DE = H.TIMI
+	CALL	LDIR5
 	CALL	C554C
-	LD	(D.F97C), A
+	LD	(MUSCSLID), A
 	LD	(H.TIMI+1), A
-	LD	HL, I50B4
+	LD	HL, JMPPLAY
 	LD	DE, H.PLAY
-	CALL	C50AE
+	CALL	LDIR5
 	LD	(H.PLAY+1), A
 	RET
 
-
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-
-
-C50AE:	LD	BC, 5
+;	  Subroutine Copy 5 bytes from HL to DE
+;	     Inputs  HL Source, DE Destination
+LDIR5:	LD	BC, 5
 	LDIR
 	RET
 
-I50B4:	RST	30H
-	DEFB	0
+; Copied to H.PLAY - PLAY statement handler hook
+JMPPLAY:
+	RST	30H				; interslot call
+	DEFB	0				; replace with MSX-MUSIC's slot it
 	DEFW	C57A1
 	RET
 
-I50B9:	RST	30H
-	DEFB	0
-	DEFW	C7FED
+;	Copied to H.TIMI - KEYINT handler hook
+JMPKEYINT:
+	RST	30H				; interslot call
+	DEFB	0				; replace with MSX-MUSIC's slot it
+	DEFW	J.KEYINT
 	RET
 
 
@@ -1717,7 +1774,7 @@ GETSLTWRK:
 	ADD	A, A
 	LD	E, A
 	LD	D, 00H
-	LD	HL, I.FD09
+	LD	HL, SLTWRK
 	ADD	HL, DE
 	POP	DE
 	POP	AF
@@ -2103,7 +2160,7 @@ J53AF:	POP	DE
 	LD	DE, HOLD8
 	LD	BC, BASINITLN
 	LDIR
-	LD	A, (D.F85F)
+	LD	A, (MAXFIL)
 	LD	(D$F80B), A
 	POP	HL
 	LD	A, L
@@ -2111,9 +2168,9 @@ J53AF:	POP	DE
 	LD	A, H
 	LD	(D$F81B), A
 	XOR	A
-	LD	(D.F85F), A
+	LD	(MAXFIL), A
 	LD	HL, BUF
-	LD	(D$F860), HL
+	LD	(FILTAB), HL
 	LD	HL, D.F560
 	LD	(BUF), HL
 	LD	(HL), A
@@ -2277,11 +2334,11 @@ J54B3:	CALL	C55E9
 ;	     Outputs ________________________
 
 C54C5:	LD	A, 01H	; 1
-	LD	(D.F6A5), A
+	LD	(SUBFLG), A
 	CALL	BRMPTRGET
 	JP	NZ, ERRILLEGALFNCALL
-	LD	(D.F6A5), A
-	LD	A, (D.F663)
+	LD	(SUBFLG), A
+	LD	A, (VALTYP)
 	CP	03H	; 3
 	JP	Z, ERRILLEGALFNCALL
 	EX	DE, HL
@@ -2318,7 +2375,7 @@ J54EB:	CALL	C54F3
 ;	     Outputs ________________________
 
 C54F3:	LD	(D.F7F8), HL
-	LD	HL, D.F663
+	LD	HL, VALTYP
 	LD	A, (HL)
 	CP	02H	; 2
 	JR	Z, J551F
@@ -2337,7 +2394,7 @@ J5511:	LD	(HL), 02H	; 2
 	CALL	BRMMBCVRT
 	LD	C, 04H	; 4
 J5519:	POP	DE
-	LD	HL, I$F7F6
+	LD	HL, DAC
 	JR	J5524
 ;	-----------------
 J551F:	LD	HL, D.F7F8
@@ -2392,12 +2449,12 @@ C554C:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5558:	IN	A, (0A8H)
+C5558:	IN	A, (PPI_SLTREG)
 	CALL	C557A
 	AND	03H	; 3
 	LD	E, A
 	LD	D, 00H
-	LD	HL, D.FCC1
+	LD	HL, EXPTBL
 	ADD	HL, DE
 	LD	A, (HL)
 	AND	80H
@@ -2792,12 +2849,12 @@ J5771:	SRL	H
 ; convert dac to integer routine
 ; copied to CODEBUF for execution
 
-I577B:	LD	A, (D.F97C)
+I577B:	LD	A, (MUSCSLID)
 	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	LD	A, (D.FCC1)
+	LD	A, (EXPTBL)
 	LD	H, 40H	; "@"
 	CALL	ENASLT
 	POP	HL
@@ -2828,7 +2885,7 @@ I57A0:	DEFB	" "
 C57A1:	CALL	MEMCHK
 	CALL	C57D9
 	PUSH	HL
-	LD	A, (D.F97C)
+	LD	A, (MUSCSLID)
 	DI
 	ADD	A, A
 	LD	HL, 8
@@ -2849,7 +2906,7 @@ J57B4:	ADD	HL, SP
 	LD	E, L
 	INC	DE
 	INC	DE
-	LD	A, (D.F97C)
+	LD	A, (MUSCSLID)
 	ADD	A, A
 	LD	BC, 8
 	JR	NC, J57D3
@@ -3368,7 +3425,7 @@ J5AC4:	LD	HL, 0
 	INC	HL
 	INC	HL
 	LD	A, (HL)
-	LD	(D.FB39), A
+	LD	(SAVVOL), A
 	LD	(HL), 80H
 	DEC	HL
 	DEC	HL
@@ -3538,7 +3595,7 @@ J5BA2:	LD	L, VCBUF_PCKLEN
 	OR	E			; rest ?
 	JR	NZ, J5BC2		; nope,
 	PUSH	HL
-	LD	A, (D.FB39)
+	LD	A, (SAVVOL)
 	OR	80H
 	LD	BC, I.000B
 	ADD	HL, BC
@@ -4302,7 +4359,8 @@ C602A:	CALL	C6614
 ;	-----------------
 J6058:	JP	ERRILLEGALFNCALL
 ;	-----------------
-J605B:	PUSH	AF
+
+KEYINT:	PUSH	AF
 	DI
 	LD	HL, D.F999
 	LD	A, (D.F983)
@@ -4325,7 +4383,7 @@ J606B:	XOR	A
 	JP	P, J6066
 J6082:	INC	(HL)
 	POP	AF
-	JP	J.F9BB
+	JP	O.TIMI
 
 
 ;	  Subroutine __________________________
@@ -4901,10 +4959,10 @@ C639D:	EI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C63B1:	LD	A, (D$FBB1)
+C63B1:	LD	A, (BASROM)
 	OR	A
 	RET	NZ
-	LD	A, (D$FC9B)
+	LD	A, (INTFLG)
 	SUB	03H	; 3
 	OR	A
 	RET
@@ -5088,7 +5146,7 @@ J64AE:	SCF
 	LD	DE, 0
 	ADD	HL, DE
 	LD	(VOICE_CTRL_BUF), HL
-	LD	A, (D.FCC1)
+	LD	A, (EXPTBL)
 	LD	HL, IDBYT1
 	CALL	RDSLT
 	AND	80H
@@ -5776,7 +5834,7 @@ J6805:	CPL
 	OR	A
 	JR	NZ, J6816
 	EX	AF, AF'
-	LD	HL, D.F9AF
+	LD	HL, PSGDUV0
 	ADD	A, A
 	CALL	C5486
 	POP	DE
@@ -5784,7 +5842,7 @@ J6805:	CPL
 	RET
 ;	-----------------
 J6816:	EX	AF, AF'
-	LD	DE, D.FB41
+	LD	DE, VCBA
 	ADD	HL, DE
 	OR	A
 	JR	Z, J6825
@@ -5841,14 +5899,14 @@ C683D:	DI
 	JR	Z, J6867
 	DEC	(HL)
 	LD	HL, X.FFFF
-	LD	(D.FB41), HL
-	LD	(D$FB66), HL
-	LD	(D$FB8B), HL
+	LD	(VCBA), HL
+	LD	(VCBB), HL
+	LD	(VCBC), HL
 	INC	HL
 	INC	HL
-	LD	(D.F9AF), HL
-	LD	(D$F9B1), HL
-	LD	(D$F9B3), HL
+	LD	(PSGDUV0), HL
+	LD	(PSGDUV1), HL
+	LD	(PSGDUV2), HL
 	LD	A, 87H
 	LD	(MUSICF), A
 J6867:	LD	HL, D.F997
@@ -5920,7 +5978,7 @@ C68AE:	CP	7BH	; "{"
 	CCF
 	RET
 ;	-----------------
-?68C4:	LD	A, (D.F663)
+?68C4:	LD	A, (VALTYP)
 	CP	08H	; 8
 	JR	NC, J68D0
 	SUB	03H	; 3
@@ -6754,7 +6812,7 @@ C6DB5:	PUSH	AF
 	CALL	C6DF3
 	JR	C, J6DDD
 	PUSH	HL
-	LD	HL, I.F9C0
+	LD	HL, OPRGSAV
 	ADD	A, L
 	LD	L, A
 	LD	A, 00H
@@ -6763,11 +6821,11 @@ C6DB5:	PUSH	AF
 	DI
 	LD	(HL), B
 	LD	A, C
-	OUT	(7CH), A
+	OUT	(OPLREG), A
 	EX	(SP), HL
 	EX	(SP), HL
 	LD	A, B
-	OUT	(7DH), A
+	OUT	(OPLDAT), A
 	EX	(SP), HL
 	EX	(SP), HL
 	EX	(SP), HL
@@ -6795,7 +6853,7 @@ C6DE0:	LD	A, C
 	CALL	C6DF3
 	RET	C
 	PUSH	HL
-	LD	HL, I.F9C0
+	LD	HL, OPRGSAV
 	LD	A, C
 	ADD	A, L
 	LD	L, A
@@ -8135,7 +8193,8 @@ I6E0C:	DEFM	'Piano 1 ', 00H
 
 	DEFS	07FEDH-$, 0
 
-C7FED:	JP	J5003
+J.KEYINT:
+	JP	J5003
 
 	DEFS	07FF6H-$, 0
 
