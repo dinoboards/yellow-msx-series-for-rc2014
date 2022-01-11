@@ -61,6 +61,9 @@ https://sourceforge.net/projects/msxsyssrc/
 You can assembly a new ROM image by following the instructions below, or download one of the pre-assembled [released packages](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
 
 There are 2 different ways to compile and assemble the rom.  Docker or host.  With Docker, you only need to have docker installed.  Alternatively, you can install the full tool chain (z88dk, pasmo, linux packages etc)
+
+It is highly recommended that the docker build process be used to assemble the code - its the simplest and most reliable way to get all the dependencies and tools (with the correct versions), installed and configured.
+
 ## Building the binaries using the prebuilt docker image
 
 After you have installed docker on your system, you can compile the ROM image using the following command from within the `msx` directory:
@@ -84,7 +87,17 @@ msxmake apps
 
 If you prefer to avoid using Docker, the following sections describe a more native build process.
 
+### Updating your local copy of the docker image
+
+As and when new versions of the Docker image are published, you will need to retrieve and update your local copy of the image:
+
+```
+docker pull vipoo/yellow-msx-rc2014-tool-chain:latest
+```
+
 ## Building the binaries manually
+
+> These notes on building outside of the docker image may not be as detailed as required - refer to the Dockerfile for specific requirements/commands required to setup the tool chain.
 
 The Makefile in this directory can orchestrate the building of all binary units required for the RC2014 MSX system.
 
@@ -103,6 +116,7 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 * mtools
 * Nextor support tools, see below
 * [pasmo z80 assembler](https://pasmo.speccy.org/)
+* [sjasmplus](https://github.com/z00m128/sjasmplus)
 
 > PASMO: For debian based linux, just run `sudo apt install pasmo`
 
