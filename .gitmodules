@@ -25,3 +25,6 @@
 [submodule "msx/bbcbasic-z80"]
 	path = msx/bbcbasic-z80
 	url = git@github.com:vipoo/bbcbasic-z80.git
+[submodule "referened-repos/msx-hub"]
+	path = referened-repos/msx-hub
+	url = git@github.com:S0urceror/MSX-USB.git
