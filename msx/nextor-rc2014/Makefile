@@ -4,7 +4,11 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
+.DELETE_ON_ERROR:
+
 BINDIR := ./bin/
+
+ASM = sjasmplus --fullpath --inc=../nextor/source/kernel/ --raw=$@ --sym=$@.sym --lst=$@.lst --exp=$@.exp
 
 all: bin/rcembdrv.bin $(BINDIR)cbios.nextor.rom $(BINDIR)rc2014.nextor.rom
 
@@ -15,7 +19,7 @@ clean:
 
 $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm
 	@mkdir -p $(BINDIR)
-	sjasmplus --fullpath --inc=../nextor/source/kernel/ --lst=$(BINDIR)rcembdrv.lst --exp=$(BINDIR)rcembdrv.exp.asm --raw=$(BINDIR)rcembdrv.bin --sym=$(BINDIR)rcembdrv.sym.asm rcembdrv.asm embinc.asm
+	$(ASM) $^
 	filesize=$$(stat -c%s "$(BINDIR)rcembdrv.bin")
 	if ((filesize > 16484 )); then
 		echo -e "\r\nError: $(BINDIR)rcembdrv.bin exceeded size of 16k"
@@ -24,7 +28,7 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm
 
 $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm embinc.asm version.asm
 	@mkdir -p $(BINDIR)
-	sjasmplus --fullpath --inc=../nextor/source/kernel/ --lst=$(BINDIR)rc2014dr.lst --exp=$(BINDIR)rc2014dr.exp.asm --raw=$(BINDIR)rc2014dr.bin --sym=$(BINDIR)rc2014dr.sym.asm rc2014dr.asm embinc.asm
+	$(ASM) rc2014dr.asm embinc.asm
 	filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")
 	if ((filesize > 16484 )); then
 		echo -e "\r\nError: $(BINDIR)rc2014dr.bin exceeded size of 16k"
@@ -33,6 +37,7 @@ $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm embinc.asm version.asm
 
 $(BINDIR)chgbnk.bin: chgbnk.asm
 	@mkdir -p $(BINDIR)
+	$(ASM) $^
 	sjasmplus --fullpath --inc=../nextor/source/kernel/ --lst=$(BINDIR)chgbnk.lst --exp=$(BINDIR)chgbnk.exp.asm --raw=$(BINDIR)chgbnk.bin --sym=$(BINDIR)chgbnk.sym.asm chgbnk.asm
 
 cbios-nextor-kernel:
