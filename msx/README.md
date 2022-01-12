@@ -74,8 +74,10 @@ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}
 
 The docker run command is complex, so to make it easier, make an alias entry (typically in something like `~/.bash_aliases`)
 
+The following alias statement, is a bit complex, as it includes directory scanning code - to enable running the msxmake command in any sub-directory of this repo.
+
 ```
-alias msxmake="docker run -v \${PWD}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest make"
+alias msxmake="_msxRootDir=\"\"; _msxWrkDir=\"\"; pushd . > /dev/null; while [ ! -f root.md ]; do _msxRootDir=\"\${_msxRootDir}../\"; _msxWrkDir=\"\${PWD##*/}/\${_msxWrkDir}\"; cd ..; done; popd > /dev/null; docker run -e GITHUB_TOKEN -v \${PWD}/\${_msxRootDir}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -w /src/\${_msxWrkDir} -it vipoo/yellow-msx-rc2014-tool-chain:latest make"
 ```
 
 There after, you can treat the alias as an alternative make command eg:
