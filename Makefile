@@ -41,7 +41,7 @@ release: release-build release-notes
 release-build:
 	@version=$$(date +%Y-%m-%d)
 	$(MAKE) -C msx clean
-	echo -e "INFO_S:			DB	10, \"MSX ON RC2014 ($${version})\", 10\r\n" > "./msx/nextor-rc2014/version.asm"
+	echo -e "INFO_S:			DB	10, 13, \"MSX ON RC2014 ($${version})\", 10, 13\r\n" > "./msx/nextor-rc2014/version.asm"
 	RELEASE=true $(MAKE) -C msx jeds
 	RELEASE=true $(MAKE) -C msx/apps -j
 	RELEASE=true $(MAKE) -C msx apps

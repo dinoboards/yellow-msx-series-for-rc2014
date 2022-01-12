@@ -22,7 +22,7 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm
 		exit 1
 	fi
 
-$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm embinc.asm
+$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm embinc.asm version.asm
 	@mkdir -p $(BINDIR)
 	sjasmplus --fullpath --inc=../nextor/source/kernel/ --lst=$(BINDIR)rc2014dr.lst --exp=$(BINDIR)rc2014dr.exp.asm --raw=$(BINDIR)rc2014dr.bin --sym=$(BINDIR)rc2014dr.sym.asm rc2014dr.asm embinc.asm
 	filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")
