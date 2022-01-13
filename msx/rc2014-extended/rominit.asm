@@ -48,49 +48,37 @@ INST_HOOK:
 	; FOR PERFORMANCE REASONS, WE KNOW WE ARE SLOT 3-3 - SO JUST HARD CODE THE SLTWRK OFFSET
 	; CALL	WSLW10
 
-	LD	DE, FOSSIL_DRV_START
+	LD	DE, @FOSSIL_DRV_START
 	EX	DE, HL
-	LD	BC, FOSSIL_DRV_LENGTH
+	LD	BC, @FOSSIL_DRV_LENGTH
 	LDIR
 
 	; relocate the fossil driver
-	LD	IX, (WORK)
-	LD	HL, FOSSILE_DRV_MAP + 2
-	LD	BC, (FOSSILE_DRV_MAP)
+	LD	IX, @FOSSILE_DRV_MAP
+	LD	BC, @FOSSILE_DRV_MAP_LENGTH
+	LD	DE, (WORK)		; DE' => amount required to be added to
 
-	exx
-	ld	de, (WORK)	; DE' => amount required to be added to
-	exx
-
-LOOP:
-	PUSH	BC
-
-	LD	B, 8
-	LD	A, (HL)
-	INC	HL
-NEXT:
-	RLCA
-	JR	NC, SKIP
-
-	EXX
-	LD	L, (IX)
+LOOP:	LD	L, (IX)
 	INC	IX
 	LD	H, (IX)
-	ADD	HL, DE
-	LD	(IX), H
-	DEC	IX
-	LD	(IX), L
-	EXX
-
-SKIP:
 	INC	IX
-	DEC	B
-	JR	NZ, NEXT
+	ADD	HL, DE			; HL -> ADDRESS REFERENCE TO BE RELOCATED
 
-	POP	BC
-	DEC	BC
-	LD	A, C
-	OR	B
+	PUSH	HL			; SAVE ADDRESS REFERENCE ADDRESS
+	LD	A, (HL)
+	INC	HL
+	LD	H, (HL)
+	LD	L, A			; ADDRESS VALUE TO BE RELOCATED
+
+	ADD	HL, DE			; RELOCATE ADDR
+
+	POP	IY			; GET ADDR REFERENCE
+	LD	(IY), L
+	LD	(IY+1), H		; RELOCATE THE ADDRESS
+
+	DEC	BC	
+	LD	A, B
+	OR	C
 	JR	NZ, LOOP
 
 	RET
@@ -102,18 +90,3 @@ ALLOC_FAILED:
 
 MSG.ALLOC_FAILED:
 	DB	"RC2014 Driver: Insufficient page 3 memory available", 13, 10, 0
-
-FOSSIL_DRV_START:
-if SYMBOL_ONLY=1
-	INCBIN	"bin/fossil_xxx.bin"
-else
-	INCBIN	"bin/fossil_000.bin"
-endif
-FOSSIL_DRV_LENGTH	EQU	$-FOSSIL_DRV_START
-
-FOSSILE_DRV_MAP:
-if SYMBOL_ONLY=1
-	INCBIN	"bin/fossil-map-xxx.bin"
-else
-	INCBIN	"bin/fossil-map.bin"
-endif

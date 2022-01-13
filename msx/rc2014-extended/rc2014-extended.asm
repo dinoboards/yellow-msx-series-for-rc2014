@@ -2,7 +2,6 @@
 	ORG	08000H
 
 	include "msx.inc"
-	INCLUDE	"fossil.sym"
 	INCLUDE	"sio.inc"
 
 ; +0	ID		Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
@@ -21,7 +20,7 @@ ROM_HEADER:
 	DS	6
 
 	INCLUDE "rominit.asm"
-
+	INCLUDE	"fossil.asm"
 	INCLUDE "alloc.asm"
 	INCLUDE "sio.asm"
 	INCLUDE	"utils.asm"

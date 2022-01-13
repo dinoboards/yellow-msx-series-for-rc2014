@@ -1,13 +1,19 @@
 
-	include	"sio.inc"
-	include	"msx.inc"
+	; include	"sio.inc"
+	; include	"msx.inc"
 
+	; MODULE	FOSSIL
 ;
 ; All the code here is relocated to page 3 location during rominit
 
+@FOSSIL_DRV_START:
+
 SIO_BUFSZ	EQU	150
 
-FOSSIL_JUMP_TABLE:
+	MODULE	FOSSIL
+	PHASE	0
+	RELOCATE_START
+
 	jp	getversion	; Version H.L (H,L packed BCD)
 	jp	init		; initialises RS232
 	jp	deinit		; deinitialises the RS232
@@ -142,26 +148,26 @@ deinit:
 set_baud:
  	LD	A, L
 	CP	H
-	JR	NC, SKIP1
+	JR	NC, .SKIP1
 	LD	A, H		; H IS LARGER, SO USE THAT AS BASIS
 
-SKIP1:
+.SKIP1:
 	CP	5
-	JR	NC, SKIP2	; LESS THAN 5
+	JR	NC, .SKIP2	; LESS THAN 5
 	LD	A, 5		; SET TO 5
-SKIP2:
+.SKIP2:
 	CP 	7
-	JR	C, SKIP3	; GREATER THAN 7
+	JR	C, .SKIP3	; GREATER THAN 7
 	LD	A, 7		; SET TO 7
 
-SKIP3:
-	LD	HL, RSC_RCV_BAUD
+.SKIP3:
+	LD	HL, FS_RSC_RCV_BAUD
 	CP	7
-	JR	NZ, SKIP4
+	JR	NZ, .SKIP4
 	LD	HL, BAUD_HIGH
 	JR	SET_BAUD_EXIT
 
-SKIP4:
+.SKIP4:
 	CP	6
 	JR	NZ, SKIP5
 	LD	HL, BAUD_MID
@@ -171,8 +177,8 @@ SKIP5:
 	LD	HL, BAUD_LOW
 
 SET_BAUD_EXIT:
-	LD	(RSC_RCV_BAUD), HL
-	LD	(RSC_SND_BAUD), HL
+	LD	(FS_RSC_RCV_BAUD), HL
+	LD	(FS_RSC_SND_BAUD), HL
 
 	LD	L, A		; RETURN THE ACTUAL SELECTED BAUD RATES
 	LD	H, A
@@ -258,8 +264,7 @@ keyb_hook:
 get_info:
 	RET
 
-	PUBLIC	SIO_INT
-SIO_INT:
+@SIO_INT:
 	DI				; INTERRUPTS WILL BE RE-ENABLED BY MSX BIOS
 
 	; CHECK TO SEE IF SOMETHING IS ACTUALLY THERE
@@ -388,19 +393,30 @@ SIO_INT_ABORT:
 	JR	SIO_INTRCV4
 
 RS232_INIT_TABLE:
-RSC_CHAR_LEN:		DB	'8'		; Character length '5'-'8'
-RSC_PARITY:		DB	'N'		; Parity 'E','O','I','N'
-RSC_STOP_BITS:		DB	'1'		; Stop bits '1','2','3'
-RSC_XON_XOFF:		DB	'N'		; XON/XOFF controll 'X','N'
-RSC_CTR_RTS:		DB	'H'		; CTR-RTS hand shake 'H','N'
-RSC_AUTO_RCV_LF:	DB	'N'		; Auto LF for receive 'A','N'
-RSC_AUTO_SND_LF:	DB	'N'		; Auto LF for send 'A','N'
-RSC_SI_SO_CTRL:		DB	'N'		; SI/SO control 'S','N'
-RSC_RCV_BAUD:		DW	19200		; Receiver baud rate  50-19200 ; MARK MAKE BAUD RATE CONFIG
-RSC_SND_BAUD:		DW	19200		; Transmitter baud rate 50-19200 ; MARK MAKE BAUD RATE CONFIG
-RSC_TIMEOUT_CNT:	DB	0		; Time out counter 0-255
+FS_RSC_CHAR_LEN:	DB	'8'		; Character length '5'-'8'
+FS_RSC_PARITY:		DB	'N'		; Parity 'E','O','I','N'
+FS_RSC_STOP_BITS:	DB	'1'		; Stop bits '1','2','3'
+FS_RSC_XON_XOFF:	DB	'N'		; XON/XOFF controll 'X','N'
+FS_RSC_CTR_RTS:		DB	'H'		; CTR-RTS hand shake 'H','N'
+FS_RSC_AUTO_RCV_LF:	DB	'N'		; Auto LF for receive 'A','N'
+FS_RSC_AUTO_SND_LF:	DB	'N'		; Auto LF for send 'A','N'
+FS_RSC_SI_SO_CTRL:	DB	'N'		; SI/SO control 'S','N'
+FS_RSC_RCV_BAUD:	DW	19200		; Receiver baud rate  50-19200 ; MARK MAKE BAUD RATE CONFIG
+FS_RSC_SND_BAUD:	DW	19200		; Transmitter baud rate 50-19200 ; MARK MAKE BAUD RATE CONFIG
+FS_RSC_TIMEOUT_CNT:	DB	0		; Time out counter 0-255
 
 SIO_RCVBUF:
-SIO_HD:		DW	SIO_BUF		; BUFFER HEAD POINTER
-SIO_TL:		DW	SIO_BUF		; BUFFER TAIL POINTER
-SIO_BUF:	DS	SIO_BUFSZ, $00	; RECEIVE RING BUFFER
+SIO_HD:			DW	SIO_BUF		; BUFFER HEAD POINTER
+SIO_TL:			DW	SIO_BUF		; BUFFER TAIL POINTER
+SIO_BUF:		DS	SIO_BUFSZ, $00	; RECEIVE RING BUFFER
+
+
+	RELOCATE_END
+	UNPHASE
+@FOSSIL_DRV_LENGTH	EQU	$-FOSSIL_DRV_START
+
+@FOSSILE_DRV_MAP:
+	RELOCATE_TABLE
+@FOSSILE_DRV_MAP_LENGTH	EQU	($-@FOSSILE_DRV_MAP)/2
+
+	ENDMODULE

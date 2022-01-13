@@ -49,7 +49,6 @@ EXTBIO_RS2_JUMP_TABLE:
 	; Return: carry flag is set if illegal parameters are contained
 	; Modify: [AF]
 
-	PUBLIC	RSF_INIT	; INIT ENTRY POINT FOR FOSSIL DRIVER
 RSF_INIT:
 	EI
 	PUSH	HL
@@ -58,7 +57,6 @@ RSF_INIT:
 	CALL	SIO_INIT
 	JR	RS_INIT_INSTALL
 
-	PUBLIC	RS_INIT
 RS_INIT:				; initialize RS232C port
 	EI
 
@@ -127,7 +125,7 @@ RS_INIT_INSTALL:
 	; INSTALL INTERRUPT HOOK TO SIO_INT
 	LD	A, $C3                  ; JUMP
 	LD	DE, (WORK)
-	LD	HL, SIO_INT             ; SET TO JUMP TO SIO_INIT IN PAGE 3 RAM
+	LD	HL, @SIO_INT             ; SET TO JUMP TO SIO_INIT IN PAGE 3 RAM
 	ADD	HL, DE
 	DI
 	LD	(H_KEYI), A             ; SET JMP INSTRUCTION
@@ -191,7 +189,6 @@ SIO_INIT:
 	EI
 	RET
 
-	PUBLIC	RS_OPEN
 ; ------------------------------------------------
 RS_OPEN:				; open RS232C port
 	EI
@@ -235,9 +232,8 @@ STAT:				; Read Status
 
 GETCHR:				; reveive data
 	EI
-	JP	SIO_RCBBYT
+	JP	@SIO_RCBBYT
 
-	PUBLIC	RS_SNDCHR
 RS_TRANSMIT_PENDING_MASK	EQU	$04	; BIT 2 OF SIO REGISTER 0
 RS_SNDCHR:					; SEND CHARACTER OUT
 	EI
