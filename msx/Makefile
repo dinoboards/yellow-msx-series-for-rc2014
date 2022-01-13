@@ -98,6 +98,7 @@ clean:
 	(cd msxsys-build && $(MAKE) --no-print-directory clean)
 	$(MAKE) -C cbios --no-print-directory clean
 	$(MAKE) -C ./rc2014-extended --no-print-directory clean
+	$(MAKE) -C ./nextor-rc2014 --no-print-directory clean
 	cd nextor/source && $(MAKE) --no-print-directory clean -f Makefile-rc2014.mk
 	rm -rf nextor-rc2014/extras/*
 
