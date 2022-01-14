@@ -61,7 +61,7 @@ $(BINDIR)$1.fdd.dsk: $1-nextor-kernel $(BINDIR)rcembdrv.bin
 	mmove -i $(BINDIR)$1.fdd.dsk ::/system/command2.com ::/
 	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/nextor.sys ::/
 	[[ $$$$(ls -A ./extras) ]] && mcopy -i $(BINDIR)$1.fdd.dsk ./extras/* ::/
-	echo "Built disk image $(BINDIR)$1.fdd.dsk"
+	# echo "Built disk image $(BINDIR)$1.fdd.dsk"
 
 #Package driver and disk image
 $(BINDIR)$1.driver-with-sectors.bin: $(BINDIR)rc2014dr.bin $(BINDIR)rcembdrv.bin $(BINDIR)$1.fdd.dsk
@@ -78,12 +78,12 @@ $(BINDIR)$1.driver-with-sectors.bin: $(BINDIR)rc2014dr.bin $(BINDIR)rcembdrv.bin
 		dd status=none conv=notrunc if=rcembdrv.bin of=$1.driver-with-sectors.bin bs=8k count=1 seek=$$$$((2*$$$$i))
 		dd status=none conv=notrunc if=$1.fdd.dsk of=$1.driver-with-sectors.bin bs=1 count=$$$${DATSIZ} seek=$$$$BNK_ADDR skip=$$$$SKIP
 	done
-	echo "Built image $(BINDIR)$1.driver-with-sectors.bin"
+	# echo "Built image $(BINDIR)$1.driver-with-sectors.bin"
 
 #Package rom with driver and disk image
 $(BINDIR)$1.nextor.rom: $(BINDIR)$1.driver-with-sectors.bin $(BINDIR)chgbnk.bin
 	@cd $(BINDIR)
-	../../nextor/linuxtools/mknexrom ../../nextor/bin/working/$1/dos250ba.dat $1.nextor.rom -d:$1.driver-with-sectors.bin -m:chgbnk.bin
+	../../nextor/linuxtools/mknexrom ../../nextor/bin/working/$1/dos250ba.dat $1.nextor.rom -q -d:$1.driver-with-sectors.bin -m:chgbnk.bin
 
 endef
 

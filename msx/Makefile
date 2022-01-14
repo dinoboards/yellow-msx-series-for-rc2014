@@ -4,6 +4,8 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
+MAKEFLAGS += -s
+
 all: nextor-mfr apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/music100.rom bin/music410.rom bin/rcmusic.rom bin/bbcbasic.com
 
 pmsxsysromimages:
@@ -67,7 +69,7 @@ rom-image-pal: bin/cbios.nextor.rom cbios ./rc2014-extended/bin/rc2014-extended.
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1  seek=3
 	dd status=none conv=notrunc if=./bin/cbios.nextor.rom             	    			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=27 seek=4
 	dd status=none conv=notrunc if=./rc2014-extended/bin/rc2014-extended.rom		 	of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1  seek=31
-	printf 'Built bin/yellow-msx-pal-rc2104.rom\r\n'
+	# printf 'Built bin/yellow-msx-pal-rc2104.rom\r\n'
 
 .PHONY: rom-image-ntsc
 rom-image-ntsc: bin/cbios.nextor.rom cbios ./rc2014-extended/bin/rc2014-extended.rom
@@ -78,7 +80,7 @@ rom-image-ntsc: bin/cbios.nextor.rom cbios ./rc2014-extended/bin/rc2014-extended
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1  seek=3
 	dd status=none conv=notrunc if=./bin/cbios.nextor.rom    			     						of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=27 seek=4
 	dd status=none conv=notrunc if=./rc2014-extended/bin/rc2014-extended.rom		 	of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1  seek=31
-	printf 'Built bin/yellow-msx-ntsc-rc2104.rom\r\n'
+	# printf 'Built bin/yellow-msx-ntsc-rc2104.rom\r\n'
 
 .PHONY: rom-image-nms8250
 rom-image-nms8250: nextor-rc2014 cbios systemroms/nms8250_basic-bios2.rom systemroms/nms8250_msx2sub.rom ./rc2014-extended/bin/rc2014-extended.rom
@@ -89,7 +91,7 @@ rom-image-nms8250: nextor-rc2014 cbios systemroms/nms8250_basic-bios2.rom system
 	dd status=none conv=notrunc if=./systemroms/nms8250_msx2sub.rom				   			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=3
 	dd status=none conv=notrunc if=./nextor/bin/rc2014.nextor-2.1.1.rom    				of=bin/nms8250-rc2014.rom bs=16k count=27 seek=4
 	dd status=none conv=notrunc if=./rc2014-extended/bin/rc2014-extended.rom      of=bin/nms8250-rc2014.rom bs=16k count=1 seek=31
-	printf 'Built bin/nms8250-rc2014.rom\r\n'
+	# printf 'Built bin/nms8250-rc2014.rom\r\n'
 
 .PHONY: clean
 clean:
@@ -175,7 +177,7 @@ rom-msxsyssrc-$1-$2-rtc: bin/rc2014.nextor.rom cbios msxsys-$1-$2-rtc ./rc2014-e
 	dd status=none conv=notrunc status=none if=./bin/$1-$2-rtc-subrom.rom												of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=3
 	dd status=none conv=notrunc status=none if=./bin/rc2014.nextor.rom    											of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=27 seek=4
 	dd status=none conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom				of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=31
-	printf 'Built bin/msxsyssrc-rc2014-$1-$2-rtc.rom\r\n'
+	# printf 'Built bin/msxsyssrc-rc2014-$1-$2-rtc.rom\r\n'
 
 .PHONY: msxsys-$1-$2-rtc
 msxsys-$1-$2-rtc:
