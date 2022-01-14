@@ -11,7 +11,7 @@ fossil_initialise:
 	HALT
 
 allocation_ok:
-	LD	(RS_TMP), a
+	LD	(RS_P1_SEG), a
 	push_page_1
 
 	EI
@@ -98,7 +98,7 @@ fossil_deinit:
 	LD	(RS_FLAGS), A
 	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
 
-	LD	A, (RS_TMP)
+	LD	A, (RS_P1_SEG)
 	LD	B, 0				; main memory mapper
 	JP	MEMMAP_FREE
 
