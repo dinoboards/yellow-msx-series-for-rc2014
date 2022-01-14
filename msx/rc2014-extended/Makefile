@@ -4,7 +4,9 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-ASM = sjasmplus -Wno-rdlow --fullpath --raw=$@ --sym=$@.sym --lst=$@.lst --exp=$@.exp
+.DELETE_ON_ERROR:
+
+ASM = sjasmplus -Wno-rdlow --fullpath --raw=$@ --sym=$(basename $@).sym.asm --lst=$@.lst --exp=$(basename $@).exp.asm
 
 BIN := ./bin/
 

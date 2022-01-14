@@ -1,9 +1,4 @@
 
-	; include	"sio.inc"
-	; include	"msx.inc"
-
-	; MODULE	FOSSIL
-;
 ; All the code here is relocated to page 3 location during rominit
 
 @FOSSIL_DRV_START:
