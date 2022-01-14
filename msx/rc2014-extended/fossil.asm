@@ -121,13 +121,10 @@ init:
 	RET
 
 deinit:
-	LD	A, (RS_TMP)
-	LD	B, 0				; main memory mapper
-	CALL	MEMMAP_FREE
-
-	XOR	A				; MARK AS CLOSED AND RTS OFF
-	LD	(RS_FLAGS), A
-	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
+	RST	$30
+	DB	$8F				; slot 3-3
+	DW	fossil_deinit
+	EI
 	RET
 
 set_baud:
