@@ -19,6 +19,7 @@ ROM_HEADER:
 	DW	0
 	DS	6
 
+	include	"segment1.inc"
 	INCLUDE "rominit.asm"
 	INCLUDE	"fossil.asm"
 	INCLUDE "alloc.asm"
@@ -27,6 +28,7 @@ ROM_HEADER:
 	INCLUDE "rs232.asm"
 	include "probing.asm"
 	include	"extended-bios.asm"
+	include "segment1.asm"
 
 	DS	$C000 - $
 

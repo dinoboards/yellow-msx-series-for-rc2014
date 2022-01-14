@@ -3,8 +3,6 @@
 
 @FOSSIL_DRV_START:
 
-SIO_BUFSZ	EQU	250
-
 	MODULE	FOSSIL
 	PHASE	0
 	RELOCATE_START
@@ -97,72 +95,29 @@ SIO_BUFSZ	EQU	250
 ; All print commands that would be issued using the BIOS calls, will be
 ; transmitted through the RS232C interface.
 
-	jp	keyb_hook	; redirect RS232 to keyboard buffer
-				; H=0 release hook, H!=0 bend hook
-
 ; With this function, you can redirect all incoming RS232C data to the
 ; keyboard buffer.
 ; This and the previous function are nice to let a terminal control your
 ; MSX computer.
+; redirect RS232 to keyboard buffer
+; H=0 release hook, H!=0 bend hook
+	jp	keyb_hook
 
-	jp	get_info	; Gives a pointer in HL that points to a
-				; driver info block. This block describes
-				; the current situation about the driver.
+; Gives a pointer in HL that points to a
+; driver info block. This block describes
+; the current situation about the driver.
+	jp	get_info
+
 
 getversion:
 	LD	HL, 0x0101
 	RET
 
-MEMMAP_TBL	EQU	0F200H
-MEMMAP_ALLOC	EQU	MEMMAP_TBL + 0
-MEMMAP_FREE	EQU	MEMMAP_TBL + 3
-MEMAP_PUT_P1	EQU	MEMMAP_TBL + 1EH
-MEMAP_GET_P1	EQU	MEMMAP_TBL + 21H
-MEMAP_PUT_P2	EQU	MEMMAP_TBL + 24H
-MEMAP_GET_P2	EQU	MEMMAP_TBL + 27H
-
 init:
-	PUSH	IX
-	PUSH	IY
-
-	ld	a, 1				; allocate a system page
-	ld	b, 0				; main memory mapper
-	CALL	MEMMAP_ALLOC
-
-	jr	NC, allocation_ok
-
-	; what do we do here?
-	DI
-	HALT
-
-allocation_ok:
-	LD	(RS_TMP), a
-
-	CALL	MEMAP_GET_P1		; CAPTURE CURRENT ALLOCATE RAM SEGMENT IN PAGE 2
-	PUSH	AF
-	LD	A, (RS_TMP)
-	CALL	MEMAP_PUT_P1		; SWITCH IN OUR SEGMENT
-
-	LD	HL, RS232_INIT_TABLE
-	RST	30H
-	DB	$8F		; SLOT 3-3
-	DW	RSF_INIT
+	RST	$30
+	DB	$8F				; slot 3-3
+	DW	fossil_initialise
 	EI
-
-	LD	HL, SIO_RCVBUF
-	LD	C, SIO_BUFSZ
-	LD	E, 4
-
-	RST	30H
-	DB	$8F		; SLOT 3-3
-	DW	RS_OPEN
-	EI
-
-	POP	AF			; RESTORE RAM SEGMENT IN PAGE 2
-	CALL	MEMAP_PUT_P1
-
-	POP	IY
-	POP	IX
 	RET
 
 deinit:
@@ -176,49 +131,14 @@ deinit:
 	RET
 
 set_baud:
- 	LD	A, L
-	CP	H
-	JR	NC, .SKIP1
-	LD	A, H		; H IS LARGER, SO USE THAT AS BASIS
-
-.SKIP1:
-	CP	5
-	JR	NC, .SKIP2	; LESS THAN 5
-	LD	A, 5		; SET TO 5
-.SKIP2:
-	CP 	7
-	JR	C, .SKIP3	; GREATER THAN 7
-	LD	A, 7		; SET TO 7
-
-.SKIP3:
-	LD	HL, FS_RSC_RCV_BAUD
-	CP	7
-	JR	NZ, .SKIP4
-	LD	HL, BAUD_HIGH
-	JR	SET_BAUD_EXIT
-
-.SKIP4:
-	CP	6
-	JR	NZ, SKIP5
-	LD	HL, BAUD_MID
-	JR	SET_BAUD_EXIT
-
-SKIP5:
-	LD	HL, BAUD_LOW
-
-SET_BAUD_EXIT:
-	LD	(FS_RSC_RCV_BAUD), HL
-	LD	(FS_RSC_SND_BAUD), HL
-
-	LD	L, A		; RETURN THE ACTUAL SELECTED BAUD RATES
-	LD	H, A
+	RST	$30
+	DB	$8F				; slot 3-3
+	DW	fossil_set_baud
+	EI
 	RET
 
 rs_in:
-	CALL	MEMAP_GET_P1		; CAPTURE CURRENT ALLOCATE RAM SEGMENT IN PAGE 2
-	PUSH	AF
-	LD	A, (RS_TMP)
-	CALL	MEMAP_PUT_P1		; SWITCH IN OUR SEGMENT
+	push_page_1
 
 	LD	D, SIO_BUFSZ/4		; D IS QRT MARK OF BUFFER SIZE
 	LD	HL, SIO_RCVBUF
@@ -283,8 +203,7 @@ rs_out:
 	POP	IY
 	POP	IX
 
-	POP	AF			; RESTORE RAM SEGMENT IN PAGE 2
-	CALL	MEMAP_PUT_P1
+	pop_page_1
 	RET
 
 rs_in_stat:
@@ -323,10 +242,7 @@ get_info:
 	AND	$01			; ISOLATE RECEIVE READY BIT
 	JP	Z, RS_OLDINT		; NOTHING AVAILABLE ON CURRENT CHANNEL
 
-	CALL	MEMAP_GET_P1		; CAPTURE CURRENT ALLOCATE RAM SEGMENT IN PAGE 2
-	PUSH	AF
-	LD	A, (RS_TMP)
-	CALL	MEMAP_PUT_P1		; SWITCH IN OUR SEGMENT
+	push_page_1
 
 	LD	A, (RS_IQLN)
 	EXX
@@ -438,8 +354,7 @@ SIO_INTRCV4:
 	LD	A, COMMAND_3
 	OUT	(SIO0A_CMD), A
 
-	POP	AF			; RESTORE RAM SEGMENT IN PAGE 2
-	CALL	MEMAP_PUT_P1
+	pop_page_1
 
 	JP	RS_OLDINT
 
@@ -449,24 +364,6 @@ SIO_INT_ABORT:
 	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
 	RES	1, (HL)			; SET BIT FLAG FOR RTS OFF
 	JR	SIO_INTRCV4
-
-RS232_INIT_TABLE:
-FS_RSC_CHAR_LEN:	DB	'8'		; Character length '5'-'8'
-FS_RSC_PARITY:		DB	'N'		; Parity 'E','O','I','N'
-FS_RSC_STOP_BITS:	DB	'1'		; Stop bits '1','2','3'
-FS_RSC_XON_XOFF:	DB	'N'		; XON/XOFF controll 'X','N'
-FS_RSC_CTR_RTS:		DB	'H'		; CTR-RTS hand shake 'H','N'
-FS_RSC_AUTO_RCV_LF:	DB	'N'		; Auto LF for receive 'A','N'
-FS_RSC_AUTO_SND_LF:	DB	'N'		; Auto LF for send 'A','N'
-FS_RSC_SI_SO_CTRL:	DB	'N'		; SI/SO control 'S','N'
-FS_RSC_RCV_BAUD:	DW	19200		; Receiver baud rate  50-19200 ; MARK MAKE BAUD RATE CONFIG
-FS_RSC_SND_BAUD:	DW	19200		; Transmitter baud rate 50-19200 ; MARK MAKE BAUD RATE CONFIG
-FS_RSC_TIMEOUT_CNT:	DB	0		; Time out counter 0-255
-
-SIO_RCVBUF:		EQU	$4000
-SIO_HD:			EQU	$4000		;DW	SIO_BUF		; BUFFER HEAD POINTER
-SIO_TL:			EQU	$4002		;DW	SIO_BUF		; BUFFER TAIL POINTER
-SIO_BUF:		EQU	$4004		;DS	SIO_BUFSZ, $00	; RECEIVE RING BUFFER
 
 
 	RELOCATE_END

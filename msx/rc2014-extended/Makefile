@@ -12,7 +12,7 @@ BIN := ./bin/
 
 all: $(BIN)rc2014-extended.rom
 
-$(BIN)rc2014-extended.rom: ../rc2014config.inc sio.inc rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm probing.asm fossil.asm
+$(BIN)rc2014-extended.rom: ../rc2014config.inc sio.inc rc2014-extended.asm extended-bios.asm msx.inc utils.asm rs232.asm sio.asm alloc.asm rominit.asm probing.asm fossil.asm segment1.asm segment1.inc
 	@mkdir -p bin
 	$(ASM) rc2014-extended.asm
 
