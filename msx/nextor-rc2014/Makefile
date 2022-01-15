@@ -8,7 +8,7 @@ MAKEFLAGS += --no-builtin-rules
 
 BINDIR := ./bin/
 
-ASM = sjasmplus --fullpath --inc=../nextor/source/kernel/ --raw=$@ --sym=$(basename $@).sym.asm --lst=$@.lst --exp=$(basename $@).exp.asm
+ASM = sjasmplus --msg-war --nologo --fullpath --inc=../nextor/source/kernel/ --raw=$@ --sym=$(basename $@).sym.asm --lst=$@.lst --exp=$(basename $@).exp.asm
 
 all: $(BINDIR)cbios.nextor.rom $(BINDIR)rc2014.nextor.rom
 
@@ -25,6 +25,7 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm
 		echo -e "\r\nError: $(BINDIR)rcembdrv.bin exceeded size of 16k"
 		exit 1
 	fi
+	echo "Assembled $@"
 
 $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm embinc.asm version.asm
 	@mkdir -p $(BINDIR)
@@ -34,11 +35,13 @@ $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm embinc.asm version.asm
 		echo -e "\r\nError: $(BINDIR)rc2014dr.bin exceeded size of 16k"
 		exit 1
 	fi
+	echo "Assembled $@"
 
 $(BINDIR)chgbnk.bin: chgbnk.asm
 	@mkdir -p $(BINDIR)
 	$(ASM) $^
 	sjasmplus --fullpath --inc=../nextor/source/kernel/ --lst=$(BINDIR)chgbnk.lst --exp=$(BINDIR)chgbnk.exp.asm --raw=$(BINDIR)chgbnk.bin --sym=$(BINDIR)chgbnk.sym.asm chgbnk.asm
+	echo "Assembled $@"
 
 cbios-nextor-kernel:
 	@cd ../nextor/source && BUILD_TYPE=cbios $(MAKE) --no-print-directory -f Makefile-rc2014.mk

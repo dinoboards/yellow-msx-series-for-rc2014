@@ -1,9 +1,12 @@
 
 fossil_initialise:
+	ld	a, (RS_P1_SEG)
+	or	a				; have we already allocated a segment?
+	jr	nz, allocation_ok		; yes - so skip allocation request
+
 	ld	a, 1				; allocate a system page
 	ld	b, 0				; main memory mapper
 	CALL	MEMMAP_ALLOC
-
 	jr	NC, allocation_ok
 
 	; what do we do here?
@@ -21,9 +24,7 @@ allocation_ok:
 	ld	bc, segment1_length
 	ldir
 
-	LD	HL, RS232_INIT_TABLE
-	PUSH	HL
-	POP	IX		; IX IS FOSSIL'S INIT TABLE IN PAGE 3
+	LD	IX, RS232_INIT_TABLE
 	CALL	CFG_RS232_SETTINGS
 	CALL	SIO_INIT
 	XOR	A
@@ -34,9 +35,10 @@ allocation_ok:
 	LD	DE, RS_OLDINT		; COPY HOOK FUNCTION FROM H_KEYI TO RS_OLDINT
 	LD	A, (DE)
 	OR	A
-	JR	NZ, fossil_int_handler_installed
+	JR	NZ, fossil_init_buffer
+					; install interrupt handler
 
-	LD	HL, H_KEYI
+	LD	HL, H_KEYI		
 	LD	BC, 5
 	LDIR				; COPY THE OLD INT HOOK
 
@@ -49,38 +51,14 @@ allocation_ok:
 	LD	(H_KEYI), A             ; SET JMP INSTRUCTION
 	LD	(H_KEYI+1), HL          ; SET NEW INTERRUPT ENTRY POINT
 
-fossil_int_handler_installed:
-	LD	HL, SIO_RCVBUF
-	LD	C, SIO_BUFSZ
-	LD	E, 4
+fossil_init_buffer:
 	XOR	A
 	LD	(RS_DATCNT), A
 	LD	(RS_FLAGS), A
 
-	LD	(RS_FCB), HL
-	LD      A, C
-	LD      (RS_IQLN),A
-
-	LD	D, H		; FIRST 2 WORDS OF BUFFER AT THE HEAD AND TAIL PTRS
-	LD	E, L		; THEY NEED TO BE INITIALISED TO START OF ACTUAL DATA BUFFER
-	EX	DE, HL		; WHICH IS JUST AFTER THESE 4 BYTES
-	INC	DE
-	INC	DE
-	INC	DE
-	INC	DE
-	LD	(HL), E		; LOAD FIRST 2 WORDS IN BUFFER TO POINT TO ADDRESS
-	INC	HL		; AFTER FIRST 2 WORDS
-	LD	(HL), D
-	INC	HL
-	LD	(HL), E
-	INC	HL
-	LD	(HL), D
-	INC	HL
-
-	EX	DE, HL
-	LD	B, 0
-	ADD	HL, BC
-	LD	(RS_BUFEND), HL
+	LD	HL, SIO_BUF
+	LD	(SIO_HD), HL
+	LD	(SIO_TL), HL
 
 	LD      HL, RS_FLAGS
 	SET     3, (HL)			; SET RS232 OPEN FLAG
@@ -176,7 +154,7 @@ SIO_IN1:
 	LD	C, (HL)			; C := CHAR TO BE RETURNED
 	INC	HL			; BUMP TAIL PTR
 	POP	DE			; RECOVER ADR OF TAIL PTR
-	LD	A, (RS_BUFEND)		; GET BUFEND PTR LOW BYTE
+	LD	A, LOW SIO_BUFEND	; GET BUFEND PTR LOW BYTE
 	CP	L			; ARE WE AT BUFF END?
 	JR	NZ, SIO_IN2		; IF NOT, BYPASS
 	LD	H, D			; SET HL TO
@@ -208,27 +186,20 @@ segment1_rs_out_wait:
 
 
 segment1_sio_interrupt:
-	LD	A, (RS_IQLN)
 	EXX
-	LD	C, A			; BUFFER FULL COUNT IN C
-	LD	HL, RS_DATCNT
-	SUB	5			; 5 FROM BUF SIZE IS HIGH WATER MARK
-	JR 	Z, SIO_ZERO_HI_MARK
-	JR 	NC, SIO_5_MINUS_HI_MARK
-SIO_ZERO_HI_MARK:
-	LD	A, 1
-SIO_5_MINUS_HI_MARK:
-	LD	D, A
+	LD	C, SIO_BUFSZ		; BUFFER FULL COUNT IN C
+	LD	HL, RS_DATCNT		; buffer size ptr
+	LD	D, SIO_BUFSZ-10		; buffer high mark
 	EXX
 
 	LD	HL, RS_FLAGS		; IS OPENED?
 	BIT	3, (HL)			; FLAG PORT OPEN?
 	JR	Z, SIO_INT_ABORT
 
-	LD	A, (RS_BUFEND)		; GET BUFEND PTR LOW BYTE
+	LD	A, LOW SIO_BUFEND	; GET BUFEND PTR LOW BYTE
 	LD	C, A
 
-	LD	HL, (RS_FCB)
+	LD	HL, SIO_RCVBUF
 	LD	D, H			; SAVE ADR OF HEAD PTR
 	LD	E, L
 	LD	A, (HL)			; DEREFERENCE HL
@@ -343,6 +314,7 @@ SIO_RCVBUF:
 SIO_HD:			DW	SIO_BUF		; BUFFER HEAD POINTER
 SIO_TL:			DW	SIO_BUF		; BUFFER TAIL POINTER
 SIO_BUF:		DS	SIO_BUFSZ, $00	; RECEIVE RING BUFFER
+SIO_BUFEND:
 
 	DEPHASE
 segment1_end:
