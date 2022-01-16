@@ -8,7 +8,7 @@ MAKEFLAGS += --no-builtin-rules
 
 BINDIR := ./bin/
 
-ASM = sjasmplus --msg-war --nologo --fullpath --inc=../nextor/source/kernel/ --raw=$@ --sym=$(basename $@).sym.asm --lst=$@.lst --exp=$(basename $@).exp.asm
+ASM = sjasmplus --msg=war --nologo --fullpath --inc=../nextor/source/kernel/ --raw=$@ --sym=$(basename $@).sym.asm --lst=$@.lst --exp=$(basename $@).exp.asm
 
 all: $(BINDIR)cbios.nextor.rom $(BINDIR)rc2014.nextor.rom
 
