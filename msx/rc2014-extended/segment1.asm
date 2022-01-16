@@ -24,8 +24,6 @@ allocation_ok:
 	ld	bc, segment1_length
 	ldir
 
-	LD	IX, RS232_INIT_TABLE
-	CALL	CFG_RS232_SETTINGS
 	CALL	SIO_INIT
 	XOR	A
 	LD	(RS_FLAGS), A
@@ -81,49 +79,59 @@ fossil_deinit:
 	JP	MEMMAP_FREE
 
 fossil_set_baud:
-	push_page_1
+	ld	a, l
+	cp	h
+	jr	nc, .skip1
+	ld	l, h					; h is larger than l, so use that
 
-	LD	A, L
-	CP	H
-	JR	NC, .SKIP1
-	LD	A, H				; H IS LARGER, SO USE THAT AS BASIS
+.skip1:
+	ld	a, (RS_SIO_CLK)
+	ld	d, a
+	ld	ix, baud_mapping_table
+	ld	bc, baud_clock_map_size
 
-.SKIP1:
-	CP	5
-	JR	NC, .SKIP2			; LESS THAN 5
-	LD	A, 5				; SET TO 5
-.SKIP2:
-	CP 	7
-	JR	C, .SKIP3			; GREATER THAN 7
-	LD	A, 7				; SET TO 7
+.loop
+	ld	a, (ix+baud_clock_map.sio_clk_code)
 
-.SKIP3:
-	LD	HL, FS_RSC_RCV_BAUD
-	CP	7
-	JR	NZ, .SKIP4
-	LD	HL, BAUD_HIGH
-	JR	SET_BAUD_EXIT
+	cp	d					; is this entry for the sio/2 clock?
+	jr	z, .found_entry
 
-.SKIP4:
-	CP	6
-	JR	NZ, SKIP5
-	LD	HL, BAUD_MID
-	JR	SET_BAUD_EXIT
+.try_next
+	add	ix, bc
+	jr	.loop
 
-SKIP5:
-	LD	HL, BAUD_LOW
+.found_entry:
+	ld	a, (ix+baud_clock_map.fossil_max_code)
+	cp	l					; is it <= to fossil_max_code
+	jr	c, .try_next 				; no, try next record
 
-SET_BAUD_EXIT:
-	LD	(FS_RSC_RCV_BAUD), HL
-	LD	(FS_RSC_SND_BAUD), HL
+	; found our entry
 
-	ld	c, a				; store the actual selected baud rates
-	pop_page_1
+	ld	a, (ix+baud_clock_map.sio_clk_divider)
+	ld	(RS_SIO_CLK_DIV), a
+	ld	c, (ix+baud_clock_map.fossil_sel_code)	; get the baud rate selected
 
-	ld	l, c				; return the actual selected baud rates
+	ld	l, c					; return the actual selected baud rate
 	ld	h, c
 	RET
 
+
+	STRUCT baud_clock_map
+sio_clk_code	BYTE
+sio_clk_divider	BYTE
+fossil_max_code	BYTE
+fossil_sel_code	BYTE
+	ENDS
+
+	; Map SIO/2 clock rate code to fossil baud rate code
+baud_mapping_table:
+	baud_clock_map	{ SIO_CLK_307200, SIO_CLK_DIV_64, FOSSIL_BAUD_4800, FOSSIL_BAUD_4800  }
+baud_clock_map_size	EQU	$-baud_mapping_table
+	baud_clock_map	{ SIO_CLK_307200, SIO_CLK_DIV_32, FOSSIL_BAUD_9600,  FOSSIL_BAUD_9600  }
+	baud_clock_map	{ SIO_CLK_307200, SIO_CLK_DIV_16, $FF,               FOSSIL_BAUD_19200 }
+	baud_clock_map	{ SIO_CLK_614400, SIO_CLK_DIV_64, FOSSIL_BAUD_9600,  FOSSIL_BAUD_9600  }
+	baud_clock_map	{ SIO_CLK_614400, SIO_CLK_DIV_32, FOSSIL_BAUD_19200, FOSSIL_BAUD_19200  }
+	baud_clock_map	{ SIO_CLK_614400, SIO_CLK_DIV_16, $FF,		     FOSSIL_BAUD_38400  }
 
 segment1_start:
 	PHASE	$4000
@@ -196,8 +204,7 @@ segment1_sio_interrupt:
 	BIT	3, (HL)			; FLAG PORT OPEN?
 	JR	Z, SIO_INT_ABORT
 
-	LD	A, LOW SIO_BUFEND	; GET BUFEND PTR LOW BYTE
-	LD	C, A
+	LD	C, LOW SIO_BUFEND	; GET BUFEND PTR LOW BYTE
 
 	LD	HL, SIO_RCVBUF
 	LD	D, H			; SAVE ADR OF HEAD PTR
@@ -237,7 +244,7 @@ SIO_INTRCV2:
 
 	LD	A, C			; GET BUFEND PTR LOW BYTE
 	CP	L			; ARE WE AT BUFF END?
-	JR	NZ, SIO_INTRCV3		; IF NOT, BYPASS
+	JP	NZ, SIO_INTRCV3		; IF NOT, BYPASS
 	LD	H, D			; SET HL TO
 	LD	L, E			; ... HEAD PTR ADR
 	INC	HL			; BUMP PAST HEAD PTR
@@ -251,14 +258,14 @@ SIO_INTRCV3:
 	OUT	(CMD_CH), A		; READ REGISTER 0
 	IN	A, (CMD_CH)		;
 	RRA				; READY BIT TO CF
-	JR	C, SIO_INTRCV1		; IF SET, DO SOME MORE
+	JP	C, SIO_INTRCV1		; IF SET, DO SOME MORE
 
 	LD	A, (RS_FLAGS)
-	BIT	1, A
-	JR	Z, SIO_UPDATE_HEAD_PTR		; ABORT NOW IF RTS IS OFF
+	AND	00000010B		; BIT 1, A
+	JR	Z, SIO_UPDATE_HEAD_PTR	; ABORT NOW IF RTS IS OFF
 
 	; TEST FOR NEW BYTES FOR A SHORT PERIOD OF TIME
-	LD	B, 80
+	LD	B, 100
 SIO_MORE:
 	IN	A, (CMD_CH)		;
 	RRA				; READY BIT TO CF

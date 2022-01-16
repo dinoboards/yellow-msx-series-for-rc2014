@@ -8,10 +8,10 @@
 ; void print(char* s) __z88dk_fastcall
 	PUBLIC	_print
 _print:
-    ld  a,(_usingAnsiDrv)
-    or  a
-    jp  nz,_AnsiPrint
-    push    ix
+	ld	a, (_usingAnsiDrv)
+	or	a
+	jp	nz, _AnsiPrint
+	push    ix
 loop:
     ld  a,(hl)
     or  a

@@ -1,6 +1,8 @@
 #ifndef __SYSTEM_STATE
 #define __SYSTEM_STATE
 
+#include <stdlib.h>
+
 // Our Flags
 extern unsigned char ucEcho;         // Echo On?
 extern unsigned char ucAutoDownload; // Auto download on binary transfers?
@@ -18,4 +20,7 @@ extern unsigned char ucRcvData[128];
 #define RcvMemorySize 1024
 extern unsigned char ucRcvDataMemory[RcvMemorySize];
 extern unsigned int  uiGetSize;
+
+extern uint16_t baud_rate;
+
 #endif

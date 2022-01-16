@@ -179,7 +179,7 @@ This section describes how you can create your own custom MSX Rom image that inc
 
 After verifying you have been able to build as per the instruction above, you can follow these steps for your custom build:
 
-1. If you would like to include any files in the embedded floppy image, simply copy them to `nextor/extras` directory*
+1. If you would like to include any files in the embedded floppy image, simply copy them to `nextor-rc2014/extras` directory*
 
 2. run `make` (or the docker `msxmake` alias) and ensure no assembly errors are raised.
 

@@ -93,7 +93,7 @@ unsigned int AnsiGetCursorPosition();
  * AnsiPutChar will put ucChar on screen of in ANSI / VT command buffer
  *
  */
-void AnsiPutChar(unsigned char ucChar) __z88dk_fastcall;
+void AnsiPutChar(const unsigned char ucChar) __z88dk_fastcall;
 
 /*
  * AnsiPrint will proccess ucString and execute commands/put characters on
@@ -101,4 +101,4 @@ void AnsiPutChar(unsigned char ucChar) __z88dk_fastcall;
  * commands are partially in one buffer and then the rest in the next buffer
  *
  */
-void AnsiPrint(unsigned char *ucString) __z88dk_fastcall;
+void AnsiPrint(const unsigned char *ucString) __z88dk_fastcall;

@@ -50,7 +50,8 @@
  libraries/msxbios/system_vars.h
 ./bin/term/arguments.c.asm: term/arguments.c term/arguments.h term/system-state.h
 ./bin/term/aofossilhelper.c.asm: term/aofossilhelper.c term/aofossilhelper.h \
- libraries/fossil/fossil.h libraries/fusion/msx_fusion.h term/print.h
+ term/arguments.h libraries/fossil/fossil.h term/msx2ansi.h \
+ libraries/fusion/msx_fusion.h term/print.h term/system-state.h
 ./bin/term/fossil_interface.c.asm: term/fossil_interface.c libraries/fossil/fossil.h \
  libraries/fusion/msx_fusion.h
 ./bin/term/ansiprint.c.asm: term/ansiprint.c term/ansiprint.h term/print.h \
@@ -59,7 +60,8 @@
 ./bin/print.c.asm: print.c print.h
 ./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
-./bin/muflash/main.c.asm: muflash/main.c libraries/msxdos/msxdos.h
+./bin/muflash/arguments.c.asm: muflash/arguments.c muflash/arguments.h print.h
+./bin/muflash/main.c.asm: muflash/main.c muflash/arguments.h libraries/msxdos/msxdos.h
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
 ./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
  libraries/msxbios/system_vars.h

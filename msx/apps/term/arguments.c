@@ -1,16 +1,20 @@
 #include "arguments.h"
 #include "system-state.h"
+
+const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
+
 const unsigned char *usage = "Usage:  term [options]\r\n\n"
                              "Connect to a remote BBS system using\r\n"
                              "fossil serial driver\r\n\n"
-                             "/a      turn off automatic download\r\n"
-                             "        detection\r\n"
-                             "/o      turn off ANSI rendering and\r\n"
-                             "        use MSX-DOS text rendering\r\n"
-                             "/r      Use alternative download\r\n"
-                             "        method\r\n"
-                             "/i      Display information and\r\n"
-                             "        instructions\r\n";
+                             "/a       turn off automatic download\r\n"
+                             "         detection\r\n"
+                             "/o       turn off ANSI rendering and\r\n"
+                             "         use MSX-DOS text rendering\r\n"
+                             "/r       Use alternative download\r\n"
+                             "         method\r\n"
+                             "/i       Display information and\r\n"
+                             "         instructions\r\n"
+                             "/b<rate> select baud rate\r\n";
 
 uint8_t abort_with_help() {
   printf(usage);
@@ -82,6 +86,87 @@ uint8_t arg_alternative_download_method(const uint8_t i, const char **argv) {
   return i + 1;
 }
 
+uint8_t arg_baud_rate(const uint8_t i, const char **argv) {
+  const char *arg_switch = argv[i];
+  const char *arg_value;
+  if (strncasecmp(arg_switch, "/baud", 5) == 0) {
+    if (arg_switch[5] != '=') {
+      printf("Invalid baud switch - use /baud=<rate>\r\n");
+      return abort_with_help();
+    }
+
+    arg_value = arg_switch + 6;
+    goto process_baud_rate;
+  } else if (strncmp(arg_switch, "/b", 2) == 0) {
+    arg_value = arg_switch + 2;
+    goto process_baud_rate;
+  } else
+    return i;
+
+process_baud_rate:
+  if (strcmp(arg_value, "75") == 0) {
+    baud_rate = 0;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "300") == 0) {
+    baud_rate = 1 * 256 + 1;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "600") == 0) {
+    baud_rate = 2 * 256 + 2;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "1200") == 0) {
+    baud_rate = 3 * 256 + 3;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "2400") == 0) {
+    baud_rate = 4 * 256 + 4;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "4800") == 0) {
+    baud_rate = 5 * 256 + 5;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "9600") == 0) {
+    baud_rate = 6 * 256 + 6;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "19200") == 0) {
+    baud_rate = 7 * 256 + 7;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "38400") == 0) {
+    baud_rate = 8 * 256 + 8;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "57600") == 0) {
+    baud_rate = 9 * 256 + 9;
+    return i + 1;
+  }
+
+  if (strcmp(arg_value, "115200") == 0) {
+    baud_rate = 11 * 256 + 11;
+    return i + 1;
+  }
+
+  printf("Invalid baud rate setting '");
+  printf(arg_value);
+  printf("'\r\n");
+  exit(1);
+
+  return 255;
+}
+
 void process_cli_arguments(const int argc, const char **argv) {
   ucAutoDownload = 1;
   ucStandardDataTransfer = 1;
@@ -107,6 +192,10 @@ void process_cli_arguments(const int argc, const char **argv) {
       continue;
 
     i = arg_alternative_download_method(i, argv);
+    if (current_i != i)
+      continue;
+
+    i = arg_baud_rate(i, argv);
     if (current_i != i)
       continue;
 
