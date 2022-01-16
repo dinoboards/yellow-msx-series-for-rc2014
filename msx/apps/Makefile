@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg))
 
 include	Makefile.rules.mk
 
@@ -78,6 +78,10 @@ rtccalb.com.crt_enable_commandline:=1
 esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) $(MSXDOS) xrecv2/crc16.c xrecv2/serial.c xrecv2/utils.c)
 $(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files))
 esp8266.com.crt_enable_commandline:=1
+
+siocfg_files = $(call app_files,siocfg,memmap-override.asm libraries/extbio/extbio.asm getslt.asm)
+$(BIN)siocfg.com: $(addprefix $(BIN),$(siocfg_files))
+siocfg.com.crt_enable_commandline:=1
 
 romflashwriter_files = $(call app_files,romflashwriter)
 $(BIN)romflashwriter/romflashwriter.bin: ./romflashwriter/romflashwriter.asm

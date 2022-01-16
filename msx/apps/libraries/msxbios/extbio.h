@@ -41,7 +41,17 @@ extern extbio_device_table *extbio_get_dev(extbio_device_table *table) __z88dk_f
 
 // RC2014 DRIVER
 
+#define SIO_CLK_307200	1
+#define SIO_CLK_614400	2
+#define SIO_CLK_921600	3
+#define SIO_CLK_1228800	4
+#define SIO_CLK_2457600	5
+#define SIO_CLK_3686400	6
+
 extern void *extbio_fossil_install();
+extern uint8_t extbio_sio_get_clock();
+extern uint8_t extbio_sio_set_clock(const uint8_t new_code) __z88dk_fastcall;
+extern uint8_t extbio_sio_get_present();
 
 // RS232 DRIVER
 #define RS232_RAW_MODE 4

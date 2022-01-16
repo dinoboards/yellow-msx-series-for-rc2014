@@ -110,6 +110,41 @@ _extbio_fossil_install:
 	POP	IX
 	RET
 
+;
+; extern uint8_t extbio_sio_get_clock();
+;
+	PUBLIC	_extbio_sio_get_clock
+_extbio_sio_get_clock:
+	PUSH	IX
+	LD	D, 214		; RC2014 EXTENDED DRIVER
+	LD	E, 2		; FUNCTION GET SIO CLOCK
+	CALL	EXTBIO		; RETURNS VALUE IN L
+	POP	IX
+	RET
+
+;
+; extern uint8_t extbio_sio_set_clock(const unit8_t new_code) __z88dk_fastcall;
+;
+	PUBLIC	_extbio_sio_set_clock
+_extbio_sio_set_clock:
+	PUSH	IX
+	LD	D, 214		; RC2014 EXTENDED DRIVER
+	LD	E, 3		; FUNCTION SET SIO CLOCK
+	CALL	EXTBIO		; FORWARD AND RETURN VALUE IN L
+	POP	IX
+	RET
+
+;
+; extern uint8_t extbio_sio_get_present();
+;
+	PUBLIC	_extbio_sio_get_present
+_extbio_sio_get_present:
+	PUSH	IX
+	LD	D, 214		; RC2014 EXTENDED DRIVER
+	LD	E, 4		; FUNCTION SET SIO CLOCK
+	CALL	EXTBIO		; RETURN STATE IN L
+	POP	IX
+	RET
 
 RG1SAV:         equ     $F3E0
 VDP_INTEN:     EQU     5
