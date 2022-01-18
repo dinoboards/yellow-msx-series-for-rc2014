@@ -136,11 +136,11 @@ set_baud:
 	RET
 
 rs_in:
-	push_page_1
+	push_page_1	1
 
 	call	segment1_rs_in
 
-	pop_page_1
+	pop_page_1	1
 
 	LD	A, C			; MOVE CHAR TO RETURN TO A
 	OR	A
@@ -148,12 +148,12 @@ rs_in:
 
 rs_out:
 	EX	AF, AF'
-	push_page_1
+	push_page_1	1
 	EX	AF, AF'
 
 	call	segment1_rs_out
 
-	pop_page_1
+	pop_page_1	1
 	RET
 
 rs_in_stat:
@@ -192,11 +192,11 @@ get_info:
 	AND	$01			; ISOLATE RECEIVE READY BIT
 	JP	Z, RS_OLDINT		; NOTHING AVAILABLE ON CURRENT CHANNEL
 
-	push_page_1
+	push_page_1	0
 
 	call	segment1_sio_interrupt
 
-	pop_page_1
+	pop_page_1	0
 
 	ret
 

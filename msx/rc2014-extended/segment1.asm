@@ -17,9 +17,8 @@ fossil_initialise:
 
 allocation_ok:
 	LD	(RS_P1_SEG), a
-	push_page_1
 
-	EI
+	push_page_1	0
 
 	ld	hl, segment1_start
 	ld	de, $4000
@@ -47,7 +46,7 @@ allocation_ok:
 	LD	DE, (WORK)
 	LD	HL, @SIO_INT             ; SET TO JUMP TO SIO_INIT IN PAGE 3 RAM
 	ADD	HL, DE
-	DI
+
 	LD	(H_KEYI), A             ; SET JMP INSTRUCTION
 	LD	(H_KEYI+1), HL          ; SET NEW INTERRUPT ENTRY POINT
 
@@ -65,13 +64,11 @@ fossil_init_buffer:
 	SET	1, (HL)			; SET RTS ON FLAG
 	SIO_CHIP_RTS	CMD_CH, SIO_RTSON
 
-	pop_page_1
+	pop_page_1	0
 	EI
 	RET
 
 fossil_deinit:
-	DI
-
 	XOR	A				; MARK AS CLOSED AND RTS OFF
 	LD	(RS_FLAGS), A
 	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
@@ -146,26 +143,27 @@ SIO_HD:			DW	SIO_BUF		; BUFFER HEAD POINTER
 SIO_TL:			DW	SIO_BUF		; BUFFER TAIL POINTER
 
 segment1_rs_in:
-	DI				; AVOID COLLISION WITH INT HANDLER
-	LD	A, (RS_DATCNT)		; GET COUNT
-	DEC	A			; DECREMENT COUNT
-	LD	(RS_DATCNT), A		; SAVE UPDATED COUNT
-	CP	SIO_BUFSZ/4		; BUFFER LOW THRESHOLD
-	JR	Z, segment1_rs_in_set_rts		; YES, SETT RTS
+	DI						; ATOMIC DEC (RS_DATCNT)
+	LD	A, (RS_DATCNT)				; GET COUNT
+	DEC	A					; DECREMENT COUNT
+	LD	(RS_DATCNT), A				; SAVE UPDATED COUNT
+	EI
+	CP	SIO_BUFSZ/4				; BUFFER LOW THRESHOLD
+	JR	Z, segment1_rs_in_set_rts		; YES, SET RTS
 
 SIO_IN1:
 	LD	HL, (SIO_TL)
-	LD	C, (HL)			; C := CHAR TO BE RETURNED
-	INC	L			; BUMP TAIL PTR
-	LD	(SIO_TL), HL		; SAVE UPDATED TAIL PTR
-	EI				; INTERRUPTS OK AGAIN
-	RET				; char returned in C
+	LD	C, (HL)					; C := CHAR TO BE RETURNED
+	INC	L					; BUMP TAIL PTR
+	LD	(SIO_TL), HL				; SAVE UPDATED TAIL PTR
+	RET						; CHAR RETURNED IN C
 
 segment1_rs_in_set_rts:
+	DI
 	SIO_CHIP_RTS	CMD_CH, SIO_RTSON
-	LD	A, (RS_FLAGS)
-	SET	1, A
-	LD	(RS_FLAGS), A
+	LD	HL, RS_FLAGS
+	SET 	1, (HL)
+	EI
 	JP	SIO_IN1
 
 segment1_rs_out:
@@ -179,7 +177,7 @@ segment1_rs_out_wait:
 	AND	RS_TRANSMIT_PENDING_MASK	; IS TRANSMIT PENDING?
 	JR	Z, segment1_rs_out_wait		; YES, THEN WAIT UNTIL TRANSMIT COMPLETED
 	LD	A, B
-	SIO_OUT_A				; LOAD BYTE TO TRANSMIT
+	OUT	(DAT_CH), A			; LOAD BYTE TO TRANSMIT
 	OR	$FF				; RETURN NZ TO INDICATE NO TIMEOUT
 	RET
 
