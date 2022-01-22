@@ -13,7 +13,6 @@ ROM_INIT:
 	LD	(RS_HOKVLD), A
 	LD	A, $C9
 	LD	(RS_MEXBIH), A		; SET OPERATION CODE OF 'RET'
-	JR	INST_HOOK
 
 initialise_serial_state:
 	XOR	A
