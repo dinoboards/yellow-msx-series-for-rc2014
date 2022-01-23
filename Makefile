@@ -6,11 +6,11 @@ MAKEFLAGS += --no-builtin-rules
 
 .PHONY: msx
 msx:
-	$(MAKE) -C msx
+	@$(MAKE) -C msx --no-print-directory
 
 .PHONY: apps-rc2014
 apps-rc2014:
-	$(MAKE) -C apps-rc2014
+	@$(MAKE) -C apps-rc2014 --no-print-directory
 
 .PHONY: release-notes
 release-notes:

@@ -6,7 +6,7 @@ MAKEFLAGS += --no-builtin-rules
 
 MAKEFLAGS += -s
 
-all: nextor-mfr apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/music100.rom bin/music410.rom bin/rcmusic.rom bin/bbcbasic.com
+all: nextor-mfr apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com
 
 pmsxsysromimages:
 	@$(MAKE) -j -O msxsysromimages --no-print-directory
@@ -52,7 +52,7 @@ nextor-mfr:
 	@mkdir -p ./bin
 	cd nextor/source
 	BUILD_TYPE=std $(MAKE) ../bin/mfr.nextor-2.1.1.rom -O -j --no-print-directory -f Makefile-rc2014.mk
-	cp -u ../bin/mfr.nextor-2.1.1.rom ../../bin/ 
+	cp -u ../bin/mfr.nextor-2.1.1.rom ../../bin/
 	BUILD_TYPE=std $(MAKE) ../bin/mfr.dsk --no-print-directory -f Makefile-rc2014.mk
 	cp -u ../bin/mfr.dsk ../../bin
 
@@ -98,8 +98,9 @@ clean:
 	@rm -rf ./bin
 	$(MAKE) -C apps --no-print-directory clean
 	(cd msxsys-build && $(MAKE) --no-print-directory clean)
-	$(MAKE) -C cbios --no-print-directory clean
+	$(MAKE) -C ./cbios --no-print-directory clean
 	$(MAKE) -C ./rc2014-extended --no-print-directory clean
+	$(MAKE) -C ./rc2014-music --no-print-directory clean
 	$(MAKE) -C ./nextor-rc2014 --no-print-directory clean
 	cd nextor/source && $(MAKE) --no-print-directory clean -f Makefile-rc2014.mk
 	rm -rf nextor-rc2014/extras/*
@@ -210,21 +211,8 @@ $(eval $(call BUILD_msxsysromimage-country,russia))
 
 .PHONY: bin/rcmusic.rom
 bin/rcmusic.rom:
-	@cd msxsys-build
-	$(MAKE) --no-print-directory working/rcmusic.rom
-	cp working/rcmusic.rom ../bin/rcmusic.rom
-
-.PHONY: bin/music100.rom
-bin/music100.rom:
-	@cd msxsys-build
-	$(MAKE) --no-print-directory working/music100.rom
-	cp working/music100.rom ../bin/music100.rom
-
-.PHONY: bin/music410.rom
-bin/music410.rom:
-	@cd msxsys-build
-	$(MAKE) --no-print-directory working/music410.rom
-	cp working/music410.rom ../bin/music410.rom
+	$(MAKE) --no-print-directory -C rc2014-music
+	cp rc2014-music/bin/rcmusic.rom ./bin/rcmusic.rom
 
 release:
 	@version=$$(date +%y-%m-%d)
