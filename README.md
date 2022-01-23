@@ -1,6 +1,6 @@
 # Yellow MSX Series for RC2014
 
-[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main)
+[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev)
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 

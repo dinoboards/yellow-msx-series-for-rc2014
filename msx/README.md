@@ -1,7 +1,7 @@
 
 # Yellow MSX for RC2014 ROM Image Builder
 
-[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main)
+[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev)
 
 ### MSX BIOS AND MSX-DOS
 
