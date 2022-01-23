@@ -1,5 +1,7 @@
 # Yellow MSX Series for RC2014
 
+[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main)
+
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
 The repo describes a series of boards designed for RC2014, to give MSX+ compatiblity.
