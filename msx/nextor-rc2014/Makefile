@@ -27,7 +27,7 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm
 	fi
 	echo "Assembled $@"
 
-$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm embinc.asm version.asm
+$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm version.asm
 	@mkdir -p $(BINDIR)
 	$(ASM) rc2014dr.asm embinc.asm
 	filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")

@@ -1,4 +1,5 @@
     ; RC2014 ROM DISK driver for Nextor 2.0
+    ; NEXTOR DEVICE BASED MODEL
 
 	ORG	$4000
 	DS	$100
@@ -6,10 +7,12 @@
 ;
 ; STANDARD BIOS AND WORK AREA ENTRIES
 
-CHPUT			EQU	000A2H	; CHARACTER OUTPUT
-CHGET			EQU	0009FH	; CHARACTER INPUT
-MSXDOS_RC2014_INIT	EQU	08100H
-SLOT_3_3_ID		EQU	08FH	;
+CHPUT			EQU	$00A2	; CHARACTER OUTPUT
+CHGET			EQU	$009F	; CHARACTER INPUT
+MSXDOS_RC2014_INIT	EQU	$8100
+SLOT_3_3_ID		EQU	$8F	;
+SLOT_3_1_ID		EQU	$87	;
+RDSLT			EQU	$000C
 
 DRV_START:
 
@@ -88,9 +91,6 @@ CALLB0	equ	403Fh
 
 
 
-
-
-
 ;* This address contains one byte that tells how many banks
 ;  form the Nextor kernel (or alternatively, the first bank
 ;  number of the driver).
@@ -122,7 +122,7 @@ SING_DBL  equ     7820h ;"1-Single side / 2-Double side"
 ;-----------------------------------------------------------------------------
 ;
 ; Driver flags:
-;    bit 0: 0 for drive-based, 1 for device-based
+;    bit 0: 0 for drive-based, *1 for device-based
 ;    bit 2: 1 if the driver implements the DRV_CONFIG routine
 ;             (used by Nextor from v2.0.5)
 
@@ -202,7 +202,7 @@ DRV_NAME:
 ;      B = number of available drives
 ;      HL = maximum size of allocatable work area in page 3
 ;    Output:
-;      A = number of required drives (for drive-based driver only)
+;      A = Not used for this device based driver
 ;      HL = size of required work area in page 3
 ;      Cy = 1 if DRV_TIMI must be hooked to the timer interrupt, 0 otherwise
 ;
@@ -251,11 +251,49 @@ DRV_INIT2:
 
 DRV_CF_STATE_STORE:
 	LD	(IX+ST_PRESENT), A
+
+	LD	HL, $4000
+	LD	DE, MSX_MARKER_1
+	LD	B, 2
+	CALL	TEST_MARKER
+	RET	NZ				; NO MSX MUSIC DETECTED
+
+	LD	HL, $401C
+	LD	DE, MSX_MARKER_2
+	LD	B, 4
+	CALL	TEST_MARKER
+	RET	NZ				; NO MSX MUSIC DETECTED
+
+	LD	A, (IX+ST_PRESENT)
+	OR	PRES_MS
+	LD	(IX+ST_PRESENT), A		; SET BIT FLAG TO INDICATE MSX-MUSIC ROM IS PRESENT
+
 	RET
 
 DRV_CF_NOT:
 	XOR	A
 	JR	DRV_CF_STATE_STORE
+
+TEST_MARKER:
+	LD	A, $87		; slot 3-1 for music
+	PUSH	DE
+	PUSH	BC
+	CALL	RDSLT
+	POP	BC
+	POP	DE
+	EX	DE, HL
+	CP	(HL)
+	EX	DE, HL
+	RET	NZ
+	INC	DE
+	INC	HL
+	DJNZ	TEST_MARKER
+	RET
+
+MSX_MARKER_1:
+	DEFB	"AB"
+MSX_MARKER_2:
+	DEFB	"OPLL"
 
 ;-----------------------------------------------------------------------------
 ;
@@ -362,12 +400,17 @@ DRV_CONFIG:
 
 DRV_CONFIG_COUNT:
 	LD	B, 1
-
-	CALL	DRV_CF_PRESENT
+	CALL	DRV_GET_PRESENT
+	BIT	BIT_PRES_CF, A
 	JR	Z, DRV_CFG_NO_CF
-	LD	B, 2
+	INC	B
 
 DRV_CFG_NO_CF:
+	BIT	BIT_PRES_MS, A
+	JR	Z, DRV_CFG_NO_MS
+	INC	B
+
+DRV_CFG_NO_MS:
 	XOR	A
 	RET
 
@@ -425,41 +468,22 @@ DEV_RW:
 	EI
 	JR	NC, DEV_READ		; ARE WE READING?
 
-	CP	1
-	JP	Z, DEV_WRT_1
-
-	CP	2
-	JP	Z, DEV_WRT_2
+	CALL	DEVICE_MAPPING
+	CP	DEV_MAP_CF
+	JP	Z, DEV_WRT_CF
 
 	JR	DEV_RW_ERR
 
-DEV_WRT_1:
-	CALL	DRV_CF_PRESENT
-	JP	NZ, DEV_WRT_CF
-	JP	DEV_WRT_ROM
-
-DEV_WRT_2:
-	CALL	DRV_CF_PRESENT
-	JP	NZ, DEV_WRT_ROM
-
-	LD	A, ERR.IDEVL
-	RET
-
 DEV_READ:
-	CP	1
-	JP	Z, DEV_READ_1
+	CALL	DEVICE_MAPPING
+	CP	DEV_MAP_ROM
+	JP	Z, DEV_READ_ROM
 
-	CP	2
-	JP	Z, DEV_READ_2
+	CP	DEV_MAP_CF
+	JP	Z, DEV_READ_CF
 
-DEV_READ_1:
-	CALL	DRV_CF_PRESENT
-	JP	NZ, DEV_READ_CF
-	JP	DEV_READ_ROM
-
-DEV_READ_2:
-	CALL	DRV_CF_PRESENT
-	JP	NZ, DEV_READ_ROM
+	CP	DEV_MAP_MS
+	JP	Z, DEV_READ_MS
 
 DEV_RW_ERR:
 	LD	A, ERR.IDEVL
@@ -503,25 +527,20 @@ DEV_RW_ERR:
 ; provided, not the leftmost.
 
 DEV_INFO:
-	CP	1
-	JR	Z, DEV_INFO_1
+	CALL	DEVICE_MAPPING
+	CP	DEV_MAP_CF
+	JR	Z, DEV_INFO_CF
 
-	CP	2
-	JR	Z, DEV_INFO_2
+	CP	DEV_MAP_ROM
+	JR	Z, DEV_INFO_ROM
+
+	CP	DEV_MAP_MS
+	JR	Z, DEV_INFO_MS
 
 DEV_INFO_NO_DEV:
 	LD	A, 1
 	RET
 
-DEV_INFO_1:
-	CALL	DRV_CF_PRESENT
-	JR	NZ, DEV_INFO_CF
-	JR	DEV_INFO_ROM
-
-DEV_INFO_2:
-	CALL	DRV_CF_PRESENT
-	JR	NZ, DEV_INFO_ROM
-	JR	DEV_INFO_NO_DEV
 
 DEV_INFO_CF:
 	LD	A, B
@@ -543,6 +562,20 @@ DEV_INFO_ROM:
 
 	CP	3
 	JR	Z, DEV_INFO_RM_SERIAL
+
+	LD	A, 1
+	RET
+
+DEV_INFO_MS:
+	LD	A, B
+	CP	0
+	JR	Z, DEV_INFO_0
+
+	CP	1
+	JR	Z, DEV_INFO_RM_MAN
+
+	CP	2
+	JR	Z, DEV_INFO_MS_NAME
 
 	LD	A, 1
 	RET
@@ -600,6 +633,15 @@ LEFT_PAD_LP:
 
 	XOR	A
 	RET
+
+DEV_INFO_MS_NAME:
+	EX	DE, HL
+	LD	HL, MSX_MUSIC_NAME
+	LD	BC, MSX_MUSIC_NAME_LEN
+	LDIR
+	LD	B, 64-MSX_MUSIC_NAME_LEN
+	JR	RIGHT_PAD
+
 ;-----------------------------------------------------------------------------
 ;
 ; Obtain device status
@@ -630,29 +672,23 @@ LEFT_PAD_LP:
 ; DEV_STATUS itself. Please read the Driver Developer Guide for more info.
 
 DEV_STATUS:
-	CP	1
-	JR	Z, DEV_STATUS_1
-	CP	2
-	JR	Z, DEV_STATUS_2
+	CALL	DEVICE_MAPPING
+	CP	DEV_MAP_ROM
+	JR	Z, DEV_STATUS_ROM
+	CP	DEV_MAP_CF
+	JR	Z, DEV_STATUS_CF
+	CP	DEV_MAP_MS
+	JR	Z, DEV_STATUS_MS
 
 DEV_STATUS_ERR:
 	XOR	A
 	RET
 
-DEV_STATUS_1:
-	CALL	DRV_CF_PRESENT
-	JR	NZ, DEV_STATUS_CF
-	JR	DEV_STATUS_ROM
-
-DEV_STATUS_2:
-	CALL	DRV_CF_PRESENT
-	JR	NZ, DEV_STATUS_ROM
-	JR	DEV_STATUS_ERR
-
 DEV_STATUS_ROM:
 	LD	A, 1
 	RET
 
+DEV_STATUS_MS:
 DEV_STATUS_CF:
 	LD	A, 3
 	RET
@@ -692,24 +728,17 @@ DEV_STATUS_CF:
 ; For other types of device, these fields must be zero.
 
 LUN_INFO:
-	CP	1
-	JP	Z, LUN_INFO_1
-	CP	2
-	JP	Z, LUN_INFO_2
+	CALL	DEVICE_MAPPING
+	CP	DEV_MAP_ROM
+	JR	Z, LUN_INFO_ROM
+	CP	DEV_MAP_CF
+	JP	Z, LUN_INFO_CF
+	CP	DEV_MAP_MS
+	JP	Z, LUN_INFO_MS
 
 LUN_INFO_ERR:
 	LD	A, 1
 	RET
-
-LUN_INFO_1:
-	CALL	DRV_CF_PRESENT
-	JP	NZ, LUN_INFO_CF
-	JR	LUN_INFO_ROM
-
-LUN_INFO_2:
-	CALL	DRV_CF_PRESENT
-	JR	NZ, LUN_INFO_ROM
-	JR	LUN_INFO_ERR
 
 
 ;-----------------------------------------------------------------------------
@@ -826,8 +855,68 @@ LUN_INFO_ROM_INVALID:
 	LD	A, 1
 	RET
 
+; Given requested device index in A, and the present of Compact Flash and MSX-MUSIC, Rom
+; identify the mapping
+;Input:   A  = Device index, 1 to 7
+;         B  = Logical unit number, 1 to 7
+;         HL = Pointer to buffer in RAM.
+;Output:  A = 1 -> embedded ROM Disk
+;	    = 2 -> Compact Flash
+;	    = 3 -> MSX-MUSIC
+;	    = 0 -> no drive present
 
+DEVICE_MAPPING:
+	CP	1
+	JR	Z, DEVICE_INDX_1
 
+	CP	2
+	JR	Z, DEVICE_INDX_2
+
+	CP	3
+	JR	Z, DEVICE_INDX_3
+
+DEVICE_NONE:
+	XOR	A			; RETURN NO DRIVE MAPPED
+	RET
+
+DEVICE_INDX_1:
+	CALL	DRV_GET_PRESENT
+	BIT	BIT_PRES_CF, A
+	JR	NZ, DEVICE_CF
+	BIT	BIT_PRES_MS, A
+	JR	NZ, DEVICE_MS
+
+DEVICE_ROM:
+	LD	A, DEV_MAP_ROM			; EMBEDDED ROM DRIVE
+	RET
+
+DEVICE_INDX_2:
+	CALL	DRV_GET_PRESENT
+	BIT	BIT_PRES_CF, A
+	JR	Z, DEVICE_INDX_2_1
+	BIT	BIT_PRES_MS, A
+	JR	NZ, DEVICE_MS
+	JR	DEVICE_ROM
+
+DEVICE_INDX_2_1:
+	AND	(PRES_CF | PRES_MS)
+	JR	Z, DEVICE_NONE
+	JR	DEVICE_ROM
+
+DEVICE_INDX_3:
+	CALL	DRV_GET_PRESENT
+	AND	(PRES_CF | PRES_MS)
+	CP	(PRES_CF | PRES_MS)
+	JR	Z, DEVICE_ROM
+	JR	DEVICE_NONE
+
+DEVICE_CF:
+	LD	A, DEV_MAP_CF
+	RET
+
+DEVICE_MS:
+	LD	A, DEV_MAP_MS
+	RET
 
 ;-----------------------------------------------------------------------------
 ;
@@ -868,14 +957,13 @@ MY_GWORK:
 ;-----------------------------------------------------------------------------
 ; SET NZ IF CF IS PRESENT
 
-DRV_CF_PRESENT:
+DRV_GET_PRESENT:
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 
 	CALL	MY_GWORK
 	LD	A, (IX+ST_PRESENT)
-	AND	PRES_CF
 
 	POP	HL
 	POP	DE
@@ -907,7 +995,7 @@ no_rest:
 	jr	div_loop
 
 	include		cfdrv.asm
-
+	include		musicdriver.asm
 ;-----------------------------------------------------------------------------
 ;
 ; End of the driver code
@@ -923,6 +1011,9 @@ ROM_DRV_NAME_LEN	EQU	$-ROM_DRV_NAME
 
 CF_INFO:		DB	"Compact Flash Driver", 0
 CF_INFO_LN		EQU	$-CF_INFO
+
+MSX_MUSIC_NAME:		DB	"MSX-MUSIC ROM Disk"
+MSX_MUSIC_NAME_LEN	EQU	$-MSX_MUSIC_NAME
 
 ; 4000h   +---------------------+
 ;         |     Page 0 code     |
