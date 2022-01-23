@@ -101,7 +101,7 @@ romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.as
 $(BIN)romflash.com: $(BIN)romflashwriter/romflashwriter.inc $(addprefix $(BIN),$(romflash_files)) 
 romflash.com.crt_enable_commandline:=1
 
-muflash_files = $(call app_files,muflash,)
+muflash_files = $(call app_files,muflash,$(SYSTEM_VARS))
 $(BIN)muflash.com: $(addprefix $(BIN),$(muflash_files))
 muflash.com.crt_enable_commandline:=1
 

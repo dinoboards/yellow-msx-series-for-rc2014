@@ -106,20 +106,22 @@ MSX_MUSIC_BYTE_PROGRAM:
 
 	RET
 
-	PUBLIC	_msx_music_erase_ROM
-;
-; void msx_music_erase_ROM()
-;
-; APPLY THE COMMAND SEQUENCE TO ERASE THE ROM
-; 5555H=AAH, 2AAAH=55H, 5555H=80H, 5555H=AAH, 2AAAH=55H, 5555H=10H
-_msx_music_erase_ROM:
-	DI
+; SEND BYTE COMMANDS TO BEGIN SECTOR ERASE
+MSX_MUSIC_ERASE_SECTOR_PROGRAM:
+	LD	L, 1				; 5555H=AAH
+	CALL	MSX_MUSIC_SET_PAGE
+	LD	A, 0xAA
+	LD	(ROM_05555H), A
 
-	ld b,b
-	jr $+2
+	LD	L, 0				; 2AAAH=55H
+	CALL	MSX_MUSIC_SET_PAGE
+	LD	A, 0x55
+	LD	(ROM_02AAAH), A
 
-	CALL	MSX_MUSIC_SET_SLOT
-	LD	(current_page_slots), HL
+	LD	L, 1				; 5555H=A0H
+	CALL	MSX_MUSIC_SET_PAGE
+	LD	A, 0x80
+	LD	(ROM_05555H), A
 
 	LD	L, 1				; 5555H=AAH
 	CALL	MSX_MUSIC_SET_PAGE
@@ -131,34 +133,53 @@ _msx_music_erase_ROM:
 	LD	A, 0x55
 	LD	(ROM_02AAAH), A
 
-	LD	L, 1				; 5555H=80H
+	RET
+
+;
+; extern void msx_music_erase_4K_page(const uint8_t page) __z88dk_fastcall;
+;
+; Sector-Erase:
+;	5555H=AAH, 2AAAH=55H, 5555H=80H, 5555H=AAH, 2AAAH=55H,  SECTORADDRESS(& 111 1111 0000 0000 0000)=30H
+
+	PUBLIC	_msx_music_erase_4K_page
+
+_msx_music_erase_4K_page:
+	PUSH	HL
+	DI
+
+	CALL	MSX_MUSIC_SET_SLOT
+	LD	(current_page_slots), HL
+
+	CALL	MSX_MUSIC_ERASE_SECTOR_PROGRAM
+
+	POP	HL			; restore sector number in L
+	LD	A, L
+	PUSH	AF			; save sector number
+
+	SRL	A			; divide by 4
+	SRL	A
+	LD	L, A
+	CALL	MSX_MUSIC_SET_PAGE	; address the required page
+
+	POP	AF			; restore sector number in A
+	AND	3			; calculate 4K address start within the MSX Slot Page 1 (0x4000-0x7FFF)
+	ADD	4
+	RLCA
+	RLCA
+	RLCA
+	RLCA
+	LD	H, A
+	LD	L, 0			; HL will be 0x4000, 0x5000, 0x6000 or 0x7000
+
+	LD	(HL), $30		; PROGRAM ERASE SECTOR COMMAND
+
+
+	LD	L, 0				; restore page of MSX-MUSIC rom
 	CALL	MSX_MUSIC_SET_PAGE
-	LD	A, 0x80
-	LD	(ROM_05555H), A
-
-	LD	A, 0xAA				; 5555H=AAH
-	LD	(ROM_05555H), A
-
-	LD	L, 0				; 2AAAH=55H
-	CALL	MSX_MUSIC_SET_PAGE
-	LD	A, 0x55
-	LD	(ROM_02AAAH), A
-
-	LD	L, 1				; 5555H=10H
-	CALL	MSX_MUSIC_SET_PAGE
-	LD	A, 0x10
-	LD	(ROM_05555H), A
-
-	LD	L, 0				;
-	CALL	MSX_MUSIC_SET_PAGE
-
-WAIT_FOR_ERASE:
-	LD	A, (0x4000)
-	AND	0x80
-	JR	Z, WAIT_FOR_ERASE
 
 	LD	HL, (current_page_slots)
 	CALL	MSX_MUSIC_RESTORE_SLOT
+
 	EI
 	RET
 
@@ -174,7 +195,7 @@ _msx_music_write_4K_page:
 	LD	IX, 0
 	ADD	IX, SP
 
-	DI				; do we need this?
+	DI
 
 	CALL	MSX_MUSIC_SET_SLOT
 	LD	(current_page_slots), HL

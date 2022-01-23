@@ -61,7 +61,8 @@
 ./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/muflash/arguments.c.asm: muflash/arguments.c muflash/arguments.h print.h
-./bin/muflash/main.c.asm: muflash/main.c muflash/arguments.h libraries/msxdos/msxdos.h
+./bin/muflash/main.c.asm: muflash/main.c muflash/arguments.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
 ./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
@@ -73,6 +74,8 @@
  libraries/msxbios/extbio.h
 ./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h xstdio.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
+./bin/siocfg/arguments.c.asm: siocfg/arguments.c siocfg/arguments.h
+./bin/siocfg/siocfg.c.asm: siocfg/siocfg.c siocfg/arguments.h libraries/msxbios/extbio.h
 ./bin/mbrot.c.asm: mbrot.c config_request.h libraries/msxdos/msxdos.h v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
 ./bin/config_request.c.asm: config_request.c v9958.h

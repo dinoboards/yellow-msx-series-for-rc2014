@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <extbio.h>
 #include "arguments.h"
+#include <extbio.h>
+#include <stdio.h>
 
 void main(const int argc, const unsigned char **argv) {
   process_cli_arguments(argc, argv);

@@ -1,7 +1,7 @@
 #include "arguments.h"
 
-uint8_t clock_speed_code;
-const char* clock_speed = "";
+uint8_t     clock_speed_code;
+const char *clock_speed = "";
 
 const unsigned char *usage = "Usage:  siocfg [options]\r\n\n"
                              "Configure the SIO/2 Clock speed\r\n\n"
@@ -11,7 +11,6 @@ const unsigned char *usage = "Usage:  siocfg [options]\r\n\n"
                              "CLK=<clock-speed>\r\n"
                              "         Set the hardwired clock\r\n"
                              "         speed\r\n";
-
 
 uint8_t abort_with_help() {
   printf(usage);
@@ -37,12 +36,12 @@ uint8_t arg_info_msg(const uint8_t i, const char **argv) {
          "designed for RC2014\r\n"
          "Version 0.0.1\r\n"
          "Valid CLK settings:\r\n"
-          "  307200  for baud: 4800,9600,19200\r\n"
-          "  614400  for baud: 9600,19200,38400\r\n"
-          "  921600  for baud: 57600\r\n"
-          "  1228800 for baud: 19200,38400\r\n"
-          "  2457600 for baud: 38400\r\n"
-          "  3686400 for baud: 57600,115200\r\n"
+         "  307200  for baud: 4800,9600,19200\r\n"
+         "  614400  for baud: 9600,19200,38400\r\n"
+         "  921600  for baud: 57600\r\n"
+         "  1228800 for baud: 19200,38400\r\n"
+         "  2457600 for baud: 38400\r\n"
+         "  3686400 for baud: 57600,115200\r\n"
          "\r\n");
 
   exit(1);
@@ -78,7 +77,7 @@ process_clock_speed:
   }
 
   if (strcmp(arg_value, "614400") == 0) {
-    clock_speed_code = 2; 
+    clock_speed_code = 2;
     clock_speed = "614.4Khz\r\nBAUD:            9600,19200,38400";
     return i + 1;
   }
