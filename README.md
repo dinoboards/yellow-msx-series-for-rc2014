@@ -77,6 +77,12 @@ See the [README file here](./backplane/readme.md)
 
 Kit available at [Tindie](https://www.tindie.com/products/dinotron/121-backplane-designed-for-rc2014-systems) store
 
+#### Turbo CPU designed for RC2014 systems
+
+See the [README file here](./turbo-cpu/readme.md)
+
+Kit available at [Tindie](https://www.tindie.com/products/dinotron/????) store
+
 #### Integrating the ESP8266 Wifi Module
 
 Click [here](./wifi/README.md) for instructions on integrating the stock RC2014 ESP8266 wifi module into your MSX build.
