@@ -161,6 +161,7 @@ These binaries are for flashing onto the SST39SF040 ROM for the MSX Memory Modul
 | main.rom                    | Main 32K MSXSRCSYS ROM                                       | 0000-7FFF |       0       |      0      |
 | optrom.rom                  | MSXSRCSYS OPT or Logo ROM                                    | 4000-7FFF |               |             |
 | subrom.rom                  | MSXSRCSYS SUB ROM                                            | 0000-3FFF |      3-0      |     3-0     |
+| rcmusic.rom                 | MSX MUSIC BIOS/MSX BASIC EXTENSION                           | 4000-7FFF |      3-1      |     3-1     |
 | rc2014.nextor-2.1.1.rom     | Nextor ROM Image                                             | 4000-7FFF |       2       |     3-3     |
 | rc2014-extended.rom         | Custom Extended BIOS implementation for RC2014 platform      | 8000-CFFF |      3-3      |     3-3     |
 | dots.com                    | Testing tool                                                 |           |               |             |
