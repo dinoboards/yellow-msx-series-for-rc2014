@@ -212,3 +212,6 @@ Kit
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
 Kits available at: https://www.tindie.com/products/dinotron/?????
+
+* http://www.6502.org/mini-projects/clock-switching/clock-switching.html
+* http://kb.gr8bit.ru/KB0009/GR8BIT-KB0009-Accelerating-your-GR8BIT.html
