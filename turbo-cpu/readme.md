@@ -24,13 +24,13 @@ For a RC2014 configured to run a full MSX configuration, you typically need to r
 
 But these days, its possible to buy a brand new Zilog Z80 chip, rated at 20Mhz (Z84C0020PEG).  For me in the mid 80s, that would have been an unimaginable speed!
 
-We achieve compatibility by applying a combination of hardware wait states (pausing the CPU for a bit) and slowing CPU clock down to the 3.5Mhz as required.
+We achieve compatibility by applying a combination of hardware wait states (pausing the CPU for a bit) and automatically slowing the clock down to the 3.5Mhz for short periods of time when the CPU is interacting with your other modules.
 
-With the 3 way slider, soldered on the front of the module, you can at any time switch the CPU into 1 of 3 modes:
+A 3 way slider, soldered on the front of the module, gives you total control of the CPU speed.  Using this switch, you can at any time switch into 1 of 3 modes:
 
-1. Full 20Mhz clock speed, with 1 wait state for accessing memory, and auto slow the clock to 3.5Mhz for 31 clock cycles when it accesses IO devices (SIO/2, PPI, V9958 etc).
-2. Full 20Mhz clock speed as mode 1, but with 3 wait states for accessing memory
-3. Standard MSX speed 3.5Mhz CPU, M1 Wait state for accessing memory
+1. Full 20Mhz clock speed, with 1 wait state when accessing memory, and slows the clock to 3.5Mhz for 31 clock cycles when it accesses IO devices (SIO/2, PPI, V9958 etc).
+2. Full 20Mhz clock speed as mode 1, but with 3 wait states for accessing memory.
+3. Standard MSX speed 3.5Mhz CPU, M1 Wait state for accessing memory.
 
 Despite the extra wait states and clock slow down, I have found a typical speed improvement of between 4 and 5 times faster - even for software the does lots of interactions with the V9958, you can still see a very large improvement.
 
@@ -63,8 +63,49 @@ I have tested running at 20Mhz on my specific back-plane and set of modules with
 
 ### Bill of Materials
 
+|Count   | Name  |
+|:------:|-------|
+| 8      |	0.1uF |
+| 2      |	22pF |
+| 1      |	47 Ω |
+| 2      |	470 Ω (3.4mm) |
+| 1      |	1K Ω |
+| 1      |	10K Ω |
+| 1      |	1M Ω |
+| 1      |	10k Ω Bussed x 6 |
+| 2      |	5mm LED |
+| 2      |	HEADER 2x8 |
+| 1      |	HEADER 2x2 |
+| 1      |	HEADER 1x2 |
+| 4      |  SHUNTS |
+| 1      |	ATF22V10C |
+| 1      |	ATF16V8 |
+| 1      |	74AC153 |
+| 1      |	74AC74 |
+| 1      |	74HC74 |
+| 1      |	74HC02 |
+| 1      |	74HC393 |
+| 1      |	Z80 20Mhz |
+| 1      |	SP3T Slide Switch |
+| 1      |	16 Mhz Oscillator |
+| 1      |	20 Mhz Oscillator |
+| 1      |	7.3728 Mhz Crystal |
+| 2      |	Right Angle 20x2 Header |
+| 1      |	40 POS IC SOCKET |
+| 1      |	24 POS IC SOCKET NARROW |
+| 1      |	20 POS IC SOCKET |
+| 1      |	16 POS IC SOCKET |
+| 4      |	14 POS IC SOCKET |
+| 1      |	8 POS IC SOCKET |
+| 1      |	PCB |
 
 ### What else do I need to make this work?
+
+You need a RC2014 build.  This can be configured with MSX modules or other modules.
+
+I have tested on a conventional RC2014 build and with the MSX Modules.
+
+It will replace your RC2014 CPU and Clock Modules.
 
 
 ### How does it work?
@@ -90,8 +131,36 @@ The timing requirements for the V9958 can be quite complicated.  Depending on if
 
 So to solve this problem, instead of 'pausing' the CPU, I went for a different approach.  When I/O interactions are undertaken by the Z80, the Z80's clock is switched from the 20Mhz rate, down to the standard 3.5Mhz. The CPU is feed this slow clock for 31 clock cycles (at 3.5Mz), after which it revert the clock back to the full 20Mhz.  I found that about 30 odd cycles was enough to achieve general compatibility.
 
+The clock signal supplied to the CLK1 RC2014 bus is typically independent of the clock signal sent to the CPU.  When the CPU is operating at the full 20Mhz, the CLK1 signal (depending on jumper settings), will continue at its selected rate - typically 3.5Mhz.  So other modules that use this clock signal, such at the SIO/2, will not see any difference in clock signals.
 
+## Oscillator selection and installation.
 
+The kit is supplied with 2 oscillators.  20Mhz and 16Mhz.  You can choose to solder one of these oscillator directly to the PCB - but this would mean if you want to experiment with other turbo speeds, you will need to de-solder the oscillator.
+
+So to make this a little easier, the kit is supplied with an 8pin DIP socket, with the inner pins turned up, so that it will fit the footprint of the oscillator.  It may not be the most elegant solution - but will make changing the oscillator much easier.
+
+Please pay careful attention when you insert the oscillator into the DIP socket (or directly in the PCB), to its orientation.  If you get this wrong, you will almost certainly destroy the oscillator.  You may guess how I found this out!
+
+## Jumper settings for clock control
+
+### CLK1 & CLK2
+
+In the top right of the PCB, you will see all the jumper settings to manage the clock signals for your RC2014.
+
+The jumpers CLK1 and CLK2, set the clock rate to be transmitted on the respective RC2014 clock lines.  Modules such at the SIO/2 use these signals to control the baud rates for its serial communication.  For default MSX configuration, set CLK1 to 3.6864 and CLK2 to 0.3073.
+
+### TURBO
+The Turbo Jumper, is use to set the CPU's boost speed.  If you short the bottom 2 pins, the CPU will never run faster than 7.3728 Mhz (stock RC2014) - this is a safe speed that matches the stock RC2014 CPU module.
+
+If you instead short the top 2 pins, then the CPU will be boosted to the speed of the installed oscillator.
+
+### J1
+
+This jumper is typically just shorted.  This jumper maps the 3.6864Mhz clock signal to the CPU slow down speed.  This is the speed the CPU will be clocked at, when any I/O operations are performed (eg when the CPU talks to your other modules such at the serial or video modules).  For MSX configuration, this jumper needs to be shorted.
+
+<p align="center">
+<img src="images/jumpers.jpg" alt="Jumpers" width="40%"/>
+</p>
 
 ## Disclaimer
 
@@ -99,17 +168,25 @@ Please note that this is a kit, produced by a non-professional (me) for hackers,
 
 ## Images
 
-Assembled
+Installed
 ---------
 <img src="images/installed.jpg" alt="Installed" width="100%"/>
 
+Assembled
+---------
 <img src="images/assembled-profile.jpg" alt="Assembled Profiled" width="100%"/>
 
 <img src="images/assembled-top.jpg" alt="Assembled Top" width="100%"/>
 
+PCB
+---------
 <img src="images/top.jpg" alt="PCB Top" width="100%"/>
 
 <img src="images/back.jpg" alt="PCB Back" width="100%"/>
+
+Kit
+---------
+<img src="images/kit.jpg" alt="PCB Back" width="100%"/>
 
 ## References
 
