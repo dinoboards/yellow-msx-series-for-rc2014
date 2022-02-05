@@ -188,6 +188,10 @@ Kit
 ---------
 <img src="images/kit.jpg" alt="PCB Back" width="100%"/>
 
+## Resources
+
+* Schematic: [schematic.pdf](./schematic.pdf "Schematic")
+
 ## References
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
