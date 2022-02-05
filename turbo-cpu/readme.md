@@ -162,6 +162,21 @@ This jumper is typically just shorted.  This jumper maps the 3.6864Mhz clock sig
 <img src="images/jumpers.jpg" alt="Jumpers" width="40%"/>
 </p>
 
+
+## PLD Code
+
+This module has 2 (Programable Logic Devices) PLD chips to manage the clock slow down and cpu wait states.
+
+The ATF22V10 is responsible for initiating and holding the clock braking, upon any I/O operation.
+
+[msx/turbo-cpu.pld](../msx/turbo-cpu.pld)
+
+The ATF16V8 is responsible for issuing any additional WAIT states to the CPU.
+
+[msx/turbo-cpu-mwait.pld](../msx/turbo-cpu-mwait.pld)
+
+The 3 way slider's state is sent to these 2 chips to allow the user to select 2 turbo modes or a turbo off mode.
+
 ## Disclaimer
 
 Please note that this is a kit, produced by a non-professional (me) for hackers, DIYers' and retro lovers, to tinker with. I will do my best to answer any support questions you may have.
