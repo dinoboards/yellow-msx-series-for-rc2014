@@ -77,7 +77,7 @@ The SST39SF040 ROM is supplied flashed with MSX-MUSIC extensions for MSX BASIC.
 |  2     | 22K Ω Resistor | 
 |  1     | Yamaha YM2413 |
 |  1     | 74HCT273|
-|  1     | 74HCT138 |
+|  2     | 74HCT138 |
 |  1     | 74HCT32 |
 |  1     | 74HCT21 |
 |  1     | SST39SF040 512K NOR Flash ROM |
