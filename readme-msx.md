@@ -6,7 +6,7 @@ You should be able to install the V9958, Game and keyboard modules into any stoc
 
 If you wish to operate in MSX Compatibility module, in addition to the GAME, VIDEO, KEYBOARD, you will need the MEMORY module and the following stock RC2014 modules (configured as described):
 
-1. **[CPU](https://rc2014.co.uk/modules/cpu/z80-cpu-v2-1/)** - you need a CPU of course - running at 3.5Mhz.  The CBIOS image can operate at the 7Mhz rate, but many applications will not work at this frequency.  The MSXSYS based builds only work when the CPU is clocked at 3.5MHz
+1. **[Enhanced CPU](https://rc2014.co.uk/modules/cpu/z80-cpu-v2-1/)** - you need a CPU of course - running at 3.5Mhz.  The CBIOS image can operate at the 7Mhz rate, but many applications will not work at this frequency.  The MSXSYS based builds only work when the CPU is clocked at 3.5MHz
 
 2. **[Dual Clock](https://rc2014.co.uk/modules/dual-clock-module/)**.  Dual clock is recommended so that the SIO/2 module's 2nd serial port can be clocked down.  The MSX bios will struggle to operate the SIO/2 chip if both CPU and SIO/2 clock lines are the same.  You will want to set the primary clock to 3.5Mhz and the 2nd clock to 0.3072Mhz. (See notes below for specific difference for bios msx versions*)
 
