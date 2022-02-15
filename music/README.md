@@ -12,6 +12,28 @@ YM2413 MSX-Music Module Designed for RC2014
 
 Give your RC2014 MSX build MSX-Music OPLL Sounds
 
+  * [Description](#description)
+  * [What is it?](#what-is-it-)
+  * [Key features:](#key-features-)
+  * [What is the 'Yellow MSX Series of Boards'?](#what-is-the--yellow-msx-series-of-boards--)
+  * [What's included in this kit](#what-s-included-in-this-kit)
+  * [Bill of Materials](#bill-of-materials)
+  * [What else do I need to make this work?](#what-else-do-i-need-to-make-this-work-)
+  * [Port Mapping](#port-mapping)
+  * [Rom page selection](#rom-page-selection)
+- [Software](#software)
+  * [vgmplay.com](#vgmplaycom)
+  * [Running MSX-BASIC code](#running-msx-basic-code)
+  * [muflash.com](#muflashcom)
+  * [Updating the onboard MSX-MUSIC rom image](#updating-the-onboard-msx-music-rom-image)
+  * [Using the MSX-MUSIC to update your main rom's image.](#using-the-msx-music-to-update-your-main-rom-s-image)
+- [Disclaimer](#disclaimer)
+- [FAQ](#faq)
+- [Images](#images)
+- [Resources](#resources)
+- [References](#references)
+
+
 ### Description
 
 Explore the world of mid 80s music synthesis sound chips - Yamaha's YM2413 OPLL (FM synthesis) as used in the MSX-MUSIC standard.
@@ -24,7 +46,7 @@ The OPLL was especially made for the MSX system. It provides 9 channels of FM so
 
 The OPLL was also used in Sega Mark III and the Japanese Sega Master System, as well as in arcade machines by SNK and Alpha Denshi, and in a range of Yamaha keyboards.
 
-Th chip supports one user-defined instrument and fifteen read-only hard-coded instrument profiles (violin, guitar, piano, flute, clarinet, oboe, trumpet, organ, horn, synthesizer, harpsichord, vibraphone, synthesizer bass, acoustic bass and electric guitar). The IC can operate either as nine channels of melodic instruments or six melodic channels and five hard-coded percussion instruments (high hat, top cymbal, and tom tom, snare and bass drums).
+The chip supports one user-defined instrument and fifteen read-only hard-coded instrument profiles (violin, guitar, piano, flute, clarinet, oboe, trumpet, organ, horn, synthesizer, harpsichord, vibraphone, synthesizer bass, acoustic bass and electric guitar). The IC can operate either as nine channels of melodic instruments or six melodic channels and five hard-coded percussion instruments (high hat, top cymbal, and tom tom, snare and bass drums).
 
 Installed into a MSX configured RC2014 build, this kit will give your system the ability to run many MSX music tracker applications or compatible games.
 
@@ -187,7 +209,7 @@ To do this process, the Compact Flash module (or some other storage solution) is
 
 To perform a MSX-Memory ROM update using the MSX-MUSIC flashing capability, following these steps:
 
-1. Download (or assembly your own version) from the github's release page, https://github.com/vipoo/yellow-msx-series-for-rc2014/releases, the file `msx-rc2014-XX-XX-XX.zip`
+1. Download (or assemble your own version) from the github's release page, https://github.com/vipoo/yellow-msx-series-for-rc2014/releases, the file `msx-rc2014-XX-XX-XX.zip`
 2. Extract the `muflash.com` and the rom image you would like to apply to your MSX-Memory system (eg: `msxsyssrc-rc2014-japan-with-rtc.rom`)
 3. Copy the ROM image to your Compact Flash card (renaming to 8.3 file name eg: `msxjapan.rom`)
 4. From the MSX-DOS prompt run the command `muflash msxjapan.rom`
@@ -200,7 +222,23 @@ To perform a MSX-Memory ROM update using the MSX-MUSIC flashing capability, foll
 
 Please note that this is a kit, produced by a non-professional (me) for hackers, DIYers' and retro lovers, to tinker with. I will do my best to answer any support questions you may have.
 
-## Images
+## FAQ
+
+**My RC2014 does not boot with the MSX-MUSIC module installed.  What might be the problem?**
+
+Try removing the ROM chip from the module, if it boots up and you can play music with `VGMPLAY` application, then you may have forgotten to map the SLT3-1 signal from the main memory board.  
+
+**How does this board and the GAME work together?**
+
+The MSX-MUSIC module can mix in the audio output of the GAME module.  Connect a jumper from the 2 pin audio output connection of the GAME to the MUSIC module.  Make sure you get polarity correct - GND to GND.  The 3.5mm output of the GAME need not be used. Plug your speaker into the MSX-MUSIC's 3.5mm socket.
+
+**Why do I hear some background noises from the MSX-MUSIC module?**
+
+The noise from nearby digital circuits of your RC2014 will be picked up and amplified by this module.  If you are running the ESP8266 module, that is particularly noisy.  You should find though, that once playing music the background noise is not too noticeable.
+
+
+
+## Assembly Images
 
 Assembled
 ---------
