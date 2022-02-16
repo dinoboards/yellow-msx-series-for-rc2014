@@ -61,36 +61,36 @@ install-prereq:
 	(cd rc2014-extended && $(MAKE) install-prereq --no-print-directory)
 
 .PHONY: rom-image-pal
-rom-image-pal: bin/cbios.nextor.rom cbios ./rc2014-extended/bin/rc2014-extended.rom
+rom-image-pal: bin/cbios.nextor.rom cbios ./bin/rc2014-extended.rom
 	@rm -f bin/yellow-msx-pal-rc2104.rom
 	dd status=none if=/dev/zero bs=16k count=8 of=bin/yellow-msx-pal-rc2104.rom
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_main_rc2014_pal.rom 	of=bin/yellow-msx-pal-rc2104.rom bs=16k count=2  seek=0
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1  seek=2
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1  seek=3
 	dd status=none conv=notrunc if=./bin/cbios.nextor.rom             	    			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=27 seek=4
-	dd status=none conv=notrunc if=./rc2014-extended/bin/rc2014-extended.rom		 	of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1  seek=31
+	dd status=none conv=notrunc if=./bin/rc2014-extended.rom		 									of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1  seek=31
 	# printf 'Built bin/yellow-msx-pal-rc2104.rom\r\n'
 
 .PHONY: rom-image-ntsc
-rom-image-ntsc: bin/cbios.nextor.rom cbios ./rc2014-extended/bin/rc2014-extended.rom
+rom-image-ntsc: bin/cbios.nextor.rom cbios ./bin/rc2014-extended.rom
 	@rm -f bin/yellow-msx-ntsc-rc2104.rom
 	dd status=none if=/dev/zero bs=16k count=8 of=bin/yellow-msx-ntsc-rc2104.rom
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_main_rc2014_ntsc.rom of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=2  seek=0
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1  seek=2
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1  seek=3
 	dd status=none conv=notrunc if=./bin/cbios.nextor.rom    			     						of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=27 seek=4
-	dd status=none conv=notrunc if=./rc2014-extended/bin/rc2014-extended.rom		 	of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1  seek=31
+	dd status=none conv=notrunc if=./bin/rc2014-extended.rom										 	of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1  seek=31
 	# printf 'Built bin/yellow-msx-ntsc-rc2104.rom\r\n'
 
 .PHONY: rom-image-nms8250
-rom-image-nms8250: nextor-rc2014 cbios systemroms/nms8250_basic-bios2.rom systemroms/nms8250_msx2sub.rom ./rc2014-extended/bin/rc2014-extended.rom
+rom-image-nms8250: nextor-rc2014 cbios systemroms/nms8250_basic-bios2.rom systemroms/nms8250_msx2sub.rom ./bin/rc2014-extended.rom
 	@rm -f bin/nms8250-rc2014.rom
 	dd status=none if=/dev/zero bs=16k count=8 of=bin/nms8250-rc2014.rom
 	dd status=none conv=notrunc if=./systemroms/nms8250_basic-bios2.rom					 	of=bin/nms8250-rc2014.rom bs=16k count=2 seek=0
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_logo_rc2014.rom 			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=2
 	dd status=none conv=notrunc if=./systemroms/nms8250_msx2sub.rom				   			of=bin/nms8250-rc2014.rom bs=16k count=1 seek=3
 	dd status=none conv=notrunc if=./nextor/bin/rc2014.nextor-2.1.1.rom    				of=bin/nms8250-rc2014.rom bs=16k count=27 seek=4
-	dd status=none conv=notrunc if=./rc2014-extended/bin/rc2014-extended.rom      of=bin/nms8250-rc2014.rom bs=16k count=1 seek=31
+	dd status=none conv=notrunc if=./bin/rc2014-extended.rom    								  of=bin/nms8250-rc2014.rom bs=16k count=1 seek=31
 	# printf 'Built bin/nms8250-rc2014.rom\r\n'
 
 .PHONY: clean
@@ -161,23 +161,23 @@ nextor-rc2014/extras/AUTOEXEC.BAT: ./AUTOEXEC.BAT
 	@mkdir -p nextor-rc2014/extras
 	@cp -up ./AUTOEXEC.BAT nextor-rc2014/extras/AUTOEXEC.BAT
 
-.PHONY: rc2014-extended/bin/rc2014-extended.rom
-rc2014-extended/bin/rc2014-extended.rom:
+.PHONY: bin/rc2014-extended.rom
+bin/rc2014-extended.rom:
 	@$(MAKE) -C ./rc2014-extended --no-print-directory bin/rc2014-extended.rom
-	cp rc2014-extended/bin/rc2014-extended.rom ./bin/
+	cp -p rc2014-extended/bin/rc2014-extended.rom ./bin/
 
 include Makefile-apps.mk
 
 define BUILD_msxsysromimage =
 .PHONY: rom-msxsyssrc-$1-$2-rtc
-rom-msxsyssrc-$1-$2-rtc: bin/rc2014.nextor.rom cbios msxsys-$1-$2-rtc ./rc2014-extended/bin/rc2014-extended.rom
+rom-msxsyssrc-$1-$2-rtc: bin/rc2014.nextor.rom cbios msxsys-$1-$2-rtc ./bin/rc2014-extended.rom
 	@rm -f bin/msxsyssrc-rc2014-$1-$2-rtc.rom
 	dd status=none if=/dev/zero bs=16k count=8 of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom
 	dd status=none conv=notrunc status=none if=./bin/$1-$2-rtc-main.rom													of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=2  seek=0
 	dd status=none conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 				of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=2
 	dd status=none conv=notrunc status=none if=./bin/$1-$2-rtc-subrom.rom												of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=3
 	dd status=none conv=notrunc status=none if=./bin/rc2014.nextor.rom    											of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=27 seek=4
-	dd status=none conv=notrunc status=none if=./rc2014-extended/bin/rc2014-extended.rom				of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=31
+	dd status=none conv=notrunc status=none if=./bin/rc2014-extended.rom												of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=31
 	# printf 'Built bin/msxsyssrc-rc2014-$1-$2-rtc.rom\r\n'
 
 .PHONY: msxsys-$1-$2-rtc

@@ -2,6 +2,8 @@
 #ifndef __FLASH_LOADER
 #define __FLASH_LOADER
 
-extern void flashLoader();
+#include <stdlib.h>
+
+extern void flashLoader(const uint8_t segment) __z88dk_fastcall;
 
 #endif
