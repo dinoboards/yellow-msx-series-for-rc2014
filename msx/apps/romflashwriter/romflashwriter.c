@@ -18,6 +18,7 @@ void erase_sector_prefix();
 void wait_for_completion(volatile uint8_t* addr) __z88dk_fastcall;
 void copy_4k_from_source_bank();
 void flash_4k();
+void reset_system();
 
 void main() {
   __asm__("LD	SP, 0xF000");
@@ -28,7 +29,7 @@ void main() {
 
   flash_4k();
 
-  __asm__("HALT");
+  reset_system();
 }
 
 void erase_sector_prefix() {
@@ -103,4 +104,11 @@ void flash_4k() {
     *destination = *source++;
     wait_for_completion(destination++);
   }
+}
+
+void reset_system() {
+  // select slot 0 for page 0 and page 1
+  PSL_STAT = PSL_STAT & 0b11110000;
+
+  __asm__("JP 0");
 }
