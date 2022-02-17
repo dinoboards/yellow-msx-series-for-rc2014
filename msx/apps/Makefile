@@ -90,8 +90,6 @@ $(BIN)romflashwriter/write-extended.bin: ./romflashwriter/write-extended.c ./rom
 	zcc +z80 -startup=0 -SO3 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 ./romflashwriter/main.asm bin/romflashwriter/write-extended.c.asm ./romflashwriter/working.asm -o ./bin/romflashwriter/write-extended.bin
 	echo "Assembled $< to write-extended.bin"
 
-#-pragma-define:CRT_ORG_CODE=0x0C000
-
 $(BIN)romflashwriter/write-extended.inc: $(BIN)romflashwriter/write-extended.bin
 	@./romflashwriter/export.sh $(BIN)romflashwriter/write-extended.bin $(BIN)romflashwriter/write-extended.inc
 	echo "exported write-extended.bin to write-extended.inc"

@@ -4,6 +4,6 @@
 
 #include <stdlib.h>
 
-extern void flashLoader(const uint8_t segment) __z88dk_fastcall;
+extern void flash_loader_extended() __z88dk_fastcall;
 
 #endif

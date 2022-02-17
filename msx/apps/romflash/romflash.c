@@ -38,7 +38,7 @@ void main(const int argc, const unsigned char **argv) {
 
   __asm__("DI");
   SEGS[0] = allocated_data_segment;
-  flashLoader(allocated_data_segment);
+  flash_loader_extended();
 
   // printf("SPIKE loading file into mapped memory ....\r\n");
 

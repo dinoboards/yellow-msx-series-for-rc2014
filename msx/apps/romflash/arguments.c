@@ -2,11 +2,14 @@
 #include "print.h"
 #include <stdbool.h>
 
+const char *flash_rom_type;
 const char *flash_file_name;
 
 uint8_t abort_with_help() {
-  printf("Usage:  romflash <filename>\r\n\r\n"
-         "Flash the the rom (extended bios only)\r\n\r\n"
+  printf("Usage:  romflash <type> <filename>\r\n\r\n"
+         "Flash pages within the main ROM\r\n\r\n"
+         "  type\r\n"
+         "    one of (extended, driver)\r\n"
          "  filename\r\n"
          "    The file name of image to flash\r\n"
          "\r\n");
@@ -21,6 +24,24 @@ uint8_t arg_help_msg(const uint8_t i, const char **argv) {
     return i;
 
   return abort_with_help();
+}
+
+uint8_t arg_rom_type(const uint8_t i, const char **argv) {
+  if (argv[i][0] != '/') {
+    if (flash_rom_type)
+      return i;
+    flash_rom_type = argv[i];
+
+    if (strncasecmp(flash_rom_type, "extended", 8) == 0) 
+      return i+1;
+
+    if (strncasecmp(flash_rom_type, "driver", 8) == 0) 
+      return i+1;
+
+    return abort_with_help();
+  }
+
+  return i;
 }
 
 uint8_t arg_file_name(const uint8_t i, const char **argv) {
@@ -41,8 +62,8 @@ uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) {
   return abort_with_help();
 }
 
-uint8_t abort_with_missing_file_name_msg() {
-  printf("Missing filename.\r\n\r\n");
+uint8_t abort_with_missing_args_message() {
+  printf("Missing rom type and/or filename.\r\n\r\n");
   return abort_with_help();
 }
 
@@ -54,6 +75,10 @@ void process_cli_arguments(const int argc, const char **argv) {
     if (current_i != i)
       continue;
 
+    i = arg_rom_type(i, argv);
+    if (current_i != i)
+      continue;
+
     i = arg_file_name(i, argv);
     if (current_i != i)
       continue;
@@ -61,6 +86,9 @@ void process_cli_arguments(const int argc, const char **argv) {
     abort_with_invalid_arg_msg(i, argv);
   }
 
+  if (flash_rom_type == NULL)
+    abort_with_missing_args_message();
+
   if (flash_file_name == NULL)
-    abort_with_missing_file_name_msg();
+    abort_with_missing_args_message();
 }

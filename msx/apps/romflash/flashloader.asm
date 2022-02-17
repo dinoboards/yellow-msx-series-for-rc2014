@@ -1,9 +1,9 @@
 
-	PUBLIC	_flashLoader
+	PUBLIC	_flash_loader_extended
 
-; extern void flashLoader(const uint8_t segment) __z88dk_fastcall;
+; extern voidflash_loader_extended() __z88dk_fastcall;
 
-_flashLoader:
+_flash_loader_extended:
 	EXX				; SAVE HL
 
 	; CLEAR PAGE 3 RAM BANK 
