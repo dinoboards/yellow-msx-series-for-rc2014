@@ -32,5 +32,5 @@ PUSHLOOP:
 	JP	$C100
 
 ROM_FLASH_WRITER:
-	include	"../bin/romflashwriter/romflashwriter.inc"
+	include	"../bin/romflashwriter/write-extended.inc"
 ROM_FLASH_WRITER_LENGTH	EQU	$-ROM_FLASH_WRITER

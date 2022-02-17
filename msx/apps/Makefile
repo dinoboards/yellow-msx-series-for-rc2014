@@ -84,22 +84,22 @@ $(BIN)siocfg.com: $(addprefix $(BIN),$(siocfg_files))
 siocfg.com.crt_enable_commandline:=1
 
 romflashwriter_files = $(call app_files,romflashwriter)
-$(BIN)romflashwriter/romflashwriter.bin: ./romflashwriter/romflashwriter.c ./romflashwriter/main.asm ./romflashwriter/working.asm
+$(BIN)romflashwriter/write-extended.bin: ./romflashwriter/write-extended.c ./romflashwriter/main.asm ./romflashwriter/working.asm
 	@mkdir -p $(dir $@)
-	zcc +z80 -startup=0 -SO3 --max-allocs-per-node200000 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 -a ./romflashwriter/romflashwriter.c -o ./bin/romflashwriter/romflashwriter.c.asm
-	zcc +z80 -startup=0 -SO3 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 ./romflashwriter/main.asm bin/romflashwriter/romflashwriter.c.asm ./romflashwriter/working.asm -o ./bin/romflashwriter/romflashwriter.bin
-	echo "Assembled $< to romflashwriter.bin"
+	zcc +z80 -startup=0 -SO3 --max-allocs-per-node200000 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 -a ./romflashwriter/write-extended.c -o ./bin/romflashwriter/write-extended.c.asm
+	zcc +z80 -startup=0 -SO3 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 ./romflashwriter/main.asm bin/romflashwriter/write-extended.c.asm ./romflashwriter/working.asm -o ./bin/romflashwriter/write-extended.bin
+	echo "Assembled $< to write-extended.bin"
 
 #-pragma-define:CRT_ORG_CODE=0x0C000
 
-$(BIN)romflashwriter/romflashwriter.inc: $(BIN)romflashwriter/romflashwriter.bin
-	@./romflashwriter/export.sh $(BIN)romflashwriter/romflashwriter.bin $(BIN)romflashwriter/romflashwriter.inc
-	echo "exported romflashwriter.bin to romflashwriter.inc"
+$(BIN)romflashwriter/write-extended.inc: $(BIN)romflashwriter/write-extended.bin
+	@./romflashwriter/export.sh $(BIN)romflashwriter/write-extended.bin $(BIN)romflashwriter/write-extended.inc
+	echo "exported write-extended.bin to write-extended.inc"
 
-./bin/romflash/flashloader.o: romflash/flashloader.asm $(BIN)romflashwriter/romflashwriter.inc
+./bin/romflash/flashloader.o: romflash/flashloader.asm $(BIN)romflashwriter/write-extended.inc
  
 romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.asm)    
-$(BIN)romflash.com: $(BIN)romflashwriter/romflashwriter.inc $(addprefix $(BIN),$(romflash_files)) 
+$(BIN)romflash.com: $(BIN)romflashwriter/write-extended.inc $(addprefix $(BIN),$(romflash_files)) 
 romflash.com.crt_enable_commandline:=1
 
 muflash_files = $(call app_files,muflash,$(SYSTEM_VARS))

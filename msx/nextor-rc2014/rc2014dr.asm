@@ -1031,17 +1031,4 @@ MSX_MUSIC_NAME_LEN	EQU	$-MSX_MUSIC_NAME
 ;         | Bank switching code |
 ; 7FFFh   +---------------------+
 
-; SECTOR_INDX_START	EQU	07F00h
-; SECTORS			EQU	05F00h		; 8k of data (16 sectors)
-
-; 	PUBLIC	SECSTRT, SECEND, DATSIZE
-; DRV_END:
-
-; SECSTRT:
-; 	DS	SECCNT * SECSIZ, 0
-; SECEND:
-; DATSIZE	EQU	SECCNT * SECSIZ
-
-	; EXPORT	DRVEND
-; DRVEND:
 	end

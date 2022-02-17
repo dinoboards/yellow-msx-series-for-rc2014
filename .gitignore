@@ -4,3 +4,5 @@ msx/systemroms/
 msx/msxsys-build/working/*
 release/
 .env
+
+msx/nextor-rc2014..

@@ -1,14 +1,14 @@
+#include "arguments.h"
 #include "flashloader.h"
 #include "memmapper.h"
 #include <extbio.h>
 #include <msxdos.h>
 #include <stdio.h>
 #include <system_vars.h>
-#include "arguments.h"
 
 memmap_extbio_info info_table;
 
-static FILE *   file;
+static FILE *file;
 
 uint8_t __at 0xC000 SEGS[16];
 
@@ -40,9 +40,7 @@ void main(const int argc, const unsigned char **argv) {
   SEGS[0] = allocated_data_segment;
   flashLoader(allocated_data_segment);
 
-
   // printf("SPIKE loading file into mapped memory ....\r\n");
-
 
   // FILE *fptr = NULL;
   // fptr = fopen(pFileName, "rb");
@@ -60,7 +58,6 @@ void main(const int argc, const unsigned char **argv) {
   // // }
 
   // uint8_t currentSegment = memmap_get_page_2();
-
 
   // for (int i = 0; i < size / 16384; i++) {
   //   uint8_t success = memmap_allocate_segment(0, 0x0, &allocated_segment, &allocated_slot);
@@ -81,7 +78,6 @@ void main(const int argc, const unsigned char **argv) {
   // extbio_get_dev_info_table(4, &info_table);
 
   // printf("Free Slot %d, Total Slots: %d\r\n", info_table.number_of_free_segments, info_table.number_of_segments);
-
 }
 
 // void main() {

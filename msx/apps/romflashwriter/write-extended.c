@@ -7,7 +7,7 @@ extern uint8_t WORKING_BUFFER[];
 __sfr __at 0xA8 PSL_STAT;
 __sfr __at 0xFE MEM_BANK_PAGE_2;
 
-uint8_t __at 0xC000 SEGS[16];
+uint8_t          __at 0xC000 SEGS[16];
 volatile uint8_t __at 0xFFFF SECONDARY_SLOT;
 
 uint8_t __at 0x5555 rom5555;
@@ -15,7 +15,7 @@ uint8_t __at 0x2AAA rom2AAA;
 
 void erase_extended_rom();
 void erase_sector_prefix();
-void wait_for_completion(volatile uint8_t* addr) __z88dk_fastcall;
+void wait_for_completion(volatile uint8_t *addr) __z88dk_fastcall;
 void copy_4k_from_source_bank();
 void flash_4k();
 void reset_system();
@@ -46,11 +46,11 @@ void erase_extended_rom() {
   PSL_STAT = PSL_STAT & 0b11110000 | 0b00110000;
 
   // select sub slot 3 for page 2
-  SECONDARY_SLOT = (~SECONDARY_SLOT) | 0b00110000; 
+  SECONDARY_SLOT = (~SECONDARY_SLOT) | 0b00110000;
 
-  volatile uint8_t* addr = (uint8_t*)0x8000;
+  volatile uint8_t *addr = (uint8_t *)0x8000;
 
-  for(uint8_t c = 4; c > 0; c--) {
+  for (uint8_t c = 4; c > 0; c--) {
     erase_sector_prefix();
     *addr = 0x30;
     wait_for_completion(addr);
@@ -58,7 +58,7 @@ void erase_extended_rom() {
   }
 }
 
-void wait_for_completion(volatile uint8_t* addr) __z88dk_fastcall {
+void wait_for_completion(volatile uint8_t *addr) __z88dk_fastcall {
   (void)addr;
   // clang-format off
   __asm
@@ -79,10 +79,10 @@ void copy_4k_from_source_bank() {
   // select the memory bank
   MEM_BANK_PAGE_2 = SEGS[0];
 
-  memcpy(WORKING_BUFFER, (uint8_t*)0x8000, 0x1000);
+  memcpy(WORKING_BUFFER, (uint8_t *)0x8000, 0x1000);
 }
 
- void program_byte_prefix() {
+void program_byte_prefix() {
   rom5555 = 0xAA;
   rom2AAA = 0x55;
   rom5555 = 0xA0;
@@ -94,12 +94,12 @@ void flash_4k() {
   PSL_STAT = PSL_STAT & 0b11110000 | 0b00110000;
 
   // select sub slot 3 for page 2
-  SECONDARY_SLOT = (~SECONDARY_SLOT) | 0b00110000; 
+  SECONDARY_SLOT = (~SECONDARY_SLOT) | 0b00110000;
 
-  uint8_t* source = WORKING_BUFFER;
-  uint8_t* destination = (uint8_t*)0x8000;
+  uint8_t *source = WORKING_BUFFER;
+  uint8_t *destination = (uint8_t *)0x8000;
 
-  for(uint16_t index = 0x1000; index > 0; index--) {
+  for (uint16_t index = 0x1000; index > 0; index--) {
     program_byte_prefix();
     *destination = *source++;
     wait_for_completion(destination++);
