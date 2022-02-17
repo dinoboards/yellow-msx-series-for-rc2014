@@ -2,7 +2,7 @@
 #include "print.h"
 #include <stdbool.h>
 
-const char *flash_rom_type;
+RomType     flash_rom_type;
 const char *flash_file_name;
 
 uint8_t abort_with_help() {
@@ -30,13 +30,16 @@ uint8_t arg_rom_type(const uint8_t i, const char **argv) {
   if (argv[i][0] != '/') {
     if (flash_rom_type)
       return i;
-    flash_rom_type = argv[i];
 
-    if (strncasecmp(flash_rom_type, "extended", 8) == 0) 
-      return i+1;
+    if (strncasecmp(argv[i], "extended", 8) == 0) {
+      flash_rom_type = ROM_TYPE_EXTENDED;
+      return i + 1;
+    }
 
-    if (strncasecmp(flash_rom_type, "driver", 8) == 0) 
-      return i+1;
+    if (strncasecmp(argv[i], "driver", 8) == 0) {
+      flash_rom_type = ROM_TYPE_DRIVER;
+      return i + 1;
+    }
 
     return abort_with_help();
   }
@@ -86,7 +89,7 @@ void process_cli_arguments(const int argc, const char **argv) {
     abort_with_invalid_arg_msg(i, argv);
   }
 
-  if (flash_rom_type == NULL)
+  if (flash_rom_type == ROM_TYPE_UNDEFINED)
     abort_with_missing_args_message();
 
   if (flash_file_name == NULL)

@@ -1,3 +1,11 @@
+	SECTION	CODE
+
+	PUBLIC _debug
+_debug:
+	ld b,b
+	jr $+2
+	RET
+
 	SECTION	BSS
 
 	PUBLIC _WORKING_BUFFER

@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 
-extern void flash_loader_extended() __z88dk_fastcall;
+extern void flash_loader_extended();
+extern void flash_loader_driver();
 
 #endif

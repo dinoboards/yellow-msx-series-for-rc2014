@@ -14,12 +14,39 @@ The ROM is paged into the Z80's address space, allowing the banking of MSX BIOS,
 
 The ROM is devided into 16K banks, mapped at the following addresses and MSX slots:
 
-|  SLOT  |  CPU ADDRESS      |  DESC                    |  ROM CHIP'S ADDR    |
-|--------|-------------------|--------------------------|---------------------|
-|    0   | 0x0000 to 0x7FFF  | MAIN ROM (48K)           | 0x00000 to 0x07FFF  |
-|    0   | 0x8000 to 0xBFFF  | LOGO ROM (16K)           | 0x08000 to 0x0BFFF  |
-|  3-0   | 0x0000 to 0x3FFF  | SUB ROM (16K)            | 0x0C000 to 0x0FFFF  |
-|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR/ROM DISK  | 0x10000 to 0x7FFFF  |
+|  SLOT  |  CPU ADDRESS      |  DESC                        |   BANK  |  ROM CHIP'S ADDR    |
+|--------|-------------------|------------------------------|---------|---------------------|
+|    0   | 0x0000 to 0x7FFF  | MAIN ROM (48K)               |    -    | 0x00000 to 0x07FFF  |
+|    0   | 0x8000 to 0xBFFF  | LOGO ROM (16K)               |    -    | 0x08000 to 0x0BFFF  |
+|  3-0   | 0x0000 to 0x3FFF  | SUB ROM (16K)                |    -    | 0x0C000 to 0x0FFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR SYSTEM        |    0    | 0x10000 to 0x13FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR SYSTEM        |    1    | 0x14000 to 0x17FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR SYSTEM        |    2    | 0x18000 to 0x1BFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR SYSTEM        |    3    | 0x1C000 to 0x1FFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR SYSTEM        |    4    | 0x20000 to 0x23FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR SYSTEM        |    5    | 0x24000 to 0x27FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR SYSTEM        |    6    | 0x28000 to 0x2BFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | MSX-DOS/NEXTOR RC2014 DRV    |    7    | 0x2C000 to 0x2FFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    8    | 0x30000 to 0x33FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    9    | 0x34000 to 0x37FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    10   | 0x38000 to 0x3BFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    11   | 0x3C000 to 0x3FFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    12   | 0x40000 to 0x43FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    13   | 0x43000 to 0x47FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    14   | 0x48000 to 0x4CFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    15   | 0x50000 to 0x53FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    16   | 0x54000 to 0x57FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    17   | 0x58000 to 0x5BFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    18   | 0x5C000 to 0x5FFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    19   | 0x60000 to 0x63FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    20   | 0x64000 to 0x67FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    21   | 0x68000 to 0x6BFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    22   | 0x6C000 to 0x6FFFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    23   | 0x70000 to 0x73FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    24   | 0x74000 to 0x77FFF  |
+|  3-3   | 0x4000 to 0x7FFF  | EMBEDDED ROM DISK IMAGE      |    25   | 0x78000 to 0x7BFFF  |
+|  3-3   | 0x8000 to 0xBFFF  | RC2014 CUSTOM EXTENDED BIOS  |    26   | 0x7C000 to 0x7FFFF  |
+
 
 The first 64K of the onboard ROM is coded to be addressed from slot 0 and 3-0.
 The remaining 28 16K banks mapped to slot 3-3, using the [ASCII16](https://www.msx.org/wiki/MegaROM_Mappers#ASC16_.28ASCII.29) banking system.

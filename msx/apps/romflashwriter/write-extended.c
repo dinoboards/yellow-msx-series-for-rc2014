@@ -73,7 +73,7 @@ wait_for_erase:
 }
 
 void copy_4k_from_source_bank() {
-  // select TAM slot for page 2
+  // select RAM slot for page 2
   SECONDARY_SLOT = (~SECONDARY_SLOT) & 0b11001111 | 0b00100000;
 
   // select the memory bank

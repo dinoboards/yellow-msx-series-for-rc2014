@@ -42,6 +42,7 @@ bin/$1.nextor.rom: $(addprefix nextor-rc2014/extras/apps/,$(INCLUDED_APPS)) $(ad
 	cd nextor-rc2014
 	$(MAKE) ./bin/$1.nextor.rom -O -j --no-print-directory
 	cp -u ./bin/$1.nextor.rom ../bin
+	cp -u ./bin/$1.driver.only.bin ../bin
 endef
 
 $(eval $(call BUILD_versions,cbios))

@@ -10,7 +10,7 @@ BINDIR := ./bin/
 
 ASM = sjasmplus --msg=war --nologo --fullpath --inc=../nextor/source/kernel/ --raw=$@ --sym=$(basename $@).sym.asm --lst=$@.lst --exp=$(basename $@).exp.asm
 
-all: $(BINDIR)cbios.nextor.rom $(BINDIR)rc2014.nextor.rom
+all: $(BINDIR)cbios.nextor.rom $(BINDIR)rc2014.nextor.rom $(BINDIR)rc2014.driver.x.bin $(BINDIR)cbios.driver.x.bin
 
 .PHONY: clean
 clean:
@@ -87,7 +87,8 @@ $(BINDIR)$1.driver-with-sectors.bin: $(BINDIR)rc2014dr.bin $(BINDIR)rcembdrv.bin
 $(BINDIR)$1.nextor.rom: $(BINDIR)$1.driver-with-sectors.bin $(BINDIR)chgbnk.bin
 	@cd $(BINDIR)
 	../../nextor/linuxtools/mknexrom ../../nextor/bin/working/$1/dos250ba.dat $1.nextor.rom -q -d:$1.driver-with-sectors.bin -m:chgbnk.bin
-
+	# extract bank 7 from the nextor rom
+	dd status=none skip=114688 count=16384 if=$1.nextor.rom of=$1.driver.only.bin bs=1
 endef
 
 $(eval $(call BUILD_versions,cbios))

@@ -38,7 +38,11 @@ void main(const int argc, const unsigned char **argv) {
 
   __asm__("DI");
   SEGS[0] = allocated_data_segment;
-  flash_loader_extended();
+
+  if (flash_rom_type == ROM_TYPE_EXTENDED)
+    return flash_loader_extended();
+
+  flash_loader_driver();
 
   // printf("SPIKE loading file into mapped memory ....\r\n");
 

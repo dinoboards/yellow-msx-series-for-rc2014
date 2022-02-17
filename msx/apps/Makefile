@@ -83,18 +83,28 @@ siocfg_files = $(call app_files,siocfg,memmap-override.asm libraries/extbio/extb
 $(BIN)siocfg.com: $(addprefix $(BIN),$(siocfg_files))
 siocfg.com.crt_enable_commandline:=1
 
-romflashwriter_files = $(call app_files,romflashwriter)
+# romflashwriter_files = $(call app_files,romflashwriter)
 $(BIN)romflashwriter/write-extended.bin: ./romflashwriter/write-extended.c ./romflashwriter/main.asm ./romflashwriter/working.asm
 	@mkdir -p $(dir $@)
 	zcc +z80 -startup=0 -SO3 --max-allocs-per-node200000 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 -a ./romflashwriter/write-extended.c -o ./bin/romflashwriter/write-extended.c.asm
 	zcc +z80 -startup=0 -SO3 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 ./romflashwriter/main.asm bin/romflashwriter/write-extended.c.asm ./romflashwriter/working.asm -o ./bin/romflashwriter/write-extended.bin
 	echo "Assembled $< to write-extended.bin"
 
+$(BIN)romflashwriter/write-driver.bin: ./romflashwriter/write-driver.c ./romflashwriter/main.asm ./romflashwriter/working.asm
+	@mkdir -p $(dir $@)
+	zcc +z80 -startup=0 -SO3 --max-allocs-per-node200000 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 -a ./romflashwriter/write-driver.c -o ./bin/romflashwriter/write-driver.c.asm
+	zcc +z80 -startup=0 -SO3 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C100 ./romflashwriter/main.asm bin/romflashwriter/write-driver.c.asm ./romflashwriter/working.asm -o ./bin/romflashwriter/write-driver.bin
+	echo "Assembled $< to write-driver.bin"
+
+$(BIN)romflashwriter/write-driver.inc: $(BIN)romflashwriter/write-driver.bin
+	@./romflashwriter/export.sh $(BIN)romflashwriter/write-driver.bin $(BIN)romflashwriter/write-driver.inc
+	echo "exported write-driver.bin to write-driver.inc"
+
 $(BIN)romflashwriter/write-extended.inc: $(BIN)romflashwriter/write-extended.bin
 	@./romflashwriter/export.sh $(BIN)romflashwriter/write-extended.bin $(BIN)romflashwriter/write-extended.inc
 	echo "exported write-extended.bin to write-extended.inc"
 
-./bin/romflash/flashloader.o: romflash/flashloader.asm $(BIN)romflashwriter/write-extended.inc
+./bin/romflash/flashloader.o: romflash/flashloader.asm $(BIN)romflashwriter/write-extended.inc $(BIN)romflashwriter/write-driver.inc
  
 romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.asm)    
 $(BIN)romflash.com: $(BIN)romflashwriter/write-extended.inc $(addprefix $(BIN),$(romflash_files)) 
