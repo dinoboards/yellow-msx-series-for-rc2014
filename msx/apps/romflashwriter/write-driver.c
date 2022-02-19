@@ -3,10 +3,11 @@
 
 extern uint8_t WORKING_BUFFER[];
 
-#define DRIVER_BANK_NUMBER 7;
+#define DRIVER_BANK_NUMBER 7
 
 // slot status
 __sfr __at 0xA8 PSL_STAT;
+__sfr __at 0xF4 REG_F4;
 __sfr __at 0xFE MEM_BANK_PAGE_2;
 
 uint8_t          __at 0xC000 SEGS[16];
@@ -35,7 +36,7 @@ inline void set_page_1_to_slot_33() {
 }
 
 // initate a memory write for ASCII16 bank switching, to switch to driver bank
-inline void set_ROM_driver_bank() { BNKREG = DRIVER_BANK_NUMBER; }
+inline void set_ROM_driver_bank(const uint8_t bnk) { BNKREG = bnk; }
 
 // switch in main rom to access 00000-07FFF of ROM
 inline void set_page_0_and_1_for_ROM_programming() { PSL_STAT = PSL_STAT & 0b11110000; }
@@ -90,7 +91,7 @@ void flash_4k(uint8_t *destination) __z88dk_fastcall {
 
   for (uint16_t index = 0x1000; index > 0; index--) {
     set_page_1_to_slot_33();
-    set_ROM_driver_bank();
+    set_ROM_driver_bank(DRIVER_BANK_NUMBER);
     set_page_0_and_1_for_ROM_programming();
     program_byte_prefix();
     set_page_1_to_nextor_slot();
@@ -101,7 +102,7 @@ void flash_4k(uint8_t *destination) __z88dk_fastcall {
 
 void erase_sector(uint8_t *address) __z88dk_fastcall {
   set_page_1_to_slot_33();
-  set_ROM_driver_bank();
+  set_ROM_driver_bank(DRIVER_BANK_NUMBER);
   set_page_0_and_1_for_ROM_programming();
   erase_sector_prefix();
   set_page_1_to_nextor_slot();
@@ -129,8 +130,13 @@ void erase_nextor_driver() {
 }
 
 void reset_system() {
+  set_page_1_to_slot_33();
+  set_ROM_driver_bank(0);
+
   // select slot 0 for page 0 and page 1
   PSL_STAT = PSL_STAT & 0b11110000;
 
-  __asm__("JP 0");
+  REG_F4 = 255;
+
+  __asm__("RST 0");
 }
