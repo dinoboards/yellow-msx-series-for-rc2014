@@ -98,10 +98,10 @@ $(eval $(call BUILD_versions,rc2014))
 RDASMFLAGS = --fullpath --raw=$@ --sym=$(basename $@).sym --lst=$(basename $@).lst -D__ROOKIEDRIVE
 ASMFLAGS = --fullpath --raw=$@ --sym=$(basename $@).sym --lst=$(basename $@).lst -D__MSXUSBCARTv1
 
-$(BINDIR)driverrd.rom: $(addprefix msx-hub/,driver_low.asm driver_helpers_low.asm flashdisk.asm print_bios.asm ch376s.asm ch376s_helpers.asm usbhost.asm nextordirect.asm scsi.asm scsi_helpers.asm)
+$(BINDIR)driverrd.rom: $(addprefix msx-usb/,driver_low.asm driver_helpers_low.asm flashdisk.asm print_bios.asm ch376s.asm ch376s_helpers.asm usbhost.asm nextordirect.asm scsi.asm scsi_helpers.asm)
 	$(ASM) $(RDASMFLAGS) $<
 
-$(BINDIR)extra1k.dat: $(addprefix msx-hub/,extra1k.asm)
+$(BINDIR)extra1k.dat: $(addprefix msx-usb/,extra1k.asm)
 	$(ASM) $(ASMFLAGS) $<
 
 $(BINDIR)nextorrd.rom: ../nextor/bin/working/rc2014/dos250ba.dat $(BINDIR)driverrd.rom $(BINDIR)chgbnk.bin $(BINDIR)extra1k.dat $(BINDIR)rc2014.fdd.dsk

@@ -83,6 +83,20 @@ TXT_TEST_START:			db "\r\n+Testing storage device",0
 TXT_TEST_OK:			db "\r\n+All systems go!\r\n",0
 TXT_FLASHDISK_OK:		db "+ROM disk detected\r\n",0
 
+TXT_CONNECT	db "Connected\r\n", 0
+TXT_BUS_RESET	db "Bus Reset\r\n", 0
+
+TXT_DEBUG1	db "11", 0
+TXT_DEBUG2	db "22", 0
+TXT_DEBUG3	db "33", 0
+TXT_DEBUG4	db "44", 0
+TXT_DEBUG5	db "55", 0
+TXT_DEBUG6	db "66", 0
+TXT_DEBUG7	db "77", 0
+TXT_DEBUG8	db "88", 0
+TXT_DEBUG9	db "99", 0
+TXT_DEBUG10	db "00", 0
+
 RD_MANUFACTURER:		db "S0urceror",0
 RD_DEVICE_NAME:			db "Flash ROM Disk",0
-RD_SERIAL:				db "v0.1",0
+RD_SERIAL:			db "v0.1",0

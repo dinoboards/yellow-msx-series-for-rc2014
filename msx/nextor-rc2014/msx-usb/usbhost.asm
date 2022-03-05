@@ -932,6 +932,11 @@ INIT_STORAGE:
 
 ; Initialise HUB device
 INIT_HUB:
+    push hl
+	ld hl, TXT_DEBUG1
+	call PRINT
+    pop hl
+
     call MY_GWORK
     ld iy, ix ; iy pointing to start of WRKAREA
     ld bc, WRKAREA.USB_DESCRIPTOR
@@ -945,11 +950,29 @@ INIT_HUB:
     push bc,de
     call CH_SET_CONFIGURATION
     pop de,bc
+
+    push hl
+	ld hl, TXT_DEBUG2
+	call PRINT
+    pop hl
+
     ret c
+
+    push hl
+	ld hl, TXT_DEBUG3
+	call PRINT
+    pop hl
+
     ; get HUB descriptor
     ld hl, ix ; WRKAREA.USB_DESCRIPTOR
     call CH_GET_HUB_DESCRIPTOR
     ret c
+
+    push hl
+	ld hl, TXT_DEBUG4
+	call PRINT
+    pop hl
+
     ld a, (ix+HUB_DESCRIPTOR.bNrPorts)
     ld (iy+WRKAREA.HUB_DEVICE_INFO.HUB_PORTS),a
     ; power up all ports
@@ -960,6 +983,12 @@ _POWER_UP_AGAIN:
     ld a, e
     call SET_HUB_PORT_FEATURE
     ret c
+
+    push hl
+	ld hl, TXT_DEBUG5
+	call PRINT
+    pop hl
+
     inc e
     djnz _POWER_UP_AGAIN
     ; check which ones have something connected
@@ -977,6 +1006,12 @@ _HUB_STATUS_AGAIN:
     call GET_HUB_PORT_STATUS
     pop bc
     ret c
+
+    push hl
+	ld hl, TXT_DEBUG6
+	call PRINT
+    pop hl
+
     ld a, (hl)
     bit 0,a ; connected
     call nz, INIT_HUB_DEVICE
@@ -991,17 +1026,34 @@ _HUB_STATUS_AGAIN:
     ;bit 4,a ; indicator control
     inc e
     djnz _HUB_STATUS_AGAIN
+
+    push hl
+	ld hl, TXT_DEBUG7
+	call PRINT
+    pop hl
+
     ret
 
 ; Input - E = portnumber on hub to initialise
 ;         D = USB device address
 INIT_HUB_DEVICE:
+    push hl
+	ld hl, TXT_DEBUG8
+	call PRINT
+    pop hl
+
     push bc, de
     ; reset usb bus on port(s)
     ld a, e ; e contains port number
     ld c, 4 ; RESET
     call SET_HUB_PORT_FEATURE
-    ret c
+    jr c, INIT_HUB_DEVICE_ERR
+
+    push hl
+	ld hl, TXT_DEBUG9
+	call PRINT
+    pop hl
+
     ; wait 250ms
     push bc
     ld bc, WAIT_ONE_SECOND/4
@@ -1013,6 +1065,14 @@ INIT_HUB_DEVICE:
     call SET_USB_DEVICE_ADDRESS
     call FN_CONNECT2
     ;
+
+    push hl
+	ld hl, TXT_DEBUG10
+	call PRINT
+    pop hl
+
+
+INIT_HUB_DEVICE_ERR:
     pop de, bc
     ret
 

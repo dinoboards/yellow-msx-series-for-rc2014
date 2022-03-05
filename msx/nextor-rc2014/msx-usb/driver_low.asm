@@ -309,9 +309,16 @@ _HW_TEST_OKAY:
 	; reset USB bus and device
     call USB_HOST_BUS_RESET
 
+	ld hl, TXT_BUS_RESET
+	call PRINT
+
 	; enumerate and initialise USB devices
 	push ix
 	call FN_CONNECT
+
+	ld hl, TXT_CONNECT
+	call PRINT
+
 	pop ix
 	or a
 	jp nz, _USB_MODE_OKAY
