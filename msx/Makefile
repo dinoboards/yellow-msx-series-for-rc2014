@@ -177,7 +177,7 @@ rom-msxsyssrc-$1-$2-rtc: bin/rc2014.nextor.rom cbios msxsys-$1-$2-rtc ./bin/rc20
 	dd status=none conv=notrunc status=none if=./bin/$1-$2-rtc-main.rom													of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=2  seek=0
 	dd status=none conv=notrunc status=none if=./cbios/derived/bin/cbios_logo_rc2014.rom 				of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=2
 	dd status=none conv=notrunc status=none if=./bin/$1-$2-rtc-subrom.rom												of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=3
-	dd status=none conv=notrunc status=none if=./bin/rc2014.nextor.rom    											of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=27 seek=4
+	dd status=none conv=notrunc status=none if=./nextor-rc2014/bin/nextorrd_complete.rom  											of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=27 seek=4
 	dd status=none conv=notrunc status=none if=./bin/rc2014-extended.rom												of=bin/msxsyssrc-rc2014-$1-$2-rtc.rom bs=16k count=1  seek=31
 	# printf 'Built bin/msxsyssrc-rc2014-$1-$2-rtc.rom\r\n'
 

@@ -52,7 +52,7 @@ rc2014-nextor-kernel:
 
 define BUILD_versions =
 # Build a FAT12 floppy disk image containing nextor.sys, command2.com and other files
-.PHONY: $(BINDIR)$1.fdd.dsk
+.PHONY: $(BINDIR)rc2014.fdd.dsk
 $(BINDIR)$1.fdd.dsk: $1-nextor-kernel $(BINDIR)rcembdrv.bin
 	@mkdir -p $(BINDIR)
 	DATSIZ=$$$$(./scripts/getsymb.sh $(BINDIR)rcembdrv.exp.asm DATSIZ)
@@ -89,8 +89,24 @@ $(BINDIR)$1.nextor.rom: $(BINDIR)$1.driver-with-sectors.bin $(BINDIR)chgbnk.bin
 	../../nextor/linuxtools/mknexrom ../../nextor/bin/working/$1/dos250ba.dat $1.nextor.rom -q -d:$1.driver-with-sectors.bin -m:chgbnk.bin
 	# extract bank 7 from the nextor rom
 	dd status=none skip=114688 count=16384 if=$1.nextor.rom of=$1.driver.only.bin bs=1
+
 endef
 
 $(eval $(call BUILD_versions,cbios))
 $(eval $(call BUILD_versions,rc2014))
+
+RDASMFLAGS = --fullpath --raw=$@ --sym=$(basename $@).sym --lst=$(basename $@).lst -D__ROOKIEDRIVE
+ASMFLAGS = --fullpath --raw=$@ --sym=$(basename $@).sym --lst=$(basename $@).lst -D__MSXUSBCARTv1
+
+$(BINDIR)driverrd.rom: $(addprefix msx-hub/,driver_low.asm driver_helpers_low.asm flashdisk.asm print_bios.asm ch376s.asm ch376s_helpers.asm usbhost.asm nextordirect.asm scsi.asm scsi_helpers.asm)
+	$(ASM) $(RDASMFLAGS) $<
+
+$(BINDIR)extra1k.dat: $(addprefix msx-hub/,extra1k.asm)
+	$(ASM) $(ASMFLAGS) $<
+
+$(BINDIR)nextorrd.rom: ../nextor/bin/working/rc2014/dos250ba.dat $(BINDIR)driverrd.rom $(BINDIR)chgbnk.bin $(BINDIR)extra1k.dat $(BINDIR)rc2014.fdd.dsk
+	../nextor/linuxtools/mknexrom ../nextor/bin/working/rc2014/dos250ba.dat $(BINDIR)nextorrd.rom \
+							-d:$(BINDIR)driverrd.rom -m:$(BINDIR)chgbnk.bin \
+							-e:$(BINDIR)extra1k.dat
+	cat $(BINDIR)nextorrd.rom $(BINDIR)rc2014.fdd.dsk > $(BINDIR)nextorrd_complete.rom
 
