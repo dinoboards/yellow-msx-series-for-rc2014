@@ -161,7 +161,7 @@ DRV_NAME:
 	jp	DRV_BASSTAT
 	jp	DRV_BASDEV
 	jp	DRV_EXTBIO
-	jp	DRV_DIRECT0
+	jp	UNAPI_ENTRY
 	jp	DRV_DIRECT1
 	jp	DRV_DIRECT2
 	jp	DRV_DIRECT3
@@ -229,7 +229,7 @@ DRV_INIT:
 	JR	NZ, DRV_INIT2
 
 DRV_INIT1:
-	LD	DE, INFO_S
+	LD	HL, INFO_S
 	CALL	PRINT
 
 	;NOTE THAT CY IS 0 (NO INTERRUPT HOOKING NEEDED)
@@ -241,6 +241,8 @@ DRV_INIT2:
 	CALL	MY_GWORK			; PASS WORK AREA ADDRESS TO EXT-BIO
 
 	PUSH	IX
+
+	CALL	DRV_INIT_CH376
 
 	CALL	DRV_INIT_CF
 
@@ -294,6 +296,35 @@ MSX_MARKER_1:
 	DEFB	"AB"
 MSX_MARKER_2:
 	DEFB	"OPLL"
+
+DRV_INIT_CH376:
+	CALL	CH_RESET
+	; reset CH376s
+	; wait ~100ms
+	LD	BC, WAIT_ONE_SECOND/10
+	CALL	WAIT
+
+	CALL	CH_HW_TEST
+	JR	NC, CH376_FOUND
+
+CH376_NOT_FOUND:
+	LD	HL, CH376_NOT_FOUND_MSG
+	CALL	PRINT
+	XOR	A
+	RET
+
+CH376_FOUND:
+	LD	HL, CH376_FOUND_MSG
+	CALL	PRINT
+
+	OR	255
+	RET
+
+CH376_NOT_FOUND_MSG:
+	DB	"CH376:           NOT PRESENT", 13, 10, 0
+CH376_FOUND_MSG
+	DB	"CH376:           PRESENT", 13, 10, 0
+
 
 ;-----------------------------------------------------------------------------
 ;
@@ -351,7 +382,7 @@ DRV_EXTBIO:
 ; to DIRECT0/1/2/3/4 respectively.
 ; Receives all register data from the caller except IX and AF'.
 
-DRV_DIRECT0:
+; DRV_DIRECT0:
 DRV_DIRECT1:
 DRV_DIRECT2:
 DRV_DIRECT3:
@@ -921,16 +952,20 @@ DEVICE_MS:
 ;-----------------------------------------------------------------------------
 ;
 ; Print a zero-terminated string on screen
-; Input: DE = String address
-
+; Input: HL = String address
+; Protects AF
 PRINT:
-	ld	a,(de)
-	or	a
-	ret	z
-	call	CHPUT
-	inc	de
-	jr	PRINT
-
+	PUSH	AF
+_PRINT_MORE:
+	LD	A, (HL)
+	AND	A
+	JR	Z, _PRINT_DONE
+	CALL	CHPUT
+	INC	HL
+	JR	_PRINT_MORE
+_PRINT_DONE:
+	POP	AF
+	RET
 
 ;-----------------------------------------------------------------------------
 ;
@@ -996,6 +1031,30 @@ no_rest:
 
 	include		cfdrv.asm
 	include		musicdriver.asm
+
+	DEFINE RC2014
+CH_DATA_PORT	EQU	$84
+CH_COMMAND_PORT	EQU	$85
+
+	; include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/flashdisk.asm"
+	; include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/driver_helpers_low.asm"
+	; include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/print_bios.asm"
+	include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/ch376s.asm"
+	include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/usbhost.asm"
+	include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/nextordirect.asm"
+	include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/scsi.asm"
+
+
+;-----------------------------------------------------------------------------
+;
+; Obtain the work area address for the driver or the device
+; Input: BC = delta in WKRAREA
+; Output: IX=Pointer to the selected work area
+
+WRKAREAPTR:
+	call MY_GWORK
+	add ix, bc
+	ret
 ;-----------------------------------------------------------------------------
 ;
 ; End of the driver code

@@ -17,9 +17,9 @@ clean:
 	@rm -rf bin
 	cd ../nextor/source && make clean --no-print-directory -f Makefile-rc2014.mk
 
-$(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm
+$(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm rcembdrv.inc
 	@mkdir -p $(BINDIR)
-	$(ASM) $^
+	$(ASM) rcembdrv.asm rcembdrv.inc
 	filesize=$$(stat -c%s "$(BINDIR)rcembdrv.bin")
 	if ((filesize > 16484 )); then
 		echo -e "\r\nError: $(BINDIR)rcembdrv.bin exceeded size of 16k"
@@ -27,9 +27,9 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm
 	fi
 	echo "Assembled $@"
 
-$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm version.asm
+$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc version.asm
 	@mkdir -p $(BINDIR)
-	$(ASM) rc2014dr.asm embinc.asm
+	$(ASM) rc2014dr.asm rc2014dr.inc
 	filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")
 	if ((filesize > 16484 )); then
 		echo -e "\r\nError: $(BINDIR)rc2014dr.bin exceeded size of 16k"
@@ -57,7 +57,7 @@ $(BINDIR)$1.fdd.dsk: $1-nextor-kernel $(BINDIR)rcembdrv.bin
 	@mkdir -p $(BINDIR)
 	DATSIZ=$$$$(./scripts/getsymb.sh $(BINDIR)rcembdrv.exp.asm DATSIZ)
 	rm -f $(BINDIR)$1.fdd.dsk
-	dd status=none if=/dev/zero of=$(BINDIR)$1.fdd.dsk bs=$$$$(($$$$DATSIZ*18)) count=1  
+	dd status=none if=/dev/zero of=$(BINDIR)$1.fdd.dsk bs=$$$$(($$$$DATSIZ*18)) count=1
 	mkfs.vfat -F 12 -f 1 $(BINDIR)$1.fdd.dsk > /dev/null
 	mmd -i $(BINDIR)$1.fdd.dsk system
 	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/*.com ::/system/
