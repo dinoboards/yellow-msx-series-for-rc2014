@@ -27,9 +27,9 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm rcembdrv.inc
 	fi
 	echo "Assembled $@"
 
-$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc version.asm
+$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc version.asm ch376drv.asm
 	@mkdir -p $(BINDIR)
-	$(ASM) rc2014dr.asm rc2014dr.inc
+	$(ASM) rc2014dr.asm ch376drv.asm rc2014dr.inc
 	filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")
 	if ((filesize > 16484 )); then
 		echo -e "\r\nError: $(BINDIR)rc2014dr.bin exceeded size of 16k"
