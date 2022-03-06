@@ -33,13 +33,13 @@ SECTOR_ADDR_IN_BANK:
 COPY_SECTOR_TO_USR:
 	; dbg.break
 
-	LD	E, (IX+ST_DEST_LW)
-	LD	D, (IX+ST_DEST_HI)
+	LD	E, (IX+WRKAREA.ST_DEST_LW)
+	LD	D, (IX+WRKAREA.ST_DEST_HI)
 	LD	BC, 512
 	; HL IS SECTOR SOUND ADDR
 	; DE IS DESTINATION ADDR
 	LDIR	; COPY TO USER DATA PAGE
-	LD	(IX+ST_DEST_HI), D
+	LD	(IX+WRKAREA.ST_DEST_HI), D
 	RET
 
 ;-----------------------------------------------------------------------------
