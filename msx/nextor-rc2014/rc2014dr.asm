@@ -297,34 +297,6 @@ MSX_MARKER_1:
 MSX_MARKER_2:
 	DEFB	"OPLL"
 
-DRV_INIT_CH376:
-	CALL	CH_RESET
-	; reset CH376s
-	; wait ~100ms
-	LD	BC, WAIT_ONE_SECOND/10
-	CALL	WAIT
-
-	CALL	CH_HW_TEST
-	JR	NC, CH376_FOUND
-
-CH376_NOT_FOUND:
-	LD	HL, CH376_NOT_FOUND_MSG
-	CALL	PRINT
-	XOR	A
-	RET
-
-CH376_FOUND:
-	LD	HL, CH376_FOUND_MSG
-	CALL	PRINT
-
-	OR	255
-	RET
-
-CH376_NOT_FOUND_MSG:
-	DB	"CH376:           NOT PRESENT", 13, 10, 0
-CH376_FOUND_MSG
-	DB	"CH376:           PRESENT", 13, 10, 0
-
 
 ;-----------------------------------------------------------------------------
 ;
