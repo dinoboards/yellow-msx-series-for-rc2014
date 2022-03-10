@@ -14,6 +14,23 @@ SLOT_3_3_ID		EQU	$8F	;
 SLOT_3_1_ID		EQU	$87	;
 RDSLT			EQU	$000C
 
+;-----------------------------------------------------------------------------
+;
+; Error codes for DEV_RW
+;
+_NCOMP	equ	0FFh
+_WRERR	equ	0FEh
+_DISK	equ	0FDh
+_NRDY	equ	0FCh
+_DATA	equ	0FAh
+_RNF	equ	0F9h
+_WPROT	equ	0F8h
+_UFORM	equ	0F7h
+_SEEK	equ	0F3h
+_IFORM	equ	0F0h
+_IDEVL	equ	0B5h
+_IPARM	equ	08Bh
+
 DRV_START:
 
 ;-----------------------------------------------------------------------------
@@ -486,6 +503,9 @@ DEV_RW:
 	CP	DEV_MAP_CF
 	JP	Z, DEV_WRT_CF
 
+	CP	DEV_MAP_USB
+	JP	Z, DEV_WRT_USB
+
 	JR	DEV_RW_ERR
 
 DEV_READ:
@@ -498,6 +518,9 @@ DEV_READ:
 
 	CP	DEV_MAP_MS
 	JP	Z, DEV_READ_MS
+
+	CP	DEV_MAP_USB
+	JP	Z, DEV_READ_USB
 
 DEV_RW_ERR:
 	LD	A, ERR.IDEVL

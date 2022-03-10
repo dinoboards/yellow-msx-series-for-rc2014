@@ -287,6 +287,48 @@ _DEV_STATUS_ERR:
 	ret
 
 
+DEV_WRT_USB:
+	DI
+	call	CAPS_FLASH
+	call	SCSI_WRITE
+	jr	c, _DEV_RW_ERR
+
+_DEV_RW_NEXT_4:
+	; CAPS OFF
+	in	a, 0xaa
+	set	6, a
+	out	0xaa, a
+	xor	a ; success
+	ret
+
+_DEV_RW_ERR
+	call	CAPS_FLASH
+	ld	a, _RNF
+	ld	b, 0
+	ret
+
+DEV_READ_USB:
+	DI
+	call	CAPS_FLASH
+	call	SCSI_READ
+	jr	c, _DEV_RW_ERR
+	jr	_DEV_RW_NEXT_4
+
+CAPS_FLASH:
+	in	a, (0xaa)
+	bit	6, a
+	jr	z, _CAPS_FLASH_ON
+	res	6, a
+    	jr	_CAPS_FLASH
+
+_CAPS_FLASH_ON:
+	set	6, a
+
+_CAPS_FLASH:
+	out	(0xaa), a
+    	ret
+
+
 CH376_NOT_FOUND_MSG:		DB	"CH376:           NOT PRESENT", 13, 10, 0
 CH376_FOUND_MSG:		DB	"CH376:           PRESENT (VER ", 0
 CH376_NEWLINE:			DB	")\r\n",0
