@@ -1,4 +1,6 @@
 DRV_INIT_CH376:
+	call	USBHOST_INIT
+
 	CALL	CH_RESET
 	LD	BC, WAIT_ONE_SECOND/10
 	CALL	WAIT
@@ -16,8 +18,6 @@ CH376_FOUND:
 	; LD	HL, CH376_FOUND_MSG
 	; CALL	PRINT
 
-	CALL	INIWORK		; Initialize the work-area
-
 	LD	A, (IX+WRKAREA.STATUS)
 	SET	0, A
 	LD	(IX+WRKAREA.STATUS), A
@@ -31,6 +31,84 @@ CH376_FOUND:
 	LD	HL, CH376_NEWLINE
 	CALL	PRINT
 
+	CALL	USB_HOST_BUS_RESET
+
+	; enumerate and initialise USB devices
+	PUSH	IX
+	CALL	FN_CONNECT
+	POP	IX
+	OR	A
+	JP	NZ, _USB_MODE_OKAY
+
+	LD	HL, USB_NOT_FOUND_MSG
+	CALL	PRINT
+
+	XOR	A
+	RET
+
+_USB_MODE_OKAY:
+	LD	A, (IX+WRKAREA.STATUS)
+	SET	1, A
+	LD	(IX+WRKAREA.STATUS),A
+	LD	A, (IX+WRKAREA.STORAGE_DEVICE_INFO.DEVICE_ADDRESS)
+	AND	A
+	JR	NZ, _FOUND_
+	LD	HL, USB_FLASH_NOT_FOUND_MSG
+	CALL	PRINT
+	XOR	A
+	RET
+
+_FOUND_:
+	LD	HL, USB_FLASH_FOUND_MSG
+	CALL	PRINT
+; 	; start communicating with SCSI device
+; 	call SCSI_MAX_LUNS
+; 	ret c
+; 	call SCSI_INIT
+; 	call SCSI_INQUIRY
+; 	jr nc, _INQUIRY_OKAY
+; 	ld hl, TXT_INQUIRY_NOK
+; 	call PRINT
+; 	ret
+; _INQUIRY_OKAY:
+; 	push ix
+; 	;
+; 	ld hl, TXT_INQUIRY_OK
+; 	call PRINT
+; 	ld bc, WRKAREA.SCSI_DEVICE_INFO.VENDORID
+; 	call WRKAREAPTR
+; 	ld hl, ix
+; 	call PRINT
+; 	ld hl, TXT_INQUIRY_OK
+; 	call PRINT
+; 	ld bc, WRKAREA.SCSI_DEVICE_INFO.PRODUCTID
+; 	call WRKAREAPTR
+; 	ld hl, ix
+; 	call PRINT
+; 	;
+; 	pop ix
+; 	ld a,(ix+WRKAREA.STATUS)
+;     set 2,a
+;     ld (ix+WRKAREA.STATUS),a
+
+; 	ld hl, TXT_TEST_START
+; 	call PRINT
+; _SCSI_TEST_AGAIN:
+; 	call SCSI_TEST
+; 	jr nc, _SCSI_TEST_OKAY
+; 	call SCSI_REQUEST_SENSE
+; 	jr _SCSI_TEST_AGAIN
+; _SCSI_TEST_OKAY:
+; 	ld hl, TXT_TEST_OK
+; 	call PRINT
+; 	; return status disk present but changed
+; 	ld a,(ix+WRKAREA.STATUS)
+;     set 3,a
+; 	set 4,a
+; 	set 5,a
+;     ld (ix+WRKAREA.STATUS),a
+; 	ret
+
 	OR	255
 	RET
 
@@ -42,7 +120,7 @@ INIWORK:
 	LD	HL, IX
 	LD	DE, HL
 	INC	DE
-	LD	BC, WRKAREA-1 ; SIZE OF WRKAREA
+	LD	BC, ST_WRKAREA-1 ; SIZE OF ST & USB WRKAREA
 	XOR	A
 	LD	(HL),A
 	LDIR
@@ -50,9 +128,10 @@ INIWORK:
 	; COPY NXT_DIRECT TO WORK-AREA
 	JP	NXT_DIRECT_WRKAREA
 
-CH376_NOT_FOUND_MSG:
-	DB	"CH376:           NOT PRESENT", 13, 10, 0
-CH376_FOUND_MSG
-	DB	"CH376:           PRESENT (VER ", 0
-CH376_NEWLINE:
-	DB	")\r\n",0
+CH376_NOT_FOUND_MSG:		DB	"CH376:           NOT PRESENT", 13, 10, 0
+CH376_FOUND_MSG:		DB	"CH376:           PRESENT (VER ", 0
+CH376_NEWLINE:			DB	")\r\n",0
+
+USB_NOT_FOUND_MSG:		DB	"USB:             NOT PRESENT", 13, 10, 0
+USB_FLASH_FOUND_MSG:		DB	"USB-STORAGE:     PRESENT", 13, 10, 0
+USB_FLASH_NOT_FOUND_MSG:	DB	"USB-STORAGE:     NOT PRESENT", 13, 10, 0
