@@ -14,7 +14,7 @@
 
 SEC_RAW_CPY:
 	; C IS THE RELATIVE OFFSET WITHIN LOCAL SECTORS
-	CALL	MY_GWORK
+	CALL	MY_STWORK
 
 	CALL	SECTOR_ADDR_IN_BANK
 	CALL	COPY_SECTOR_TO_USR
@@ -33,13 +33,13 @@ SECTOR_ADDR_IN_BANK:
 COPY_SECTOR_TO_USR:
 	; dbg.break
 
-	LD	E, (IX+WRKAREA.ST_DEST_LW)
-	LD	D, (IX+WRKAREA.ST_DEST_HI)
+	LD	E, (IX+ST_WRKAREA.DEST_LW)
+	LD	D, (IX+ST_WRKAREA.DEST_HI)
 	LD	BC, 512
 	; HL IS SECTOR SOUND ADDR
 	; DE IS DESTINATION ADDR
 	LDIR	; COPY TO USER DATA PAGE
-	LD	(IX+WRKAREA.ST_DEST_HI), D
+	LD	(IX+ST_WRKAREA.DEST_HI), D
 	RET
 
 ;-----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ COPY_SECTOR_TO_USR:
 ; Input: A=1  to obtain the work area for the master, 2 for the slave
 ; Preserves A
 
-MY_GWORK:
+MY_STWORK:
 	PUSH	AF
 	XOR	A
 	EX	AF,AF'
