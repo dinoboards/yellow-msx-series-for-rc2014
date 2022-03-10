@@ -1,5 +1,5 @@
 DRV_INIT_CH376:
-	call	USBHOST_INIT
+	CALL	USBHOST_INIT
 
 	CALL	CH_RESET
 	LD	BC, WAIT_ONE_SECOND/10
@@ -61,53 +61,36 @@ _USB_MODE_OKAY:
 _FOUND_:
 	LD	HL, USB_FLASH_FOUND_MSG
 	CALL	PRINT
-; 	; start communicating with SCSI device
-; 	call SCSI_MAX_LUNS
-; 	ret c
-; 	call SCSI_INIT
-; 	call SCSI_INQUIRY
-; 	jr nc, _INQUIRY_OKAY
-; 	ld hl, TXT_INQUIRY_NOK
-; 	call PRINT
-; 	ret
-; _INQUIRY_OKAY:
-; 	push ix
-; 	;
-; 	ld hl, TXT_INQUIRY_OK
-; 	call PRINT
-; 	ld bc, WRKAREA.SCSI_DEVICE_INFO.VENDORID
-; 	call WRKAREAPTR
-; 	ld hl, ix
-; 	call PRINT
-; 	ld hl, TXT_INQUIRY_OK
-; 	call PRINT
-; 	ld bc, WRKAREA.SCSI_DEVICE_INFO.PRODUCTID
-; 	call WRKAREAPTR
-; 	ld hl, ix
-; 	call PRINT
-; 	;
-; 	pop ix
-; 	ld a,(ix+WRKAREA.STATUS)
-;     set 2,a
-;     ld (ix+WRKAREA.STATUS),a
 
-; 	ld hl, TXT_TEST_START
-; 	call PRINT
-; _SCSI_TEST_AGAIN:
-; 	call SCSI_TEST
-; 	jr nc, _SCSI_TEST_OKAY
-; 	call SCSI_REQUEST_SENSE
-; 	jr _SCSI_TEST_AGAIN
-; _SCSI_TEST_OKAY:
-; 	ld hl, TXT_TEST_OK
-; 	call PRINT
-; 	; return status disk present but changed
-; 	ld a,(ix+WRKAREA.STATUS)
-;     set 3,a
-; 	set 4,a
-; 	set 5,a
-;     ld (ix+WRKAREA.STATUS),a
-; 	ret
+	call SCSI_MAX_LUNS
+	JR	NC, __OK1
+	XOR	A
+	RET
+
+__OK1:
+	call SCSI_INIT
+	call SCSI_INQUIRY
+	JR	NC, __OK2
+	XOR	A
+	RET
+
+__OK2:
+	ld	a, (ix+WRKAREA.STATUS)
+	set	2, a				; usb device present
+	ld	(ix+WRKAREA.STATUS), a
+
+_SCSI_TEST_AGAIN:
+	call	SCSI_TEST
+	jr 	nc, _SCSI_TEST_OKAY
+	call	SCSI_REQUEST_SENSE
+	jr	_SCSI_TEST_AGAIN
+_SCSI_TEST_OKAY:
+	; return status disk present but changed
+	ld 	a, (ix+WRKAREA.STATUS)
+	set	3, a				; usb device mounted
+	set	4, a				; ???
+	set	5, a				; dsk changed
+	ld	(ix+WRKAREA.STATUS), a
 
 	OR	255
 	RET
@@ -129,9 +112,7 @@ INIWORK:
 	JP	NXT_DIRECT_WRKAREA
 
 
-
 ; USB-STORAGE DRIVER FUNCTIONS
-
 
 DEV_INFO_USB:
 	CALL	MY_GWORK
@@ -195,68 +176,114 @@ _DEV_INFO_NOT_INSERTED:
 	ret
 
 LUN_INFO_USB:
-	; #0
-	ld (hl),0 ; block device
-	; #1
-	inc hl
-	ld (hl),00h
-	inc hl
-	ld (hl),02h ; 512 byte sector
-	; #3
+	LD	A, B
+	CP	1
+	JR	Z, LUN_INFO_USB_VALID
 
-    inc hl
+	LD	A, 1
+	RET
 
-    push hl
-    push ix
-    ld a, (ix+WRKAREA.STORAGE_DEVICE_INFO.DEVICE_ADDRESS)
-    ld bc, WRKAREA.SCSI_DEVICE_INFO.BUFFER
-    add ix, bc
-    ld iy, ix
-    
-    ld b, 0
-    ld c, _SCSI_READ_CAPACITY
-    ld de, 0x8
-    ld hl, SCSI_READ_CAPACITY
-    push iy
-    or  a
-    call DO_SCSI_CMD
-    pop iy
-    pop ix
-    pop hl
+LUN_INFO_USB_VALID:
+	LD	(HL), 0 			; #0 BLOCK DEVICE
+	INC 	HL				; #1
+	LD 	(HL), 0				; SECTOR SIZE
+	INC	HL				; #2
+	LD	(HL), 2				; 512 BYTE SECTOR
+
+	CALL	USB_SCSI_READ_CAPACITY
+
+	INC	HL				; #3
+	LD	A, (IY+3)			; WRITE USB CAPACITY TO NEXTOR RESPONSE
+	LD	(HL), A
+
+	INC	HL				; #4
+	LD	A, (IY+2)
+	LD	(HL), A
+
+	INC	HL				; #5
+	LD	A, (IY+1)
+	LD	(HL), A
+
+	INC	HL				; #6
+	LD	A, (IY+0)
+	LD	(HL), A
+
+	INC	HL				; #7
+	LD	(HL), 00000001b 		; REMOVABLE + NON-READ ONLY + NO FLOPPY
+
+	INC 	HL				; #8
+	LD	(HL), 0
+	INC	HL				; #9
+	LD	(HL), 0 			; CYLINDERS/TRACKS
+
+	INC	HL				; #10
+	LD	(HL), 0				; HEADS
+	INC	HL				; #11
+	LD	(HL), 0				; SECTORS PER TRACK
+
+	LD	A, 0
+	RET
+
+; RETRIEVE THE NUMBER OF SECTORS AVAILABLE FOR USB STORAGE
+; INPUTS
+;   IX - ADDRESS OF USB WORK AREA (MY_GWORK)
+; OUTPUTS
+;   IY - POINTS TO 32BIT NUMBER OF 512 SECTORS FOR USB STORAGE
+USB_SCSI_READ_CAPACITY:
+	CALL	MY_GWORK
+
+	PUSH	HL							; PROTECT HL
+
+	LD	A, (IX+WRKAREA.STORAGE_DEVICE_INFO.DEVICE_ADDRESS)	; GET STORAGE ADDRESS
+	LD	BC, WRKAREA.SCSI_DEVICE_INFO.BUFFER			; BUFFER OFFSET FROM IX
+	ADD	IX, BC							; POINT IX TO BUFFER
+	LD	IY, IX							; AND ALSO IY
+	LD	B, 0
+	LD	C, _SCSI_READ_CAPACITY
+	LD	DE, 0x8
+	LD	HL, SCSI_READ_CAPACITY
+	OR	A							; READ SCSI
+	PUSH	IY							; STORE IY
+	CALL	DO_SCSI_CMD						; EXECUTE USB/SCSI COMMAND
+	POP	IY							; RETRIEVE BUFFER ADDRESS
+	JR	NC, USB_SCSI_READ_CAPACITY_OK
+
+	LD	(IY+0), 0
+	LD	(IY+1), 0
+	LD	(IY+2), 1
+	LD	(IY+3), 0
+
+USB_SCSI_READ_CAPACITY_OK:
+	POP	HL							; RESTORE REGISTERS
+	RET
 
 
-    ld a, (iy+3)
-    ld  (hl), a
-    inc hl
+DEV_STATUS_USB:
+	call	MY_GWORK
+	; bit 0 = CH376s present,
+	; bit 1 = initialised,
+	; bit 2 = USB device present,
+	; bit 3 = USB device mounted,
+	; bit 4 = virtual DSK inserted,
+	; bit 5 = DSK changed
+	ld a, (ix+WRKAREA.STATUS)
+	; DSK present?
+	bit 4,a
+	jr z, _DEV_STATUS_ERR
+	; changed?
+	bit 5,a
+	jr z, _DEV_STATUS_NO_CHANGE
+	res 5,a
+	ld (ix+WRKAREA.STATUS),a
+	ld a, 2 ; available, changed
+	ret
 
-    ld a, (iy+2)
-    ld  (hl), a
-    inc hl
+_DEV_STATUS_NO_CHANGE:
+	ld a, 1 ; available, no change
+	ret
 
-    ld a, (iy+1)
-    ld  (hl), a
-    inc hl
-
-    ld a, (iy+0)
-    ld  (hl), a
-    inc hl
-
-	; #7
-	; inc hl
-	ld (hl),00000001b ; removable + non-read only + no floppy
-	; #8
-	inc hl
-	ld (hl), 0
-	inc hl
-	ld (hl), 0 ; cylinders/tracks
-	; #10
-	inc hl
-	ld (hl), 0 ; heads
-	; #11
-	inc hl
-	ld (hl), 0 ; sectors per track
-
-	ld a, 0
+_DEV_STATUS_ERR:
+	xor	a ; not available
 	ret
 
 
@@ -267,3 +294,13 @@ CH376_NEWLINE:			DB	")\r\n",0
 USB_NOT_FOUND_MSG:		DB	"USB:             NOT PRESENT", 13, 10, 0
 USB_FLASH_FOUND_MSG:		DB	"USB-STORAGE:     PRESENT", 13, 10, 0
 USB_FLASH_NOT_FOUND_MSG:	DB	"USB-STORAGE:     NOT PRESENT", 13, 10, 0
+
+    STRUCT _SCSI_READ_CAPACITY
+BASE:			; Offset to the base of the data structure
+OPERATION_CODE:		db 0x25
+LUN:	            	db 0
+RESERVED:		ds 8, 0
+PAD:			ds 2, 0
+    ENDS
+
+SCSI_READ_CAPACITY          _SCSI_READ_CAPACITY
