@@ -18,6 +18,7 @@ DEV_MAP_NONE	EQU	0
 DEV_MAP_ROM	EQU	1
 DEV_MAP_CF	EQU	2
 DEV_MAP_MS	EQU	3
+DEV_MAP_USB	EQU	4
 
 ;* Get in IX the address of the SLTWRK entry for the slot passed in A,
 ;  which will in turn contain a pointer to the allocated page 3

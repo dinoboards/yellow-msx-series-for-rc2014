@@ -875,60 +875,88 @@ LUN_INFO_ROM_INVALID:
 ;Output:  A = 1 -> embedded ROM Disk
 ;	    = 2 -> Compact Flash
 ;	    = 3 -> MSX-MUSIC
+;	    = 4 -> USB-STORAGE
 ;	    = 0 -> no drive present
 
+; | ROM | CF  | MUSIC | USB | INDX 1  | INDX 2  | INDX 3  | INDX 4  |
+; | T   | F   | F     | F   | ROM     | NONE    | NONE    | NONE    | 000
+; | T   | T   | F     | F   | CF      | ROM     | NONE    | NONE    | 001
+; | T   | F   | T     | F   | MUSIC   | ROM     | NONE    | NONE    | 010
+; | T   | T   | T     | F   | CF      | MUSIC   | ROM     | NONE    | 011
+; | T   | F   | F     | T   | USB     | ROM     | NONE    | NONE    | 100
+; | T   | T   | F     | T   | CF      | USB     | ROM     | NONE    | 101
+; | T   | F   | T     | T   | USB     | MUSIC   | ROM     | NONE    | 110
+; | T   | T   | T     | T   | CF      | USB     | MUSIC   | ROM     | 111
+
+;
 DEVICE_MAPPING:
+	PUSH	HL
+	PUSH	BC
+	LD	HL, TBL_IDX1
 	CP	1
-	JR	Z, DEVICE_INDX_1
+	JR	Z, DEVICE_INDX
 
+	LD	HL, TBL_IDX2
 	CP	2
-	JR	Z, DEVICE_INDX_2
+	JR	Z, DEVICE_INDX
 
+	LD	HL, TBL_IDX3
 	CP	3
-	JR	Z, DEVICE_INDX_3
+	JR	Z, DEVICE_INDX
 
-DEVICE_NONE:
-	XOR	A			; RETURN NO DRIVE MAPPED
-	RET
+	LD	HL, TBL_IDX4
+	CP	4
+	JR	Z, DEVICE_INDX
 
-DEVICE_INDX_1:
+DEVICE_INDX:
 	CALL	DRV_GET_PRESENT
-	BIT	BIT_PRES_CF, A
-	JR	NZ, DEVICE_CF
-	BIT	BIT_PRES_MS, A
-	JR	NZ, DEVICE_MS
-
-DEVICE_ROM:
-	LD	A, DEV_MAP_ROM			; EMBEDDED ROM DRIVE
+	LD	B, 0
+	LD	C, A
+	ADD	HL, BC
+	LD	A, (HL)
+	POP	BC
+	POP	HL
 	RET
 
-DEVICE_INDX_2:
-	CALL	DRV_GET_PRESENT
-	BIT	BIT_PRES_CF, A
-	JR	Z, DEVICE_INDX_2_1
-	BIT	BIT_PRES_MS, A
-	JR	NZ, DEVICE_MS
-	JR	DEVICE_ROM
+TBL_IDX1:
+	DB	DEV_MAP_ROM
+	DB	DEV_MAP_CF
+	DB	DEV_MAP_MS
+	DB	DEV_MAP_CF
+	DB	DEV_MAP_USB
+	DB	DEV_MAP_CF
+	DB	DEV_MAP_USB
+	DB	DEV_MAP_CF
 
-DEVICE_INDX_2_1:
-	AND	(PRES_CF | PRES_MS)
-	JR	Z, DEVICE_NONE
-	JR	DEVICE_ROM
+TBL_IDX2:
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_ROM
+	DB	DEV_MAP_ROM
+	DB	DEV_MAP_MS
+	DB	DEV_MAP_ROM
+	DB	DEV_MAP_USB
+	DB	DEV_MAP_MS
+	DB	DEV_MAP_USB
 
-DEVICE_INDX_3:
-	CALL	DRV_GET_PRESENT
-	AND	(PRES_CF | PRES_MS)
-	CP	(PRES_CF | PRES_MS)
-	JR	Z, DEVICE_ROM
-	JR	DEVICE_NONE
+TBL_IDX3:
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_ROM
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_ROM
+	DB	DEV_MAP_ROM
+	DB	DEV_MAP_MS
 
-DEVICE_CF:
-	LD	A, DEV_MAP_CF
-	RET
-
-DEVICE_MS:
-	LD	A, DEV_MAP_MS
-	RET
+TBL_IDX4:
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_ROM
 
 ;-----------------------------------------------------------------------------
 ;
