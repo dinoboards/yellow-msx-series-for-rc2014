@@ -549,6 +549,9 @@ DEV_INFO:
 	CP	DEV_MAP_MS
 	JR	Z, DEV_INFO_MS
 
+	CP	DEV_MAP_USB
+	JP	Z, DEV_INFO_USB
+
 DEV_INFO_NO_DEV:
 	LD	A, 1
 	RET
@@ -654,6 +657,8 @@ DEV_INFO_MS_NAME:
 	LD	B, 64-MSX_MUSIC_NAME_LEN
 	JR	RIGHT_PAD
 
+
+
 ;-----------------------------------------------------------------------------
 ;
 ; Obtain device status
@@ -747,6 +752,8 @@ LUN_INFO:
 	JP	Z, LUN_INFO_CF
 	CP	DEV_MAP_MS
 	JP	Z, LUN_INFO_MS
+	CP	DEV_MAP_USB
+	JP	Z, LUN_INFO_USB
 
 LUN_INFO_ERR:
 	LD	A, 1
