@@ -40,9 +40,6 @@ $(WRK_DIR)msx.inc: base300.inc
 $(WRK_DIR)%.mac: msxsyssrc/$(MSXSYS)/%.mac
 	@unix2dos -f -n "$<" "$@"
 
-working/rcmusic.mac: rc2014-music/page1.mac
-	@unix2dos -f -n "$<" "$@"
-
 working/music100.mac: msxsyssrc/music100/music.mac
 	@unix2dos -f -n "$<" "$@"
 
@@ -101,10 +98,6 @@ $(WRK_DIR)subrom.hex: $(addprefix $(WRK_DIR), subrom.rel)
 $(WRK_DIR)optrom.hex: $(addprefix $(WRK_DIR), optrom.rel)
 	@cd $(WRK_DIR)
 	l80.sh optrom.hex OPTROM/X/E/N/P:4000,OPTROM
-
-working/rcmusic.hex: working/rcmusic.rel
-	@cd working
-	l80.sh rcmusic.hex RCMUSIC/X/E/N/P:4000,RCMUSIC
 
 working/music100.hex: working/music100.rel
 	@cd working

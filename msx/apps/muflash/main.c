@@ -2,10 +2,18 @@
 #include <conio.h>
 #include <msxdos.h>
 #include <stdio.h>
+#include <system_vars.h>
 
-extern void msx_music_erase_ROM();
+extern void msx_music_erase_4K_page(const uint8_t page) __z88dk_fastcall;
 extern void msx_music_write_4K_page(const uint8_t page, const uint8_t buffer[4096]);  // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
 extern bool msx_music_verify_4K_page(const uint8_t page, const uint8_t buffer[4096]); // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
+
+void wait_at_least_25ms() {
+  int16_t start_time = JIFFY;
+  while (JIFFY - start_time <= 3) {
+    __asm HALT __endasm;
+  }
+}
 
 uint8_t __at 0x8000 buffer[4096]; // Must not be within page1 (0x4000-0x7FFF) as that is where the ROM will be mapped.
 
@@ -39,8 +47,6 @@ void main(const int argc, const unsigned char **argv) {
   if (ch != 'Y')
     return;
 
-  msx_music_erase_ROM();
-
   rewind(file);
 
   unsigned long length = fread(buffer, 1, 4096, file);
@@ -49,6 +55,8 @@ void main(const int argc, const unsigned char **argv) {
   printf("\r\n");
 
   while (length > 0) {
+    msx_music_erase_4K_page(page_index);
+    wait_at_least_25ms();
     msx_music_write_4K_page(page_index, buffer);
     if (!msx_music_verify_4K_page(page_index, buffer))
       goto error;

@@ -39,7 +39,7 @@ void main() {
 
   xprintf("Version %04X\r\n", version);
 
-  uint16_t b = fossil_set_baud(6 * 256 + 6); // 9600
+  uint16_t b = fossil_set_baud(7 * 256 + 7); // 19200
   printf("Baud %04X\r\n", b);
 
   fossil_init();

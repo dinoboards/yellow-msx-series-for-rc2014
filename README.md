@@ -1,5 +1,7 @@
 # Yellow MSX Series for RC2014
 
+[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev)
+
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
 The repo describes a series of boards designed for RC2014, to give MSX+ compatiblity.
@@ -74,6 +76,12 @@ Kit available at [Tindie](https://www.tindie.com/products/dinotron/msx-cartridge
 See the [README file here](./backplane/readme.md)
 
 Kit available at [Tindie](https://www.tindie.com/products/dinotron/121-backplane-designed-for-rc2014-systems) store
+
+#### Turbo CPU designed for RC2014 systems
+
+See the [README file here](./turbo-cpu/readme.md)
+
+Kit available at [Tindie](https://www.tindie.com/products/dinotron/????) store
 
 #### Integrating the ESP8266 Wifi Module
 

@@ -34,9 +34,12 @@
 --
 */
 #include "aofossilhelper.h"
+#include "arguments.h"
 #include "fossil.h"
+#include "msx2ansi.h"
 #include "msx_fusion.h"
 #include "print.h"
+#include "system-state.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -54,7 +57,11 @@ unsigned char InitializeTCPIP() {
   if (!fossil_link())
     return 0;
 
-  fossil_set_baud(9 * 256 + 9);
+  const uint16_t actual_baud_rate = fossil_set_baud(baud_rate);
+  AnsiPrint("Baud Rate:");
+  AnsiPrint(fossil_rate_to_string(actual_baud_rate));
+  AnsiPrint("\r\n");
+
   fossil_set_protocol(7); // 8N1
   fossil_init();
   return 1;

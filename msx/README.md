@@ -1,7 +1,7 @@
 
 # Yellow MSX for RC2014 ROM Image Builder
 
-[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/main)
+[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev)
 
 ### MSX BIOS AND MSX-DOS
 
@@ -61,6 +61,9 @@ https://sourceforge.net/projects/msxsyssrc/
 You can assembly a new ROM image by following the instructions below, or download one of the pre-assembled [released packages](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
 
 There are 2 different ways to compile and assemble the rom.  Docker or host.  With Docker, you only need to have docker installed.  Alternatively, you can install the full tool chain (z88dk, pasmo, linux packages etc)
+
+It is highly recommended that the docker build process be used to assemble the code - its the simplest and most reliable way to get all the dependencies and tools (with the correct versions), installed and configured.
+
 ## Building the binaries using the prebuilt docker image
 
 After you have installed docker on your system, you can compile the ROM image using the following command from within the `msx` directory:
@@ -71,8 +74,10 @@ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}
 
 The docker run command is complex, so to make it easier, make an alias entry (typically in something like `~/.bash_aliases`)
 
+The following alias statement, is a bit complex, as it includes directory scanning code - to enable running the msxmake command in any sub-directory of this repo.
+
 ```
-alias msxmake="docker run -v \${PWD}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest make"
+alias msxmake="_msxRootDir=\"\"; _msxWrkDir=\"\"; pushd . > /dev/null; while [ ! -f root.md ]; do _msxRootDir=\"\${_msxRootDir}../\"; _msxWrkDir=\"\${PWD##*/}/\${_msxWrkDir}\"; cd ..; done; popd > /dev/null; docker run -e GITHUB_TOKEN -v \${PWD}/\${_msxRootDir}:/src/ --privileged=true -u \$(id -u \${USER}):\$(id -g \${USER}) -w /src/\${_msxWrkDir} -it vipoo/yellow-msx-rc2014-tool-chain:latest make"
 ```
 
 There after, you can treat the alias as an alternative make command eg:
@@ -84,7 +89,17 @@ msxmake apps
 
 If you prefer to avoid using Docker, the following sections describe a more native build process.
 
+### Updating your local copy of the docker image
+
+As and when new versions of the Docker image are published, you will need to retrieve and update your local copy of the image:
+
+```
+docker pull vipoo/yellow-msx-rc2014-tool-chain:latest
+```
+
 ## Building the binaries manually
+
+> These notes on building outside of the docker image may not be as detailed as required - refer to the Dockerfile for specific requirements/commands required to setup the tool chain.
 
 The Makefile in this directory can orchestrate the building of all binary units required for the RC2014 MSX system.
 
@@ -103,6 +118,7 @@ Before attempting to build any of the artifacts, you need to ensure you have the
 * mtools
 * Nextor support tools, see below
 * [pasmo z80 assembler](https://pasmo.speccy.org/)
+* [sjasmplus](https://github.com/z00m128/sjasmplus)
 
 > PASMO: For debian based linux, just run `sudo apt install pasmo`
 
@@ -145,8 +161,9 @@ These binaries are for flashing onto the SST39SF040 ROM for the MSX Memory Modul
 | main.rom                    | Main 32K MSXSRCSYS ROM                                       | 0000-7FFF |       0       |      0      |
 | optrom.rom                  | MSXSRCSYS OPT or Logo ROM                                    | 4000-7FFF |               |             |
 | subrom.rom                  | MSXSRCSYS SUB ROM                                            | 0000-3FFF |      3-0      |     3-0     |
+| rcmusic.rom                 | MSX MUSIC BIOS/MSX BASIC EXTENSION                           | 4000-7FFF |      3-1      |     3-1     |
 | rc2014.nextor-2.1.1.rom     | Nextor ROM Image                                             | 4000-7FFF |       2       |     3-3     |
-| rc2014-extended.rom         | Custom Extended BIOS implementation for RC2014 platform      | 8000-CFFF |      3-3      |     3-3     |
+| rc2014-extended.rom         | Custom Extended BIOS implementation for RC2014 platform      | 8000-BFFF |      3-3      |     3-3     |
 | dots.com                    | Testing tool                                                 |           |               |             |
 | extbio.com                  | Testing tool                                                 |           |               |             |
 | fdisk.com                   | Testing tool                                                 |           |               |             |
@@ -163,7 +180,7 @@ This section describes how you can create your own custom MSX Rom image that inc
 
 After verifying you have been able to build as per the instruction above, you can follow these steps for your custom build:
 
-1. If you would like to include any files in the embedded floppy image, simply copy them to `nextor/extras` directory*
+1. If you would like to include any files in the embedded floppy image, simply copy them to `nextor-rc2014/extras` directory*
 
 2. run `make` (or the docker `msxmake` alias) and ensure no assembly errors are raised.
 

@@ -210,7 +210,6 @@ _fossil_channel:
 _fossil_rs_in:
 	CALL	0
 	LD	L, A
-	LD	H, 0
 	RET
 
 _fossil_rs_out:

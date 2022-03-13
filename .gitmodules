@@ -22,3 +22,9 @@
 [submodule "msx/apps/chip8"]
 	path = msx/apps/chip8
 	url = git@github.com:vipoo/rc2014-chip8.git
+[submodule "msx/bbcbasic-z80"]
+	path = msx/bbcbasic-z80
+	url = git@github.com:vipoo/bbcbasic-z80.git
+[submodule "referened-repos/msx-hub"]
+	path = referened-repos/msx-usb
+	url = git@github.com:S0urceror/MSX-USB.git

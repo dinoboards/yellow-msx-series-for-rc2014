@@ -3,9 +3,9 @@
 # To run the container:
 #   $ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest
 
-FROM ubuntu:20.04 as STAGE1
+FROM ubuntu:focal-20220105 as STAGE1
 
-LABEL Version="0.0.12" \
+LABEL Version="0.0.13" \
       Date="2021-12-17" \
       Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -15,7 +15,8 @@ ENV Z88DK_PATH="/opt/z88dk" \
     BUILD_SDCC=1 \
     DEBIAN_FRONTEND=noninteractive
 
-RUN apt update -y && \
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/ubuntu/archive/|g' /etc/apt/sources.list && \
+    apt update -y && \
     apt dist-upgrade -y && \
     apt install -y  mtools build-essential dos2unix libboost-all-dev texinfo texi2html libxml2-dev subversion bison \
                    flex zlib1g-dev m4 git wget dosfstools curl
@@ -49,11 +50,20 @@ RUN cd /opt && \
 
 RUN wget -O /tmp/node.tar.gz https://nodejs.org/dist/v16.5.0/node-v16.5.0-linux-x64.tar.gz
 RUN tar -xzf "/tmp/node.tar.gz" -C /opt && \
-    ls /opt/ -lartsh  && \
-    mv /opt/node-v16.5.0-linux-x64 /opt/nodejs && ls /opt/nodejs/bin/node -lartsh && chmod +x /opt/nodejs/bin/node && \
+    mv /opt/node-v16.5.0-linux-x64 /opt/nodejs && \
+    chmod +x /opt/nodejs/bin/node && \
     /opt/nodejs/bin/node --version
 
-FROM ubuntu:20.04
+RUN cd /opt && \
+    wget https://github.com/z00m128/sjasmplus/archive/refs/tags/v1.18.3.tar.gz -O sjasmplus.tar.gz && \
+    tar -xvf sjasmplus.tar.gz && \
+    rm sjasmplus.tar.gz && \
+    mv sjasmplus-1.18.3 sjasmplus && \
+    cd sjasmplus && \
+    make clean && \
+    make
+
+FROM ubuntu:focal-20220105
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/ubuntu/archive/|g' /etc/apt/sources.list && \
@@ -76,6 +86,7 @@ COPY --from=STAGE1 /opt/nodejs /opt/nodejs
 COPY --from=STAGE1 /opt/sdcc-4.0.0 /opt/sdcc-4.0.0
 COPY --from=STAGE1 /opt/cpm /opt/cpm
 COPY --from=STAGE1 /opt/hex2bin /opt/hex2bin
+COPY --from=STAGE1 /opt/sjasmplus /opt/sjasmplus
 COPY --from=STAGE1 /opt/z88dk/bin /opt/z88dk/bin
 COPY --from=STAGE1 /opt/z88dk/include /opt/z88dk/include
 COPY --from=STAGE1 /opt/z88dk/lib /opt/z88dk/lib
@@ -86,8 +97,10 @@ COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix /opt/z88dk/libsrc/
 COPY --from=STAGE1 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80
 
 ENV Z88DK_PATH="/opt/z88dk" \
-    PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.0.0/bin:/opt/hex2bin:/opt/cpm:${PATH}" \
+    PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.0.0/bin:/opt/hex2bin:/opt/cpm:/opt/sjasmplus:${PATH}" \
     ZCCCFG="/opt/z88dk/lib/config/"
+
+RUN sjasmplus --version
 
 RUN adduser --disabled-password --gecos "" builder
 
@@ -96,3 +109,8 @@ COPY bashrc /home/builder/.bashrc
 RUN su builder -c "wine cmd.exe /C dir"
 
 WORKDIR /src/
+
+LABEL Version="0.0.13" \
+      Date="2021-12-17" \
+      Maintainer="Dean Netherton" \
+      Description="Tool chain to build units for the yellow msx for rc2014 kits"

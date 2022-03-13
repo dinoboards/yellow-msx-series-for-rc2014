@@ -1,13 +1,13 @@
 
-	include	"sio.inc"
-	include	"msx.inc"
-
-;
 ; All the code here is relocated to page 3 location during rominit
 
-SIO_BUFSZ	EQU	150
 
-FOSSIL_JUMP_TABLE:
+@FOSSIL_DRV_START:
+
+	MODULE	FOSSIL
+	PHASE	0
+	RELOCATE_START
+
 	jp	getversion	; Version H.L (H,L packed BCD)
 	jp	init		; initialises RS232
 	jp	deinit		; deinitialises the RS232
@@ -96,140 +96,64 @@ FOSSIL_JUMP_TABLE:
 ; All print commands that would be issued using the BIOS calls, will be
 ; transmitted through the RS232C interface.
 
-	jp	keyb_hook	; redirect RS232 to keyboard buffer
-				; H=0 release hook, H!=0 bend hook
-
 ; With this function, you can redirect all incoming RS232C data to the
 ; keyboard buffer.
 ; This and the previous function are nice to let a terminal control your
 ; MSX computer.
+; redirect RS232 to keyboard buffer
+; H=0 release hook, H!=0 bend hook
+	jp	keyb_hook
 
-	jp	get_info	; Gives a pointer in HL that points to a
-				; driver info block. This block describes
-				; the current situation about the driver.
+; Gives a pointer in HL that points to a
+; driver info block. This block describes
+; the current situation about the driver.
+	jp	get_info
+
 
 getversion:
 	LD	HL, 0x0101
 	RET
 
 init:
-	PUSH	IX
-	PUSH	IY
-	LD	HL, RS232_INIT_TABLE
-	RST	30H
-	DB	$8F		; SLOT 3-3
-	DW	RSF_INIT
+	RST	$30
+	DB	$8F				; slot 3-3
+	DW	fossil_initialise
 	EI
-
-	LD	HL, SIO_RCVBUF
-	LD	C, SIO_BUFSZ
-	LD	E, 4
-
-	RST	30H
-	DB	$8F		; SLOT 3-3
-	DW	RS_OPEN
-	EI
-	POP	IY
-	POP	IX
 	RET
 
 deinit:
-	XOR	A		; MARK AS CLOSED AND RTS OFF
-	LD	(RS_FLAGS), A
-	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
+	RST	$30
+	DB	$8F				; slot 3-3
+	DW	fossil_deinit
+	EI
 	RET
 
 set_baud:
- 	LD	A, L
-	CP	H
-	JR	NC, SKIP1
-	LD	A, H		; H IS LARGER, SO USE THAT AS BASIS
-
-SKIP1:
-	CP	5
-	JR	NC, SKIP2	; LESS THAN 5
-	LD	A, 5		; SET TO 5
-SKIP2:
-	CP 	7
-	JR	C, SKIP3	; GREATER THAN 7
-	LD	A, 7		; SET TO 7
-
-SKIP3:
-	LD	HL, RSC_RCV_BAUD
-	CP	7
-	JR	NZ, SKIP4
-	LD	HL, BAUD_HIGH
-	JR	SET_BAUD_EXIT
-
-SKIP4:
-	CP	6
-	JR	NZ, SKIP5
-	LD	HL, BAUD_MID
-	JR	SET_BAUD_EXIT
-
-SKIP5:
-	LD	HL, BAUD_LOW
-
-SET_BAUD_EXIT:
-	LD	(RSC_RCV_BAUD), HL
-	LD	(RSC_SND_BAUD), HL
-
-	LD	L, A		; RETURN THE ACTUAL SELECTED BAUD RATES
-	LD	H, A
+	RST	$30
+	DB	$8F				; slot 3-3
+	DW	fossil_set_baud
+	EI
 	RET
 
 rs_in:
-	LD	D, SIO_BUFSZ/4		; D IS QRT MARK OF BUFFER SIZE
-	LD	HL, SIO_RCVBUF
-	DI				; AVOID COLLISION WITH INT HANDLER
-	LD	A, (RS_DATCNT)		; GET COUNT
-	DEC	A			; DECREMENT COUNT
-	LD	(RS_DATCNT), A		; SAVE UPDATED COUNT
-	CP	D			; BUFFER LOW THRESHOLD
-	JR	NZ, SIO_IN1		; IF NOT, BYPASS SETTING RTS
+	push_page_1	1
 
-	SIO_CHIP_RTS	CMD_CH, SIO_RTSON
-	LD	A, (RS_FLAGS)
-	SET	1, A
-	LD	(RS_FLAGS), A
+	call	segment1_rs_in
 
-SIO_IN1:
-	INC	HL
-	INC	HL			; HL NOW HAS ADR OF TAIL PTR
-	PUSH	HL			; SAVE ADR OF TAIL PTR
-	LD	A, (HL)			; DEREFERENCE HL
-	INC	HL
-	LD	H, (HL)
-	LD	L, A			; HL IS NOW ACTUAL TAIL PTR
-	LD	C, (HL)			; C := CHAR TO BE RETURNED
-	INC	HL			; BUMP TAIL PTR
-	POP	DE			; RECOVER ADR OF TAIL PTR
-	LD	A, (RS_BUFEND)		; GET BUFEND PTR LOW BYTE
-	CP	L			; ARE WE AT BUFF END?
-	JR	NZ, SIO_IN2		; IF NOT, BYPASS
-	LD	H, D			; SET HL TO
-	LD	L, E			; ... TAIL PTR ADR
-	INC	HL			; BUMP PAST TAIL PTR
-	INC	HL			; ... SO HL NOW HAS ADR OF ACTUAL BUFFER START
-SIO_IN2:
-	EX	DE, HL			; DE := TAIL PTR VAL, HL := ADR OF TAIL PTR
-	LD	(HL), E			; SAVE UPDATED TAIL PTR
-	INC	HL
-	LD	(HL), D
-	EI				; INTERRUPTS OK AGAIN
+	pop_page_1	1
+
 	LD	A, C			; MOVE CHAR TO RETURN TO A
 	OR	A
 	RET
 
 rs_out:
-	PUSH	IX
-	PUSH	IY
-	RST	$30
-	DB	$8F
-	DW	RS_SNDCHR
-	EI
-	POP	IY
-	POP	IX
+	EX	AF, AF'
+	push_page_1	1
+	EX	AF, AF'
+
+	call	segment1_rs_out
+
+	pop_page_1	1
 	RET
 
 rs_in_stat:
@@ -258,149 +182,32 @@ keyb_hook:
 get_info:
 	RET
 
-	PUBLIC	SIO_INT
-SIO_INT:
+@SIO_INT:
 	DI				; INTERRUPTS WILL BE RE-ENABLED BY MSX BIOS
 
 	; CHECK TO SEE IF SOMETHING IS ACTUALLY THERE
+	LD	A, (RS_SIO_B_CMD)
+	LD	C, A
 	XOR	A			; READ REGISTER 0
-	OUT	(CMD_CH), A
-	IN	A, (CMD_CH)
+	OUT	(C), A
+	IN	A, (C)
 	AND	$01			; ISOLATE RECEIVE READY BIT
 	JP	Z, RS_OLDINT		; NOTHING AVAILABLE ON CURRENT CHANNEL
 
-	LD	A, (RS_IQLN)
-	EXX
-	LD	C, A			; BUFFER FULL COUNT IN C
-	LD	HL, RS_DATCNT
-	SUB	5			; 5 FROM BUF SIZE IS HIGH WATER MARK
-	JR 	Z, SIO_ZERO_HI_MARK
-	JR 	NC, SIO_5_MINUS_HI_MARK
-SIO_ZERO_HI_MARK:
-	LD	A, 1
-SIO_5_MINUS_HI_MARK:
-	LD	D, A
-	EXX
+	push_page_1	0
 
-	LD	HL, RS_FLAGS		; IS OPENED?
-	BIT	3, (HL)			; FLAG PORT OPEN?
-	JR	Z, SIO_INT_ABORT
+	call	segment1_sio_interrupt
 
-	LD	A, (RS_BUFEND)		; GET BUFEND PTR LOW BYTE
-	LD	C, A
+	pop_page_1	0
 
-	LD	HL, (RS_FCB)
-	LD	D, H			; SAVE ADR OF HEAD PTR
-	LD	E, L
-	LD	A, (HL)			; DEREFERENCE HL
-	INC	HL
-	LD	H, (HL)
-	LD	L, A			; HL IS NOW ACTUAL HEAD PTR
+	ret
 
-	; HL IS HEAD - ADDR OF NEXT BYTE TO BE WRITTEN IN BUFFER
-	; DE IS &HEAD - ADDR STORE FOR HEAD PTR
+	RELOCATE_END
+	UNPHASE
+@FOSSIL_DRV_LENGTH	EQU	$-FOSSIL_DRV_START
 
-	; RECEIVE CHARACTER INTO BUFFER
-SIO_INTRCV1:
-	IN	A, (DAT_CH)		; READ PORT
-	LD	B, A			; SAVE BYTE READ
+@FOSSILE_DRV_MAP:
+	RELOCATE_TABLE
+@FOSSILE_DRV_MAP_LENGTH	EQU	($-@FOSSILE_DRV_MAP)/2
 
-	EXX
-	LD	A, (HL)			; GET COUNT
-	CP	C			; COMPARE TO BUFFER SIZE
-	JR	Z, SIO_INTRCV4		; BAIL OUT IF BUFFER FULL, RCV BYTE DISCARDED
-
-	INC	A			; INCREMENT THE COUNT
-	LD	(HL), A			; AND SAVE IT
-	CP	D			; HIT HIGH WATER MARK?
-	EXX
-	JR	NZ, SIO_INTRCV2		; IF NOT, BYPASS CLEARING RTS
-
-	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
-	LD	A, (RS_FLAGS)		; SET BIT FLAG FOR RTS OFF
-	RES	1, A
-	LD	(RS_FLAGS), A
-
-SIO_INTRCV2:
-	LD	(HL), B			; SAVE CHARACTER RECEIVED IN BUFFER AT HEAD
-	INC	HL			; BUMP HEAD POINTER
-
-	LD	A, C			; GET BUFEND PTR LOW BYTE
-	CP	L			; ARE WE AT BUFF END?
-	JR	NZ, SIO_INTRCV3		; IF NOT, BYPASS
-	LD	H, D			; SET HL TO
-	LD	L, E			; ... HEAD PTR ADR
-	INC	HL			; BUMP PAST HEAD PTR
-	INC	HL
-	INC	HL
-	INC	HL			; ... SO HL NOW HAS ADR OF ACTUAL BUFFER START
-
-SIO_INTRCV3:
-	; CHECK FOR MORE PENDING...
-	XOR	A
-	OUT	(CMD_CH), A		; READ REGISTER 0
-	IN	A, (CMD_CH)		;
-	RRA				; READY BIT TO CF
-	JR	C, SIO_INTRCV1		; IF SET, DO SOME MORE
-
-	LD	A, (RS_FLAGS)
-	BIT	1, A
-	JR	Z, SIO_UPDATE_HEAD_PTR		; ABORT NOW IF RTS IS OFF
-
-	; TEST FOR NEW BYTES FOR A SHORT PERIOD OF TIME
-	LD	B, 80
-SIO_MORE:
-	IN	A, (CMD_CH)		;
-	RRA				; READY BIT TO CF
-	JR	C, SIO_INTRCV1		; IF SET, DO SOME MORE
-	DJNZ	SIO_MORE
-
-COMMAND_0	EQU	0
-COMMAND_1	EQU	0x08
-COMMAND_2	EQU	0x10
-COMMAND_3	EQU	0x18
-COMMAND_4	EQU	0x20
-COMMAND_5	EQU	0x28
-COMMAND_6	EQU	0x30
-COMMAND_7	EQU	0x38
-
-SIO_UPDATE_HEAD_PTR:
-	EX	DE, HL			; DE := HEAD PTR VAL, HL := ADR OF HEAD PTR
-	LD	(HL), E			; SAVE UPDATED HEAD PTR
-	INC	HL
-	LD	(HL), D
-
-
-SIO_INTRCV4:
-	; NOT SURE WHY NEED TO RESET CHANNEL A
-	; SOMETHING NOT QUITE RIGHT
-	LD	A, 0
-	OUT	(SIO0A_CMD), A
-	LD	A, COMMAND_3
-	OUT	(SIO0A_CMD), A
-	JP	RS_OLDINT
-
-SIO_INT_ABORT:
-	IN	A, (DAT_CH)
-	; PORT NOT OPENED, SO IGNORE BYTE, RESET RTS AND EXIT
-	SIO_CHIP_RTS	CMD_CH, SIO_RTSOFF
-	RES	1, (HL)			; SET BIT FLAG FOR RTS OFF
-	JR	SIO_INTRCV4
-
-RS232_INIT_TABLE:
-RSC_CHAR_LEN:		DB	'8'		; Character length '5'-'8'
-RSC_PARITY:		DB	'N'		; Parity 'E','O','I','N'
-RSC_STOP_BITS:		DB	'1'		; Stop bits '1','2','3'
-RSC_XON_XOFF:		DB	'N'		; XON/XOFF controll 'X','N'
-RSC_CTR_RTS:		DB	'H'		; CTR-RTS hand shake 'H','N'
-RSC_AUTO_RCV_LF:	DB	'N'		; Auto LF for receive 'A','N'
-RSC_AUTO_SND_LF:	DB	'N'		; Auto LF for send 'A','N'
-RSC_SI_SO_CTRL:		DB	'N'		; SI/SO control 'S','N'
-RSC_RCV_BAUD:		DW	19200		; Receiver baud rate  50-19200 ; MARK MAKE BAUD RATE CONFIG
-RSC_SND_BAUD:		DW	19200		; Transmitter baud rate 50-19200 ; MARK MAKE BAUD RATE CONFIG
-RSC_TIMEOUT_CNT:	DB	0		; Time out counter 0-255
-
-SIO_RCVBUF:
-SIO_HD:		DW	SIO_BUF		; BUFFER HEAD POINTER
-SIO_TL:		DW	SIO_BUF		; BUFFER TAIL POINTER
-SIO_BUF:	DS	SIO_BUFSZ, $00	; RECEIVE RING BUFFER
+	ENDMODULE

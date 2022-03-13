@@ -51,6 +51,7 @@ RS_ESTBLS
 |  1  | SET -> USE RTS/CTS  |
 |  3  | AUTO LF??           |
 |  4  | SI/SO ??            |
+|  7  | PRESENT             |
 
 FOSSIL DATA VARIABLES:
 | Address | Name   | Length | Description                                            |

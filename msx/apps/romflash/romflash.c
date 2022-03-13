@@ -10,51 +10,56 @@ memmap_extbio_info info_table;
 const char pFileName[] = "TEST.ROM";
 
 void main() {
-  printf("SPIKE loading file into mapped memory ....\r\n");
+  printf("Spike erasing last sector\r\n");
+  flashLoader();
 
-  extbio_get_dev_info_table(4, &info_table);
-  memmap_link(info_table.jump_table);
-  printf("Free Slot %d, Total Slots: %d\r\n", info_table.number_of_free_segments, info_table.number_of_segments);
 
-  FILE *fptr = NULL;
-  fptr = fopen(pFileName, "rb");
+  // printf("SPIKE loading file into mapped memory ....\r\n");
 
-  fseek(fptr, 0, SEEK_END); // seek to end of file
-  long size = ftell(fptr);  // get current file pointer
-  fseek(fptr, 0, SEEK_SET); // seek back to beginning of file
+  // extbio_get_dev_info_table(4, &info_table);
+  // memmap_link(info_table.jump_table);
+  // printf("Free Slot %d, Total Slots: %d\r\n", info_table.number_of_free_segments, info_table.number_of_segments);
 
-  printf("File size is %ld\r\n", size);
+  // FILE *fptr = NULL;
+  // fptr = fopen(pFileName, "rb");
 
-  if (size != 524288L) {
-    printf("Rom image size is invalid - expected 512k\r\n");
-    fclose(fptr);
-    exit(1);
-  }
+  // fseek(fptr, 0, SEEK_END); // seek to end of file
+  // long size = ftell(fptr);  // get current file pointer
+  // fseek(fptr, 0, SEEK_SET); // seek back to beginning of file
 
-  uint8_t currentSegment = memmap_get_page_2();
+  // printf("File size is %ld\r\n", size);
 
-  uint8_t allocated_segment;
-  uint8_t allocated_slot;
+  // // if (size != 524288L) {
+  // //   printf("Rom image size is invalid - expected 512k\r\n");
+  // //   fclose(fptr);
+  // //   exit(1);
+  // // }
 
-  for (int i = 0; i < 32; i++) {
-    uint8_t success = memmap_allocate_segment(0, 0x0, &allocated_segment, &allocated_slot);
+  // uint8_t currentSegment = memmap_get_page_2();
 
-    memmap_put_page_2(allocated_segment);
+  // uint8_t allocated_segment;
+  // uint8_t allocated_slot;
 
-    size_t length = fread((void *)0x8000, 1, 0x4000, fptr);
+  // for (int i = 0; i < size / 16384; i++) {
+  //   uint8_t success = memmap_allocate_segment(0, 0x0, &allocated_segment, &allocated_slot);
 
-    printf("Read block %d %d bytes into segment %d\r\n", i, length, allocated_segment);
-  }
+  //   memmap_put_page_2(allocated_segment);
 
-  fclose(fptr);
+  //   size_t length = fread((void *)0x8000, 1, 0x4000, fptr);
 
-  printf("File close\r\n");
+  //   printf("Read block %d %d bytes into segment %d\r\n", i, length, allocated_segment);
+  // }
 
-  memmap_put_page_2(currentSegment);
+  // fclose(fptr);
 
-  extbio_get_dev_info_table(4, &info_table);
+  // printf("File close\r\n");
 
-  printf("Free Slot %d, Total Slots: %d\r\n", info_table.number_of_free_segments, info_table.number_of_segments);
+  // memmap_put_page_2(currentSegment);
+
+  // extbio_get_dev_info_table(4, &info_table);
+
+  // printf("Free Slot %d, Total Slots: %d\r\n", info_table.number_of_free_segments, info_table.number_of_segments);
+
 }
 
 // void main() {
