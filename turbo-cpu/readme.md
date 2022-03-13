@@ -2,7 +2,7 @@
 
 * [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-<a href="https://www.tindie.com/products/dinotron/???"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+<a href="https://www.tindie.com/products/dinotron/turbo-cpu-module-designed-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
 
 ## Title
 
@@ -15,6 +15,10 @@ Run a Z80 CPU at up to 20Mhz
 ### Description
 
 A Z80 CPU module supporting speeds up to 20Mhz - but with the required wait states and clock control to ensure compatibility with existing software and RC2014 modules.
+
+## Demonstration Video
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/coI_g9XZ_w4/0.jpg)](https://www.youtube.com/watch?v=coI_g9XZ_w4)
 
 ### What is it?
 

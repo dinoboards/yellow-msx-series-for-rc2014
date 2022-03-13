@@ -81,7 +81,7 @@ Kit available at [Tindie](https://www.tindie.com/products/dinotron/121-backplane
 
 See the [README file here](./turbo-cpu/readme.md)
 
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/????) store
+Kit available at [Tindie](https://www.tindie.com/products/dinotron/turbo-cpu-module-designed-for-rc2014) store
 
 #### Integrating the ESP8266 Wifi Module
 
