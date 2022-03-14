@@ -62,14 +62,14 @@ _FOUND_:
 	LD	HL, USB_FLASH_FOUND_MSG
 	CALL	PRINT
 
-	call SCSI_MAX_LUNS
+	call	SCSI_MAX_LUNS
 	JR	NC, __OK1
 	XOR	A
 	RET
 
 __OK1:
-	call SCSI_INIT
-	call SCSI_INQUIRY
+	call 	SCSI_INIT
+	call 	SCSI_INQUIRY
 	JR	NC, __OK2
 	XOR	A
 	RET
@@ -94,6 +94,29 @@ _SCSI_TEST_OKAY:
 
 	OR	255
 	RET
+
+RESET_USB_STORAGE:
+	CALL	USB_HOST_BUS_RESET
+
+	; enumerate and initialise USB devices
+	PUSH	IX
+	CALL	FN_CONNECT
+	POP	IX
+	OR	A
+	RET	Z
+
+	call	SCSI_MAX_LUNS
+	RET	C
+
+	call 	SCSI_INIT
+	call 	SCSI_INQUIRY
+	RET	C
+
+_SCSI_TEST_AGAIN1:
+	call	SCSI_TEST
+	ret 	nc
+	call	SCSI_REQUEST_SENSE
+	jr	_SCSI_TEST_AGAIN1
 
 ; ------------------------------------------------
 ; Initialize the Work-area
@@ -286,14 +309,108 @@ _DEV_STATUS_ERR:
 	xor	a ; not available
 	ret
 
+ADD_512_TO_HL:
+	push	de
+	ld	de, 512
+	add	hl, de
+	pop	de
+	ret
+
+	; 1 to 32bit number at DE
+INC_SECTOR_NUMBER:
+	push	bc
+	push	de
+	push	hl
+	ex	de, hl
+
+	push	hl
+	ld	c, (hl)
+	inc	hl
+	ld	b, (hl)
+	inc	hl
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	pop	hl
+	inc	c
+	jr	NZ,l_increment32Bit_00103
+	inc	b
+	jr	NZ,l_increment32Bit_00103
+	inc	de
+l_increment32Bit_00103:
+	ld	(hl), c
+	inc	hl
+	ld	(hl), b
+	inc	hl
+	ld	(hl), e
+	inc	hl
+	ld	(hl), d
+
+	pop	hl
+	pop	de
+	pop	bc
+	ret
 
 DEV_WRT_USB:
-	DI
+	push	iy
+	push	af			; reserve 4 bytes for modifying sector number
+	push	af
+	ld	iy, 0
+	add	iy, sp
+
+	ld	a, (de)
+	inc	de
+	ld	(iy), a
+	ld	a, (de)
+	inc	de
+	ld	(iy+1), a
+	ld	a, (de)
+	inc	de
+	ld	(iy+2), a
+	ld	a, (de)
+	inc	de
+	ld	(iy+3), a
+	push	iy
+	pop	de
+
+DEV_WRT_USB_NXT_SECTOR:
+
+	LD	A, 2
+	PUSH	AF
+
+DEV_WRT_SECTOR_LOOP:
 	call	CAPS_FLASH
-	call	SCSI_WRITE
-	jr	c, _DEV_RW_ERR
+	push	bc
+	ld	b, 1
+	call	SAFE_SCSI_WRITE
+	pop	bc
+	jr	nc, _DEV_RW_NEXT_4
+	
+	POP	AF
+	DEC	A
+	JR	Z, _DEV_RW_ERR
+	
+	PUSH	AF
+	push	bc
+
+	ld	bc, 60*3
+	ei
+	call	WAIT
+	pop	bc
+
+	jr	DEV_WRT_SECTOR_LOOP
 
 _DEV_RW_NEXT_4:
+	POP	AF
+	call	ADD_512_TO_HL
+	call	INC_SECTOR_NUMBER
+	djnz	DEV_WRT_USB_NXT_SECTOR
+
+
+	pop	af			; restore stack and iy
+	pop	af
+	pop	iy
+
 	; CAPS OFF
 	in	a, 0xaa
 	set	6, a
@@ -301,18 +418,44 @@ _DEV_RW_NEXT_4:
 	xor	a ; success
 	ret
 
-_DEV_RW_ERR
+_DEV_RW_ERR:
 	call	CAPS_FLASH
+
+	pop	af			; restore stack and iy
+	pop	af
+	pop	iy
+
 	ld	a, _RNF
 	ld	b, 0
 	ret
 
 DEV_READ_USB:
-	DI
+	push	iy
+	push	af			; reserve 4 bytes for modifying sector number
+	push	af
+	ld	iy, 0
+	add	iy, sp
+
+	LD	A, 2
+	PUSH	AF
+
+DEV_READ_USB_TRY_AGAIN:
 	call	CAPS_FLASH
-	call	SCSI_READ
-	jr	c, _DEV_RW_ERR
-	jr	_DEV_RW_NEXT_4
+	call	SAFE_SCSI_READ
+
+	jr	nc, _DEV_RW_NEXT_4
+	POP	AF
+	DEC	A
+	JR	Z, _DEV_RW_ERR
+
+	push	af
+	push	bc
+
+	ld	bc, 60*3
+	ei
+	call	WAIT
+	pop	bc
+	jr	DEV_READ_USB_TRY_AGAIN
 
 CAPS_FLASH:
 	in	a, (0xaa)
@@ -328,6 +471,33 @@ _CAPS_FLASH:
 	out	(0xaa), a
     	ret
 
+SAFE_SCSI_WRITE:
+	push	iy
+	push	ix
+	push	hl
+	push	de
+	push	bc
+	call	SCSI_WRITE
+	pop	bc
+	pop	de
+	pop	hl
+	pop	ix
+	pop	iy
+	ret
+
+SAFE_SCSI_READ:
+	push	iy
+	push	ix
+	push	hl
+	push	de
+	push	bc
+	call	SCSI_READ
+	pop	bc
+	pop	de
+	pop	hl
+	pop	ix
+	pop	iy
+	ret
 
 CH376_NOT_FOUND_MSG:		DB	"CH376:           NOT PRESENT", 13, 10, 0
 CH376_FOUND_MSG:		DB	"CH376:           PRESENT (VER ", 0
