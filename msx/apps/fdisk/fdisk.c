@@ -706,7 +706,7 @@ void testDeviceAccess() {
     printf(buffer);
     printf(" ...\x1BK");
 
-    error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, buffer);
+    error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 2, buffer);
 
     if (error != 0) {
       strcpy(buffer, errorMessageHeader);
@@ -755,17 +755,16 @@ bool writeSector(uint32_t targetSector) {
   return TRUE;
 }
 
-void testDeviceWriteAccess() {
-
-#define FOR_BUFFER(f)       \
-  for (i = 0; i < 512; i++) \
+#define FOR_BUFFER(f, s)       \
+  for (i = 0; i < s; i++) \
   f
-#define CHECK_BUFFER(c, f) \
+#define CHECK_BUFFER(c, f, s) \
   FOR_BUFFER(if (c) {      \
     f;                     \
     break;                 \
-  })
+  }, s)
 
+void testDeviceWriteAccess() {
   uint16_t error;
   uint16_t i;
 
@@ -786,7 +785,7 @@ void testDeviceWriteAccess() {
   if (!readSector(targetSector))
     goto abortTest;
 
-  FOR_BUFFER(buffer[i] = 0);
+  FOR_BUFFER(buffer[i] = 0, 512);
 
   printf("Writing zeros\r\n");
   if (!writeSector(targetSector))
@@ -797,14 +796,14 @@ void testDeviceWriteAccess() {
     goto abortTest;
 
   error = FALSE;
-  CHECK_BUFFER(buffer[i] != 0, error = TRUE);
+  CHECK_BUFFER(buffer[i] != 0, error = TRUE, 512);
 
   if (error) {
     printf("Comparision failure at byte %d\r\n", i);
     goto abortTest;
   }
 
-  FOR_BUFFER(buffer[i] = i);
+  FOR_BUFFER(buffer[i] = i, 512);
 
   printf("Writing sequence\r\n");
   if (!writeSector(targetSector))
@@ -815,7 +814,7 @@ void testDeviceWriteAccess() {
     goto abortTest;
 
   error = FALSE;
-  CHECK_BUFFER(buffer[i] != (uint8_t)i, error = TRUE);
+  CHECK_BUFFER(buffer[i] != (uint8_t)i, error = TRUE, 512);
 
   if (error) {
     printf("Comparision failure at byte %d\r\n", i);
@@ -827,6 +826,112 @@ void testDeviceWriteAccess() {
 abortTest:
   waitKey();
 }
+
+// const char fullWriteTestMessage[] = "Full Write Test";
+
+bool readWriteError(const char *errorMessageHeader, const uint16_t error, const uint16_t sectorNumber, const char* message) {
+  strcpy(buffer, errorMessageHeader);
+  sprintf(buffer + strlen(errorMessageHeader), "%u", sectorNumber);
+  strcpy(buffer + strlen(buffer), ":");
+  printDosErrorMessage(error, buffer);
+  printStateMessage("Continue reading sectors? (y/n) ");
+  if (!getYesOrNo()) {
+    return false;
+  }
+  initializeScreenForTestDeviceAccess(message);
+
+  return true;
+}
+
+void increment32Bit(uint32_t* p) __z88dk_fastcall {
+  (*p)++;
+}
+
+void testDeviceFullWriteAccess() {
+  const char *message = "Now testing sector ";
+  uint32_t    sectorNumber = 0;
+  uint8_t     messageLen = strlen(message);
+  uint16_t    error = 23;
+  uint16_t    i;
+
+  initializeScreenForTestDeviceWriteAccess("Checking write access on *ALL* sector\r\n");
+  locate(0, MESSAGE_ROW + 1);
+  printf("WARNING! All existing data will be lost.\r\n");
+  printStateMessage("Proceed? (y/n) ");
+  if (!getYesOrNo())
+    return;
+
+  initializeScreenForTestDeviceAccess(message);
+
+  while (getKey() == 0) {
+    sprintf(buffer, "%u", sectorNumber);
+    locate(messageLen, MESSAGE_ROW);
+    printf(buffer);
+    printf(" ...\x1BK");
+
+    FOR_BUFFER(buffer[i] = 0, 512);
+
+    error = msxdosDevWrite(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, buffer);
+    if (error) {
+      if (!readWriteError("Error when writing zeros to sector ", error, sectorNumber, message))
+        return;
+      goto nextSector;
+    }
+
+    FOR_BUFFER(buffer[i] = 255, 512);
+
+    error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 1, buffer);
+    if (error) {
+      if (!readWriteError("Error when re-reading sector ", error, sectorNumber, message))
+        return;
+      goto nextSector;
+    }
+
+    error = FALSE;
+    CHECK_BUFFER(buffer[i] != 0, error = TRUE, 512);
+    if (error) {
+      if (!readWriteError("Verification failed for sector ", error, sectorNumber, message))
+        return;
+      goto nextSector;
+    }
+    
+    FOR_BUFFER(buffer[i] = i, 1024);
+    error = msxdosDevWrite(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 2, buffer);
+    if (error) {
+      if (!readWriteError("Error when writing sequence to sector ", error, sectorNumber, message))
+        return;
+      goto nextSector;
+    }
+
+    FOR_BUFFER(buffer[i] = 0, 1024);
+    error = msxdosDevRead(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 2, buffer);
+    if (error) {
+      if (!readWriteError("Error when reading sequence sector ", error, sectorNumber, message))
+        return;
+      goto nextSector;
+    }
+
+    error = FALSE;
+    CHECK_BUFFER(buffer[i] != (uint8_t)i, error = TRUE, 1024);
+    if (error) {
+      if (!readWriteError("Sequence verification failed for sector ", error, sectorNumber, message))
+        return;
+      goto nextSector;
+    }
+
+nextSector:
+    sectorNumber++;
+    if (sectorNumber >= selectedLun->sectorCount) {
+      sectorNumber = 0;
+    }
+  }
+
+  printStateMessage("Success.  Press any key to exit");
+
+abortTest:
+  waitKey();
+}
+
 
 bool confirmDataDestroy(char *action) {
   printStateMessage("");
@@ -1055,6 +1160,7 @@ void goPartitioningMainMenuScreen() {
     }
     printf("T. Test device access\r\n");
     printf("C: Test write for last sector\r\n");
+    printf("X: Test write all sectors\r\n");
 
     printStateMessage("Select an option or press ESC to return");
 
@@ -1100,6 +1206,11 @@ void goPartitioningMainMenuScreen() {
 
     if (key == 'c') {
       testDeviceWriteAccess();
+      continue;
+    }
+
+    if (key == 'x') {
+      testDeviceFullWriteAccess();
       continue;
     }
 
