@@ -69,3 +69,5 @@ USB		WRKAREA
 	ENDS
 
 	DISPLAY "WRKAREA bytes: ",/D,WRKAREA
+
+_usb_host_init:		EQU	$6000	; entry point within cextens section

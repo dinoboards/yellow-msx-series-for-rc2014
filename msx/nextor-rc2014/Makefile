@@ -27,9 +27,12 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm rcembdrv.inc
 	fi
 	echo "Assembled $@"
 
-$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc version.asm ch376drv.asm
+$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc version.asm ch376drv.asm $(BINDIR)spike.bin drvend.asm
 	@mkdir -p $(BINDIR)
-	$(ASM) rc2014dr.asm ch376drv.asm rc2014dr.inc
+	$(ASM) rc2014dr.asm ch376drv.asm rc2014dr.inc drvend.asm
+	cat $(BINDIR)rc2014dr.bin $(BINDIR)spike.bin > $(BINDIR)tmp.bin
+	rm $(BINDIR)rc2014dr.bin
+	mv $(BINDIR)tmp.bin $(BINDIR)rc2014dr.bin
 	filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")
 	if ((filesize > 16484 )); then
 		echo -e "\r\nError: $(BINDIR)rc2014dr.bin exceeded size of 16k"
@@ -72,7 +75,7 @@ $(BINDIR)$1.driver-with-sectors.bin: $(BINDIR)rc2014dr.bin $(BINDIR)rcembdrv.bin
 	SECSTRT=$$$$(../scripts/getsymb.sh rcembdrv.exp.asm SECSTR)
 	DATSIZ=$$$$(../scripts/getsymb.sh rcembdrv.exp.asm DATSIZ)
 	dd status=none if=/dev/zero of=$1.driver-with-sectors.bin bs=16k count=19 seek=0
-	dd status=none conv=notrunc if=rc2014dr.bin of=$1.driver-with-sectors.bin bs=8k count=1 seek=0
+	dd status=none conv=notrunc if=rc2014dr.bin of=$1.driver-with-sectors.bin bs=8k count=2 seek=0
 	BNK_START_ADDR=$$$$((SECSTRT-16384))
 	for i in {1..18}
 	do
@@ -93,3 +96,6 @@ endef
 $(eval $(call BUILD_versions,cbios))
 $(eval $(call BUILD_versions,rc2014))
 
+include ./cexten/Makefile
+# $(BINDIR)spike.bin:
+# 	$(MAKE) -c cexten

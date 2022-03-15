@@ -1,4 +1,7 @@
 DRV_INIT_CH376:
+	ld b,b
+	jr $+2
+	call	_usb_host_init
 	CALL	USBHOST_INIT
 
 	CALL	CH_RESET
