@@ -16,7 +16,9 @@ SRC := ./cexten/
 
 ZCC := zcc +msx  -subtype=msxdos2 -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
 
-$(BINDIR)spike.bin: $(SRC)print.asm $(SRC)print.c $(BINDIR)usb-host-init.c.asm $(SRC)work-area.asm ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
+$(BINDIR)spike.bin: $(BINDIR)print.o $(BINDIR)print.c.o $(BINDIR)usb-host-init.c.o $(BINDIR)work-area.o ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
+
+$(BINDIR)usb-host-init.c.asm: $(SRC)usb-host-init.c $(SRC)work-area.h
 
 $(BINDIR)%.bin:
 	@mkdir -p $(dir $@)
@@ -31,7 +33,6 @@ endef
 
 define compile
 	@mkdir -p $(dir $@)
-	pwd
 	$(ZCC) --assemble-only $< -o $@
 	echo "Compiled $(notdir $@) from $(notdir $<)"
 endef
@@ -41,9 +42,10 @@ define objects
 endef
 
 
+
 .PRECIOUS: $(BINDIR)%.c.asm
-$(BINDIR)%.c.asm: $(SRC)/%.c; $(compile)
+$(BINDIR)%.c.asm: $(SRC)%.c; $(compile)
 $(BINDIR)%.o: $(BINDIR)%.asm; $(assemble)
-$(BINDIR)%.o: $(SRC)/%.asm; $(assemble)
+$(BINDIR)%.o: $(SRC)%.asm; $(assemble)
 $(BINDIR)%.m4.o: %.asm.m4; $(assemble)
 
