@@ -1,5 +1,4 @@
 DRV_INIT_CH376:
-	CALL	USBHOST_INIT
 	call	_usb_host_init
 
 	ld	a, l
