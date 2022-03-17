@@ -49,7 +49,15 @@ typedef struct __scsi_devinfo {
   uint8_t ignored3;
 } _scsi_devinfo;
 
-typedef uint8_t usb_descriptor_block[8];
+typedef struct _usb_descriptor_block {
+  uint8_t code;
+  uint8_t dat2;
+  uint8_t dat3;
+  uint8_t dat4;
+  uint8_t dat5;
+  uint8_t dat6;
+  uint16_t length;
+} usb_descriptor_block;
 
 typedef struct __usb_descriptor_blocks {
   usb_descriptor_block  cmd_get_device_descriptor;
