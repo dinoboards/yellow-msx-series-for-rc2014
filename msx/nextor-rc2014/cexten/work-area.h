@@ -1,4 +1,7 @@
+#ifndef __WORK_AREA
+#define __WORK_AREA
 
+#include <stdlib.h>
 
 typedef struct __scsi_command_status_wrapper {
   uint8_t cbwsignature[4];
@@ -51,11 +54,11 @@ typedef struct __scsi_devinfo {
 
 typedef struct _usb_descriptor_block {
   uint8_t code;
+  uint8_t dat1;
   uint8_t dat2;
   uint8_t dat3;
   uint8_t dat4;
   uint8_t dat5;
-  uint8_t dat6;
   uint16_t length;
 } usb_descriptor_block;
 
@@ -66,14 +69,14 @@ typedef struct __usb_descriptor_blocks {
   usb_descriptor_block  cmd_get_string;
   usb_descriptor_block  cmd_get_config_descriptor;
   usb_descriptor_block  cmd_set_interface;
-  usb_descriptor_block  cmd_set_packet_filter; 
-  usb_descriptor_block  cmd_set_idle; 
+  usb_descriptor_block  cmd_set_packet_filter;
+  usb_descriptor_block  cmd_set_idle;
   usb_descriptor_block  cmd_set_protocol;
   usb_descriptor_block  reserved[3];
-  usb_descriptor_block  cmd_get_hub_descriptor; 
+  usb_descriptor_block  cmd_get_hub_descriptor;
   usb_descriptor_block  cmd_set_hub_port_feature;
   usb_descriptor_block  cmd_get_hub_port_status;
-  usb_descriptor_block  cmd_get_max_luns; 
+  usb_descriptor_block  cmd_get_max_luns;
   usb_descriptor_block  cmd_mass_storage_reset;
 } _usb_descriptor_blocks;
 
@@ -107,3 +110,54 @@ typedef struct _work_area {
 } work_area;
 
 extern work_area* get_work_area();
+
+typedef struct _device_descriptor {
+  uint8_t  bLength;
+  uint8_t  bDescriptorType;
+  uint16_t bcdUSB;
+  uint8_t  bDeviceClass;
+  uint8_t  bDeviceSubClass;
+  uint8_t  bDeviceProtocol;
+  uint8_t  bMaxPacketSize0;
+  uint16_t idVendor;
+  uint16_t idProduct;
+  uint16_t bcdDevice;
+  uint8_t  iManufacturer;
+  uint8_t  iProduct;
+  uint8_t  iSerialNumber;
+  uint8_t  bNumConfigurations;
+} device_descriptor;
+
+typedef struct _config_descriptor {
+  uint8_t  bLength;
+  uint8_t  bDescriptorType;
+  uint16_t wTotalLength;
+  uint8_t  bNumInterfaces;
+  uint8_t  bConfigurationvalue;
+  uint8_t  iConfiguration;
+  uint8_t  bmAttributes;
+  uint8_t  bMaxPower;
+} config_descriptor;
+
+typedef struct _interface_descriptor {
+  uint8_t bLength;
+  uint8_t bDescriptorType;
+  uint8_t bInterfaceNumber;
+  uint8_t bAlternateSetting;
+  uint8_t bNumEndpoints;
+  uint8_t bInterfaceClass;
+  uint8_t bInterfaceSubClass;
+  uint8_t bInterfaceProtocol;
+  uint8_t iInterface;
+} interface_descriptor;
+
+typedef struct _endpoint_descriptor {
+  uint8_t  bLength;
+  uint8_t  bDescriptorType;
+  uint8_t  bEndpointAddress;
+  uint8_t  bmAttributes;
+  uint16_t wMaxPacketSize;
+  uint8_t  bInterval;
+} endpoint_descriptor;
+
+#endif

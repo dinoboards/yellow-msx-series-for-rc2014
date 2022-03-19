@@ -4,6 +4,11 @@
 #include "print.h"
 #include "work-area.h"
 #include <stdbool.h>
+#include "debuggin.h"
+
+inline uint8_t min(const uint8_t a, const uint8_t b) {
+  return a < b ? a : b;
+}
 
 __sfr __at 0x84 CH376_DATA_PORT;
 __sfr __at 0x85 CH376_COMMAND_PORT;
@@ -18,6 +23,7 @@ __sfr __at 0x85 CH376_COMMAND_PORT;
 #define CH_CMD_GET_STATUS   0x22
 #define CH_CMD_RD_USB_DATA0 0x27
 #define CH_CMD_WR_HOST_DATA 0x2C
+#define CH_CMD_CLR_STALL    0x41
 #define CH_CMD_ISSUE_TKN_X  0x4E
 
 
@@ -30,6 +36,9 @@ __sfr __at 0x85 CH376_COMMAND_PORT;
 
 // CH376 result codes
 #define CH_USB_INT_SUCCESS        0x14
+#define CH_USB_ERR_FOUND_NAME     0x43
+
+#define USB_STALL 0x2e
 
 
 typedef enum _ch376_pid {
@@ -38,27 +47,33 @@ typedef enum _ch376_pid {
   CH_PID_OUT    = 0x01
 } ch376_pid;
 
+const void setCommand(const uint8_t command) __z88dk_fastcall {
+  CH376_COMMAND_PORT = command;
+  delay(1);
+}
+
 inline void ch376_reset() {
   delay(30);
-  CH376_COMMAND_PORT = CH_CMD_RESET_ALL;
+  setCommand(CH_CMD_RESET_ALL);
   delay(30);
 }
 
+
 const uint8_t* ch_write_data(const uint8_t* buffer, uint8_t length) {
-  CH376_COMMAND_PORT = CH_CMD_WR_HOST_DATA;
+  setCommand(CH_CMD_WR_HOST_DATA);
   CH376_DATA_PORT = length;
 
-  while(length-- > 0)
+  while(length-- > 0) {
     CH376_DATA_PORT = *buffer++;
-
+  }
   return buffer;
 }
 
 // endpoint => e
 // pid => B
 // toggle => A (bit 7 for in, bit 6 for out)
-void ch_issue_token(uint8_t endpoint, ch376_pid pid, uint8_t toggle_bits) {
-  CH376_COMMAND_PORT = CH_CMD_ISSUE_TKN_X;
+void ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t toggle_bits) {
+  setCommand(CH_CMD_ISSUE_TKN_X);
   CH376_DATA_PORT = toggle_bits;
   CH376_DATA_PORT = endpoint << 4 | pid;
 }
@@ -68,116 +83,334 @@ uint8_t ch_wait_int_and_get_result() {
   while ((CH376_DATA_PORT & 0x80) && --counter > 0)
     ;
 
-  CH376_COMMAND_PORT = CH_CMD_GET_STATUS;
+  setCommand(CH_CMD_GET_STATUS);
   return CH376_DATA_PORT;
 }
 
 // buffer => hl
 // C -> amount_received
 // returned -> hl
-uint8_t* ch_read_data(uint8_t* buffer, uint8_t* amount_received) {
-  CH376_COMMAND_PORT = CH_CMD_RD_USB_DATA0;
+uint8_t* ch_read_data(uint8_t* buffer, uint8_t* const amount_received) {
+  setCommand(CH_CMD_RD_USB_DATA0);
   uint8_t count = CH376_DATA_PORT;
   *amount_received = count;
 
-  while(--count > 0) 
+  while(count-- > 0)
     *buffer++ = CH376_DATA_PORT;
-  
+
   return buffer;
 }
 // buffer -> hl
-// data_length -> bc 
+// data_length -> bc
 // device_address -> a
 // max_packet_size -> d
 // endpoint -> e
 // *toggle -> Cy
 // *amount_received -> BC
-uint8_t ch_data_in_transfer(uint8_t* buffer, uint16_t data_length, uint8_t max_packet_size, uint8_t endpoint, uint16_t* amount_received, uint8_t *toggle) {
- 
+uint8_t ch_data_in_transfer(uint8_t* buffer, uint16_t data_length, const uint8_t max_packet_size, const uint8_t endpoint, uint16_t* const amount_received, uint8_t * const toggle) {
+
   uint8_t count;
+  uint8_t result;
   do {
-    // xprintf(". (%d)", *toggle);
     ch_issue_token(endpoint, CH_PID_IN, *toggle ? 0x80 : 0x00);
     *toggle = ~*toggle;
 
-    if (ch_wait_int_and_get_result() != CH_USB_INT_SUCCESS)
-      return false;
+    if ((result = ch_wait_int_and_get_result()) != CH_USB_INT_SUCCESS)
+      return result;
 
     buffer = ch_read_data(buffer, &count);
     data_length -= count;
-    amount_received += count;
+    *amount_received += count;
   } while(data_length > 0 && count < max_packet_size);
 
   return CH_USB_INT_SUCCESS;
 }
 
-uint8_t ch_data_out_transfer() {
-  return 99;
+// buffer => HL
+// buffer_length => BC
+// max_packet_size => D
+// endpoint => E
+// *toggle => Cy
+uint8_t ch_data_out_transfer(const uint8_t* buffer, uint16_t buffer_length, const uint8_t max_packet_size, const uint8_t endpoint, uint8_t* const toggle) {
+  uint8_t result;
+
+  while (buffer_length > 0) {
+    uint8_t size = min(max_packet_size, buffer_length);
+    buffer = ch_write_data(buffer, size);
+    buffer_length -= size;
+
+    ch_issue_token(endpoint, CH_PID_OUT, *toggle ? 0x40 : 0x00);
+    if ((result = ch_wait_int_and_get_result()) != CH_USB_INT_SUCCESS)
+      return result;
+
+    *toggle = ~*toggle;
+  }
+
+  return CH_USB_INT_SUCCESS;
 }
 // setupPacket -> HL
 // buffer -> DE
 // device_address -> a
 // max_packet_size -> b
 // *amount_transferred -> bc
-uint8_t hw_control_transfer(const usb_descriptor_block *setupPacket, uint8_t* buffer, uint8_t device_address, uint8_t max_packet_size, uint16_t* amount_transferred) {
-  CH376_COMMAND_PORT = CH_CMD_SET_USB_ADDR;
+uint8_t hw_control_transfer(const usb_descriptor_block * const cmd_packet, uint8_t* const buffer, const uint8_t device_address, const uint8_t max_packet_size, uint16_t* const amount_transferred) {
+  uint8_t result;
+  uint8_t toggle;
+
+retry:
+  toggle = 1;
+  setCommand(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
-  xprintf("22");
-
-  ch_write_data((const uint8_t*)setupPacket, sizeof(usb_descriptor_block));
-
-  xprintf("33");
+  ch_write_data((const uint8_t*)cmd_packet, sizeof(usb_descriptor_block));
 
   ch_issue_token(0, CH_PID_SETUP, 0);
 
-  uint8_t result;
   if ((result = ch_wait_int_and_get_result()) != CH_USB_INT_SUCCESS) {
-    xprintf("\r\n33-11 (%d)\r\n", result);
+    printf("\r\nErr1 (%d)\r\n", result);
     return result;
   }
 
-  xprintf("44");
+  const uint8_t transferIn = (cmd_packet->code & 0x80);
 
-  const uint8_t transferIn = (setupPacket->code & 0x80);
+  result = transferIn ?
+    ch_data_in_transfer(buffer, cmd_packet->length, max_packet_size, 0, amount_transferred, &toggle) :
+    ch_data_out_transfer(buffer, cmd_packet->length, max_packet_size, 0, &toggle);
 
-  uint8_t toggle = 1;
+  if ((result & 0x2f) == USB_STALL) {
+    printf("Stall");
+    setCommand(CH_CMD_CLR_STALL);
+    delay(60/4);
+    CH376_DATA_PORT = cmd_packet->code & 0x80;
 
-  // xprintf("55 (%d) ", transferIn);
+    result = ch_wait_int_and_get_result();
+    if (result == CH_USB_INT_SUCCESS)
+      goto retry;
+  }
 
-  const uint8_t transfer_result = transferIn ? 
-    ch_data_in_transfer(buffer, setupPacket->length, max_packet_size, 0, amount_transferred, &toggle) : 
-    ch_data_out_transfer();
+  if (result != CH_USB_INT_SUCCESS) {
+    printf("\r\nErr 2 (%d)\r\n", result);
+    return result;
+  }
 
-  // if (transfer_result == CH_USB_INT_SUCCESS)
-  //transfer out
+  if (transferIn)
+    ch_issue_token(0, CH_PID_OUT, 0x40);
+  else
+    ch_issue_token(0, CH_PID_IN, 0x80);
 
-  xprintf("66 (%d)", transfer_result);
+  result = ch_wait_int_and_get_result();
 
-  return transfer_result;
+  if (transferIn)
+    return CH_USB_INT_SUCCESS;
+
+  setCommand(CH_CMD_RD_USB_DATA0);
+  result = CH376_DATA_PORT;
+  if (result == 0)
+    return CH_USB_INT_SUCCESS;
+
+  return result;
 }
 
-uint8_t ch_get_device_descriptor(const work_area *work_area, uint8_t *buffer, uint8_t device_address, uint16_t* amount_transferred) {
-  const uint8_t response = hw_control_transfer(&work_area->ch376.usb_descriptor_blocks.cmd_get_device_descriptor, buffer, device_address, 8, amount_transferred);
-
-  return (response == CH_USB_INT_SUCCESS);
+uint8_t ch_get_device_descriptor(const work_area * const work_area, device_descriptor * const buffer, const uint8_t device_address, uint16_t* const amount_transferred) {
+  *amount_transferred = 0;
+  return hw_control_transfer(
+    &work_area->ch376.usb_descriptor_blocks.cmd_get_device_descriptor,
+    (uint8_t*)buffer,
+    device_address,
+    8,
+    amount_transferred
+  );
 }
 
-uint8_t hw_get_descriptors(const work_area *work_area, uint8_t* buffer, uint8_t device_address) {
-  uint16_t amount_transferred;
-  return ch_get_device_descriptor(work_area, buffer, device_address, &amount_transferred);
+// buffer => hl
+// configuration index starting with 0 to DEVICE_DESCRIPTOR.bNumConfigurations => A
+// max_packet_size => B
+// buffer_size => C
+// device_address => D
+uint8_t ch_get_config_descriptor(work_area* const work_area, config_descriptor* const buffer, const uint8_t config_index, const uint8_t max_packet_size, const uint8_t buffer_size, const uint8_t device_address, uint16_t* const amount_transferred) {
+  *amount_transferred = 0;
+  work_area->ch376.usb_descriptor_blocks.cmd_get_config_descriptor.dat2 = config_index;
+  work_area->ch376.usb_descriptor_blocks.cmd_get_config_descriptor.length = (uint16_t)buffer_size;
+
+  return hw_control_transfer(
+    &work_area->ch376.usb_descriptor_blocks.cmd_get_config_descriptor,
+    (uint8_t*)buffer,
+    device_address,
+    max_packet_size,
+    amount_transferred
+  );
 }
 
-uint8_t fn_connect(work_area *work_area) {
+
+// usb_address => A
+// packet_size => B
+uint8_t ch_set_address(work_area* const work_area, const uint8_t usb_address, const uint8_t packet_size) {
+  uint16_t amount_transferred = 0;
+
+  work_area->ch376.usb_descriptor_blocks.cmd_set_address.dat2 = usb_address;
+  return hw_control_transfer(
+    &work_area->ch376.usb_descriptor_blocks.cmd_set_address,
+    (uint8_t*)0,
+    0,
+    packet_size,
+    &amount_transferred
+  );
+}
+
+
+uint8_t hw_get_descriptors(work_area * const work_area, uint8_t* buffer, uint8_t device_address) {
+  uint8_t result;
+  uint16_t amount_transferred = 0;
+  device_descriptor* const device = (device_descriptor*)buffer;
+  uint8_t r = ch_get_device_descriptor(work_area, device, device_address, &amount_transferred);
+
+  if (r != CH_USB_INT_SUCCESS)
+    return r;   //todo try on low speed for device_address 1
+
+  if(device_address == 0) {
+    if ((result = ch_set_address(work_area, work_area->ch376.max_device_address, device->bMaxPacketSize0)) != CH_USB_INT_SUCCESS)
+      return result;
+  }
+
+  buffer += sizeof(device_descriptor);
+
+  for(uint8_t config_index = 0; config_index < device->bNumConfigurations; config_index++) {
+    if(device_address == 0) {
+      device_address = work_area->ch376.max_device_address;
+    }
+
+    config_descriptor* const config = (config_descriptor *)buffer;
+    if ((result = ch_get_config_descriptor(work_area, config, config_index, device->bMaxPacketSize0, sizeof(config_descriptor), device_address, &amount_transferred)) != CH_USB_INT_SUCCESS)
+      return result;
+
+
+    const uint8_t total_length = config->wTotalLength;
+
+    if ((result = ch_get_config_descriptor(work_area, config, config_index, device->bMaxPacketSize0, total_length, device_address, &amount_transferred)) != CH_USB_INT_SUCCESS) {
+      printf("Err3 (%d,%d)", result, amount_transferred);
+      return result;
+    }
+
+    buffer += total_length;
+  }
+
+  return CH_USB_INT_SUCCESS;
+}
+
+void check_device_descriptor(work_area* const work_area, const device_descriptor* const buffer) {
+  work_area->ch376.search_device_info.num_configs = buffer->bNumConfigurations;
+  work_area->ch376.usb_device_info.max_packet_size = buffer->bMaxPacketSize0;
+}
+
+void check_config_descriptor(work_area* work_area, const config_descriptor* buffer) {
+  work_area->ch376.search_device_info.num_interfaces = buffer->bNumInterfaces;
+  work_area->ch376.usb_device_info.config_id = buffer->bConfigurationvalue;
+
+  work_area->ch376.search_device_info.num_configs--;
+}
+
+void check_interface_descriptor(work_area* work_area, const interface_descriptor* buffer) {
+  work_area->ch376.search_device_info.num_endpoints = buffer->bNumEndpoints;
+
+  if (work_area->ch376.search_device_info.wanted_class == buffer->bInterfaceClass) {
+    uint8_t wanted_sub_class = work_area->ch376.search_device_info.wanted_sub_class;
+
+    if ( wanted_sub_class == 0xff || wanted_sub_class == buffer->bInterfaceSubClass ) {
+      uint8_t wanted_protocol = work_area->ch376.search_device_info.wanted_protocol;
+
+      if (wanted_protocol == 0xff || wanted_protocol == buffer->bInterfaceProtocol) {
+        work_area->ch376.usb_device_info.interface_id = buffer->bInterfaceNumber;
+      }
+    }
+  }
+
+  work_area->ch376.search_device_info.num_interfaces--;
+}
+
+void check_endpoint_descriptor(work_area* const work_area, const endpoint_descriptor* const buffer) {
+  if ((buffer->bmAttributes & 0b00000011) == 0b00000010) {
+    uint8_t endpointAddress = buffer->bEndpointAddress;
+    if (endpointAddress & 0b10000000) {
+      work_area->ch376.usb_device_info.data_bulk_in_endpoint_id = endpointAddress & 0b01111111;
+    } else {
+      work_area->ch376.usb_device_info.data_bulk_out_endpoint_id = endpointAddress & 0b01111111;
+    }
+  }
+
+  work_area->ch376.search_device_info.num_endpoints--;
+}
+
+void parse_usb_descriptors(work_area* const work_area) {
+  uint8_t length;
+  uint8_t type;
+  uint8_t* buffer = work_area->ch376.usb_descriptor;
+
+loop:
+  length = buffer[0];
+  type = buffer[1];
+  switch(type) {
+    case 0:
+    __asm
+  di
+  halt
+    __endasm;
+    case 1:
+      check_device_descriptor(work_area, (device_descriptor*)buffer);
+      break;
+
+    case 2:
+      check_config_descriptor(work_area, (config_descriptor*)buffer);
+      break;
+
+    case 4:
+      check_interface_descriptor(work_area, (interface_descriptor*)buffer);
+      break;
+
+    case 5:
+      check_endpoint_descriptor(work_area, (endpoint_descriptor*)buffer);
+      break;
+  }
+
+  if (work_area->ch376.search_device_info.num_configs != 0) {
+    buffer += length;
+    goto loop;
+  }
+
+  if (work_area->ch376.search_device_info.num_interfaces != 0) {
+    buffer += length;
+    goto loop;
+  }
+
+  if (work_area->ch376.search_device_info.num_endpoints != 0) {
+    buffer += length;
+    goto loop;
+  }
+}
+
+uint8_t check_descriptor_mass_storage(work_area* const work_area) {
+  work_area->ch376.usb_device_info.interface_id = 0xff;
+  work_area->ch376.usb_device_info.config_id = 0xff;
+  work_area->ch376.search_device_info.wanted_class = 0x8;
+  work_area->ch376.search_device_info.wanted_sub_class = 0x6;
+  work_area->ch376.search_device_info.wanted_protocol = 0x50;
+  parse_usb_descriptors(work_area);
+  return work_area->ch376.usb_device_info.interface_id != 0xff;
+}
+
+uint8_t fn_connect(work_area * const work_area) {
   const uint8_t max_device_address = work_area->ch376.max_device_address;
   if (max_device_address != 0)
     return max_device_address;
 
-  xprintf("11");
   work_area->ch376.max_device_address = 1;
 
-  if (!hw_get_descriptors(work_area, work_area->ch376.usb_descriptor, 0))
+  memset(work_area->ch376.usb_descriptor, 0, sizeof(work_area->ch376.usb_descriptor));
+
+  if (hw_get_descriptors(work_area, work_area->ch376.usb_descriptor, 0) != CH_USB_INT_SUCCESS)
     return false;
+
+  uint8_t result = check_descriptor_mass_storage(work_area);
+  printf("usb found? (%d)", result);
 
   return false;
 }
@@ -191,15 +424,27 @@ uint8_t fn_connect(work_area *work_area) {
 
 ============================================================================= */
 inline uint8_t ch376_test() {
-  CH376_COMMAND_PORT = CH_CMD_CHECK_EXIST;
+  setCommand(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x34;
   if (CH376_DATA_PORT != 0x34)
     return false;
 
-  CH376_COMMAND_PORT = CH_CMD_CHECK_EXIST;
+  setCommand(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x89;
   return CH376_DATA_PORT == 0x89;
 }
+
+uint8_t ch376_probe() {
+  for(uint8_t i = 8; i > 0; i--) {
+    if (ch376_test())
+      return true;
+
+    delay(5);
+  }
+
+  return false;
+}
+
 
 /* =============================================================================
 
@@ -209,7 +454,7 @@ inline uint8_t ch376_test() {
     The chip version
 ============================================================================= */
 inline uint8_t ch376_get_firmware_version() {
-  CH376_COMMAND_PORT = CH_CMD_GET_IC_VER;
+  setCommand(CH_CMD_GET_IC_VER);
   return CH376_DATA_PORT & 0x1f;
 }
 
@@ -220,8 +465,8 @@ inline uint8_t ch376_get_firmware_version() {
   Returns:
     0 -> OK, 1 -> ERROR
 ============================================================================= */
-uint8_t ch376_set_usb_mode(uint8_t mode) __z88dk_fastcall {
-  CH376_COMMAND_PORT = CH_CMD_SET_USB_MODE;
+uint8_t ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
+  setCommand(CH_CMD_SET_USB_MODE);
   CH376_DATA_PORT = mode;
 
   uint8_t count = 255;
@@ -232,7 +477,7 @@ uint8_t ch376_set_usb_mode(uint8_t mode) __z88dk_fastcall {
 }
 
 inline void hw_configure_nak_retry() {
-  CH376_COMMAND_PORT = CH_CMD_SET_RETRY;
+  setCommand(CH_CMD_SET_RETRY);
   CH376_DATA_PORT = 0x25;
   CH376_DATA_PORT = 0x8F;   // Retry NAKs indefinitely (default)
 }
@@ -255,7 +500,7 @@ inline uint8_t usb_host_bus_reset() {
 #define target_device_address 0
 #define configuration_id 0
 #define string_id 0
-#define config_descriptor_size 9
+#define config_descriptor_size (sizeof(config_descriptor))
 #define alternate_setting 0
 #define packet_filter 0
 #define control_interface_id 0
@@ -290,35 +535,36 @@ const _usb_descriptor_blocks usb_descriptor_blocks_templates = {
   .cmd_mass_storage_reset      = {0b00100001, 0b11111111, 0, 0, storage_interface_id, 0, 0}
 };
 
-void initialise_work_area(work_area *p) {
+void initialise_work_area(work_area * const p) {
   p->ch376.max_device_address = 0;
   memcpy(&p->ch376.usb_descriptor_blocks, &usb_descriptor_blocks_templates, sizeof(usb_descriptor_blocks_templates));
 }
 
 uint8_t usb_host_init() {
-  work_area *p = get_work_area();
-  xprintf("usb_host_init %p\r\n", p);
+  work_area * const p = get_work_area();
+  printf("usb_host_init %p\r\n", p);
 
   initialise_work_area(p);
 
   ch376_reset();
 
-  if (!ch376_test()) {
-    xprintf("CH376:           NOT PRESENT\r\n");
+  if (!ch376_probe()) {
+    printf("CH376:           NOT PRESENT\r\n");
     return false;
   }
 
   p->ch376.present = true;
   const uint8_t ver = ch376_get_firmware_version();
-  xprintf("CH376:           PRESENT (VER %d)\r\n", ver);
+  printf("CH376:           PRESENT (VER %d)\r\n", ver);
 
   usb_host_bus_reset();
+  delay(60);
 
-  xprintf("fn_connect\r\n");
+  printf("fn_connect\r\n");
   fn_connect(p);
   delay(60);
 
-  xprintf("resetting host\r\n");
+  printf("resetting host\r\n");
   initialise_work_area(p);
   ch376_reset();
   delay(10);
