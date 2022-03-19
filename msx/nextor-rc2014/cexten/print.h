@@ -3,4 +3,6 @@
 
 int xprintf(const char *fmt, ...);
 
+#define printf xprintf
+
 #endif
