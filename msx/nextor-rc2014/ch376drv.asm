@@ -360,11 +360,11 @@ DEV_WRT_SECTOR_LOOP:
 	call	SAFE_SCSI_WRITE
 	pop	bc
 	jr	nc, _DEV_RW_NEXT_4
-	
+
 	POP	AF
 	DEC	A
 	JR	Z, _DEV_RW_ERR
-	
+
 	PUSH	AF
 	push	bc
 
