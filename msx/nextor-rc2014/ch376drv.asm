@@ -30,6 +30,15 @@ INIWORK:
 ; USB-STORAGE DRIVER FUNCTIONS
 
 DEV_INFO_USB:
+	push	hl
+	push	bc
+	inc	sp
+	call	_usb_dev_info
+	pop	af
+	inc	sp
+	ld	a, l
+	RET
+
 	CALL	MY_GWORK
 	ld a,(ix+WRKAREA.STATUS)
 
