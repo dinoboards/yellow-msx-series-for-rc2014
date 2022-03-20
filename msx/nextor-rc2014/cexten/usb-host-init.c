@@ -610,6 +610,12 @@ void initialise_work_area(work_area *const p) {
   memcpy(&p->ch376.usb_descriptor_blocks, &usb_descriptor_blocks_templates, sizeof(usb_descriptor_blocks_templates));
 }
 
+void scsi_init(ch376_work_area *const work_area) {
+  work_area->scsi_device_info.tag = 1;
+  work_area->storage_device_info.data_bulk_in_endpoint_toggle =
+      work_area->storage_device_info.data_bulk_out_endpoint_toggle = 0;
+}
+
 uint8_t usb_host_init() {
   work_area *const p = get_work_area();
   printf("usb_host_init %p\r\n", p);
@@ -639,6 +645,8 @@ uint8_t usb_host_init() {
     printf("Err-scsi_max_luns %d\r\n", result);
     return false;
   }
+
+  scsi_init(&p->ch376);
 
   return true;
 }
