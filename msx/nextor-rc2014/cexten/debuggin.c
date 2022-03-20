@@ -33,5 +33,18 @@ void logDevice(const device_descriptor* const p) {
     p->iSerialNumber,
     p->bNumConfigurations
   );
+}
 
+void logUsbDevice(const _usb_device_info* const info) {
+  printf(
+    "add %d, id %d, cfg: %d, max: %d, inend: %d, outend: %d, intog: %d, outog: %d\r\n",
+    info->device_address,
+    info->interface_id,
+    info->config_id,
+    info->max_packet_size,
+    info->data_bulk_in_endpoint_id,
+    info->data_bulk_out_endpoint_id,
+    info->data_bulk_in_endpoint_toggle,
+    info->data_bulk_out_endpoint_toggle
+  );
 }

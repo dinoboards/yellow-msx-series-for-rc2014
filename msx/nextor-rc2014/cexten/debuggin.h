@@ -9,4 +9,6 @@ extern void logConfig(const config_descriptor* const p);
 
 extern void logDevice(const device_descriptor* const p);
 
+extern void logUsbDevice(const _usb_device_info* const info);
+
 #endif
