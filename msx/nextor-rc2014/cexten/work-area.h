@@ -12,8 +12,8 @@ typedef struct __scsi_command_status_wrapper {
 
 // 	STRUCT WRKAREA
 // BASE:					; Offset to the base of the data structure
-// STATUS:			db 		; bit 0 = CH376s present, bit 1 = initialised, bit 2 = USB device present, bit
-// 3 = USB device mounted, bit 5 = DSK changed, bit 7 = Flash disk present
+// STATUS:			db 		; bit 0 = CH376s present, bit 1 = initialised, bit 2 = USB device present,
+// bit 3 = USB device mounted, bit 5 = DSK changed, bit 7 = Flash disk present
 
 typedef struct __usb_device_info {
   uint8_t device_address;
