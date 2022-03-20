@@ -839,5 +839,7 @@ uint8_t usb_host_init() {
     return false;
   }
 
+  p->ch376.usb_present = true;
+
   return true;
 }
