@@ -85,6 +85,7 @@ typedef struct __usb_descriptor_blocks {
 typedef struct _ch376_work_area {
   uint8_t             present : 1;
   uint8_t             initialised : 1;
+  uint8_t             usb_present : 1;
   uint8_t             max_device_address;
   _usb_device_info    usb_device_info;
   _usb_device_info    storage_device_info;
