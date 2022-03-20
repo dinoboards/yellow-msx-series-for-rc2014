@@ -262,6 +262,19 @@ uint8_t ch_set_configuration(work_area * const work_area, const uint8_t config_i
   );
 }
 
+uint8_t scsi_max_luns(work_area * const work_area, uint16_t* const amount_transferred) {
+  * amount_transferred = 0;
+  work_area->ch376.usb_descriptor_blocks.cmd_get_max_luns.dat4 = work_area->ch376.storage_device_info.interface_id;
+  return hw_control_transfer(
+    &work_area->ch376.usb_descriptor_blocks.cmd_get_max_luns,
+    (uint8_t*)&work_area->ch376.scsi_device_info.max_luns,
+    work_area->ch376.storage_device_info.device_address,
+    work_area->ch376.storage_device_info.max_packet_size,
+    amount_transferred
+  );
+}
+
+
 
 // usb_address => A
 // packet_size => B
@@ -611,7 +624,15 @@ uint8_t usb_host_init() {
   usb_host_bus_reset();
   delay(10);
 
-  fn_connect(p);
+  if (!fn_connect(p))
+    return false;
+
+  uint16_t amount_transferred;
+  uint8_t result;
+  if ((result = scsi_max_luns(p, &amount_transferred)) != CH_USB_INT_SUCCESS) {
+    printf("Err-scsi_max_luns %d\r\n", result);
+    return false;
+  }
 
   return true;
 }
