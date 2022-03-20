@@ -15,7 +15,7 @@ SRC := ./cexten/
 
 ZCC := zcc +msx  -subtype=msxdos2 -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
 
-$(BINDIR)spike.bin: $(BINDIR)debuggin.c.o $(BINDIR)scsi.c.o $(BINDIR)print.o $(BINDIR)print.c.o $(BINDIR)usb-host-init.c.o $(BINDIR)work-area.o ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
+$(BINDIR)spike.bin: $(BINDIR)debuggin.c.o $(BINDIR)usb-dev-info.c.o $(BINDIR)scsi.c.o $(BINDIR)print.o $(BINDIR)print.c.o $(BINDIR)usb-host-init.c.o $(BINDIR)work-area.o ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
 
 
 $(BINDIR)%.bin:
