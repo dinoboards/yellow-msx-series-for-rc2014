@@ -1,44 +1,18 @@
 DRV_INIT_CH376:
+	push	ix
 	call	_usb_host_init
+	pop	ix
 
 	ld	a, l
 	or	a
 	ret	z
 
-CH376_FOUND:
-	; CALL	USB_HOST_BUS_RESET
-
-	; enumerate and initialise USB devices
-	PUSH	IX
-	CALL	FN_CONNECT
-	POP	IX
-	OR	A
-	JP	NZ, _USB_MODE_OKAY
-
-	LD	HL, USB_NOT_FOUND_MSG
-	CALL	PRINT
-
-	XOR	A
-	RET
-
-_USB_MODE_OKAY:
-	LD	A, (IX+WRKAREA.STATUS)
-	SET	1, A
-	LD	(IX+WRKAREA.STATUS),A
-	LD	A, (IX+WRKAREA.STORAGE_DEVICE_INFO.DEVICE_ADDRESS)
-	AND	A
-	JR	NZ, _FOUND_
-	LD	HL, USB_FLASH_NOT_FOUND_MSG
-	CALL	PRINT
-	XOR	A
-	RET
-
-_FOUND_:
-	LD	HL, USB_FLASH_FOUND_MSG
-	CALL	PRINT
-
 	call	SCSI_MAX_LUNS
 	JR	NC, __OK1
+
+	LD	HL, debug1
+	CALL	PRINT
+
 	XOR	A
 	RET
 
@@ -46,6 +20,10 @@ __OK1:
 	call 	SCSI_INIT
 	call 	SCSI_INQUIRY
 	JR	NC, __OK2
+
+	LD	HL, debug2
+	CALL	PRINT
+
 	XOR	A
 	RET
 
@@ -69,6 +47,9 @@ _SCSI_TEST_OKAY:
 
 	OR	255
 	RET
+
+debug1:	db	"1111", 13, 10, 0
+debug2:	db	"2222", 13, 10, 0
 
 RESET_USB_STORAGE:
 	CALL	USB_HOST_BUS_RESET
@@ -473,14 +454,6 @@ SAFE_SCSI_READ:
 	pop	ix
 	pop	iy
 	ret
-
-; CH376_NOT_FOUND_MSG:		DB	"CH376:           NOT PRESENT", 13, 10, 0
-CH376_FOUND_MSG:		DB	"CH376:           PRESENT (VER ", 0
-CH376_NEWLINE:			DB	")\r\n",0
-
-USB_NOT_FOUND_MSG:		DB	"USB:             NOT PRESENT", 13, 10, 0
-USB_FLASH_FOUND_MSG:		DB	"USB-STORAGE:     PRESENT", 13, 10, 0
-USB_FLASH_NOT_FOUND_MSG:	DB	"USB-STORAGE:     NOT PRESENT", 13, 10, 0
 
     STRUCT _SCSI_READ_CAPACITY
 BASE:			; Offset to the base of the data structure
