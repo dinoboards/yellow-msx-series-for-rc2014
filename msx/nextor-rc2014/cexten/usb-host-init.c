@@ -173,6 +173,11 @@ retry:
 
   const uint8_t transferIn = (cmd_packet->code & 0x80);
 
+  if (transferIn && buffer == 0) {
+    printf("Err5\r\n");
+    return 99;
+  }
+
   result = transferIn ?
     ch_data_in_transfer(buffer, cmd_packet->length, max_packet_size, 0, amount_transferred, &toggle) :
     ch_data_out_transfer(buffer, cmd_packet->length, max_packet_size, 0, &toggle);
@@ -235,6 +240,22 @@ uint8_t ch_get_config_descriptor(work_area* const work_area, config_descriptor* 
   return hw_control_transfer(
     &work_area->ch376.usb_descriptor_blocks.cmd_get_config_descriptor,
     (uint8_t*)buffer,
+    device_address,
+    max_packet_size,
+    amount_transferred
+  );
+}
+
+// config_id => A
+// max_packet_size => B
+// device_address => D
+uint8_t ch_set_configuration(work_area * const work_area, const uint8_t config_id, const uint8_t max_packet_size, const uint8_t device_address, uint16_t* const amount_transferred) {
+  *amount_transferred = 0;
+  work_area->ch376.usb_descriptor_blocks.cmd_set_configuration.dat2 = config_id;
+
+  return hw_control_transfer(
+    &work_area->ch376.usb_descriptor_blocks.cmd_set_configuration,
+    (uint8_t*)0,
     device_address,
     max_packet_size,
     amount_transferred
@@ -387,7 +408,7 @@ loop:
   }
 }
 
-uint8_t check_descriptor_mass_storage(work_area* const work_area) {
+bool check_descriptor_mass_storage(work_area* const work_area) {
   work_area->ch376.usb_device_info.interface_id = 0xff;
   work_area->ch376.usb_device_info.config_id = 0xff;
   work_area->ch376.search_device_info.wanted_class = 0x8;
@@ -397,7 +418,20 @@ uint8_t check_descriptor_mass_storage(work_area* const work_area) {
   return work_area->ch376.usb_device_info.interface_id != 0xff;
 }
 
-uint8_t fn_connect(work_area * const work_area) {
+uint8_t init_storage(work_area * const work_area) {
+  uint16_t amount_transferred;
+  work_area->ch376.usb_device_info.device_address = work_area->ch376.max_device_address;
+  work_area->ch376.storage_device_info = work_area->ch376.usb_device_info;
+
+  return ch_set_configuration(
+    work_area,
+    work_area->ch376.storage_device_info.config_id,
+    work_area->ch376.storage_device_info.max_packet_size,
+    work_area->ch376.storage_device_info.device_address,
+    &amount_transferred);
+}
+
+bool fn_connect(work_area * const work_area) {
   const uint8_t max_device_address = work_area->ch376.max_device_address;
   if (max_device_address != 0)
     return max_device_address;
@@ -406,13 +440,30 @@ uint8_t fn_connect(work_area * const work_area) {
 
   memset(work_area->ch376.usb_descriptor, 0, sizeof(work_area->ch376.usb_descriptor));
 
-  if (hw_get_descriptors(work_area, work_area->ch376.usb_descriptor, 0) != CH_USB_INT_SUCCESS)
+//found usb things?
+  if (hw_get_descriptors(work_area, work_area->ch376.usb_descriptor, 0) != CH_USB_INT_SUCCESS) {
+    printf("USB:             NOT PRESENT\r\n");
     return false;
+  }
 
+//found usb storage
   uint8_t result = check_descriptor_mass_storage(work_area);
-  printf("usb found? (%d)", result);
+  printf("USB-STORAGE:     ");
 
-  return false;
+  work_area->ch376.initialised = true;
+
+  if (result) {
+    if ((result = init_storage(work_area)) != CH_USB_INT_SUCCESS) {
+      printf("Err4 %d\r\n", result);
+      result = false;
+    } else {
+      result = true;
+    }
+  }
+
+  printf(result ? "PRESENT\r\n" : "NOT PRESENT\r\n");
+
+  return result;
 }
 
 /* =============================================================================
@@ -558,18 +609,9 @@ uint8_t usb_host_init() {
   printf("CH376:           PRESENT (VER %d)\r\n", ver);
 
   usb_host_bus_reset();
-  delay(60);
+  delay(10);
 
-  printf("fn_connect\r\n");
   fn_connect(p);
-  delay(60);
-
-  printf("resetting host\r\n");
-  initialise_work_area(p);
-  ch376_reset();
-  delay(10);
-  usb_host_bus_reset();
-  delay(10);
 
   return true;
 }
