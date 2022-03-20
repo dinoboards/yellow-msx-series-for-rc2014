@@ -1,5 +1,6 @@
 #include "debuggin.h"
 #include "print.h"
+#include "scsi.h"
 #include "work-area.h"
 #include <delay.h>
 #include <stdbool.h>
@@ -53,7 +54,7 @@ const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
   setCommand(CH_CMD_WR_HOST_DATA);
   CH376_DATA_PORT = length;
 
-  while (length-- > 0) {
+  while (length-- != 0) {
     CH376_DATA_PORT = *buffer++;
   }
   return buffer;
@@ -70,7 +71,7 @@ void ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t t
 
 uint8_t ch_wait_int_and_get_result() {
   uint8_t counter = 255;
-  while ((CH376_DATA_PORT & 0x80) && --counter > 0)
+  while ((CH376_DATA_PORT & 0x80) && --counter != 0)
     ;
 
   setCommand(CH_CMD_GET_STATUS);
@@ -80,12 +81,17 @@ uint8_t ch_wait_int_and_get_result() {
 // buffer => hl
 // C -> amount_received
 // returned -> hl
-uint8_t *ch_read_data(uint8_t *buffer, uint8_t *const amount_received) {
+uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received) {
   setCommand(CH_CMD_RD_USB_DATA0);
   uint8_t count    = CH376_DATA_PORT;
   *amount_received = count;
 
-  while (count-- > 0)
+  if (count > buffer_size) {
+    printf("buffer too small %d, %d", count, buffer_size);
+    count = buffer_size;
+  }
+
+  while (count-- != 0)
     *buffer++ = CH376_DATA_PORT;
 
   return buffer;
@@ -98,7 +104,7 @@ uint8_t *ch_read_data(uint8_t *buffer, uint8_t *const amount_received) {
 // *toggle -> Cy
 // *amount_received -> BC
 uint8_t ch_data_in_transfer(uint8_t *       buffer,
-                            uint16_t        data_length,
+                            int16_t         data_length,
                             const uint8_t   max_packet_size,
                             const uint8_t   endpoint,
                             uint16_t *const amount_received,
@@ -113,12 +119,34 @@ uint8_t ch_data_in_transfer(uint8_t *       buffer,
     if ((result = ch_wait_int_and_get_result()) != CH_USB_INT_SUCCESS)
       return result;
 
-    buffer = ch_read_data(buffer, &count);
+    buffer = ch_read_data(buffer, data_length, &count);
     data_length -= count;
     *amount_received += count;
   } while (data_length > 0 && count < max_packet_size);
 
   return CH_USB_INT_SUCCESS;
+}
+
+// buffer -> hl
+// data_length -> bc
+// device_address -> a
+// max_packet_size -> d
+// endpoint -> e
+// device_address => a
+// *toggle -> Cy
+// *amount_received -> BC
+uint8_t hw_data_in_transfer(uint8_t *       buffer,
+                            const uint16_t  data_length,
+                            const uint8_t   max_packet_size,
+                            const uint8_t   endpoint,
+                            const uint8_t   device_address,
+                            uint16_t *const amount_received,
+                            uint8_t *const  toggle) {
+
+  setCommand(CH_CMD_SET_USB_ADDR);
+  CH376_DATA_PORT = device_address;
+
+  return ch_data_in_transfer(buffer, data_length, max_packet_size, endpoint, amount_received, toggle);
 }
 
 // buffer => HL
@@ -127,7 +155,7 @@ uint8_t ch_data_in_transfer(uint8_t *       buffer,
 // endpoint => E
 // *toggle => Cy
 uint8_t ch_data_out_transfer(const uint8_t *buffer,
-                             uint16_t       buffer_length,
+                             int16_t        buffer_length,
                              const uint8_t  max_packet_size,
                              const uint8_t  endpoint,
                              uint8_t *const toggle) {
@@ -147,7 +175,26 @@ uint8_t ch_data_out_transfer(const uint8_t *buffer,
 
   return CH_USB_INT_SUCCESS;
 }
-// setupPacket -> HL
+// buffer => HL
+// buffer_length => BC
+// max_packet_size => D
+// endpoint => E
+// *toggle => Cy
+// device_address -> A
+uint8_t hw_data_out_transfer(const uint8_t *buffer,
+                             uint16_t       buffer_length,
+                             const uint8_t  max_packet_size,
+                             const uint8_t  endpoint,
+                             const uint8_t  device_address,
+                             uint8_t *const toggle) {
+
+  setCommand(CH_CMD_SET_USB_ADDR);
+  CH376_DATA_PORT = device_address;
+
+  return ch_data_out_transfer(buffer, buffer_length, max_packet_size, endpoint, toggle);
+}
+
+// cmd_packet -> HL
 // buffer -> DE
 // device_address -> a
 // max_packet_size -> b
@@ -170,14 +217,14 @@ retry:
   ch_issue_token(0, CH_PID_SETUP, 0);
 
   if ((result = ch_wait_int_and_get_result()) != CH_USB_INT_SUCCESS) {
-    printf("\r\nErr1 (%d)\r\n", result);
+    printf("Err1 (%d)\r\n", result);
     return result;
   }
 
   const uint8_t transferIn = (cmd_packet->code & 0x80);
 
   if (transferIn && buffer == 0) {
-    printf("Err5\r\n");
+    printf("Err2\r\n");
     return 99;
   }
 
@@ -196,7 +243,7 @@ retry:
   }
 
   if (result != CH_USB_INT_SUCCESS) {
-    printf("\r\nErr 2 (%d)\r\n", result);
+    printf("Err3 (%d)\r\n", result);
     return result;
   }
 
@@ -328,7 +375,7 @@ uint8_t hw_get_descriptors(work_area *const work_area, uint8_t *buffer, uint8_t 
     if ((result = ch_get_config_descriptor(
              work_area, config, config_index, device->bMaxPacketSize0, total_length, device_address, &amount_transferred)) !=
         CH_USB_INT_SUCCESS) {
-      printf("Err3 (%d,%d)", result, amount_transferred);
+      printf("Err4 (%d,%d)\r\n", result, amount_transferred);
       return result;
     }
 
@@ -475,7 +522,7 @@ bool fn_connect(work_area *const work_area) {
 
   if (result) {
     if ((result = init_storage(work_area)) != CH_USB_INT_SUCCESS) {
-      printf("Err4 %d\r\n", result);
+      printf("Err5 %d\r\n", result);
       result = false;
     } else {
       result = true;
@@ -507,7 +554,7 @@ inline uint8_t ch376_test() {
 }
 
 uint8_t ch376_probe() {
-  for (uint8_t i = 8; i > 0; i--) {
+  for (int8_t i = 8; i > 0; i--) {
     if (ch376_test())
       return true;
 
@@ -616,6 +663,144 @@ void scsi_init(ch376_work_area *const work_area) {
       work_area->storage_device_info.data_bulk_out_endpoint_toggle = 0;
 }
 
+// storage_device_id => a
+// lun => B
+// cmd_buffer_length => C
+// send_receive_buffer_length => DE
+// cmd_buffer => HL
+// send_receive_buffer => IX
+// send => Cy
+
+_scsi_command_block_wrapper *prepare_cbw(ch376_work_area *const work_area,
+                                         const uint8_t          lun,
+                                         const uint8_t          cmd_buffer_length,
+                                         const uint16_t         send_receive_buffer_length,
+                                         uint8_t *const         cmd_buffer) {
+  _scsi_command_block_wrapper *const cbw = (_scsi_command_block_wrapper *)&work_area->scsi_device_info.buffer[0];
+  memcpy(cbw, &scsi_command_block_wrapper, sizeof(_scsi_command_block_wrapper));
+  memcpy(cbw + 1, cmd_buffer, cmd_buffer_length);
+
+  cbw->bCBWLUN                = lun;
+  cbw->bCBWCBLength           = cmd_buffer_length;
+  cbw->dCBWDataTransferLength = send_receive_buffer_length;
+  cbw->dCBWTag[0]             = ++work_area->scsi_device_info.tag;
+
+  return cbw;
+}
+
+uint8_t do_scsi_cmd(ch376_work_area *const work_area,
+                    const uint8_t          storage_device_id,
+                    const uint8_t          lun,
+                    const uint8_t          cmd_buffer_length,
+                    const uint16_t         send_receive_buffer_length,
+                    uint8_t *const         cmd_buffer,
+                    uint8_t *const         send_receive_buffer,
+                    bool                   send) {
+
+  uint8_t  result;
+  uint16_t amount_received;
+
+  _scsi_command_block_wrapper *const cbw =
+      prepare_cbw(work_area, lun, cmd_buffer_length, send_receive_buffer_length, cmd_buffer);
+
+  if (!send)
+    cbw->bmCBWFlags = 0x80;
+
+  result = hw_data_out_transfer((uint8_t *)cbw,
+                                sizeof(_scsi_command_block_wrapper) + 16,
+                                work_area->storage_device_info.max_packet_size,
+                                work_area->storage_device_info.data_bulk_out_endpoint_id,
+                                storage_device_id,
+                                &work_area->storage_device_info.data_bulk_out_endpoint_toggle);
+
+  if (result != CH_USB_INT_SUCCESS) {
+    printf("Err6 %d\r\n", result);
+    return result;
+  }
+
+  //_DO_SCSI_CMD_PAYLOAD
+  if (cbw->dCBWDataTransferLength != 0) {
+    if ((cbw->bmCBWFlags & 0x80) != 0) {
+      result = hw_data_in_transfer(send_receive_buffer,
+                                   (uint16_t)cbw->dCBWDataTransferLength,
+                                   work_area->storage_device_info.max_packet_size,
+                                   work_area->storage_device_info.data_bulk_in_endpoint_id,
+                                   storage_device_id,
+                                   &amount_received,
+                                   &work_area->storage_device_info.data_bulk_in_endpoint_toggle);
+    } else {
+      result = hw_data_out_transfer(send_receive_buffer,
+                                    (uint16_t)cbw->dCBWDataTransferLength,
+                                    work_area->storage_device_info.max_packet_size,
+                                    work_area->storage_device_info.data_bulk_out_endpoint_id,
+                                    storage_device_id,
+                                    &work_area->storage_device_info.data_bulk_out_endpoint_toggle);
+    }
+
+    if (result != CH_USB_INT_SUCCESS) {
+      printf("Err7 %d\r\n", result);
+      return result;
+    }
+  }
+
+  // _DO_SCSI_CMD_RCV_COMMAND_STATUS_WRAPPER
+
+  // printf(" a8 (%p, %d, %d, %d, %d, %p, %p, %d)",
+  //   (uint8_t*)work_area->scsi_device_info.csw,
+  //   sizeof(_scsi_command_status_wrapper),
+  //   work_area->storage_device_info.max_packet_size,
+  //   work_area->storage_device_info.data_bulk_in_endpoint_id,
+  //   storage_device_id,
+  //   &amount_received,
+  //   &work_area->storage_device_info.data_bulk_in_endpoint_toggle,
+  //   work_area->storage_device_info.data_bulk_in_endpoint_toggle);
+
+  result = hw_data_in_transfer((uint8_t *)work_area->scsi_device_info.csw,
+                               sizeof(_scsi_command_status_wrapper),
+                               work_area->storage_device_info.max_packet_size,
+                               work_area->storage_device_info.data_bulk_in_endpoint_id,
+                               storage_device_id,
+                               &amount_received,
+                               &work_area->storage_device_info.data_bulk_in_endpoint_toggle);
+
+  if (result != CH_USB_INT_SUCCESS) {
+    printf("Err8 %d\r\n", result);
+    return result;
+  }
+
+  if (work_area->scsi_device_info.csw.cbwstatus != 0) {
+    printf("status error %d\r\n", work_area->scsi_device_info.csw.cbwstatus);
+    return 99;
+  }
+
+  return CH_USB_INT_SUCCESS;
+}
+
+uint8_t scsi_inquiry(ch376_work_area *const work_area) {
+  (void)work_area;
+  uint8_t result;
+  if ((result = do_scsi_cmd(work_area,
+                            work_area->storage_device_info.device_address,
+                            0,
+                            sizeof(scsi_packet_inquiry),
+                            0x24,
+                            (uint8_t *)scsi_packet_inquiry,
+                            work_area->scsi_device_info.buffer,
+                            false)) != CH_USB_INT_SUCCESS) {
+    return result;
+  }
+
+  memcpy(work_area->scsi_device_info.vendorid,
+         work_area->scsi_device_info.buffer + 8,
+         sizeof(work_area->scsi_device_info.vendorid));
+  memcpy(work_area->scsi_device_info.productid,
+         work_area->scsi_device_info.buffer + 16,
+         sizeof(work_area->scsi_device_info.productid));
+  memcpy(work_area->scsi_device_info.productrev, work_area->scsi_device_info.buffer + 32, 4); // todo is this right?
+
+  return CH_USB_INT_SUCCESS;
+}
+
 uint8_t usb_host_init() {
   work_area *const p = get_work_area();
   printf("usb_host_init %p\r\n", p);
@@ -647,6 +832,12 @@ uint8_t usb_host_init() {
   }
 
   scsi_init(&p->ch376);
+
+  if ((result = scsi_inquiry(&p->ch376)) != CH_USB_INT_SUCCESS) {
+    printf("Err-scsi_inquiry %d\r\n", result);
+
+    return false;
+  }
 
   return true;
 }

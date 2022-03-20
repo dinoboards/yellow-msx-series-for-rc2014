@@ -7,16 +7,12 @@ DRV_INIT_CH376:
 	or	a
 	ret	z
 
-__OK1:
-	; call 	SCSI_INIT
-	call 	SCSI_INQUIRY
-	JR	NC, __OK2
+; __OK1:
+; 	call 	SCSI_INQUIRY
+; 	JR	NC, __OK2
 
-	LD	HL, debug2
-	CALL	PRINT
-
-	XOR	A
-	RET
+; 	XOR	A
+; 	RET
 
 __OK2:
 	ld	a, (ix+WRKAREA.STATUS)
@@ -39,31 +35,28 @@ _SCSI_TEST_OKAY:
 	OR	255
 	RET
 
-debug1:	db	"1111", 13, 10, 0
-debug2:	db	"2222", 13, 10, 0
+; RESET_USB_STORAGE:
+; 	CALL	USB_HOST_BUS_RESET
 
-RESET_USB_STORAGE:
-	CALL	USB_HOST_BUS_RESET
+; 	; enumerate and initialise USB devices
+; 	PUSH	IX
+; 	CALL	FN_CONNECT
+; 	POP	IX
+; 	OR	A
+; 	RET	Z
 
-	; enumerate and initialise USB devices
-	PUSH	IX
-	CALL	FN_CONNECT
-	POP	IX
-	OR	A
-	RET	Z
+; 	call	SCSI_MAX_LUNS
+; 	RET	C
 
-	call	SCSI_MAX_LUNS
-	RET	C
+; 	call 	SCSI_INIT
+; 	call 	SCSI_INQUIRY
+; 	RET	C
 
-	call 	SCSI_INIT
-	call 	SCSI_INQUIRY
-	RET	C
-
-_SCSI_TEST_AGAIN1:
-	call	SCSI_TEST
-	ret 	nc
-	call	SCSI_REQUEST_SENSE
-	jr	_SCSI_TEST_AGAIN1
+; _SCSI_TEST_AGAIN1:
+; 	call	SCSI_TEST
+; 	ret 	nc
+; 	call	SCSI_REQUEST_SENSE
+; 	jr	_SCSI_TEST_AGAIN1
 
 ; ------------------------------------------------
 ; Initialize the Work-area
