@@ -97,5 +97,4 @@ $(eval $(call BUILD_versions,cbios))
 $(eval $(call BUILD_versions,rc2014))
 
 include ./cexten/Makefile
-# $(BINDIR)spike.bin:
-# 	$(MAKE) -c cexten
+include ./depends.d
