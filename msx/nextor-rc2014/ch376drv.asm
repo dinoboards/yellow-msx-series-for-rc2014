@@ -7,18 +7,6 @@ DRV_INIT_CH376:
 	or	a
 	ret	z
 
-; __OK1:
-; 	call 	SCSI_INQUIRY
-; 	JR	NC, __OK2
-
-; 	XOR	A
-; 	RET
-
-__OK2:
-	ld	a, (ix+WRKAREA.STATUS)
-	set	2, a				; usb device present
-	ld	(ix+WRKAREA.STATUS), a
-
 _SCSI_TEST_AGAIN:
 	call	SCSI_TEST
 	jr 	nc, _SCSI_TEST_OKAY
