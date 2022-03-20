@@ -663,14 +663,6 @@ void scsi_init(ch376_work_area *const work_area) {
       work_area->storage_device_info.data_bulk_out_endpoint_toggle = 0;
 }
 
-// storage_device_id => a
-// lun => B
-// cmd_buffer_length => C
-// send_receive_buffer_length => DE
-// cmd_buffer => HL
-// send_receive_buffer => IX
-// send => Cy
-
 _scsi_command_block_wrapper *prepare_cbw(ch376_work_area *const work_area,
                                          const uint8_t          lun,
                                          const uint8_t          cmd_buffer_length,
@@ -688,8 +680,15 @@ _scsi_command_block_wrapper *prepare_cbw(ch376_work_area *const work_area,
   return cbw;
 }
 
+// device_address => a
+// lun => B
+// cmd_buffer_length => C
+// send_receive_buffer_length => DE
+// cmd_buffer => HL
+// send_receive_buffer => IX
+// send => Cy
 uint8_t do_scsi_cmd(ch376_work_area *const work_area,
-                    const uint8_t          storage_device_id,
+                    const uint8_t          device_address,
                     const uint8_t          lun,
                     const uint8_t          cmd_buffer_length,
                     const uint16_t         send_receive_buffer_length,
@@ -710,7 +709,7 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                                 sizeof(_scsi_command_block_wrapper) + 16,
                                 work_area->storage_device_info.max_packet_size,
                                 work_area->storage_device_info.data_bulk_out_endpoint_id,
-                                storage_device_id,
+                                device_address,
                                 &work_area->storage_device_info.data_bulk_out_endpoint_toggle);
 
   if (result != CH_USB_INT_SUCCESS) {
@@ -725,7 +724,7 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                                    (uint16_t)cbw->dCBWDataTransferLength,
                                    work_area->storage_device_info.max_packet_size,
                                    work_area->storage_device_info.data_bulk_in_endpoint_id,
-                                   storage_device_id,
+                                   device_address,
                                    &amount_received,
                                    &work_area->storage_device_info.data_bulk_in_endpoint_toggle);
     } else {
@@ -733,7 +732,7 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                                     (uint16_t)cbw->dCBWDataTransferLength,
                                     work_area->storage_device_info.max_packet_size,
                                     work_area->storage_device_info.data_bulk_out_endpoint_id,
-                                    storage_device_id,
+                                    device_address,
                                     &work_area->storage_device_info.data_bulk_out_endpoint_toggle);
     }
 
@@ -750,7 +749,7 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
   //   sizeof(_scsi_command_status_wrapper),
   //   work_area->storage_device_info.max_packet_size,
   //   work_area->storage_device_info.data_bulk_in_endpoint_id,
-  //   storage_device_id,
+  //   device_address,
   //   &amount_received,
   //   &work_area->storage_device_info.data_bulk_in_endpoint_toggle,
   //   work_area->storage_device_info.data_bulk_in_endpoint_toggle);
@@ -759,7 +758,7 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                                sizeof(_scsi_command_status_wrapper),
                                work_area->storage_device_info.max_packet_size,
                                work_area->storage_device_info.data_bulk_in_endpoint_id,
-                               storage_device_id,
+                               device_address,
                                &amount_received,
                                &work_area->storage_device_info.data_bulk_in_endpoint_toggle);
 
@@ -801,6 +800,36 @@ uint8_t scsi_inquiry(ch376_work_area *const work_area) {
   return CH_USB_INT_SUCCESS;
 }
 
+bool scsi_test(ch376_work_area *const work_area) __z88dk_fastcall {
+  return do_scsi_cmd(work_area,
+                     work_area->storage_device_info.device_address,
+                     0,
+                     sizeof(_scsi_packet_test),
+                     0,
+                     (uint8_t *)scsi_packet_test,
+                     work_area->scsi_device_info.buffer,
+                     false) == CH_USB_INT_SUCCESS;
+}
+
+void scsi_request_sense(ch376_work_area *const work_area) __z88dk_fastcall {
+  do_scsi_cmd(work_area,
+              work_area->storage_device_info.device_address,
+              0,
+              sizeof(_scsi_packet_request_sense),
+              18,
+              (uint8_t *)scsi_packet_request_sense,
+              work_area->scsi_device_info.buffer,
+              false);
+}
+void wait_for_mounting(ch376_work_area *const work_area) __z88dk_fastcall {
+  while (scsi_test(work_area)) {
+    scsi_request_sense(work_area);
+  }
+  work_area->usb_mounted = true;
+  work_area->unknown     = true;
+  work_area->dsk_changed = true;
+}
+
 uint8_t usb_host_init() {
   work_area *const p = get_work_area();
   printf("usb_host_init %p\r\n", p);
@@ -838,6 +867,8 @@ uint8_t usb_host_init() {
 
     return false;
   }
+
+  wait_for_mounting(&p->ch376);
 
   p->ch376.usb_present = true;
 

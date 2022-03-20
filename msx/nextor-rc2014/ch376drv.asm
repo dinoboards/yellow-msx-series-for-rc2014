@@ -7,44 +7,8 @@ DRV_INIT_CH376:
 	or	a
 	ret	z
 
-_SCSI_TEST_AGAIN:
-	call	SCSI_TEST
-	jr 	nc, _SCSI_TEST_OKAY
-	call	SCSI_REQUEST_SENSE
-	jr	_SCSI_TEST_AGAIN
-_SCSI_TEST_OKAY:
-	; return status disk present but changed
-	ld 	a, (ix+WRKAREA.STATUS)
-	set	3, a				; usb device mounted
-	set	4, a				; ???
-	set	5, a				; dsk changed
-	ld	(ix+WRKAREA.STATUS), a
-
 	OR	255
 	RET
-
-; RESET_USB_STORAGE:
-; 	CALL	USB_HOST_BUS_RESET
-
-; 	; enumerate and initialise USB devices
-; 	PUSH	IX
-; 	CALL	FN_CONNECT
-; 	POP	IX
-; 	OR	A
-; 	RET	Z
-
-; 	call	SCSI_MAX_LUNS
-; 	RET	C
-
-; 	call 	SCSI_INIT
-; 	call 	SCSI_INQUIRY
-; 	RET	C
-
-; _SCSI_TEST_AGAIN1:
-; 	call	SCSI_TEST
-; 	ret 	nc
-; 	call	SCSI_REQUEST_SENSE
-; 	jr	_SCSI_TEST_AGAIN1
 
 ; ------------------------------------------------
 ; Initialize the Work-area
