@@ -7,14 +7,14 @@ DRV_INIT_CH376:
 	or	a
 	ret	z
 
-	call	SCSI_MAX_LUNS
-	JR	NC, __OK1
+	; call	SCSI_MAX_LUNS
+	; JR	NC, __OK1
 
-	LD	HL, debug1
-	CALL	PRINT
+	; LD	HL, debug1
+	; CALL	PRINT
 
-	XOR	A
-	RET
+	; XOR	A
+	; RET
 
 __OK1:
 	call 	SCSI_INIT
