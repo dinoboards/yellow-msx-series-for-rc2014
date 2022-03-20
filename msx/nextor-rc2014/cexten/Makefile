@@ -50,3 +50,8 @@ $(BINDIR)%.o: $(BINDIR)%.asm; $(assemble)
 $(BINDIR)%.o: $(SRC)%.asm; $(assemble)
 $(BINDIR)%.m4.o: %.asm.m4; $(assemble)
 
+.PHONY: format
+format: SHELL:=/bin/bash
+format:
+	clang-format --version
+	find \( -name "*.c" -o -name "*.h" \) -exec echo "formating {}" \; -exec clang-format -i {} \;
