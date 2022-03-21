@@ -1,11 +1,14 @@
 
+./bin/usb-lun-info.c.asm: cexten/usb-lun-info.c cexten/ch376.h cexten/print.h \
+ cexten/scsi.h cexten/work-area.h
 ./bin/print.c.asm: cexten/print.c cexten/print.h
-./bin/scsi.c.asm: cexten/scsi.c cexten/scsi.h
+./bin/scsi.c.asm: cexten/scsi.c cexten/scsi.h cexten/work-area.h
 ./bin/spike.c.asm: cexten/spike.c
+./bin/usb-dev-info.c.asm: cexten/usb-dev-info.c cexten/work-area.h
 ./bin/debuggin.c.asm: cexten/debuggin.c cexten/debuggin.h cexten/print.h \
  cexten/work-area.h
-./bin/usb-host-init.c.asm: cexten/usb-host-init.c cexten/debuggin.h \
- cexten/print.h cexten/work-area.h cexten/scsi.h \
+./bin/usb-host-init.c.asm: cexten/usb-host-init.c cexten/ch376.h \
+ cexten/debuggin.h cexten/print.h cexten/work-area.h cexten/scsi.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h
 ./bin/chgbnk.o: ./chgbnk.asm
 ./bin/rcembdrv.o: ./rcembdrv.asm
