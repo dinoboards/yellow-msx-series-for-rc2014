@@ -40,9 +40,6 @@ DEV_INFO_USB:
 	RET
 
 LUN_INFO_USB:
-	; push	bc
-	; push	hl
-
 	push	hl
 	push	bc
 	inc	sp
@@ -54,31 +51,9 @@ LUN_INFO_USB:
 
 
 DEV_STATUS_USB:
-	call	MY_GWORK
-	; bit 0 = CH376s present,
-	; bit 1 = initialised,
-	; bit 2 = USB device present,
-	; bit 3 = USB device mounted,
-	; bit 4 = virtual DSK inserted,
-	; bit 5 = DSK changed
-	ld a, (ix+WRKAREA.STATUS)
-	; DSK present?
-	bit 4,a
-	jr z, _DEV_STATUS_ERR
-	; changed?
-	bit 5,a
-	jr z, _DEV_STATUS_NO_CHANGE
-	res 5,a
-	ld (ix+WRKAREA.STATUS),a
-	ld a, 2 ; available, changed
-	ret
-
-_DEV_STATUS_NO_CHANGE:
-	ld a, 1 ; available, no change
-	ret
-
-_DEV_STATUS_ERR:
-	xor	a ; not available
+	ld	l, b
+	call	_usb_dev_status
+	ld	a, l
 	ret
 
 ADD_512_TO_HL:
