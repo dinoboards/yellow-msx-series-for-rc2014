@@ -1,3 +1,4 @@
+#include "ch376.h"
 #include "debuggin.h"
 #include "print.h"
 #include "scsi.h"
@@ -11,33 +12,6 @@ inline uint8_t min(const uint8_t a, const uint8_t b) { return a < b ? a : b; }
 
 __sfr __at 0x84 CH376_DATA_PORT;
 __sfr __at 0x85 CH376_COMMAND_PORT;
-
-#define CH_CMD_GET_IC_VER   0x01
-#define CH_CMD_RESET_ALL    0x05
-#define CH_CMD_CHECK_EXIST  0x06
-#define CH_CMD_SET_RETRY    0x0B
-#define CH_CMD_SET_USB_ADDR 0x13
-#define CH_CMD_SET_USB_MODE 0x15
-#define CH_CMD_GET_STATUS   0x22
-#define CH_CMD_RD_USB_DATA0 0x27
-#define CH_CMD_WR_HOST_DATA 0x2C
-#define CH_CMD_CLR_STALL    0x41
-#define CH_CMD_ISSUE_TKN_X  0x4E
-
-#define CH_MODE_HOST_RESET 7
-#define CH_MODE_HOST       6
-
-// return codes
-#define CH_ST_RET_SUCCESS 0x51
-#define CH_ST_RET_ABORT   0x5F
-
-// CH376 result codes
-#define CH_USB_INT_SUCCESS    0x14
-#define CH_USB_ERR_FOUND_NAME 0x43
-
-#define USB_STALL 0x2e
-
-typedef enum _ch376_pid { CH_PID_SETUP = 0x0D, CH_PID_IN = 0x09, CH_PID_OUT = 0x01 } ch376_pid;
 
 const void setCommand(const uint8_t command) __z88dk_fastcall {
   CH376_COMMAND_PORT = command;
@@ -87,7 +61,7 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   *amount_received = count;
 
   if (count > buffer_size) {
-    printf("buffer too small %d, %d", count, buffer_size);
+    xprintf("buffer too small %d, %d", count, buffer_size);
     count = buffer_size;
   }
 
@@ -217,14 +191,14 @@ retry:
   ch_issue_token(0, CH_PID_SETUP, 0);
 
   if ((result = ch_wait_int_and_get_result()) != CH_USB_INT_SUCCESS) {
-    printf("Err1 (%d)\r\n", result);
+    xprintf("Err1 (%d)\r\n", result);
     return result;
   }
 
   const uint8_t transferIn = (cmd_packet->code & 0x80);
 
   if (transferIn && buffer == 0) {
-    printf("Err2\r\n");
+    xprintf("Err2\r\n");
     return 99;
   }
 
@@ -232,7 +206,7 @@ retry:
                       : ch_data_out_transfer(buffer, cmd_packet->length, max_packet_size, 0, &toggle);
 
   if ((result & 0x2f) == USB_STALL) {
-    printf("Stall");
+    xprintf("Stall");
     setCommand(CH_CMD_CLR_STALL);
     delay(60 / 4);
     CH376_DATA_PORT = cmd_packet->code & 0x80;
@@ -243,7 +217,7 @@ retry:
   }
 
   if (result != CH_USB_INT_SUCCESS) {
-    printf("Err3 (%d)\r\n", result);
+    xprintf("Err3 (%d)\r\n", result);
     return result;
   }
 
@@ -375,7 +349,7 @@ uint8_t hw_get_descriptors(work_area *const work_area, uint8_t *buffer, uint8_t 
     if ((result = ch_get_config_descriptor(
              work_area, config, config_index, device->bMaxPacketSize0, total_length, device_address, &amount_transferred)) !=
         CH_USB_INT_SUCCESS) {
-      printf("Err4 (%d,%d)\r\n", result, amount_transferred);
+      xprintf("Err4 (%d,%d)\r\n", result, amount_transferred);
       return result;
     }
 
@@ -498,6 +472,8 @@ uint8_t init_storage(work_area *const work_area) {
                               work_area->ch376.storage_device_info.device_address,
                               &amount_transferred);
 }
+
+extern uint32_t usb_scsi_read_capacity();
 
 bool fn_connect(work_area *const work_area) {
   const uint8_t max_device_address = work_area->ch376.max_device_address;
@@ -713,7 +689,7 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                                 &work_area->storage_device_info.data_bulk_out_endpoint_toggle);
 
   if (result != CH_USB_INT_SUCCESS) {
-    printf("Err6 %d\r\n", result);
+    xprintf("Err6 %d\r\n", result);
     return result;
   }
 
@@ -737,14 +713,14 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
     }
 
     if (result != CH_USB_INT_SUCCESS) {
-      printf("Err7 %d\r\n", result);
+      xprintf("Err7 %d\r\n", result);
       return result;
     }
   }
 
   // _DO_SCSI_CMD_RCV_COMMAND_STATUS_WRAPPER
 
-  // printf(" a8 (%p, %d, %d, %d, %d, %p, %p, %d)",
+  // xprintf(" a8 (%p, %d, %d, %d, %d, %p, %p, %d)",
   //   (uint8_t*)work_area->scsi_device_info.csw,
   //   sizeof(_scsi_command_status_wrapper),
   //   work_area->storage_device_info.max_packet_size,
@@ -763,12 +739,12 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                                &work_area->storage_device_info.data_bulk_in_endpoint_toggle);
 
   if (result != CH_USB_INT_SUCCESS) {
-    printf("Err8 %d\r\n", result);
+    xprintf("Err8 %d\r\n", result);
     return result;
   }
 
   if (work_area->scsi_device_info.csw.cbwstatus != 0) {
-    printf("status error %d\r\n", work_area->scsi_device_info.csw.cbwstatus);
+    // xprintf("status error %d\r\n", work_area->scsi_device_info.csw.cbwstatus);
     return 99;
   }
 
