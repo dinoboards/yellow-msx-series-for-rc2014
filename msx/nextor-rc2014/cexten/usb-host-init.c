@@ -313,42 +313,47 @@ uint8_t ch_set_address(work_area *const work_area, const uint8_t usb_address, co
 }
 
 uint8_t hw_get_descriptors(work_area *const work_area, uint8_t *buffer, uint8_t device_address) {
-  uint8_t                  result;
-  uint16_t                 amount_transferred = 0;
-  device_descriptor *const device             = (device_descriptor *)buffer;
-  uint8_t                  r = ch_get_device_descriptor(work_area, device, device_address, &amount_transferred);
+  uint8_t  result;
+  uint16_t amount_transferred = 0;
+
+  uint8_t r = ch_get_device_descriptor(work_area, (device_descriptor *)buffer, device_address, &amount_transferred);
 
   if (r != CH_USB_INT_SUCCESS)
     return r; // todo try on low speed for device_address 1
 
+  const uint8_t num_configurations = ((device_descriptor *)buffer)->bNumConfigurations;
+  const uint8_t max_packet_size    = ((device_descriptor *)buffer)->bMaxPacketSize0;
+
   if (device_address == 0) {
-    if ((result = ch_set_address(work_area, work_area->ch376.max_device_address, device->bMaxPacketSize0)) !=
-        CH_USB_INT_SUCCESS)
+    if ((result = ch_set_address(work_area, work_area->ch376.max_device_address, max_packet_size)) != CH_USB_INT_SUCCESS)
       return result;
   }
 
   buffer += sizeof(device_descriptor);
 
-  for (uint8_t config_index = 0; config_index < device->bNumConfigurations; config_index++) {
+  for (uint8_t config_index = 0; config_index < num_configurations; config_index++) {
     if (device_address == 0) {
       device_address = work_area->ch376.max_device_address;
     }
 
-    config_descriptor *const config = (config_descriptor *)buffer;
     if ((result = ch_get_config_descriptor(work_area,
-                                           config,
+                                           ((config_descriptor *)buffer),
                                            config_index,
-                                           device->bMaxPacketSize0,
+                                           max_packet_size,
                                            sizeof(config_descriptor),
                                            device_address,
                                            &amount_transferred)) != CH_USB_INT_SUCCESS)
       return result;
 
-    const uint8_t total_length = config->wTotalLength;
+    const uint8_t total_length = ((config_descriptor *)buffer)->wTotalLength;
 
-    if ((result = ch_get_config_descriptor(
-             work_area, config, config_index, device->bMaxPacketSize0, total_length, device_address, &amount_transferred)) !=
-        CH_USB_INT_SUCCESS) {
+    if ((result = ch_get_config_descriptor(work_area,
+                                           ((config_descriptor *)buffer),
+                                           config_index,
+                                           max_packet_size,
+                                           total_length,
+                                           device_address,
+                                           &amount_transferred)) != CH_USB_INT_SUCCESS) {
       xprintf("Err4 (%d,%d)\r\n", result, amount_transferred);
       return result;
     }
