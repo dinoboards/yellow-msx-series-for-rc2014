@@ -1,6 +1,8 @@
 #ifndef __SCSI
 #define __SCSI
 
+#include "work-area.h"
+#include <stdbool.h>
 #include <stdlib.h>
 
 typedef struct __scsi_command_block_wrapper {
@@ -42,8 +44,33 @@ typedef struct _scsi_packet_request_sense {
   uint8_t pad[6];
 } _scsi_packet_request_sense;
 
+typedef struct __scsi_read_capacity {
+  uint8_t operation_code;
+  uint8_t lun;
+  uint8_t reserved[8];
+  uint8_t pad[2];
+} _scsi_read_capacity;
+
 extern _scsi_command_block_wrapper scsi_command_block_wrapper;
 extern _scsi_packet_inquiry        scsi_packet_inquiry;
 extern _scsi_packet_test           scsi_packet_test;
 extern _scsi_packet_request_sense  scsi_packet_request_sense;
+extern _scsi_read_capacity         scsi_read_capacity;
+
+// device_address => a
+// lun => B
+// cmd_buffer_length => C
+// send_receive_buffer_length => DE
+// cmd_buffer => HL
+// send_receive_buffer => IX
+// send => Cy
+extern uint8_t do_scsi_cmd(ch376_work_area *const work_area,
+                           const uint8_t          device_address,
+                           const uint8_t          lun,
+                           const uint8_t          cmd_buffer_length,
+                           const uint16_t         send_receive_buffer_length,
+                           uint8_t *const         cmd_buffer,
+                           uint8_t *const         send_receive_buffer,
+                           bool                   send);
+
 #endif
