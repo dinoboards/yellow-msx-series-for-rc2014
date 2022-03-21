@@ -70,5 +70,5 @@ USB		WRKAREA
 
 	DISPLAY "WRKAREA bytes: ",/D,WRKAREA
 
-_usb_host_init:		EQU		$6000	; entry point within cextens section
-_usb_dev_info:		EQU  	        $6003
+_usb_host_init:		EQU		$5800	; entry point within cextens section
+_usb_dev_info:		EQU  	        $5803

@@ -39,66 +39,6 @@ DEV_INFO_USB:
 	ld	a, l
 	RET
 
-	CALL	MY_GWORK
-	ld a,(ix+WRKAREA.STATUS)
-
-	ld c, a
-	ld a, b
-	cp 0
-	jr z,_DEV_INFO_BASIC
-	cp 1
-	jr z,_DEV_INFO_MANUFACTURER
-	cp 2
-	jr z,_DEV_INFO_DEVICE_NAME
-	cp 3
-	jr z,_DEV_INFO_SERIAL
-	; else
-	jr _DEV_INFO_NOT_INSERTED
-
-_DEV_INFO_BASIC:
-	ld (hl),1
-	inc hl
-	ld (hl),0
-	xor a
-	ret
-
-_DEV_INFO_MANUFACTURER:
-	ld de, hl
-	ld bc, WRKAREA.SCSI_DEVICE_INFO.VENDORID
-	call WRKAREAPTR
-	ld hl,ix
-	ld bc, 8
-	ldir
-	xor a
-	ld (de),a
-	ret
-
-_DEV_INFO_DEVICE_NAME:
-	ld de, hl
-	ld bc, WRKAREA.SCSI_DEVICE_INFO.PRODUCTID
-	call WRKAREAPTR
-	ld hl,ix
-	ld bc, 16
-	ldir
-	xor a
-	ld (de),a
-	ret
-
-_DEV_INFO_SERIAL:
-	ld de, hl
-	ld bc, WRKAREA.SCSI_DEVICE_INFO.PRODUCTREV
-	call WRKAREAPTR
-	ld hl,ix
-	ld bc, 4
-	ldir
-	xor a
-	ld (de),a
-	ret
-
-_DEV_INFO_NOT_INSERTED:
-	ld	a,1
-	ret
-
 LUN_INFO_USB:
 	LD	A, B
 	CP	1
