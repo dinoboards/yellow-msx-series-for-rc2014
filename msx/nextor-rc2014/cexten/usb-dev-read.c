@@ -21,20 +21,20 @@
 #define NEXTOR_ERR_IPARM 0x8B
 
 uint8_t scsi_read(const uint8_t number_of_sectors, const uint32_t sector_number, uint8_t *const buffer) {
-  memcpy(buffer, &scsi_packet_read, sizeof(_scsi_packet_read));
+  memcpy(buffer, &scsi_packet_read, sizeof(_scsi_packet_read_write));
 
-  ((_scsi_packet_read *)buffer)->transfer_len[1] = number_of_sectors;
-  ((_scsi_packet_read *)buffer)->lba[0]          = sector_number >> 24;
-  ((_scsi_packet_read *)buffer)->lba[1]          = sector_number >> 16;
-  ((_scsi_packet_read *)buffer)->lba[2]          = sector_number >> 8;
-  ((_scsi_packet_read *)buffer)->lba[3]          = sector_number;
+  ((_scsi_packet_read_write *)buffer)->transfer_len[1] = number_of_sectors;
+  ((_scsi_packet_read_write *)buffer)->lba[0]          = sector_number >> 24;
+  ((_scsi_packet_read_write *)buffer)->lba[1]          = sector_number >> 16;
+  ((_scsi_packet_read_write *)buffer)->lba[2]          = sector_number >> 8;
+  ((_scsi_packet_read_write *)buffer)->lba[3]          = sector_number;
 
   work_area *const p = get_work_area();
 
   return do_scsi_cmd(&p->ch376,
                      p->ch376.storage_device_info.device_address,
                      0,
-                     sizeof(_scsi_packet_read),
+                     sizeof(_scsi_packet_read_write),
                      (number_of_sectors)*512,
                      buffer,
                      buffer,
@@ -48,11 +48,12 @@ uint8_t usb_dev_read(const uint8_t  lun,
                      uint8_t *const number_of_sectors_read) {
 
   (void)lun;
-  uint8_t result;
+  uint8_t        result;
+  uint8_t *const p = buffer;
 
   for (uint8_t index = 0; index < number_sectors_to_read; index++) {
     if ((result = scsi_read(1, sector_number, buffer)) != CH_USB_INT_SUCCESS) {
-      xprintf("E %x", result);
+      yprintf(60, " ER %x ", result);
       *number_of_sectors_read = index;
       return NEXTOR_ERR_DISK;
     }
