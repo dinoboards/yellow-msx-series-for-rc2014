@@ -46,7 +46,6 @@ PRINT_CHAR_VDP:
 _print_init_screen0:
     ; set pointer to 77,0 for screen 0
 	xor	a
-	ld	hl,40
 	call	SetVdp_Write
 	ret
 

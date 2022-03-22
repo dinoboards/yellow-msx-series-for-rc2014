@@ -41,17 +41,16 @@ typedef struct __hub_device_info {
 } _hub_device_info;
 
 typedef struct __scsi_devinfo {
-  uint8_t tag;
-  uint8_t max_luns;
-  uint8_t buffer[0x24]; // longest response (inquiry) we want to absorb during init
-  _scsi_command_status_wrapper
-          csw; //[sizeof(_scsi_command_status_wrapper)]; //			ds	_scsi_command_status_wrapper
-  uint8_t vendorid[8];
-  uint8_t ignored1;
-  uint8_t productid[16];
-  uint8_t ignored2;
-  uint8_t productrev[8];
-  uint8_t ignored3;
+  uint8_t                      tag;
+  uint8_t                      max_luns;
+  uint8_t                      buffer[0x24]; // longest response (inquiry) we want to absorb during init
+  _scsi_command_status_wrapper csw;
+  uint8_t                      vendorid[8];
+  uint8_t                      ignored1;
+  uint8_t                      productid[16];
+  uint8_t                      ignored2;
+  uint8_t                      productrev[8];
+  uint8_t                      ignored3;
 } _scsi_devinfo;
 
 typedef struct _usb_descriptor_block {

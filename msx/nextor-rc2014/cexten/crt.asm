@@ -4,6 +4,7 @@
 	EXTERN	_usb_lun_info
 	EXTERN	_usb_dev_status
 	EXTERN	_usb_dev_read
+	EXTERN	_usb_dev_write
 
 	ORG	$5800
 usb_host_init:
@@ -16,3 +17,5 @@ usb_dev_status:
 	JP	_usb_dev_status
 usb_dev_read:
 	JP	_usb_dev_read
+usb_dev_write:
+	JP	_usb_dev_write

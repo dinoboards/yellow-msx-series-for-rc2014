@@ -56,125 +56,45 @@ DEV_STATUS_USB:
 	ld	a, l
 	ret
 
-ADD_512_TO_HL:
-	push	de
-	ld	de, 512
-	add	hl, de
-	pop	de
-	ret
+DEV_WRT_USB:
+	push	ix
+	dec	sp
 
-	; 1 to 32bit number at DE
-INC_SECTOR_NUMBER:
-	push	bc
-	push	de
-	push	hl
+	ld	ix, 0
+	add	ix, sp
+	push	ix			; push address for return value
+
+	push	hl			; push buffer
+
 	ex	de, hl
-
-	push	hl
-	ld	c, (hl)
-	inc	hl
-	ld	b, (hl)
-	inc	hl
 	ld	e, (hl)
 	inc	hl
 	ld	d, (hl)
-	pop	hl
-	inc	c
-	jr	NZ,l_increment32Bit_00103
-	inc	b
-	jr	NZ,l_increment32Bit_00103
-	inc	de
-l_increment32Bit_00103:
-	ld	(hl), c
 	inc	hl
-	ld	(hl), b
+	ld	a, (hl)
 	inc	hl
-	ld	(hl), e
-	inc	hl
-	ld	(hl), d
+	ld	h, (hl)
+	ld	l, a			; hlbc is sector number
 
-	pop	hl
-	pop	de
-	pop	bc
-	ret
+	push	hl			; sector number
+	push	de			; sector number
+	push	bc			; push lun and sector count
 
-DEV_WRT_USB:
-	push	iy
-	push	af			; reserve 4 bytes for modifying sector number
-	push	af
-	ld	iy, 0
-	add	iy, sp
-
-	ld	a, (de)
-	inc	de
-	ld	(iy), a
-	ld	a, (de)
-	inc	de
-	ld	(iy+1), a
-	ld	a, (de)
-	inc	de
-	ld	(iy+2), a
-	ld	a, (de)
-	inc	de
-	ld	(iy+3), a
-	push	iy
-	pop	de
-
-DEV_WRT_USB_NXT_SECTOR:
-
-	LD	A, 2
-	PUSH	AF
-
-DEV_WRT_SECTOR_LOOP:
-	call	CAPS_FLASH
-	push	bc
-	ld	b, 1
-	call	SAFE_SCSI_WRITE
-	pop	bc
-	jr	nc, _DEV_RW_NEXT_4
-
-	POP	AF
-	DEC	A
-	JR	Z, _DEV_RW_ERR
-
-	PUSH	AF
-	push	bc
-
-	ld	bc, 60*3
-	ei
-	call	WAIT
-	pop	bc
-
-	jr	DEV_WRT_SECTOR_LOOP
-
-_DEV_RW_NEXT_4:
-	POP	AF
-	call	ADD_512_TO_HL
-	call	INC_SECTOR_NUMBER
-	djnz	DEV_WRT_USB_NXT_SECTOR
-
-
-	pop	af			; restore stack and iy
+	call	_usb_dev_write
+	pop	af			; restore stack
 	pop	af
-	pop	iy
-
-	; CAPS OFF
-	in	a, 0xaa
-	set	6, a
-	out	0xaa, a
-	xor	a ; success
-	ret
-
-_DEV_RW_ERR:
-	call	CAPS_FLASH
-
-	pop	af			; restore stack and iy
 	pop	af
-	pop	iy
+	pop	af
+	pop	af
 
-	ld	a, _RNF
-	ld	b, 0
+	ld	a, l			; return values
+	ld	b, (ix-1)
+
+	inc	sp			; restore stack
+	pop	ix
 	ret
+
+
 
 DEV_READ_USB:
 	push	ix
@@ -214,73 +134,3 @@ DEV_READ_USB:
 	pop	ix
 	ret
 
-
-
-	push	iy
-	push	af			; reserve 4 bytes for modifying sector number
-	push	af
-	ld	iy, 0
-	add	iy, sp
-
-	LD	A, 2
-	PUSH	AF
-
-DEV_READ_USB_TRY_AGAIN:
-	call	CAPS_FLASH
-	call	SAFE_SCSI_READ
-
-	jr	nc, _DEV_RW_NEXT_4
-	POP	AF
-	DEC	A
-	JR	Z, _DEV_RW_ERR
-
-	push	af
-	push	bc
-
-	ld	bc, 60*3
-	ei
-	call	WAIT
-	pop	bc
-	jr	DEV_READ_USB_TRY_AGAIN
-
-CAPS_FLASH:
-	in	a, (0xaa)
-	bit	6, a
-	jr	z, _CAPS_FLASH_ON
-	res	6, a
-    	jr	_CAPS_FLASH
-
-_CAPS_FLASH_ON:
-	set	6, a
-
-_CAPS_FLASH:
-	out	(0xaa), a
-    	ret
-
-SAFE_SCSI_WRITE:
-	push	iy
-	push	ix
-	push	hl
-	push	de
-	push	bc
-	call	SCSI_WRITE
-	pop	bc
-	pop	de
-	pop	hl
-	pop	ix
-	pop	iy
-	ret
-
-SAFE_SCSI_READ:
-	push	iy
-	push	ix
-	push	hl
-	push	de
-	push	bc
-	call	SCSI_READ
-	pop	bc
-	pop	de
-	pop	hl
-	pop	ix
-	pop	iy
-	ret

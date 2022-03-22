@@ -45,8 +45,6 @@ uint8_t usb_lun_info(const uint8_t lun, nextor_lun_info *const info) {
   if (lun != 1)
     return 1;
 
-  print_init_screen0();
-
   const uint32_t capacity = usb_scsi_read_capacity();
 
   info->medium_type                 = 0; // block_device
