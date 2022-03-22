@@ -177,6 +177,45 @@ _DEV_RW_ERR:
 	ret
 
 DEV_READ_USB:
+	push	ix
+	dec	sp
+
+	ld	ix, 0
+	add	ix, sp
+	push	ix			; push address for return value
+
+	push	hl			; push buffer
+
+	ex	de, hl
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	inc	hl
+	ld	a, (hl)
+	inc	hl
+	ld	h, (hl)
+	ld	l, a			; hlbc is sector number
+
+	push	hl			; sector number
+	push	de			; sector number
+	push	bc			; push lun and sector count
+
+	call	_usb_dev_read
+	pop	af			; restore stack
+	pop	af
+	pop	af
+	pop	af
+	pop	af
+
+	ld	a, l			; return values
+	ld	b, (ix-1)
+
+	inc	sp			; restore stack
+	pop	ix
+	ret
+
+
+
 	push	iy
 	push	af			; reserve 4 bytes for modifying sector number
 	push	af

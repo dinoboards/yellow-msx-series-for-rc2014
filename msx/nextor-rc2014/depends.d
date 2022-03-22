@@ -1,4 +1,6 @@
 
+./bin/usb-dev-read.c.asm: cexten/usb-dev-read.c cexten/ch376.h cexten/scsi.h \
+ cexten/work-area.h cexten/print.h
 ./bin/usb-lun-info.c.asm: cexten/usb-lun-info.c cexten/ch376.h cexten/print.h \
  cexten/scsi.h cexten/work-area.h
 ./bin/print.c.asm: cexten/print.c cexten/print.h

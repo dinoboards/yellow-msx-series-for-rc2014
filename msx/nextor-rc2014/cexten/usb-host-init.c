@@ -15,7 +15,8 @@ __sfr __at 0x85 CH376_COMMAND_PORT;
 
 const void setCommand(const uint8_t command) __z88dk_fastcall {
   CH376_COMMAND_PORT = command;
-  delay(1);
+  for (uint8_t i = 255; i != 0; i--)
+    ;
 }
 
 inline void ch376_reset() {
@@ -83,7 +84,6 @@ uint8_t ch_data_in_transfer(uint8_t *       buffer,
                             const uint8_t   endpoint,
                             uint16_t *const amount_received,
                             uint8_t *const  toggle) {
-
   uint8_t count;
   uint8_t result;
   do {
@@ -96,7 +96,7 @@ uint8_t ch_data_in_transfer(uint8_t *       buffer,
     buffer = ch_read_data(buffer, data_length, &count);
     data_length -= count;
     *amount_received += count;
-  } while (data_length > 0 && count < max_packet_size);
+  } while (data_length > 0 && count <= max_packet_size);
 
   return CH_USB_INT_SUCCESS;
 }
@@ -191,15 +191,15 @@ retry:
   ch_issue_token(0, CH_PID_SETUP, 0);
 
   if ((result = ch_wait_int_and_get_result()) != CH_USB_INT_SUCCESS) {
-    xprintf("Err1 (%d)\r\n", result);
+    xprintf("Err1 (%d) ", result);
     return result;
   }
 
   const uint8_t transferIn = (cmd_packet->code & 0x80);
 
   if (transferIn && buffer == 0) {
-    xprintf("Err2\r\n");
-    return 99;
+    xprintf("Err2 ");
+    return 98;
   }
 
   result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->length, max_packet_size, 0, amount_transferred, &toggle)
@@ -217,7 +217,7 @@ retry:
   }
 
   if (result != CH_USB_INT_SUCCESS) {
-    xprintf("Err3 (%d)\r\n", result);
+    xprintf("Err3 (%d) ", result);
     return result;
   }
 
@@ -354,7 +354,7 @@ uint8_t hw_get_descriptors(work_area *const work_area, uint8_t *buffer, uint8_t 
                                            total_length,
                                            device_address,
                                            &amount_transferred)) != CH_USB_INT_SUCCESS) {
-      xprintf("Err4 (%d,%d)\r\n", result, amount_transferred);
+      xprintf("Err4 (%d,%d)", result, amount_transferred);
       return result;
     }
 
@@ -503,7 +503,7 @@ bool fn_connect(work_area *const work_area) {
 
   if (result) {
     if ((result = init_storage(work_area)) != CH_USB_INT_SUCCESS) {
-      printf("Err5 %d\r\n", result);
+      printf("Err5 %d ", result);
       result = false;
     } else {
       result = true;
@@ -676,9 +676,8 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                     uint8_t *const         cmd_buffer,
                     uint8_t *const         send_receive_buffer,
                     bool                   send) {
-
   uint8_t  result;
-  uint16_t amount_received;
+  uint16_t amount_received = 0;
 
   _scsi_command_block_wrapper *const cbw =
       prepare_cbw(work_area, lun, cmd_buffer_length, send_receive_buffer_length, cmd_buffer);
@@ -694,13 +693,14 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                                 &work_area->storage_device_info.data_bulk_out_endpoint_toggle);
 
   if (result != CH_USB_INT_SUCCESS) {
-    xprintf("Err6 %d\r\n", result);
+    xprintf("Err6 %d ", result);
     return result;
   }
 
   //_DO_SCSI_CMD_PAYLOAD
   if (cbw->dCBWDataTransferLength != 0) {
     if ((cbw->bmCBWFlags & 0x80) != 0) {
+
       result = hw_data_in_transfer(send_receive_buffer,
                                    (uint16_t)cbw->dCBWDataTransferLength,
                                    work_area->storage_device_info.max_packet_size,
@@ -718,7 +718,7 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
     }
 
     if (result != CH_USB_INT_SUCCESS) {
-      xprintf("Err7 %d\r\n", result);
+      xprintf("Err7 %d ", result);
       return result;
     }
   }
@@ -744,12 +744,12 @@ uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                                &work_area->storage_device_info.data_bulk_in_endpoint_toggle);
 
   if (result != CH_USB_INT_SUCCESS) {
-    xprintf("Err8 %d\r\n", result);
+    xprintf("Err8 %d ", result);
     return result;
   }
 
   if (work_area->scsi_device_info.csw.cbwstatus != 0) {
-    // xprintf("status error %d\r\n", work_area->scsi_device_info.csw.cbwstatus);
+    // xprintf(" cbwstatus(%d) ", work_area->scsi_device_info.csw.cbwstatus);
     return 99;
   }
 
