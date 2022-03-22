@@ -51,12 +51,22 @@ typedef struct __scsi_read_capacity {
   uint8_t pad[2];
 } _scsi_read_capacity;
 
+typedef struct __scsi_packet_read {
+  uint8_t operation_code;
+  uint8_t lun;
+  uint8_t lba[4]; // high-endian block number
+  uint8_t reserved1;
+  uint8_t transfer_len[2]; // high-endian in blocks of block_len (see scsi_capacity)
+  uint8_t reserved2;
+  uint8_t pad[2];
+} _scsi_packet_read;
+
 extern _scsi_command_block_wrapper scsi_command_block_wrapper;
 extern _scsi_packet_inquiry        scsi_packet_inquiry;
 extern _scsi_packet_test           scsi_packet_test;
 extern _scsi_packet_request_sense  scsi_packet_request_sense;
 extern _scsi_read_capacity         scsi_read_capacity;
-
+extern _scsi_packet_read           scsi_packet_read;
 // device_address => a
 // lun => B
 // cmd_buffer_length => C

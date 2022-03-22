@@ -30,7 +30,6 @@ uint32_t usb_scsi_read_capacity() {
                             (uint8_t *)scsi_read_capacity,
                             p->ch376.scsi_device_info.buffer,
                             false)) != CH_USB_INT_SUCCESS) {
-    xprintf(" X2 ");
     return 0;
   }
 

@@ -74,3 +74,4 @@ _usb_host_init:		EQU		$5800	; entry point within cextens section
 _usb_dev_info:		EQU  	        $5803
 _usb_lun_info:		EQU		$5806
 _usb_dev_status:	EQU		$5809
+_usb_dev_read:		EQU		$580C
