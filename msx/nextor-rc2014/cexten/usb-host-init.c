@@ -30,6 +30,7 @@ const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
   while (length-- != 0) {
     CH376_DATA_PORT = *buffer++;
   }
+
   return buffer;
 }
 
@@ -58,14 +59,23 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   setCommand(CH_CMD_RD_USB_DATA0);
   uint8_t count    = CH376_DATA_PORT;
   *amount_received = count;
+  uint8_t extra = 0;
 
   if (count > buffer_size) {
-    yprintf(0, "buffer too small %d, %d ", count, buffer_size);
+    extra = count - buffer_size;
+
+    yprintf(0, "Y (%d,", count);
+    xprintf("%d,", buffer_size);
+    xprintf("%d)", extra);
+
     count = buffer_size;
   }
 
   while (count-- != 0)
     *buffer++ = CH376_DATA_PORT;
+
+  while(extra-- != 0)   // do we need to flush buffer?
+    CH376_DATA_PORT;
 
   return buffer;
 }
@@ -315,17 +325,22 @@ uint8_t hw_get_descriptors(work_area *const work_area, uint8_t *buffer, uint8_t 
   uint8_t  result;
   uint16_t amount_transferred = 0;
 
-  uint8_t r = ch_get_device_descriptor(work_area, (device_descriptor *)buffer, device_address, &amount_transferred);
+  result = ch_get_device_descriptor(work_area, (device_descriptor *)buffer, device_address, &amount_transferred);
 
-  if (r != CH_USB_INT_SUCCESS)
-    return r; // todo try on low speed for device_address 1
+  if (result != CH_USB_INT_SUCCESS) {
+    yprintf(25, "X1 (%d)", result);
+
+    return result; // todo try on low speed for device_address 1
+  }
 
   const uint8_t num_configurations = ((device_descriptor *)buffer)->bNumConfigurations;
   const uint8_t max_packet_size    = ((device_descriptor *)buffer)->bMaxPacketSize0;
 
   if (device_address == 0) {
-    if ((result = ch_set_address(work_area, work_area->ch376.max_device_address, max_packet_size)) != CH_USB_INT_SUCCESS)
+    if ((result = ch_set_address(work_area, work_area->ch376.max_device_address, max_packet_size)) != CH_USB_INT_SUCCESS) {
+      yprintf(15, "X2 (%d)", result);
       return result;
+    }
   }
 
   buffer += sizeof(device_descriptor);
@@ -341,8 +356,10 @@ uint8_t hw_get_descriptors(work_area *const work_area, uint8_t *buffer, uint8_t 
                                            max_packet_size,
                                            sizeof(config_descriptor),
                                            device_address,
-                                           &amount_transferred)) != CH_USB_INT_SUCCESS)
+                                           &amount_transferred)) != CH_USB_INT_SUCCESS) {
+      yprintf(15, "X3 (%d)", result);
       return result;
+    }
 
     const uint8_t total_length = ((config_descriptor *)buffer)->wTotalLength;
 
@@ -414,6 +431,9 @@ void parse_usb_descriptors(work_area *const work_area) {
 loop:
   length = buffer[0];
   type   = buffer[1];
+
+  xprintf("P(%d,%d)", length, type);
+
   switch (type) {
   case 0:
     // clang-format off
@@ -581,6 +601,9 @@ inline void hw_configure_nak_retry() {
 }
 
 inline uint8_t usb_host_bus_reset() {
+  for(int8_t i = 64; i > 0; i++)
+    CH376_DATA_PORT;
+
   ch376_set_usb_mode(CH_MODE_HOST);
   delay(60 / 4);
 
@@ -592,45 +615,48 @@ inline uint8_t usb_host_bus_reset() {
 
   hw_configure_nak_retry();
 
+  setCommand(CH375_CMD_UNLOCK_USB);
+  delay(60 / 4);
+
   return true;
 }
 
-#define target_device_address  0
-#define configuration_id       0
-#define string_id              0
-#define config_descriptor_size (sizeof(config_descriptor))
-#define alternate_setting      0
-#define packet_filter          0
-#define control_interface_id   0
+#define TARGET_DEVICE_ADDRESS  0
+#define CONFIGURATION_ID       0
+#define STRING_ID              0
+#define CONFIG_DESCRIPTOR_SIZE (sizeof(config_descriptor))
+#define ALTERNATE_SETTING      0
+#define PACKET_FILTER          0
+#define CONTROL_INTERFACE_ID   0
 
-#define report_id    0
-#define duration     0x80
-#define interface_id 0
-#define protocol_id  0
+#define PLACEHOLDER_REPORT_ID    0
+#define PLACEHOLDER_DURATION     0x80
+#define PLACEHOLDER_INTERFACE_ID 0
+#define PLACEHOLDER_PROTOCOL_ID  0
 
-#define hub_descriptor_size 0
-#define feature_selector    0
-#define port                0
-#define value               0
+#define HUB_DESCRIPTOR_SIZE 0
+#define FEATURE_SELECTOR    0
+#define PLACEHOLDER_PORT                0
+#define PLACEHOLDER_VALUE               0
 
-#define storage_interface_id 0
+#define STORAGE_INTERFACE_ID 0
 
 const _usb_descriptor_blocks usb_descriptor_blocks_templates = {
     .cmd_get_device_descriptor = {0x80, 6, 0, 1, 0, 0, 18},
-    .cmd_set_address           = {0x00, 0x05, target_device_address, 0, 0, 0, 0},
-    .cmd_set_configuration     = {0x00, 0x09, configuration_id, 0, 0, 0, 0},
-    .cmd_get_string            = {0x80, 6, string_id, 3, 0, 0, 255},
-    .cmd_get_config_descriptor = {0x80, 6, configuration_id, 2, 0, 0, config_descriptor_size},
-    .cmd_set_interface         = {0x01, 11, alternate_setting, 0, interface_id, 0, 0},
-    .cmd_set_packet_filter     = {0b00100001, 0x43, packet_filter, 0, control_interface_id, 0, 0},
-    .cmd_set_idle              = {0x21, 0x0a, report_id, duration, interface_id, 0, 0},
-    .cmd_set_protocol          = {0x21, 0x0b, protocol_id, 0, interface_id, 0, 0},
+    .cmd_set_address           = {0x00, 0x05, TARGET_DEVICE_ADDRESS, 0, 0, 0, 0},
+    .cmd_set_configuration     = {0x00, 0x09, CONFIGURATION_ID, 0, 0, 0, 0},
+    .cmd_get_string            = {0x80, 6, STRING_ID, 3, 0, 0, 255},
+    .cmd_get_config_descriptor = {0x80, 6, CONFIGURATION_ID, 2, 0, 0, CONFIG_DESCRIPTOR_SIZE},
+    .cmd_set_interface         = {0x01, 11, ALTERNATE_SETTING, 0, PLACEHOLDER_INTERFACE_ID, 0, 0},
+    .cmd_set_packet_filter     = {0b00100001, 0x43, PACKET_FILTER, 0, CONTROL_INTERFACE_ID, 0, 0},
+    .cmd_set_idle              = {0x21, 0x0a, PLACEHOLDER_REPORT_ID, PLACEHOLDER_DURATION, PLACEHOLDER_INTERFACE_ID, 0, 0},
+    .cmd_set_protocol          = {0x21, 0x0b, PLACEHOLDER_PROTOCOL_ID, 0, PLACEHOLDER_INTERFACE_ID, 0, 0},
     .reserved                  = {{0}},
-    .cmd_get_hub_descriptor    = {0b10100000, 6, 0, 0x29, 0, 0, hub_descriptor_size},
-    .cmd_set_hub_port_feature  = {0b00100011, 3, feature_selector, 0, port, value, 0},
-    .cmd_get_hub_port_status   = {0b10100011, 0, 0, 0, port, 0, 4, 0},
-    .cmd_get_max_luns          = {0b10100001, 0b11111110, 0, 0, storage_interface_id, 0, 1},
-    .cmd_mass_storage_reset    = {0b00100001, 0b11111111, 0, 0, storage_interface_id, 0, 0}};
+    .cmd_get_hub_descriptor    = {0b10100000, 6, 0, 0x29, 0, 0, HUB_DESCRIPTOR_SIZE},
+    .cmd_set_hub_port_feature  = {0b00100011, 3, FEATURE_SELECTOR, 0, PLACEHOLDER_PORT, PLACEHOLDER_VALUE, 0},
+    .cmd_get_hub_port_status   = {0b10100011, 0, 0, 0, PLACEHOLDER_PORT, 0, 4, 0},
+    .cmd_get_max_luns          = {0b10100001, 0b11111110, 0, 0, STORAGE_INTERFACE_ID, 0, 1},
+    .cmd_mass_storage_reset    = {0b00100001, 0b11111111, 0, 0, STORAGE_INTERFACE_ID, 0, 0}};
 
 void initialise_work_area(work_area *const p) {
   p->ch376.max_device_address = 0;
@@ -658,6 +684,51 @@ _scsi_command_block_wrapper *prepare_cbw(ch376_work_area *const work_area,
   cbw->dCBWTag[0]             = ++work_area->scsi_device_info.tag;
 
   return cbw;
+}
+
+// device_address => a
+// lun => B
+// cmd_buffer_length => C
+// send_receive_buffer_length => DE
+// cmd_buffer => HL
+// send_receive_buffer => IX
+// send => Cy
+uint8_t do_scsi_cmd_with_reset_retry(ch376_work_area *const work_area,
+                    const uint8_t          device_address,
+                    const uint8_t          lun,
+                    const uint8_t          cmd_buffer_length,
+                    const uint16_t         send_receive_buffer_length,
+                    uint8_t *const         cmd_buffer,
+                    uint8_t *const         send_receive_buffer,
+                    bool                   send) {
+
+  uint16_t amount_transferred = 0;
+
+  uint8_t result = do_scsi_cmd(work_area, device_address, lun, cmd_buffer_length, send_receive_buffer_length, cmd_buffer, send_receive_buffer, send);
+
+  if (result == CH_USB_INT_SUCCESS)
+    return result;
+
+  delay(60*2);
+  yprintf(0, "XXXXXXXXX (%d) ", send);
+
+  work_area->usb_descriptor_blocks.cmd_mass_storage_reset.dat4 = work_area->storage_device_info.interface_id;
+
+  result = hw_control_transfer(&work_area->usb_descriptor_blocks.cmd_mass_storage_reset,
+                             (uint8_t *)0,
+                             work_area->storage_device_info.device_address,
+                             work_area->storage_device_info.max_packet_size,
+                             &amount_transferred);
+
+  xprintf(" %02X, %02X ", result, amount_transferred);
+
+  delay(60*2);
+
+  result = do_scsi_cmd(work_area, device_address, lun, cmd_buffer_length, send_receive_buffer_length, cmd_buffer, send_receive_buffer, send);
+
+  xprintf(" [[%d]] ", result);
+
+  return result;
 }
 
 // device_address => a
