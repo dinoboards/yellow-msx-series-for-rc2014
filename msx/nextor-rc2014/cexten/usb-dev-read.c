@@ -1,6 +1,7 @@
 #include "ch376.h"
 #include "scsi.h"
 #include "work-area.h"
+#include <delay.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -21,24 +22,32 @@
 #define NEXTOR_ERR_IPARM 0x8B
 
 uint8_t scsi_read(const uint8_t number_of_sectors, const uint32_t sector_number, uint8_t *const buffer) {
-  memcpy(buffer, &scsi_packet_read, sizeof(_scsi_packet_read_write));
+  uint8_t          result = 101;
+  work_area *const p      = get_work_area();
 
-  ((_scsi_packet_read_write *)buffer)->transfer_len[1] = number_of_sectors;
-  ((_scsi_packet_read_write *)buffer)->lba[0]          = sector_number >> 24;
-  ((_scsi_packet_read_write *)buffer)->lba[1]          = sector_number >> 16;
-  ((_scsi_packet_read_write *)buffer)->lba[2]          = sector_number >> 8;
-  ((_scsi_packet_read_write *)buffer)->lba[3]          = sector_number;
+  for (uint8_t retries = 4; retries != 0; retries--) {
+    memcpy(buffer, &scsi_packet_read, sizeof(_scsi_packet_read_write));
 
-  work_area *const p = get_work_area();
+    ((_scsi_packet_read_write *)buffer)->transfer_len[1] = number_of_sectors;
+    ((_scsi_packet_read_write *)buffer)->lba[0]          = sector_number >> 24;
+    ((_scsi_packet_read_write *)buffer)->lba[1]          = sector_number >> 16;
+    ((_scsi_packet_read_write *)buffer)->lba[2]          = sector_number >> 8;
+    ((_scsi_packet_read_write *)buffer)->lba[3]          = sector_number;
 
-  return do_scsi_cmd(&p->ch376,
-                     p->ch376.storage_device_info.device_address,
-                     0,
-                     sizeof(_scsi_packet_read_write),
-                     (number_of_sectors)*512,
-                     buffer,
-                     buffer,
-                     false);
+    if ((result = do_scsi_cmd(&p->ch376,
+                              p->ch376.storage_device_info.device_address,
+                              0,
+                              sizeof(_scsi_packet_read_write),
+                              (number_of_sectors)*512,
+                              buffer,
+                              buffer,
+                              false)) == CH_USB_INT_SUCCESS)
+      return result;
+
+    delay(2);
+  }
+
+  return result;
 }
 
 uint8_t usb_dev_read(const uint8_t  lun,
