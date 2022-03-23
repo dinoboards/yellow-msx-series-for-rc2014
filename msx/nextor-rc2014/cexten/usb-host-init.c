@@ -290,8 +290,10 @@ uint8_t ch_set_configuration(work_area *const work_area,
 }
 
 uint8_t scsi_max_luns(work_area *const work_area, uint16_t *const amount_transferred) {
-  *amount_transferred                                          = 0;
+  *amount_transferred = 0;
+
   work_area->ch376.usb_descriptor_blocks.cmd_get_max_luns.dat4 = work_area->ch376.storage_device_info.interface_id;
+
   return hw_control_transfer(&work_area->ch376.usb_descriptor_blocks.cmd_get_max_luns,
                              (uint8_t *)&work_area->ch376.scsi_device_info.max_luns,
                              work_area->ch376.storage_device_info.device_address,
@@ -807,10 +809,12 @@ void scsi_request_sense(ch376_work_area *const work_area) __z88dk_fastcall {
               work_area->scsi_device_info.buffer,
               false);
 }
+
 void wait_for_mounting(ch376_work_area *const work_area) __z88dk_fastcall {
-  while (scsi_test(work_area)) {
+  while (!scsi_test(work_area)) {
     scsi_request_sense(work_area);
   }
+
   work_area->usb_mounted = true;
   work_area->unknown     = true;
   work_area->dsk_changed = true;
