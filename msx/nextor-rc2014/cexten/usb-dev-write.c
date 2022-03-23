@@ -25,7 +25,7 @@ uint8_t scsi_write(const uint8_t number_of_sectors, const uint32_t sector_number
   work_area *const p      = get_work_area();
   uint8_t          result = 101;
 
-  for (uint8_t retries = 4; retries != 0; retries--) {
+  // for (uint8_t retries = 4; retries != 0; retries--) {
     _scsi_packet_read_write cmd_packet;
     cmd_packet = scsi_packet_write;
 
@@ -35,7 +35,7 @@ uint8_t scsi_write(const uint8_t number_of_sectors, const uint32_t sector_number
     cmd_packet.lba[2]          = sector_number >> 8;
     cmd_packet.lba[3]          = sector_number;
 
-    if ((result = do_scsi_cmd(&p->ch376,
+    if ((result = do_scsi_cmd_with_reset_retry(&p->ch376,
                               p->ch376.storage_device_info.device_address,
                               0,
                               sizeof(_scsi_packet_read_write),
@@ -44,9 +44,6 @@ uint8_t scsi_write(const uint8_t number_of_sectors, const uint32_t sector_number
                               (uint8_t *)buffer,
                               true)) == CH_USB_INT_SUCCESS)
       return result;
-
-    delay(2);
-  }
 
   return result;
 }
