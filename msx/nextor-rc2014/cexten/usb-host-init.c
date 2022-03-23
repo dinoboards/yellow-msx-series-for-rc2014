@@ -60,7 +60,7 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   *amount_received = count;
 
   if (count > buffer_size) {
-    yprintf(0, "buffer too small %d, %d", count, buffer_size);
+    yprintf(0, "buffer too small %d, %d ", count, buffer_size);
     count = buffer_size;
   }
 
