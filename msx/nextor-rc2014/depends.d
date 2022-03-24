@@ -15,7 +15,7 @@
 ./bin/usb-dev-info.c.asm: usbfdd/usb-dev-info.c usbfdd/nextor.h
 ./bin/usb-dev-status.c.asm: usbfdd/usb-dev-status.c
 ./bin/debuggin.c.asm: usbfdd/debuggin.c usbfdd/debuggin.h usbfdd/usb.h \
- usbfdd/print.h
+ usbfdd/work-area.h usbfdd/print.h
 ./bin/usb-dev-read.c.asm: cexten/usb-dev-read.c cexten/ch376.h cexten/scsi.h \
  cexten/work-area.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h cexten/print.h

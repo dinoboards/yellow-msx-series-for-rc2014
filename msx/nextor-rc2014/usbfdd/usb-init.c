@@ -36,18 +36,18 @@ const endpoint_descriptor *parse_endpoint(ch376_work_area *const work_area, cons
     if (pEndpoint->bmAttributes & 0x02) {
       if (pEndpoint->bmAttributes & 0x01) { // 3 -> Interrupt
         if (pEndpoint->bEndpointAddress & 0x80) {
-          work_area->interrupt_in.number = pEndpoint->bEndpointAddress & 0x07;
-          work_area->interrupt_in.toggle = 0;
+          work_area->interrupt_in.number          = pEndpoint->bEndpointAddress & 0x07;
+          work_area->interrupt_in.toggle          = 0;
           work_area->interrupt_in.max_packet_size = pEndpoint->wMaxPacketSize;
         }
       } else {
         if (pEndpoint->bEndpointAddress & 0x80) {
-          work_area->bulk_in.number = pEndpoint->bEndpointAddress & 0x07;
-          work_area->bulk_in.toggle = 0;
+          work_area->bulk_in.number          = pEndpoint->bEndpointAddress & 0x07;
+          work_area->bulk_in.toggle          = 0;
           work_area->bulk_in.max_packet_size = pEndpoint->wMaxPacketSize;
         } else {
-          work_area->bulk_out.number = pEndpoint->bEndpointAddress & 0x07;
-          work_area->bulk_out.toggle = 0;
+          work_area->bulk_out.number          = pEndpoint->bEndpointAddress & 0x07;
+          work_area->bulk_out.toggle          = 0;
           work_area->bulk_out.max_packet_size = pEndpoint->wMaxPacketSize;
         }
       }
@@ -55,7 +55,7 @@ const endpoint_descriptor *parse_endpoint(ch376_work_area *const work_area, cons
   }
 
   logEndPointDescription(pEndpoint);
-  return pEndpoint+1;
+  return pEndpoint + 1;
 }
 
 const interface_descriptor *parse_interface(ch376_work_area *const work_area, const interface_descriptor *p) {
@@ -78,7 +78,7 @@ const interface_descriptor *parse_interface(ch376_work_area *const work_area, co
   return (interface_descriptor *)pEndpoint;
 }
 
-uint8_t parse_config(ch376_work_area *const work_area, const device_descriptor* const desc, const uint8_t config_index) {
+uint8_t parse_config(ch376_work_area *const work_area, const device_descriptor *const desc, const uint8_t config_index) {
   uint16_t                 amount_transferred = 0;
   uint8_t                  result;
   uint8_t                  buffer[140];
@@ -86,18 +86,22 @@ uint8_t parse_config(ch376_work_area *const work_area, const device_descriptor* 
 
   printf("Config %d: ", config_index);
 
-  result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), 0, &amount_transferred);
+  result = hw_get_config_descriptor(
+      config_desc, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), 0, &amount_transferred);
   if (result != CH_USB_INT_SUCCESS) {
     yprintf(15, "X1 (%d)", result);
     return result;
   }
   logConfig(config_desc);
 
-  result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, config_desc->wTotalLength, 0, &amount_transferred);
+  result = hw_get_config_descriptor(
+      config_desc, config_index, desc->bMaxPacketSize0, config_desc->wTotalLength, 0, &amount_transferred);
   if (result != CH_USB_INT_SUCCESS) {
     yprintf(15, "X2 (%d)", result);
     return result;
   }
+
+  work_area->bConfigurationvalue = config_desc->bConfigurationvalue;
 
   const interface_descriptor *p = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
   for (uint8_t interface_index = 0; interface_index < config_desc->bNumInterfaces; interface_index++) {
@@ -112,14 +116,15 @@ uint8_t parse_config(ch376_work_area *const work_area, const device_descriptor* 
 }
 
 uint8_t read_all_configs(ch376_work_area *const work_area) {
-  device_descriptor        desc;
-  uint8_t                  result;
+  device_descriptor desc;
+  uint8_t           result;
 
   result = hw_get_description(0, &desc);
   printf("Desc %02x\r\n", result);
   logDevice(&desc);
 
-  work_area->usb_device = 0;
+  work_area->usb_device      = 0;
+  work_area->max_packet_size = desc.bMaxPacketSize0;
 
   for (uint8_t config_index = 0; config_index < desc.bNumConfigurations; config_index++) {
     if ((result = parse_config(work_area, &desc, config_index)) != CH_USB_INT_SUCCESS)
@@ -134,8 +139,10 @@ uint8_t read_all_configs(ch376_work_area *const work_area) {
 
 uint8_t usb_host_init() {
   __asm__("EI");
+  uint8_t                result;
+  work_area *const       p         = get_work_area();
+  ch376_work_area *const work_area = &p->ch376;
 
-  work_area *const p = get_work_area();
   printf("usb_host_init %p\r\n", p);
 
   ch376_reset();
@@ -153,6 +160,19 @@ uint8_t usb_host_init() {
   delay(10);
 
   read_all_configs(&p->ch376);
+
+  if (p->ch376.usb_device) {
+    if ((result = hw_set_address(DEVICE_ADDRESS, work_area->max_packet_size)) != CH_USB_INT_SUCCESS) {
+      yprintf(15, "X2 (%d)", result);
+      return result;
+    }
+
+    if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, DEVICE_ADDRESS)) !=
+        CH_USB_INT_SUCCESS) {
+      yprintf(15, "X3 (%d)", result);
+      return result;
+    }
+  }
 
   logWorkArea(&p->ch376);
   return 0;
