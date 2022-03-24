@@ -57,10 +57,19 @@ uint8_t read_all_configs() {
       return result;
     }
 
+    uint8_t floppyInterface = 255;
+    uint8_t massStorageInterface = 255;
+
     const interface_descriptor *p = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
     for (uint8_t interface_index = 0; interface_index < config_desc->bNumInterfaces; interface_index++) {
       printf("Interf %d: ", interface_index);
       logInterface(p);
+
+      if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 6 && p->bInterfaceProtocol == 80 && massStorageInterface == 255)
+        massStorageInterface = p->bInterfaceNumber;
+
+      if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0 && floppyInterface == 255)
+        floppyInterface = p->bInterfaceNumber;
 
       const endpoint_descriptor *pEndpoint = (const endpoint_descriptor *)(p + 1);
 
@@ -72,6 +81,14 @@ uint8_t read_all_configs() {
       }
 
       p = (interface_descriptor *)pEndpoint;
+    }
+
+    if (floppyInterface != 255) {
+      printf("Detected floppy at %d", floppyInterface);
+    }
+
+    if (massStorageInterface != 255) {
+      printf("Detected mass storage at %d", massStorageInterface);
     }
   }
 
