@@ -30,76 +30,113 @@ inline uint8_t usb_host_bus_reset() {
   return true;
 }
 
-uint8_t read_all_configs() {
-  device_descriptor        desc;
-  uint8_t                  result;
+const endpoint_descriptor *parse_endpoint(ch376_work_area *const work_area, const endpoint_descriptor const *pEndpoint) {
+
+  if (work_area->usb_device == USB_IS_FLOPPY) {
+    if (pEndpoint->bmAttributes & 0x02) {
+      if (pEndpoint->bmAttributes & 0x01) { // 3 -> Interrupt
+        if (pEndpoint->bEndpointAddress & 0x80) {
+          work_area->interrupt_in.number = pEndpoint->bEndpointAddress & 0x07;
+          work_area->interrupt_in.toggle = 0;
+          work_area->interrupt_in.max_packet_size = pEndpoint->wMaxPacketSize;
+        }
+      } else {
+        if (pEndpoint->bEndpointAddress & 0x80) {
+          work_area->bulk_in.number = pEndpoint->bEndpointAddress & 0x07;
+          work_area->bulk_in.toggle = 0;
+          work_area->bulk_in.max_packet_size = pEndpoint->wMaxPacketSize;
+        } else {
+          work_area->bulk_out.number = pEndpoint->bEndpointAddress & 0x07;
+          work_area->bulk_out.toggle = 0;
+          work_area->bulk_out.max_packet_size = pEndpoint->wMaxPacketSize;
+        }
+      }
+    }
+  }
+
+  logEndPointDescription(pEndpoint);
+  return pEndpoint+1;
+}
+
+const interface_descriptor *parse_interface(ch376_work_area *const work_area, const interface_descriptor *p) {
+  logInterface(p);
+
+  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 6 && p->bInterfaceProtocol == 80 && work_area->usb_device == 0)
+    work_area->usb_device = USB_IS_MASS_STORAGE;
+
+  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0 && work_area->usb_device == 0)
+    work_area->usb_device = USB_IS_FLOPPY;
+
+  const endpoint_descriptor *pEndpoint = (const endpoint_descriptor *)(p + 1);
+
+  for (uint8_t endpoint_index = 0; endpoint_index < p->bNumEndpoints; endpoint_index++) {
+    printf("end %p: ", endpoint_index);
+
+    pEndpoint = parse_endpoint(work_area, pEndpoint);
+  }
+
+  return (interface_descriptor *)pEndpoint;
+}
+
+uint8_t parse_config(ch376_work_area *const work_area, const device_descriptor* const desc, const uint8_t config_index) {
   uint16_t                 amount_transferred = 0;
+  uint8_t                  result;
   uint8_t                  buffer[140];
   config_descriptor *const config_desc = (config_descriptor *)buffer;
+
+  printf("Config %d: ", config_index);
+
+  result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), 0, &amount_transferred);
+  if (result != CH_USB_INT_SUCCESS) {
+    yprintf(15, "X1 (%d)", result);
+    return result;
+  }
+  logConfig(config_desc);
+
+  result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, config_desc->wTotalLength, 0, &amount_transferred);
+  if (result != CH_USB_INT_SUCCESS) {
+    yprintf(15, "X2 (%d)", result);
+    return result;
+  }
+
+  const interface_descriptor *p = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
+  for (uint8_t interface_index = 0; interface_index < config_desc->bNumInterfaces; interface_index++) {
+    printf("Interf %d: ", interface_index);
+    p = parse_interface(work_area, p);
+
+    if (work_area->usb_device)
+      break;
+  }
+
+  return CH_USB_INT_SUCCESS;
+}
+
+uint8_t read_all_configs(ch376_work_area *const work_area) {
+  device_descriptor        desc;
+  uint8_t                  result;
 
   result = hw_get_description(0, &desc);
   printf("Desc %02x\r\n", result);
   logDevice(&desc);
 
+  work_area->usb_device = 0;
+
   for (uint8_t config_index = 0; config_index < desc.bNumConfigurations; config_index++) {
-    printf("Config %d: ", config_index);
-
-    result = hw_get_config_descriptor(config_desc, config_index, desc.bMaxPacketSize0, sizeof(config_descriptor), 0, &amount_transferred);
-    if (result != CH_USB_INT_SUCCESS) {
-      yprintf(15, "X1 (%d)", result);
+    if ((result = parse_config(work_area, &desc, config_index)) != CH_USB_INT_SUCCESS)
       return result;
-    }
-    logConfig(config_desc);
 
-    result = hw_get_config_descriptor(config_desc, config_index, desc.bMaxPacketSize0, config_desc->wTotalLength, 0, &amount_transferred);
-    if (result != CH_USB_INT_SUCCESS) {
-      yprintf(15, "X2 (%d)", result);
-      return result;
-    }
-
-    uint8_t floppyInterface = 255;
-    uint8_t massStorageInterface = 255;
-
-    const interface_descriptor *p = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
-    for (uint8_t interface_index = 0; interface_index < config_desc->bNumInterfaces; interface_index++) {
-      printf("Interf %d: ", interface_index);
-      logInterface(p);
-
-      if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 6 && p->bInterfaceProtocol == 80 && massStorageInterface == 255)
-        massStorageInterface = p->bInterfaceNumber;
-
-      if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0 && floppyInterface == 255)
-        floppyInterface = p->bInterfaceNumber;
-
-      const endpoint_descriptor *pEndpoint = (const endpoint_descriptor *)(p + 1);
-
-      for (uint8_t endpoint_index = 0; endpoint_index < p->bNumEndpoints; endpoint_index++) {
-        printf("end %p: ", endpoint_index);
-
-        logEndPointDescription(pEndpoint);
-        pEndpoint++;
-      }
-
-      p = (interface_descriptor *)pEndpoint;
-    }
-
-    if (floppyInterface != 255) {
-      printf("Detected floppy at %d", floppyInterface);
-    }
-
-    if (massStorageInterface != 255) {
-      printf("Detected mass storage at %d", massStorageInterface);
-    }
+    if (work_area->usb_device)
+      break;
   }
 
-  return 0;
+  return CH_USB_INT_SUCCESS;
 }
 
 uint8_t usb_host_init() {
-  // work_area *const p = get_work_area();
-  // printf("usb_host_init %p\r\n", p);
-
   __asm__("EI");
+
+  work_area *const p = get_work_area();
+  printf("usb_host_init %p\r\n", p);
 
   ch376_reset();
 
@@ -115,7 +152,8 @@ uint8_t usb_host_init() {
   usb_host_bus_reset();
   delay(10);
 
-  read_all_configs();
+  read_all_configs(&p->ch376);
 
+  logWorkArea(&p->ch376);
   return 0;
 }
