@@ -1,6 +1,13 @@
 
+./bin/usb-dev-read.c.asm: usbfdd/usb-dev-read.c usbfdd/nextor.h
+./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h
+./bin/usb-init.c.asm: usbfdd/usb-init.c
+./bin/usb-dev-write.c.asm: usbfdd/usb-dev-write.c usbfdd/nextor.h
+./bin/usb-dev-info.c.asm: usbfdd/usb-dev-info.c usbfdd/nextor.h
+./bin/usb-dev-status.c.asm: usbfdd/usb-dev-status.c
 ./bin/usb-dev-read.c.asm: cexten/usb-dev-read.c cexten/ch376.h cexten/scsi.h \
- cexten/work-area.h cexten/print.h
+ cexten/work-area.h ../apps/libraries/delay/delay.h \
+ ../apps/libraries/msxbios/system_vars.h cexten/print.h
 ./bin/usb-lun-info.c.asm: cexten/usb-lun-info.c cexten/ch376.h cexten/print.h \
  cexten/scsi.h cexten/work-area.h
 ./bin/print.c.asm: cexten/print.c cexten/print.h
@@ -21,6 +28,7 @@
 ./bin/cfdrv.o: ./cfdrv.asm
 ./bin/drvend.o: ./drvend.asm
 ./bin/ch376drv.o: ./ch376drv.asm
+./bin/crt.o: ./usbfdd/crt.asm
 ./bin/version.o: ./version.asm
 ./bin/scsi_helpers.o: ./scsi_helpers.asm 
 ./bin/musicdriver.o: ./musicdriver.asm
