@@ -59,7 +59,7 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   setCommand(CH_CMD_RD_USB_DATA0);
   uint8_t count    = CH376_DATA_PORT;
   *amount_received = count;
-  uint8_t extra = 0;
+  uint8_t extra    = 0;
 
   if (count > buffer_size) {
     extra = count - buffer_size;
@@ -74,7 +74,7 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   while (count-- != 0)
     *buffer++ = CH376_DATA_PORT;
 
-  while(extra-- != 0)   // do we need to flush buffer?
+  while (extra-- != 0) // do we need to flush buffer?
     CH376_DATA_PORT;
 
   return buffer;
@@ -601,7 +601,7 @@ inline void hw_configure_nak_retry() {
 }
 
 inline uint8_t usb_host_bus_reset() {
-  for(int8_t i = 64; i > 0; i++)
+  for (int8_t i = 64; i > 0; i++)
     CH376_DATA_PORT;
 
   ch376_set_usb_mode(CH_MODE_HOST);
@@ -636,8 +636,8 @@ inline uint8_t usb_host_bus_reset() {
 
 #define HUB_DESCRIPTOR_SIZE 0
 #define FEATURE_SELECTOR    0
-#define PLACEHOLDER_PORT                0
-#define PLACEHOLDER_VALUE               0
+#define PLACEHOLDER_PORT    0
+#define PLACEHOLDER_VALUE   0
 
 #define STORAGE_INTERFACE_ID 0
 
@@ -694,37 +694,39 @@ _scsi_command_block_wrapper *prepare_cbw(ch376_work_area *const work_area,
 // send_receive_buffer => IX
 // send => Cy
 uint8_t do_scsi_cmd_with_reset_retry(ch376_work_area *const work_area,
-                    const uint8_t          device_address,
-                    const uint8_t          lun,
-                    const uint8_t          cmd_buffer_length,
-                    const uint16_t         send_receive_buffer_length,
-                    uint8_t *const         cmd_buffer,
-                    uint8_t *const         send_receive_buffer,
-                    bool                   send) {
+                                     const uint8_t          device_address,
+                                     const uint8_t          lun,
+                                     const uint8_t          cmd_buffer_length,
+                                     const uint16_t         send_receive_buffer_length,
+                                     uint8_t *const         cmd_buffer,
+                                     uint8_t *const         send_receive_buffer,
+                                     bool                   send) {
 
   uint16_t amount_transferred = 0;
 
-  uint8_t result = do_scsi_cmd(work_area, device_address, lun, cmd_buffer_length, send_receive_buffer_length, cmd_buffer, send_receive_buffer, send);
+  uint8_t result = do_scsi_cmd(
+      work_area, device_address, lun, cmd_buffer_length, send_receive_buffer_length, cmd_buffer, send_receive_buffer, send);
 
   if (result == CH_USB_INT_SUCCESS)
     return result;
 
-  delay(60*2);
+  delay(60 * 2);
   yprintf(0, "XXXXXXXXX (%d) ", send);
 
   work_area->usb_descriptor_blocks.cmd_mass_storage_reset.dat4 = work_area->storage_device_info.interface_id;
 
   result = hw_control_transfer(&work_area->usb_descriptor_blocks.cmd_mass_storage_reset,
-                             (uint8_t *)0,
-                             work_area->storage_device_info.device_address,
-                             work_area->storage_device_info.max_packet_size,
-                             &amount_transferred);
+                               (uint8_t *)0,
+                               work_area->storage_device_info.device_address,
+                               work_area->storage_device_info.max_packet_size,
+                               &amount_transferred);
 
   xprintf(" %02X, %02X ", result, amount_transferred);
 
-  delay(60*2);
+  delay(60 * 2);
 
-  result = do_scsi_cmd(work_area, device_address, lun, cmd_buffer_length, send_receive_buffer_length, cmd_buffer, send_receive_buffer, send);
+  result = do_scsi_cmd(
+      work_area, device_address, lun, cmd_buffer_length, send_receive_buffer_length, cmd_buffer, send_receive_buffer, send);
 
   xprintf(" [[%d]] ", result);
 
@@ -891,7 +893,7 @@ void wait_for_mounting(ch376_work_area *const work_area) __z88dk_fastcall {
   work_area->dsk_changed = true;
 }
 
-uint8_t usb_host_init() {
+uint8_t usb_host_init_old() {
   work_area *const p = get_work_area();
   printf("usb_host_init %p\r\n", p);
 

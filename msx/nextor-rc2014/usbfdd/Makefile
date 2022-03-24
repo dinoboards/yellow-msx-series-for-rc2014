@@ -10,12 +10,18 @@ ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 --allow-unsafe-read
 endif
 
 LIBS := -I./../apps/libraries/msxbios/ -I./../apps/libraries/delay/
-SRC := ./cexten/
+SRC := ./usbfdd/
 
 ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
 
-$(BINDIR)spike.bin: $(BINDIR)crt.o $(BINDIR)debuggin.c.o $(BINDIR)fdd_init.c.o $(BINDIR)usb-dev-write.c.o $(BINDIR)usb-dev-read.c.o $(BINDIR)usb-dev-status.c.o $(BINDIR)usb-lun-info.c.o $(BINDIR)usb-dev-info.c.o $(BINDIR)scsi.c.o $(BINDIR)print.o $(BINDIR)print.c.o $(BINDIR)usb-host-init.c.o $(BINDIR)work-area.o ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
-
+$(BINDIR)spike.bin: $(BINDIR)crt.o \
+ 	$(BINDIR)usb-init.c.o \
+ 	$(BINDIR)usb-dev-info.c.o \
+ 	$(BINDIR)usb-dev-read.c.o \
+ 	$(BINDIR)usb-dev-write.c.o \
+ 	$(BINDIR)usb-dev-status.c.o \
+ 	$(BINDIR)usb-lun-info.c.o \
+	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
 
 $(BINDIR)%.bin:
 	@mkdir -p $(dir $@)
