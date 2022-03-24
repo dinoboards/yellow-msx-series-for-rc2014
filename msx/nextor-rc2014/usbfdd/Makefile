@@ -21,6 +21,13 @@ $(BINDIR)spike.bin: $(BINDIR)crt.o \
  	$(BINDIR)usb-dev-write.c.o \
  	$(BINDIR)usb-dev-status.c.o \
  	$(BINDIR)usb-lun-info.c.o \
+ 	$(BINDIR)work-area.o \
+ 	$(BINDIR)work-area.c.o \
+ 	$(BINDIR)print.o \
+ 	$(BINDIR)print.c.o \
+ 	$(BINDIR)ch376.c.o \
+ 	$(BINDIR)debuggin.c.o \
+ 	$(BINDIR)hw.c.o \
 	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
 
 $(BINDIR)%.bin:
