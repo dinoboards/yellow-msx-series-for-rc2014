@@ -86,12 +86,12 @@ extern uint8_t do_scsi_cmd(ch376_work_area *const work_area,
                            bool                   send);
 
 extern uint8_t do_scsi_cmd_with_reset_retry(ch376_work_area *const work_area,
-                           const uint8_t          device_address,
-                           const uint8_t          lun,
-                           const uint8_t          cmd_buffer_length,
-                           const uint16_t         send_receive_buffer_length,
-                           uint8_t *const         cmd_buffer,
-                           uint8_t *const         send_receive_buffer,
-                           bool                   send);
+                                            const uint8_t          device_address,
+                                            const uint8_t          lun,
+                                            const uint8_t          cmd_buffer_length,
+                                            const uint16_t         send_receive_buffer_length,
+                                            uint8_t *const         cmd_buffer,
+                                            uint8_t *const         send_receive_buffer,
+                                            bool                   send);
 
 #endif
