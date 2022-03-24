@@ -5,7 +5,11 @@
 
 #include "print.h"
 
-uint8_t hw_control_transfer(const usb_descriptor_block *const cmd_packet, uint8_t *const buffer, const uint8_t device_address, const uint8_t max_packet_size, uint16_t *const amount_transferred) {
+uint8_t hw_control_transfer(const usb_descriptor_block *const cmd_packet,
+                            uint8_t *const                    buffer,
+                            const uint8_t                     device_address,
+                            const uint8_t                     max_packet_size,
+                            uint16_t *const                   amount_transferred) {
   uint8_t result;
   uint8_t toggle;
 
@@ -30,7 +34,8 @@ retry:
     return 98;
   }
 
-  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, max_packet_size, 0, amount_transferred, &toggle) : ch_data_out_transfer(buffer, cmd_packet->wLength, max_packet_size, 0, &toggle);
+  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, max_packet_size, 0, amount_transferred, &toggle)
+                      : ch_data_out_transfer(buffer, cmd_packet->wLength, max_packet_size, 0, &toggle);
 
   if ((result & 0x2f) == USB_STALL) {
     yprintf(10, "Stall");
@@ -72,7 +77,8 @@ uint8_t hw_get_description(const uint8_t device_address, device_descriptor *cons
   uint8_t  result;
   uint16_t amount_received = 0;
 
-  result = hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, device_address, sizeof(device_descriptor), &amount_received);
+  result = hw_control_transfer(
+      &cmd_get_device_descriptor, (uint8_t *)buffer, device_address, sizeof(device_descriptor), &amount_received);
 
   if (result != CH_USB_INT_SUCCESS)
     return result;
@@ -84,16 +90,48 @@ uint8_t hw_get_description(const uint8_t device_address, device_descriptor *cons
 #define PLACEHOLDER_CONFIGURATION_ID       0
 #define PLACEHOLDER_CONFIG_DESCRIPTOR_SIZE (sizeof(config_descriptor))
 
-usb_descriptor_block cmd_get_config_descriptor = {0x80, 6, {PLACEHOLDER_CONFIGURATION_ID, 2}, {0, 0}, PLACEHOLDER_CONFIG_DESCRIPTOR_SIZE};
+usb_descriptor_block cmd_get_config_descriptor = {
+    0x80, 6, {PLACEHOLDER_CONFIGURATION_ID, 2}, {0, 0}, PLACEHOLDER_CONFIG_DESCRIPTOR_SIZE};
 
-uint8_t hw_get_config_descriptor(config_descriptor *const buffer, const uint8_t config_index, const uint8_t max_packet_size, const uint8_t buffer_size, const uint8_t device_address, uint16_t *const amount_transferred) {
+uint8_t hw_get_config_descriptor(config_descriptor *const buffer,
+                                 const uint8_t            config_index,
+                                 const uint8_t            max_packet_size,
+                                 const uint8_t            buffer_size,
+                                 const uint8_t            device_address,
+                                 uint16_t *const          amount_transferred) {
 
   usb_descriptor_block cmd;
-  cmd = cmd_get_config_descriptor;
+  cmd                 = cmd_get_config_descriptor;
   *amount_transferred = 0;
 
   cmd.bValue[0] = config_index;
-  cmd.wLength = (uint16_t)buffer_size;
+  cmd.wLength   = (uint16_t)buffer_size;
 
   return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size, amount_transferred);
+}
+
+#define PLACEHOLDER_TARGET_DEVICE_ADDRESS 0
+usb_descriptor_block cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 0}, {0, 0}, 0};
+
+uint8_t hw_set_address(const uint8_t usb_address, const uint8_t packet_size) {
+  uint16_t amount_transferred = 0;
+
+  usb_descriptor_block cmd;
+  cmd           = cmd_set_address;
+  cmd.bValue[0] = usb_address;
+
+  return hw_control_transfer(&cmd, (uint8_t *)0, 0, packet_size, &amount_transferred);
+}
+
+#define PLACEHOLDER_CONFIGURATION_VALUE 0
+usb_descriptor_block usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
+
+uint8_t usb_set_configuration(const uint8_t configuration_value, const uint8_t packet_size, const uint8_t device_address) {
+  uint16_t amount_transferred = 0;
+
+  usb_descriptor_block cmd;
+  cmd           = usb_cmd_set_configuration;
+  cmd.bValue[0] = configuration_value;
+
+  return hw_control_transfer(&cmd, (uint8_t *)0, device_address, packet_size, &amount_transferred);
 }

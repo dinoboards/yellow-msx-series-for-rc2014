@@ -10,10 +10,10 @@ extern void print_init_screen0(const uint16_t p) __z88dk_fastcall;
 
 #define printf __printf
 
-#define yprintf(p, fmt, ...)     \
-  {                              \
-    print_init_screen0(p);       \
-    xprintf(fmt, ##__VA_ARGS__); \
+#define yprintf(p, fmt, ...)                                                                                                \
+  {                                                                                                                         \
+    print_init_screen0(p);                                                                                                  \
+    xprintf(fmt, ##__VA_ARGS__);                                                                                            \
   }
 
 #endif
