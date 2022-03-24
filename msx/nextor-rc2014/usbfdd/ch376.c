@@ -21,9 +21,9 @@ uint8_t ch_wait_int_and_get_result() {
 
 uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received) {
   setCommand(CH_CMD_RD_USB_DATA0);
-  uint8_t count = CH376_DATA_PORT;
+  uint8_t count    = CH376_DATA_PORT;
   *amount_received = count;
-  uint8_t extra = 0;
+  uint8_t extra    = 0;
 
   if (count > buffer_size) {
     extra = count - buffer_size;
@@ -106,7 +106,12 @@ void ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t t
   CH376_DATA_PORT = endpoint << 4 | pid;
 }
 
-uint8_t ch_data_in_transfer(uint8_t *buffer, int16_t data_length, const uint8_t max_packet_size, const uint8_t endpoint, uint16_t *const amount_received, uint8_t *const toggle) {
+uint8_t ch_data_in_transfer(uint8_t *       buffer,
+                            int16_t         data_length,
+                            const uint8_t   max_packet_size,
+                            const uint8_t   endpoint,
+                            uint16_t *const amount_received,
+                            uint8_t *const  toggle) {
   uint8_t count;
   uint8_t result;
   do {
@@ -124,12 +129,16 @@ uint8_t ch_data_in_transfer(uint8_t *buffer, int16_t data_length, const uint8_t 
   return CH_USB_INT_SUCCESS;
 }
 
-uint8_t ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, const uint8_t max_packet_size, const uint8_t endpoint, uint8_t *const toggle) {
+uint8_t ch_data_out_transfer(const uint8_t *buffer,
+                             int16_t        buffer_length,
+                             const uint8_t  max_packet_size,
+                             const uint8_t  endpoint,
+                             uint8_t *const toggle) {
   uint8_t result;
 
   while (buffer_length > 0) {
     const uint8_t size = max_packet_size < buffer_length ? max_packet_size : buffer_length;
-    buffer = ch_write_data(buffer, size);
+    buffer             = ch_write_data(buffer, size);
     buffer_length -= size;
     ch_issue_token(endpoint, CH_PID_OUT, *toggle ? 0x40 : 0x00);
     if ((result = ch_wait_int_and_get_result()) != CH_USB_INT_SUCCESS)

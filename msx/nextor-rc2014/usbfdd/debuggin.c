@@ -4,12 +4,28 @@
 #include "work-area.h"
 
 void logInterface(const interface_descriptor *const p) {
-  printf("len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,clas=%d,sub=%d,prot=%d,int=%d\r\n", p->bLength, p->bDescriptorType, p->bInterfaceNumber, p->bAlternateSetting, p->bNumEndpoints, p->bInterfaceClass, p->bInterfaceSubClass,
-         p->bInterfaceProtocol, p->iInterface);
+  printf("len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,clas=%d,sub=%d,prot=%d,int=%d\r\n",
+         p->bLength,
+         p->bDescriptorType,
+         p->bInterfaceNumber,
+         p->bAlternateSetting,
+         p->bNumEndpoints,
+         p->bInterfaceClass,
+         p->bInterfaceSubClass,
+         p->bInterfaceProtocol,
+         p->iInterface);
 }
 
 void logConfig(const config_descriptor *const p) {
-  printf("len=%d,typ=%d,tlen=%d,numI=%d,bcfgv=%d,icfg=%d,bmA=%d,max=%d\r\n", p->bLength, p->bDescriptorType, p->wTotalLength, p->bNumInterfaces, p->bConfigurationvalue, p->iConfiguration, p->bmAttributes, p->bMaxPower);
+  printf("len=%d,typ=%d,tlen=%d,numI=%d,bcfgv=%d,icfg=%d,bmA=%d,max=%d\r\n",
+         p->bLength,
+         p->bDescriptorType,
+         p->wTotalLength,
+         p->bNumInterfaces,
+         p->bConfigurationvalue,
+         p->iConfiguration,
+         p->bmAttributes,
+         p->bMaxPower);
 }
 
 void logDevice(const device_descriptor *const p) {
@@ -29,13 +45,18 @@ void logDevice(const device_descriptor *const p) {
   printf("num=%d\r\n", p->bNumConfigurations);
 }
 
-void logEndPointDescription(const endpoint_descriptor *const p) { printf("len=%d,t=%d,e=%d,a=%d,size=%d,intv=%d\r\n", p->bLength, p->bDescriptorType, p->bEndpointAddress, p->bmAttributes, p->wMaxPacketSize, p->bInterval); }
+void logEndPointDescription(const endpoint_descriptor *const p) {
+  printf("len=%d,t=%d,e=%d,a=%d,size=%d,intv=%d\r\n",
+         p->bLength,
+         p->bDescriptorType,
+         p->bEndpointAddress,
+         p->bmAttributes,
+         p->wMaxPacketSize,
+         p->bInterval);
+}
 
-void logEndPointParam(const endpoint_param* const p) {
-  printf("(num=%d,tog=%d,max=%d)",
-  p->number,
-  p->toggle,
-  p->max_packet_size);
+void logEndPointParam(const endpoint_param *const p) {
+  printf("(num=%d,tog=%d,max=%d)", p->number, p->toggle, p->max_packet_size);
 }
 
 void logWorkArea(const ch376_work_area *const p) {
