@@ -1,6 +1,7 @@
 #include "debuggin.h"
 #include "print.h"
 #include "usb.h"
+#include "work-area.h"
 
 void logInterface(const interface_descriptor *const p) {
   printf("len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,clas=%d,sub=%d,prot=%d,int=%d\r\n", p->bLength, p->bDescriptorType, p->bInterfaceNumber, p->bAlternateSetting, p->bNumEndpoints, p->bInterfaceClass, p->bInterfaceSubClass,
@@ -29,6 +30,24 @@ void logDevice(const device_descriptor *const p) {
 }
 
 void logEndPointDescription(const endpoint_descriptor *const p) { printf("len=%d,t=%d,e=%d,a=%d,size=%d,intv=%d\r\n", p->bLength, p->bDescriptorType, p->bEndpointAddress, p->bmAttributes, p->wMaxPacketSize, p->bInterval); }
+
+void logEndPointParam(const endpoint_param* const p) {
+  printf("(num=%d,tog=%d,max=%d)",
+  p->number,
+  p->toggle,
+  p->max_packet_size);
+}
+
+void logWorkArea(const ch376_work_area *const p) {
+  printf("dev: %d: BLKOUT: ", p->usb_device);
+  logEndPointParam(&p->bulk_out);
+  printf(" BLKIN: ");
+  logEndPointParam(&p->bulk_in);
+  printf(" INTIN: ");
+  logEndPointParam(&p->interrupt_in);
+  printf("\r\n");
+}
+
 // void logUsbDevice(const _usb_device_info *const info) {
 //   printf("add %d, id %d, cfg: %d, max: %d, inend: %d, outend: %d, intog: %d, outog: %d\r\n",
 //          info->device_address,
