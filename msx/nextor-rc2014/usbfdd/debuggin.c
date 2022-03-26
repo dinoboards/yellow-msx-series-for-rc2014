@@ -59,13 +59,17 @@ void logEndPointParam(const endpoint_param *const p) {
   printf("(num=%d,tog=%d,max=%d)", p->number, p->toggle, p->max_packet_size);
 }
 
-void logWorkArea(const ch376_work_area *const p) {
-  printf("dev: %d: BLKOUT: ", p->usb_device);
-  logEndPointParam(&p->bulk_out);
+void logWorkArea(const _usb_state *const p) {
+  printf("dev: %d: max: %d, cfg: %d, int: %d, BLKOUT: ",
+         p->usb_device,
+         p->max_packet_size,
+         p->bConfigurationvalue,
+         p->interface_number);
+  logEndPointParam(&p->endpoints[ENDPOINT_BULK_OUT]);
   printf(" BLKIN: ");
-  logEndPointParam(&p->bulk_in);
+  logEndPointParam(&p->endpoints[ENDPOINT_BULK_IN]);
   printf(" INTIN: ");
-  logEndPointParam(&p->interrupt_in);
+  logEndPointParam(&p->endpoints[ENDPOINT_INTERRUPT_IN]);
   printf("\r\n");
 }
 
