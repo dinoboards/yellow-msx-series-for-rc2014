@@ -5,19 +5,6 @@
 
 // ; USB error codes, these are the ones returned by the
 // ; USB routines that are documented as "Output: USB Error code"
-#define USB_ERR_OK                          0
-#define USB_ERR_NAK                         1
-#define USB_ERR_STALL                       2
-#define USB_ERR_TIMEOUT                     3
-#define USB_ERR_DATA_ERROR                  4
-#define USB_ERR_NO_DEVICE                   5
-#define USB_ERR_PANIC_BUTTON_PRESSED        6
-#define USB_ERR_UNEXPECTED_STATUS_FROM_HOST 7
-#define USB_ERR_MAX                         7
-#define USB_FILERR_MIN                      0x41
-#define USB_ERR_OPEN_DIR                    0x41
-#define USB_ERR_MISS_FILE                   0x42
-#define USB_FILERR_MAX                      0x0B4
 
 #define DEVICE_ADDRESS 1
 
