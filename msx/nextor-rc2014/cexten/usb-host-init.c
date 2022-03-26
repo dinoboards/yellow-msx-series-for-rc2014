@@ -45,7 +45,7 @@ void ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t t
 
 uint8_t ch_wait_int_and_get_result() {
   uint8_t counter = 255;
-  while ((CH376_DATA_PORT & 0x80) && --counter != 0)
+  while ((CH376_COMMAND_PORT & 0x80) && --counter != 0)
     ;
 
   setCommand(CH_CMD_GET_STATUS);
@@ -893,7 +893,7 @@ void wait_for_mounting(ch376_work_area *const work_area) __z88dk_fastcall {
   work_area->dsk_changed = true;
 }
 
-uint8_t usb_host_init_old() {
+uint8_t usb_host_init() {
   work_area *const p = get_work_area();
   printf("usb_host_init %p\r\n", p);
 

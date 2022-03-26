@@ -4,13 +4,13 @@
  ../apps/libraries/msxbios/system_vars.h usbfdd/print.h
 ./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h
 ./bin/ufi.c.asm: usbfdd/ufi.c usbfdd/ufi.h usbfdd/work-area.h usbfdd/hw.h \
- usbfdd/usb.h
+ usbfdd/ch376.h usbfdd/usb.h
 ./bin/usb-init.c.asm: usbfdd/usb-init.c usbfdd/ch376.h usbfdd/hw.h usbfdd/usb.h \
  usbfdd/work-area.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h usbfdd/print.h
 ./bin/print.c.asm: usbfdd/print.c usbfdd/print.h
 ./bin/usb-dev-write.c.asm: usbfdd/usb-dev-write.c usbfdd/nextor.h
-./bin/hw.c.asm: usbfdd/hw.c usbfdd/hw.h usbfdd/usb.h usbfdd/ch376.h \
+./bin/hw.c.asm: usbfdd/hw.c usbfdd/hw.h usbfdd/ch376.h usbfdd/usb.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
  usbfdd/print.h
 ./bin/work-area.c.asm: usbfdd/work-area.c usbfdd/work-area.h
