@@ -1,7 +1,6 @@
 #include "ufi.h"
 #include "hw.h"
 #include "usb.h"
-#include "work-area.h"
 #include <stdbool.h>
 #include <stdlib.h>
 

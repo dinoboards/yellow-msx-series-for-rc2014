@@ -15,7 +15,7 @@ inline void hw_configure_nak_retry() {
   CH376_DATA_PORT = 0x8F; // Retry NAKs indefinitely (default)
 }
 
-uint8_t usb_host_bus_reset() {
+usb_error usb_host_bus_reset() {
   ch376_set_usb_mode(CH_MODE_HOST);
   delay(60 / 4);
 
@@ -27,7 +27,7 @@ uint8_t usb_host_bus_reset() {
 
   hw_configure_nak_retry();
 
-  return true;
+  return USB_ERR_OK;
 }
 
 const endpoint_descriptor *parse_endpoint(_usb_state *const work_area, const endpoint_descriptor const *pEndpoint) {
@@ -80,7 +80,7 @@ const interface_descriptor *parse_interface(_usb_state *const work_area, const i
   return (interface_descriptor *)pEndpoint;
 }
 
-uint8_t parse_config(_usb_state *const work_area, const device_descriptor *const desc, const uint8_t config_index) {
+usb_error parse_config(_usb_state *const work_area, const device_descriptor *const desc, const uint8_t config_index) {
   uint16_t                 amount_transferred = 0;
   uint8_t                  result;
   uint8_t                  buffer[140];
@@ -90,7 +90,7 @@ uint8_t parse_config(_usb_state *const work_area, const device_descriptor *const
 
   result = hw_get_config_descriptor(
       config_desc, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), 0, &amount_transferred);
-  if (result != CH_USB_INT_SUCCESS) {
+  if (result != USB_ERR_OK) {
     yprintf(15, "X1 (%d)", result);
     return result;
   }
@@ -98,7 +98,7 @@ uint8_t parse_config(_usb_state *const work_area, const device_descriptor *const
 
   result = hw_get_config_descriptor(
       config_desc, config_index, desc->bMaxPacketSize0, config_desc->wTotalLength, 0, &amount_transferred);
-  if (result != CH_USB_INT_SUCCESS) {
+  if (result != USB_ERR_OK) {
     yprintf(15, "X2 (%d)", result);
     return result;
   }
@@ -114,10 +114,10 @@ uint8_t parse_config(_usb_state *const work_area, const device_descriptor *const
       break;
   }
 
-  return CH_USB_INT_SUCCESS;
+  return USB_ERR_OK;
 }
 
-uint8_t read_all_configs(_usb_state *const work_area) {
+usb_error read_all_configs(_usb_state *const work_area) {
   device_descriptor desc;
   uint8_t           result;
 
@@ -129,14 +129,14 @@ uint8_t read_all_configs(_usb_state *const work_area) {
   work_area->max_packet_size = desc.bMaxPacketSize0;
 
   for (uint8_t config_index = 0; config_index < desc.bNumConfigurations; config_index++) {
-    if ((result = parse_config(work_area, &desc, config_index)) != CH_USB_INT_SUCCESS)
+    if ((result = parse_config(work_area, &desc, config_index)) != USB_ERR_OK)
       return result;
 
     if (work_area->usb_device)
       break;
   }
 
-  return CH_USB_INT_SUCCESS;
+  return USB_ERR_OK;
 }
 
 uint8_t usb_host_init() {
@@ -164,13 +164,13 @@ uint8_t usb_host_init() {
   read_all_configs(&p->ch376);
 
   if (p->ch376.usb_device) {
-    if ((result = hw_set_address(DEVICE_ADDRESS, work_area->max_packet_size)) != CH_USB_INT_SUCCESS) {
+    if ((result = hw_set_address(DEVICE_ADDRESS, work_area->max_packet_size)) != USB_ERR_OK) {
       yprintf(15, "X2 (%d)", result);
       return result;
     }
 
     if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, DEVICE_ADDRESS)) !=
-        CH_USB_INT_SUCCESS) {
+        USB_ERR_OK) {
       yprintf(15, "X3 (%d)", result);
       return result;
     }
