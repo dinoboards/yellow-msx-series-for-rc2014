@@ -28,6 +28,7 @@ $(BINDIR)spike.bin: $(BINDIR)crt.o \
  	$(BINDIR)ch376.c.o \
  	$(BINDIR)debuggin.c.o \
  	$(BINDIR)hw.c.o \
+ 	$(BINDIR)ufi.c.o \
 	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
 
 $(BINDIR)%.bin:

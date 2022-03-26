@@ -3,6 +3,8 @@
 ./bin/ch376.c.asm: usbfdd/ch376.c usbfdd/ch376.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h usbfdd/print.h
 ./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h
+./bin/ufi.c.asm: usbfdd/ufi.c usbfdd/ufi.h usbfdd/work-area.h usbfdd/hw.h \
+ usbfdd/usb.h
 ./bin/usb-init.c.asm: usbfdd/usb-init.c usbfdd/ch376.h usbfdd/hw.h usbfdd/usb.h \
  usbfdd/work-area.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h usbfdd/print.h

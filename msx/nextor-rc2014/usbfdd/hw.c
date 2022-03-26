@@ -5,11 +5,21 @@
 
 #include "print.h"
 
-uint8_t hw_control_transfer(const usb_descriptor_block *const cmd_packet,
-                            uint8_t *const                    buffer,
-                            const uint8_t                     device_address,
-                            const uint8_t                     max_packet_size,
-                            uint16_t *const                   amount_transferred) {
+// ; The size and direction of the transfer are taken from the contents
+// ; of the setup packet.
+// ; -----------------------------------------------------------------------------
+// ; Input:  cmd_packet => HL = Address of a 8 byte buffer with the setup packet
+// ;         buffer => DE = Address of the input or output data buffer
+// ;         device_address => A  = Device address
+// ;         max_packet_size => B  = Maximum packet size for endpoint 0
+// ; Output: A  = USB error code
+// ;         BC = Amount of data actually transferred (if IN transfer and no error)
+
+uint8_t hw_control_transfer(const setup_packet *const cmd_packet,
+                            uint8_t *const            buffer,
+                            const uint8_t             device_address,
+                            const uint8_t             max_packet_size,
+                            uint16_t *const           amount_transferred) {
   uint8_t result;
   uint8_t toggle;
 
@@ -18,7 +28,7 @@ retry:
   setCommand(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
-  ch_write_data((const uint8_t *)cmd_packet, sizeof(usb_descriptor_block));
+  ch_write_data((const uint8_t *)cmd_packet, sizeof(setup_packet));
 
   ch_issue_token(0, CH_PID_SETUP, 0);
 
@@ -71,7 +81,7 @@ retry:
   return result;
 }
 
-usb_descriptor_block cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
+setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
 
 uint8_t hw_get_description(const uint8_t device_address, device_descriptor *const buffer) {
   uint8_t  result;
@@ -90,7 +100,7 @@ uint8_t hw_get_description(const uint8_t device_address, device_descriptor *cons
 #define PLACEHOLDER_CONFIGURATION_ID       0
 #define PLACEHOLDER_CONFIG_DESCRIPTOR_SIZE (sizeof(config_descriptor))
 
-usb_descriptor_block cmd_get_config_descriptor = {
+setup_packet cmd_get_config_descriptor = {
     0x80, 6, {PLACEHOLDER_CONFIGURATION_ID, 2}, {0, 0}, PLACEHOLDER_CONFIG_DESCRIPTOR_SIZE};
 
 uint8_t hw_get_config_descriptor(config_descriptor *const buffer,
@@ -100,7 +110,7 @@ uint8_t hw_get_config_descriptor(config_descriptor *const buffer,
                                  const uint8_t            device_address,
                                  uint16_t *const          amount_transferred) {
 
-  usb_descriptor_block cmd;
+  setup_packet cmd;
   cmd                 = cmd_get_config_descriptor;
   *amount_transferred = 0;
 
@@ -111,12 +121,12 @@ uint8_t hw_get_config_descriptor(config_descriptor *const buffer,
 }
 
 #define PLACEHOLDER_TARGET_DEVICE_ADDRESS 0
-usb_descriptor_block cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 0}, {0, 0}, 0};
+setup_packet cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 0}, {0, 0}, 0};
 
 uint8_t hw_set_address(const uint8_t usb_address, const uint8_t packet_size) {
   uint16_t amount_transferred = 0;
 
-  usb_descriptor_block cmd;
+  setup_packet cmd;
   cmd           = cmd_set_address;
   cmd.bValue[0] = usb_address;
 
@@ -124,12 +134,12 @@ uint8_t hw_set_address(const uint8_t usb_address, const uint8_t packet_size) {
 }
 
 #define PLACEHOLDER_CONFIGURATION_VALUE 0
-usb_descriptor_block usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
+setup_packet usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
 
 uint8_t usb_set_configuration(const uint8_t configuration_value, const uint8_t packet_size, const uint8_t device_address) {
   uint16_t amount_transferred = 0;
 
-  usb_descriptor_block cmd;
+  setup_packet cmd;
   cmd           = usb_cmd_set_configuration;
   cmd.bValue[0] = configuration_value;
 

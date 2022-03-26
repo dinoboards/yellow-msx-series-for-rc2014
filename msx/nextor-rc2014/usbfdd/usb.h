@@ -13,13 +13,13 @@
 //   uint8_t byte;
 // } usb_request_type;
 
-typedef struct _usb_descriptor_block {
+typedef struct _setup_packet {
   uint8_t  bmRequestType;
   uint8_t  bRequest;
   uint8_t  bValue[2];
   uint8_t  bIndex[2];
   uint16_t wLength;
-} usb_descriptor_block;
+} setup_packet;
 
 typedef struct _device_descriptor {
   uint8_t  bLength;
