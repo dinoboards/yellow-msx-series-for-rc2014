@@ -1,6 +1,7 @@
 #ifndef __DEBUGGIN
 #define __DEBUGGIN
 
+#include "ufi.h"
 #include "usb.h"
 #include "work-area.h"
 
@@ -14,6 +15,8 @@ extern void logEndPointDescription(const endpoint_descriptor *const p);
 
 extern void logWorkArea(const _usb_state *const p);
 
-// extern void logUsbDevice(const _usb_device_info *const info);
+extern void logInquiryResponse(const ufi_inquiry_response *const response);
+
+extern void logSetupPacket(const setup_packet *const cmd_packet);
 
 #endif

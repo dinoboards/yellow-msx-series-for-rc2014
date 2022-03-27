@@ -8,6 +8,7 @@
 
 #include "debuggin.h"
 #include "print.h"
+#include <string.h>
 
 inline void hw_configure_nak_retry() {
   setCommand(CH_CMD_SET_RETRY);
@@ -141,7 +142,7 @@ usb_error read_all_configs(_usb_state *const work_area) {
 
 uint8_t usb_host_init() {
   __asm__("EI");
-  uint8_t           result;
+  usb_error         result;
   work_area *const  p         = get_work_area();
   _usb_state *const work_area = &p->ch376;
 
@@ -177,6 +178,12 @@ uint8_t usb_host_init() {
   }
 
   logWorkArea(&p->ch376);
+  ufi_inquiry_response response;
+  memset(&response, 0, sizeof(ufi_inquiry_response));
+
+  result = ufi_inquiry(&p->ch376, &response);
+  printf("inq: %02x\r\n", result);
+  logInquiryResponse(&response);
 
   return true;
 }

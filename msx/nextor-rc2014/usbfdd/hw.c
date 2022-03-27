@@ -33,14 +33,14 @@ retry:
   ch_issue_token(0, CH_PID_SETUP, 0);
 
   if ((result = ch_wait_int_and_get_result()) != USB_ERR_OK) {
-    yprintf(10, "Err1 (%d) ", result);
+    yprintf(0, "Err1 (%d) ", result);
     return result;
   }
 
   const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
 
   if (transferIn && buffer == 0) {
-    yprintf(10, "Err2 ");
+    yprintf(0, "Err2 ");
     return 98;
   }
 
@@ -48,7 +48,7 @@ retry:
                       : ch_data_out_transfer(buffer, cmd_packet->wLength, max_packet_size, 0, &toggle);
 
   if (result != USB_ERR_OK) {
-    yprintf(10, "Err3 (%d) ", result);
+    yprintf(0, "Err3 (%d) ", result);
     return result;
   }
 
@@ -79,8 +79,6 @@ usb_error hw_get_description(const uint8_t device_address, device_descriptor *co
   if (result != USB_ERR_OK)
     return result;
 
-  printf("received = %d\r\n", amount_received);
-
   return USB_ERR_OK;
 }
 
@@ -98,8 +96,9 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
                                    uint16_t *const          amount_transferred) {
 
   setup_packet cmd;
-  cmd                 = cmd_get_config_descriptor;
-  *amount_transferred = 0;
+  cmd = cmd_get_config_descriptor;
+  if (amount_transferred)
+    *amount_transferred = 0;
 
   cmd.bValue[0] = config_index;
   cmd.wLength   = (uint16_t)buffer_size;
@@ -131,4 +130,55 @@ usb_error usb_set_configuration(const uint8_t configuration_value, const uint8_t
   cmd.bValue[0] = configuration_value;
 
   return hw_control_transfer(&cmd, (uint8_t *)0, device_address, packet_size, &amount_transferred);
+}
+
+// ; -----------------------------------------------------------------------------
+// ; HW_DATA_IN_TRANSFER: Perform a USB data IN transfer
+// ; -----------------------------------------------------------------------------
+// ; Input:  buffer => HL = Address of a buffer for the received data
+// ;         buffer_size => BC = Data length
+// ;         device_address => A  = Device address
+// ;         max_packet_size => D  = Maximum packet size for the endpoint
+// ;         endpoint => E  = Endpoint number
+// ;         *toggle => Cy = Current state of the toggle bit
+// ; Output: A  = USB error code
+// ;         amount_received => BC = Amount of data actually received (only if no error)
+// ;         *toggle Cy = New state of the toggle bit (even on error)
+
+usb_error hw_data_in_transfer(uint8_t *       buffer,
+                              const uint16_t  buffer_size,
+                              const uint8_t   max_packet_size,
+                              const uint8_t   endpoint,
+                              const uint8_t   device_address,
+                              uint16_t *const amount_received,
+                              uint8_t *const  toggle) {
+
+  setCommand(CH_CMD_SET_USB_ADDR);
+  CH376_DATA_PORT = device_address;
+
+  return ch_data_in_transfer(buffer, buffer_size, max_packet_size, endpoint, amount_received, toggle);
+}
+
+// ; -----------------------------------------------------------------------------
+// ; HW_DATA_OUT_TRANSFER: Perform a USB data OUT transfer
+// ; -----------------------------------------------------------------------------
+// ; Input:  HL = Address of a buffer for the data to be sent
+// ;         BC = Data length
+// ;         A  = Device address
+// ;         D  = Maximum packet size for the endpoint
+// ;         E  = Endpoint number
+// ;         Cy = Current state of the toggle bit
+// ; Output: A  = USB error code
+// ;         Cy = New state of the toggle bit (even on error)
+usb_error hw_data_out_transfer(const uint8_t *buffer,
+                               uint16_t       buffer_size,
+                               const uint8_t  max_packet_size,
+                               const uint8_t  endpoint,
+                               const uint8_t  device_address,
+                               uint8_t *const toggle) {
+
+  setCommand(CH_CMD_SET_USB_ADDR);
+  CH376_DATA_PORT = device_address;
+
+  return ch_data_out_transfer(buffer, buffer_size, max_packet_size, endpoint, toggle);
 }

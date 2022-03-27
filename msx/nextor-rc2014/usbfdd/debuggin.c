@@ -2,6 +2,7 @@
 #include "print.h"
 #include "usb.h"
 #include "work-area.h"
+#include <string.h>
 
 void logInterface(const interface_descriptor *const p) {
   printf("len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,clas=%d,sub=%d,prot=%d,int=%d\r\n",
@@ -73,14 +74,37 @@ void logWorkArea(const _usb_state *const p) {
   printf("\r\n");
 }
 
-// void logUsbDevice(const _usb_device_info *const info) {
-//   printf("add %d, id %d, cfg: %d, max: %d, inend: %d, outend: %d, intog: %d, outog: %d\r\n",
-//          info->device_address,
-//          info->interface_id,
-//          info->config_id,
-//          info->max_packet_size,
-//          info->data_bulk_in_endpoint_id,
-//          info->data_bulk_out_endpoint_id,
-//          info->data_bulk_in_endpoint_toggle,
-//          info->data_bulk_out_endpoint_toggle);
-// }
+void logInquiryResponse(const ufi_inquiry_response *const response) {
+  printf("typ: %d,", response->device_type);
+  printf("rmb: %d", response->removable_media);
+  printf("ans: %d,", response->ansi_version);
+  printf("ecma: %d,", response->ecma);
+  printf("iso: %d,", response->iso_version);
+  printf("fmt: %d,", response->response_data_format);
+  printf("add: %d,", response->additional_length);
+
+  char buffer[20];
+
+  memset(buffer, 0, 20);
+  memcpy(buffer, response->product_id, 16);
+  print_string(buffer);
+  print_string(",");
+
+  memset(buffer, 0, 20);
+  memcpy(buffer, response->vendor_information, 8);
+  print_string(buffer);
+  print_string(",");
+
+  memset(buffer, 0, 20);
+  memcpy(buffer, response->product_revision, 4);
+  print_string(buffer);
+  print_string("\r\n");
+}
+
+void logSetupPacket(const setup_packet *const cmd_packet) {
+  printf("bmRequestType = %d", cmd_packet->bmRequestType);
+  printf("bRequest = %d", cmd_packet->bRequest);
+  printf("bValue = %d,%d", cmd_packet->bValue[0], cmd_packet->bValue[1]);
+  printf("bIndex = %d,%d", cmd_packet->bIndex[0], cmd_packet->bIndex[1]);
+  printf("wLength = %d\r\n", cmd_packet->wLength);
+}
