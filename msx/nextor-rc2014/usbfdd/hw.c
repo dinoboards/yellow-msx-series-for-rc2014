@@ -20,11 +20,10 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
                               const uint8_t             device_address,
                               const uint8_t             max_packet_size,
                               uint16_t *const           amount_transferred) {
-  usb_error result;
-  uint8_t   toggle;
+  usb_error      result;
+  endpoint_param endpoint = {0, 1, max_packet_size};
 
 retry:
-  toggle = 1;
   setCommand(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
@@ -44,8 +43,8 @@ retry:
     return 98;
   }
 
-  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, max_packet_size, 0, amount_transferred, &toggle)
-                      : ch_data_out_transfer(buffer, cmd_packet->wLength, max_packet_size, 0, &toggle);
+  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint, amount_transferred)
+                      : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
 
   if (result != USB_ERR_OK) {
     yprintf(0, "Err3 (%d) ", result);
@@ -145,18 +144,16 @@ usb_error usb_set_configuration(const uint8_t configuration_value, const uint8_t
 // ;         amount_received => BC = Amount of data actually received (only if no error)
 // ;         *toggle Cy = New state of the toggle bit (even on error)
 
-usb_error hw_data_in_transfer(uint8_t *       buffer,
-                              const uint16_t  buffer_size,
-                              const uint8_t   max_packet_size,
-                              const uint8_t   endpoint,
-                              const uint8_t   device_address,
-                              uint16_t *const amount_received,
-                              uint8_t *const  toggle) {
+usb_error hw_data_in_transfer(uint8_t *             buffer,
+                              const uint16_t        buffer_size,
+                              const uint8_t         device_address,
+                              endpoint_param *const endpoint,
+                              uint16_t *const       amount_received) {
 
   setCommand(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
-  return ch_data_in_transfer(buffer, buffer_size, max_packet_size, endpoint, amount_received, toggle);
+  return ch_data_in_transfer(buffer, buffer_size, endpoint, amount_received);
 }
 
 // ; -----------------------------------------------------------------------------
@@ -170,15 +167,13 @@ usb_error hw_data_in_transfer(uint8_t *       buffer,
 // ;         Cy = Current state of the toggle bit
 // ; Output: A  = USB error code
 // ;         Cy = New state of the toggle bit (even on error)
-usb_error hw_data_out_transfer(const uint8_t *buffer,
-                               uint16_t       buffer_size,
-                               const uint8_t  max_packet_size,
-                               const uint8_t  endpoint,
-                               const uint8_t  device_address,
-                               uint8_t *const toggle) {
+usb_error hw_data_out_transfer(const uint8_t *       buffer,
+                               uint16_t              buffer_size,
+                               const uint8_t         device_address,
+                               endpoint_param *const endpoint) {
 
   setCommand(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
-  return ch_data_out_transfer(buffer, buffer_size, max_packet_size, endpoint, toggle);
+  return ch_data_out_transfer(buffer, buffer_size, endpoint);
 }

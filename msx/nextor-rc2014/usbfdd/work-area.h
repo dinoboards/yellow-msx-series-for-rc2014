@@ -1,6 +1,7 @@
 #ifndef __WORK_AREA
 #define __WORK_AREA
 
+#include "ch376.h"
 #include <stdlib.h>
 
 #define DEVICE_ADDRESS 1
@@ -8,12 +9,6 @@
 typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2 } usb_device_type;
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
-
-typedef struct _endpoint_param {
-  uint8_t number;
-  uint8_t toggle;
-  uint8_t max_packet_size;
-} endpoint_param;
 
 typedef struct __usb_state {
   endpoint_param  endpoints[3];

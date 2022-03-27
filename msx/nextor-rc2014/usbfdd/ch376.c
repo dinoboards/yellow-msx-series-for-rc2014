@@ -141,18 +141,17 @@ void ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t t
   CH376_DATA_PORT = endpoint << 4 | pid;
 }
 
-usb_error ch_data_in_transfer(uint8_t *       buffer,
-                              int16_t         buffer_size,
-                              const uint8_t   max_packet_size,
-                              const uint8_t   endpoint,
-                              uint16_t *const amount_received,
-                              uint8_t *const  toggle) {
+usb_error
+ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const endpoint, uint16_t *const amount_received) {
   uint8_t   count;
   usb_error result;
 
+  const uint8_t number          = endpoint->number;
+  const uint8_t max_packet_size = endpoint->max_packet_size;
+
   do {
-    ch_issue_token(endpoint, CH_PID_IN, *toggle ? 0x80 : 0x00);
-    *toggle = ~*toggle;
+    ch_issue_token(number, CH_PID_IN, endpoint->toggle ? 0x80 : 0x00);
+    endpoint->toggle = ~endpoint->toggle;
 
     if ((result = ch_wait_int_and_get_result()) != USB_ERR_OK)
       return result;
@@ -165,22 +164,20 @@ usb_error ch_data_in_transfer(uint8_t *       buffer,
   return USB_ERR_OK;
 }
 
-usb_error ch_data_out_transfer(const uint8_t *buffer,
-                               int16_t        buffer_length,
-                               const uint8_t  max_packet_size,
-                               const uint8_t  endpoint,
-                               uint8_t *const toggle) {
-  usb_error result;
+usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint) {
+  usb_error     result;
+  const uint8_t number          = endpoint->number;
+  const uint8_t max_packet_size = endpoint->max_packet_size;
 
   while (buffer_length > 0) {
     const uint8_t size = max_packet_size < buffer_length ? max_packet_size : buffer_length;
     buffer             = ch_write_data(buffer, size);
     buffer_length -= size;
-    ch_issue_token(endpoint, CH_PID_OUT, *toggle ? 0x40 : 0x00);
+    ch_issue_token(number, CH_PID_OUT, endpoint->toggle ? 0x40 : 0x00);
     if ((result = ch_wait_int_and_get_result()) != USB_ERR_OK)
       return result;
 
-    *toggle = ~*toggle;
+    endpoint->toggle = ~endpoint->toggle;
   }
 
   return USB_ERR_OK;
