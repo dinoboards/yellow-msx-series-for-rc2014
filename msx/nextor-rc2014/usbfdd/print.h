@@ -3,6 +3,9 @@
 
 #include <stdlib.h>
 
+extern void print_string(const char *p) __z88dk_fastcall;
+extern void x_print_string(const char *p) __z88dk_fastcall;
+
 int __printf(const char *fmt, ...);
 int xprintf(const char *fmt, ...);
 

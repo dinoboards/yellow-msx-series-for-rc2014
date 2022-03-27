@@ -61,7 +61,7 @@ usb_error ch_wait_int_and_get_result() {
 uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received) {
   setCommand(CH_CMD_RD_USB_DATA0);
   uint8_t count = CH376_DATA_PORT;
-  if (!amount_received)
+  if (amount_received)
     *amount_received = count;
   uint8_t extra = 0;
 
@@ -142,13 +142,14 @@ void ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t t
 }
 
 usb_error ch_data_in_transfer(uint8_t *       buffer,
-                              int16_t         data_length,
+                              int16_t         buffer_size,
                               const uint8_t   max_packet_size,
                               const uint8_t   endpoint,
                               uint16_t *const amount_received,
                               uint8_t *const  toggle) {
   uint8_t   count;
   usb_error result;
+
   do {
     ch_issue_token(endpoint, CH_PID_IN, *toggle ? 0x80 : 0x00);
     *toggle = ~*toggle;
@@ -156,10 +157,10 @@ usb_error ch_data_in_transfer(uint8_t *       buffer,
     if ((result = ch_wait_int_and_get_result()) != USB_ERR_OK)
       return result;
 
-    buffer = ch_read_data(buffer, data_length, &count);
-    data_length -= count;
+    buffer = ch_read_data(buffer, buffer_size, &count);
+    buffer_size -= count;
     *amount_received += count;
-  } while (data_length > 0 && count <= max_packet_size);
+  } while (buffer_size > 0 && count <= max_packet_size);
 
   return USB_ERR_OK;
 }

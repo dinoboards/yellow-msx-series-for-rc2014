@@ -250,7 +250,8 @@ uint8_t ch_get_device_descriptor(const work_area *const   work_area,
                                  device_descriptor *const buffer,
                                  const uint8_t            device_address,
                                  uint16_t *const          amount_transferred) {
-  *amount_transferred = 0;
+  if (amount_transferred)
+    *amount_transferred = 0;
   return hw_control_transfer(&work_area->ch376.usb_descriptor_blocks.cmd_get_device_descriptor,
                              (uint8_t *)buffer,
                              device_address,
@@ -270,7 +271,10 @@ uint8_t ch_get_config_descriptor(work_area *const         work_area,
                                  const uint8_t            buffer_size,
                                  const uint8_t            device_address,
                                  uint16_t *const          amount_transferred) {
-  *amount_transferred                                                     = 0;
+
+  if (amount_transferred)
+    *amount_transferred = 0;
+
   work_area->ch376.usb_descriptor_blocks.cmd_get_config_descriptor.dat2   = config_index;
   work_area->ch376.usb_descriptor_blocks.cmd_get_config_descriptor.length = (uint16_t)buffer_size;
 
@@ -289,7 +293,10 @@ uint8_t ch_set_configuration(work_area *const work_area,
                              const uint8_t    max_packet_size,
                              const uint8_t    device_address,
                              uint16_t *const  amount_transferred) {
-  *amount_transferred                                               = 0;
+
+  if (amount_transferred)
+    *amount_transferred = 0;
+
   work_area->ch376.usb_descriptor_blocks.cmd_set_configuration.dat2 = config_id;
 
   return hw_control_transfer(&work_area->ch376.usb_descriptor_blocks.cmd_set_configuration,
@@ -300,7 +307,8 @@ uint8_t ch_set_configuration(work_area *const work_area,
 }
 
 uint8_t scsi_max_luns(work_area *const work_area, uint16_t *const amount_transferred) {
-  *amount_transferred = 0;
+  if (amount_transferred)
+    *amount_transferred = 0;
 
   work_area->ch376.usb_descriptor_blocks.cmd_get_max_luns.dat4 = work_area->ch376.storage_device_info.interface_id;
 
