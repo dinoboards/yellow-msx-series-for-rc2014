@@ -32,10 +32,16 @@ typedef enum {
 #define CH_CMD_GET_IC_VER  0x01
 #define CH_CMD_ENTER_SLEEP 0x03
 
-#define CH_CMD_SET_SPEED             0x04
-#define CH_CMD_RESET_ALL             0x05
-#define CH_CMD_CHECK_EXIST           0x06
-#define CH_CMD_SET_RETRY             0x0B
+#define CH_CMD_SET_SPEED   0x04
+#define CH_CMD_RESET_ALL   0x05
+#define CH_CMD_CHECK_EXIST 0x06
+
+// #define CH_CMD_SET_RETRY             0x0B
+#define CH_CMD_WRITE_VAR8 0x0B
+#define CH_VAR_NAK_RETRY  0x25
+
+typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
+
 #define CH_CMD_SET_USB_ADDR          0x13
 #define CH_CMD_SET_USB_MODE          0x15
 #define CH_CMD_GET_STATUS            0x22
@@ -93,5 +99,15 @@ extern usb_error
 ch_data_in_transfer(uint8_t *buffer, int16_t data_length, endpoint_param *const endpoint, uint16_t *const amount_received);
 
 extern usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint);
+
+inline void ch_configure_nak_retry(const ch_nak_retry_type retry, const uint8_t number_of_retries) {
+  setCommand(CH_CMD_WRITE_VAR8);
+  CH376_DATA_PORT = CH_VAR_NAK_RETRY;
+  CH376_DATA_PORT = retry << 6 | (number_of_retries & 0x1F);
+}
+
+#define ch_configure_nak_retry_indefinite() ch_configure_nak_retry(CH_NAK_RETRY_INDEFINITE, 0x1F)
+#define ch_configure_nak_retry_disable()    ch_configure_nak_retry(CH_NAK_RETRY_DONT, 0x1F)
+#define ch_configure_nak_retry_3s()         ch_configure_nak_retry(CH_NAK_RETRY_3S, 0x1F)
 
 #endif
