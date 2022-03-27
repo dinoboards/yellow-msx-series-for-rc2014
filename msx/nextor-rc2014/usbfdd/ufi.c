@@ -34,8 +34,7 @@ usb_error usb_data_in_transfer(_usb_state *const       usb_state,
 
   endpoint_param *const endpoint = &usb_state->endpoints[endpoint_type];
 
-  result = hw_data_in_transfer(
-      buffer, buffer_size, endpoint->max_packet_size, endpoint->number, DEVICE_ADDRESS, amount_received, &endpoint->toggle);
+  result = hw_data_in_transfer(buffer, buffer_size, DEVICE_ADDRESS, endpoint, amount_received);
 
   if (result == USB_ERR_OK)
     return result;
@@ -67,8 +66,7 @@ usb_error usb_data_out_transfer(_usb_state *const usb_state, uint8_t *const buff
 
   endpoint_param *const endpoint = &usb_state->endpoints[ENDPOINT_BULK_OUT];
 
-  result = hw_data_out_transfer(
-      buffer, buffer_size, endpoint->max_packet_size, endpoint->number, DEVICE_ADDRESS, &endpoint->toggle);
+  result = hw_data_out_transfer(buffer, buffer_size, DEVICE_ADDRESS, endpoint);
 
   if (result == USB_ERR_STALL) {
     usb_clear_endpoint_halt(usb_state, ENDPOINT_BULK_OUT);

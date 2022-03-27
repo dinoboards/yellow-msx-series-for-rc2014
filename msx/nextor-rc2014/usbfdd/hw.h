@@ -25,19 +25,15 @@ extern usb_error hw_set_address(const uint8_t usb_address, const uint8_t packet_
 extern usb_error
 usb_set_configuration(const uint8_t configuration_value, const uint8_t packet_size, const uint8_t device_address);
 
-usb_error hw_data_in_transfer(uint8_t *       buffer,
-                              const uint16_t  buffer_size,
-                              const uint8_t   max_packet_size,
-                              const uint8_t   endpoint,
-                              const uint8_t   device_address,
-                              uint16_t *const amount_received,
-                              uint8_t *const  toggle);
+usb_error hw_data_in_transfer(uint8_t *             buffer,
+                              const uint16_t        buffer_size,
+                              const uint8_t         device_address,
+                              endpoint_param *const endpoint,
+                              uint16_t *const       amount_received);
 
-usb_error hw_data_out_transfer(const uint8_t *buffer,
-                               uint16_t       buffer_size,
-                               const uint8_t  max_packet_size,
-                               const uint8_t  endpoint,
-                               const uint8_t  device_address,
-                               uint8_t *const toggle);
+usb_error hw_data_out_transfer(const uint8_t *       buffer,
+                               uint16_t              buffer_size,
+                               const uint8_t         device_address,
+                               endpoint_param *const endpoint);
 
 #endif

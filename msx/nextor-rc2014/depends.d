@@ -14,7 +14,7 @@
 ./bin/hw.c.asm: usbfdd/hw.c usbfdd/hw.h usbfdd/ch376.h usbfdd/usb.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
  usbfdd/print.h
-./bin/work-area.c.asm: usbfdd/work-area.c usbfdd/work-area.h
+./bin/work-area.c.asm: usbfdd/work-area.c usbfdd/work-area.h usbfdd/ch376.h
 ./bin/usb-dev-info.c.asm: usbfdd/usb-dev-info.c usbfdd/nextor.h
 ./bin/usb-dev-status.c.asm: usbfdd/usb-dev-status.c
 ./bin/debuggin.c.asm: usbfdd/debuggin.c usbfdd/debuggin.h usbfdd/ufi.h \
