@@ -4,9 +4,6 @@
 
 #include "print.h"
 
-extern void print_string(const char *p) __z88dk_fastcall;
-extern void x_print_string(const char *p) __z88dk_fastcall;
-
 #define MAX_PRINT_STRING_LEN 200
 
 int __printf(const char *fmt, ...) {
