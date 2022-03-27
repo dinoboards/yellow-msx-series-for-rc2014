@@ -10,12 +10,6 @@
 #include "print.h"
 #include <string.h>
 
-inline void hw_configure_nak_retry() {
-  setCommand(CH_CMD_SET_RETRY);
-  CH376_DATA_PORT = 0x25;
-  CH376_DATA_PORT = 0x8F; // Retry NAKs indefinitely (default)
-}
-
 usb_error usb_host_bus_reset() {
   ch376_set_usb_mode(CH_MODE_HOST);
   delay(60 / 4);
@@ -26,7 +20,7 @@ usb_error usb_host_bus_reset() {
   ch376_set_usb_mode(CH_MODE_HOST);
   delay(60 / 4);
 
-  hw_configure_nak_retry();
+  ch_configure_nak_retry_indefinite();
 
   return USB_ERR_OK;
 }
