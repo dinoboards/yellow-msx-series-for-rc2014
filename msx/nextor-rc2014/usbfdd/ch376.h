@@ -4,6 +4,12 @@
 
 #include <stdlib.h>
 
+typedef struct {
+  uint8_t number;
+  uint8_t toggle;
+  uint8_t max_packet_size;
+} endpoint_param;
+
 typedef enum {
   USB_ERR_OK                          = 0,
   USB_ERR_NAK                         = 1,
@@ -82,16 +88,10 @@ extern uint8_t        ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
 extern uint8_t        ch376_get_firmware_version();
 extern const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length);
 extern void           ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t toggle_bits);
-extern usb_error      ch_data_in_transfer(uint8_t *       buffer,
-                                          int16_t         data_length,
-                                          const uint8_t   max_packet_size,
-                                          const uint8_t   endpoint,
-                                          uint16_t *const amount_received,
-                                          uint8_t *const  toggle);
-extern usb_error      ch_data_out_transfer(const uint8_t *buffer,
-                                           int16_t        buffer_length,
-                                           const uint8_t  max_packet_size,
-                                           const uint8_t  endpoint,
-                                           uint8_t *const toggle);
+
+extern usb_error
+ch_data_in_transfer(uint8_t *buffer, int16_t data_length, endpoint_param *const endpoint, uint16_t *const amount_received);
+
+extern usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint);
 
 #endif
