@@ -31,7 +31,7 @@ retry:
 
   ch_issue_token(0, CH_PID_SETUP, 0);
 
-  if ((result = ch_wait_int_and_get_result()) != USB_ERR_OK) {
+  if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK) {
     yprintf(0, "Err1 (%d) ", result);
     return result;
   }
@@ -54,16 +54,14 @@ retry:
   if (transferIn) {
     ch_write_data((const uint8_t *)0, 0);
     ch_issue_token(0, CH_PID_OUT, 0x40);
-  } else
-    ch_issue_token(0, CH_PID_IN, 0x80);
+    return ch_wait_int_and_get_result(100);
+  }
 
-  result = ch_wait_int_and_get_result();
-
-  if (transferIn)
-    return result;
-
+  ch_issue_token(0, CH_PID_IN, 0x80);
+  result = ch_wait_int_and_get_result(100);
   ch_read_data((uint8_t *)0, 0, 0);
-  return ch_wait_int_and_get_result();
+
+  return result;
 }
 
 setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};

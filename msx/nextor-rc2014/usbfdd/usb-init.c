@@ -49,12 +49,12 @@ const endpoint_descriptor *parse_endpoint(_usb_state *const work_area, const end
     }
   }
 
-  logEndPointDescription(pEndpoint);
+  // logEndPointDescription(pEndpoint);
   return pEndpoint + 1;
 }
 
 const interface_descriptor *parse_interface(_usb_state *const work_area, const interface_descriptor *p) {
-  logInterface(p);
+  // logInterface(p);
 
   work_area->interface_number = p->bInterfaceNumber;
 
@@ -66,11 +66,8 @@ const interface_descriptor *parse_interface(_usb_state *const work_area, const i
 
   const endpoint_descriptor *pEndpoint = (const endpoint_descriptor *)(p + 1);
 
-  for (uint8_t endpoint_index = 0; endpoint_index < p->bNumEndpoints; endpoint_index++) {
-    printf("end %p: ", endpoint_index);
-
+  for (uint8_t endpoint_index = p->bNumEndpoints; endpoint_index != 0; endpoint_index--)
     pEndpoint = parse_endpoint(work_area, pEndpoint);
-  }
 
   return (interface_descriptor *)pEndpoint;
 }
@@ -81,7 +78,7 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
   uint8_t                  buffer[140];
   config_descriptor *const config_desc = (config_descriptor *)buffer;
 
-  printf("Config %d: ", config_index);
+  // printf("Config %d: ", config_index);
 
   result = hw_get_config_descriptor(
       config_desc, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), 0, &amount_transferred);
@@ -89,7 +86,7 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
     yprintf(15, "X1 (%d)", result);
     return result;
   }
-  logConfig(config_desc);
+  // logConfig(config_desc);
 
   result = hw_get_config_descriptor(
       config_desc, config_index, desc->bMaxPacketSize0, config_desc->wTotalLength, 0, &amount_transferred);
@@ -102,7 +99,7 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
   const interface_descriptor *p = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
   for (uint8_t interface_index = 0; interface_index < config_desc->bNumInterfaces; interface_index++) {
-    printf("Interf %d: ", interface_index);
+    // printf("Interf %d: ", interface_index);
     p = parse_interface(work_area, p);
 
     if (work_area->usb_device)
@@ -117,8 +114,8 @@ usb_error read_all_configs(_usb_state *const work_area) {
   uint8_t           result;
 
   result = hw_get_description(0, &desc);
-  printf("Desc %02x\r\n", result);
-  logDevice(&desc);
+  // printf("Desc %02x\r\n", result);
+  // logDevice(&desc);
 
   work_area->usb_device      = 0;
   work_area->max_packet_size = desc.bMaxPacketSize0;
@@ -135,9 +132,9 @@ usb_error read_all_configs(_usb_state *const work_area) {
 }
 
 uint8_t usb_host_init() {
+  usb_error        result;
+  work_area *const p = get_work_area();
   __asm__("EI");
-  usb_error         result;
-  work_area *const  p         = get_work_area();
   _usb_state *const work_area = &p->ch376;
 
   printf("usb_host_init %p\r\n", p);
@@ -171,13 +168,21 @@ uint8_t usb_host_init() {
     }
   }
 
-  logWorkArea(&p->ch376);
+  // logWorkArea(&p->ch376);
   ufi_inquiry_response response;
   memset(&response, 0, sizeof(ufi_inquiry_response));
 
   result = ufi_inquiry(&p->ch376, &response);
-  printf("inq: %02x\r\n", result);
+  // printf("inq: %02x\r\n", result);
   logInquiryResponse(&response);
+
+  result = ufi_capacity(&p->ch376);
+  if (result == USB_ERR_TIMEOUT) {
+    printf("\r\nRetrying...\r\n");
+    delay(180);
+    result = ufi_capacity(&p->ch376);
+  }
+  printf("cap: %02x\r\n", result);
 
   return true;
 }
