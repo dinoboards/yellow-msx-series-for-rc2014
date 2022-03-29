@@ -79,9 +79,9 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   if (count > buffer_size) {
     extra = count - buffer_size;
 
-    yprintf(0, "Y (%d,", count);
-    xprintf("%d,", buffer_size);
-    xprintf("%d)", extra);
+    printf("\r\nY (%d,", count);
+    printf("%d,", buffer_size);
+    printf("%d)\r\n", extra);
 
     count = buffer_size;
   }
