@@ -68,7 +68,7 @@ typedef struct _ufi_inquiry_response {
   // Command Packet is too small to transfer all of the parameters, the Additional Length shall not be adjusted to
   // reflect the truncation. The UFI device shall set this field to 1Fh.
   uint8_t additional_length;
-  uint8_t reserved4[2];
+  uint8_t reserved4[3];
 
   // The Vendor Identification field contains 8 bytes of ASCII data identifying the vendor of the product. The data
   // shall be left aligned within this field.
