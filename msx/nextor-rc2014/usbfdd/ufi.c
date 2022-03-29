@@ -405,10 +405,8 @@ uint8_t ufi_capacity(_usb_state *const usb_state) {
                                       &asc,
                                       &ascq,
                                       &amount_transferred);
-  if (result) {
-    printf("ERR %d\r\n", result);
+  if (result != USB_ERR_OK)
     return result;
-  }
 
   // ;Useful information returned by the Read Format Capacities command:
   // ;+6: High byte of disk capacity in sectors:
