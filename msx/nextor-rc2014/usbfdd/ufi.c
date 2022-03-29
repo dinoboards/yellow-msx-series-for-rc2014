@@ -387,42 +387,29 @@ usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *r
 
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 
-uint8_t ufi_capacity(_usb_state *const usb_state) {
+uint8_t ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response) {
   usb_error result;
-  uint8_t   response[12];
   uint8_t   asc  = 0;
   uint8_t   ascq = 0;
   uint16_t  amount_transferred;
+  uint8_t   retryable = false;
 
-  // ch_configure_nak_retry_indefinite();
+  do {
+    retryable = !retryable;
+    if (!retryable)
+      delay(180);
 
-  result = usb_execute_cbi_with_retry(usb_state,
-                                      (uint8_t *)&packet_read_format_capacities,
-                                      false,
-                                      true,
-                                      sizeof(response),
-                                      response,
-                                      &asc,
-                                      &ascq,
-                                      &amount_transferred);
-  if (result != USB_ERR_OK)
-    return result;
+    result = usb_execute_cbi_with_retry(usb_state,
+                                        (uint8_t *)&packet_read_format_capacities,
+                                        false,
+                                        true,
+                                        sizeof(ufi_format_capacities_response),
+                                        (uint8_t *)response,
+                                        &asc,
+                                        &ascq,
+                                        &amount_transferred);
 
-  // ;Useful information returned by the Read Format Capacities command:
-  // ;+6: High byte of disk capacity in sectors:
-  // ;    5h: 720K
-  // ;    4h: 1.25M
-  // ;    Bh: 1.44M
-  // ;+8: Disk format status:
-  // ;    01b: unformatted
-  // ;    10b: formatted
-  // ;    11b: no disk in drive
-
-  printf("CAP: ");
-  for (uint8_t i = 0; i < 12; i++)
-    printf("%02X ", response[i]);
-
-  printf("\r\n%d, %d, %d\r\n", asc, ascq, amount_transferred);
+  } while (result == USB_ERR_TIMEOUT && retryable);
 
   return result;
 }

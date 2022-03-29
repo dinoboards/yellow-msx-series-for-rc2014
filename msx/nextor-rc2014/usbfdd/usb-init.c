@@ -169,20 +169,51 @@ uint8_t usb_host_init() {
   }
 
   // logWorkArea(&p->ch376);
-  ufi_inquiry_response response;
-  memset(&response, 0, sizeof(ufi_inquiry_response));
+  ufi_inquiry_response inq_response;
+  memset(&inq_response, 0, sizeof(ufi_inquiry_response));
 
-  result = ufi_inquiry(&p->ch376, &response);
+  result = ufi_inquiry(&p->ch376, &inq_response);
   // printf("inq: %02x\r\n", result);
-  logInquiryResponse(&response);
+  logInquiryResponse(&inq_response);
 
-  result = ufi_capacity(&p->ch376);
-  if (result == USB_ERR_TIMEOUT) {
-    printf("\r\nRetrying...\r\n");
-    delay(180);
-    result = ufi_capacity(&p->ch376);
+  ufi_format_capacities_response cap_response;
+  result = ufi_capacity(&p->ch376, &cap_response);
+  // ;Useful information returned by the Read Format Capacities command:
+  // ;+6: High byte of disk capacity in sectors:
+  // ;    5h: 720K
+  // ;    4h: 1.25M
+  // ;    Bh: 1.44M
+  // ;+8: Disk format status:
+  // ;    01b: unformatted
+  // ;    10b: formatted
+  // ;    11b: no disk in drive
+
+  printf("CAP: ");
+  switch (cap_response.descriptor_code) {
+  case 1:
+    printf("unformatted, ");
+    break;
+
+  case 2:
+    printf("formatted, ");
+    break;
+
+  case 3:
+    printf("no disk, ");
   }
-  printf("cap: %02x\r\n", result);
 
+  switch (cap_response.number_of_blocks[2]) {
+  case 5:
+    printf("720K");
+    break;
+
+  case 4:
+    printf("1.25M");
+    break;
+
+  case 0x0B:
+    printf("1.44MB");
+  }
+  printf("\r\n");
   return true;
 }

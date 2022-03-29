@@ -15,9 +15,13 @@ typedef struct {
   uint8_t reserved[3];
 } ufi_read_format_capacities;
 
-// typedef struct {
-
-// } ufi_format_capacities_response;
+typedef struct {
+  uint8_t capacity_list_length[4];
+  uint8_t number_of_blocks[4];
+  uint8_t descriptor_code : 2;
+  uint8_t reserved : 6;
+  uint8_t block_size[3];
+} ufi_format_capacities_response;
 
 typedef struct _ufi_request_inquiry { // contains information about a specific device
   uint8_t operation_code;
@@ -93,6 +97,6 @@ extern usb_error usb_control_transfer(const _usb_state *const   usb_state,
 
 extern usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *response);
 
-extern uint8_t ufi_capacity(_usb_state *const usb_state);
+extern uint8_t ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response);
 
 #endif
