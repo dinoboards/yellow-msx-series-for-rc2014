@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "print.h"
-
+#include <delay.h>
 // ; -----------------------------------------------------------------------------
 // ; USB_DATA_IN_TRANSFER: Perform a USB data IN transfer
 // ;
@@ -114,8 +114,10 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
     result = usb_data_out_transfer(usb_state, buffer, buffer_size);
   } else {
     *amount_transferred = 0;
-    result              = usb_data_in_transfer(usb_state, buffer, buffer_size, ENDPOINT_BULK_IN, amount_transferred);
+
+    result = usb_data_in_transfer(usb_state, buffer, buffer_size, ENDPOINT_BULK_IN, amount_transferred);
   }
+
   if (result != USB_ERR_OK) {
     *asc = 0;
     return result;
@@ -220,7 +222,11 @@ usb_error usb_clear_endpoint_halt(_usb_state *const usb_state, const usb_endpoin
   cmd           = usb_cmd_clear_endpoint_halt;
   cmd.bIndex[0] = usb_state->endpoints[endpoint_type].number;
 
-  return usb_control_transfer(usb_state, &cmd, (uint8_t *)0, 0);
+  const uint8_t result = usb_control_transfer(usb_state, &cmd, (uint8_t *)0, 0);
+
+  usb_state->endpoints[endpoint_type].toggle = false;
+
+  return result;
 }
 
 // IX => adsc ;In: IX=Prepared ADSC,
@@ -232,15 +238,15 @@ usb_error usb_clear_endpoint_halt(_usb_state *const usb_state, const usb_endpoin
 //  A = USB error code (STALL if non-zero ASC),
 //  BC=data transferred
 //  D=ASC if STALL (0 if not available)
-uint8_t usb_execute_cbi_core(_usb_state *const         usb_state,
-                             const setup_packet *const adsc,
-                             const uint8_t *const      cmd,
-                             const bool                send,
-                             const uint16_t            buffer_size,
-                             uint8_t *const            buffer,
-                             uint8_t *const            asc,
-                             uint16_t *const           amount_transferred) {
-  uint8_t result;
+usb_error usb_execute_cbi_core(_usb_state *const         usb_state,
+                               const setup_packet *const adsc,
+                               const uint8_t *const      cmd,
+                               const bool                send,
+                               const uint16_t            buffer_size,
+                               uint8_t *const            buffer,
+                               uint8_t *const            asc,
+                               uint16_t *const           amount_transferred) {
+  usb_error result;
   if (send) {
     return usb_execute_cbi_core_no_clear(usb_state, adsc, cmd, send, buffer_size, buffer, asc, amount_transferred);
   }
@@ -251,6 +257,8 @@ uint8_t usb_execute_cbi_core(_usb_state *const         usb_state,
 
   if (*asc != 0)
     return USB_ERR_STALL;
+
+  printf("U3(%d, %d) ", send, *asc);
 
   usb_clear_endpoint_halt(usb_state, ENDPOINT_BULK_IN);
   return USB_ERR_STALL;
@@ -267,14 +275,14 @@ ufi_request_inquiry ufi_cmd_request_sense = {3, 0, 0, 0, 18, 0, {0, 0, 0, 0, 0, 
 // ;         BC = amount_received of data actually transferred (if IN transfer)
 // ;         D  = ASC (if no error)
 // ;         E  = ASCQ (if no error)
-uint8_t usb_execute_cbi(_usb_state *const    usb_state,
-                        const uint8_t *const cmd,
-                        const bool           send,
-                        const uint16_t       buffer_size,
-                        uint8_t *const       buffer,
-                        uint8_t *const       asc,
-                        uint8_t *const       ascq,
-                        uint16_t *const      amount_transferred) {
+usb_error usb_execute_cbi(_usb_state *const    usb_state,
+                          const uint8_t *const cmd,
+                          const bool           send,
+                          const uint16_t       buffer_size,
+                          uint8_t *const       buffer,
+                          uint8_t *const       asc,
+                          uint8_t *const       ascq,
+                          uint16_t *const      amount_transferred) {
   uint8_t result;
 
   *asc  = 0;
@@ -319,40 +327,40 @@ uint8_t usb_execute_cbi(_usb_state *const    usb_state,
 // ;         BC = amount_received of data actually transferred (if IN transfer)
 // ;         D  = ASC (if no error)
 // ;         E  = ASCQ (if no error)
-uint8_t usb_execute_cbi_with_retry(_usb_state *const                usb_state,
-                                   const ufi_request_inquiry *const cmd,
-                                   const bool                       send,
-                                   const bool                       retry_on_media_change,
-                                   const uint16_t                   buffer_size,
-                                   uint8_t *const                   buffer,
-                                   uint16_t *const                  amount_transferred) {
+usb_error usb_execute_cbi_with_retry(_usb_state *const    usb_state,
+                                     const uint8_t *const cmd,
+                                     const bool           send,
+                                     const bool           retry_on_media_change,
+                                     const uint16_t       buffer_size,
+                                     uint8_t *const       buffer,
+                                     uint8_t *const       asc,
+                                     uint8_t *const       ascq,
+                                     uint16_t *const      amount_transferred) {
 
   uint8_t result;
-  uint8_t asc  = 0;
-  uint8_t ascq = 0;
 
   if (amount_transferred)
     *amount_transferred = 0;
 
 retry:
-  result = usb_execute_cbi(usb_state, (uint8_t *)cmd, send, buffer_size, buffer, &asc, &ascq, amount_transferred);
+  result = usb_execute_cbi(usb_state, (uint8_t *)cmd, send, buffer_size, buffer, asc, ascq, amount_transferred);
 
   if (result)
     return result;
 
-  if (asc == 0)
+  if (*asc == 0)
     return 0;
 
-  if (asc == 0x17 || asc == 0x18)
-    return asc;
+  if (*asc == 0x17 || *asc == 0x18)
+    return *asc;
 
-  if (asc == 4 && (ascq == 1 || ascq == 0xFF)) // Retry if ASC=4 and ASCQ=1 (unit becoming ready) or FFh (unit busy)
+  if (*asc == 4 && (*ascq == 1 || *ascq == 0xFF)) // Retry if *ASC=4 and *ASCQ=1 (unit becoming ready) or FFh (unit busy)
     goto retry;
 
-  if (asc == 0x29) // device powered
+  if (*asc == 0x29) // device powered
     goto retry;
 
-  if (asc == 0x28 && retry_on_media_change) // Retry "media changed" only if we were instructed to do so
+  if (*asc == 0x28 && retry_on_media_change) // Retry "media changed" only if we were instructed to do so
     goto retry;
 
   return result;
@@ -360,9 +368,62 @@ retry:
 
 ufi_request_inquiry packet_inquiry = {0x12, 0, 0, 0, 0x24, 0, {0, 0, 0, 0, 0, 0}};
 
-uint8_t ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *response) {
+usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *response) {
   uint16_t amount_transferred;
+  uint8_t  asc  = 0;
+  uint8_t  ascq = 0;
 
-  return usb_execute_cbi_with_retry(
-      usb_state, &packet_inquiry, false, true, sizeof(ufi_inquiry_response), (uint8_t *)response, &amount_transferred);
+  return usb_execute_cbi_with_retry(usb_state,
+                                    (uint8_t *)&packet_inquiry,
+                                    false,
+                                    true,
+                                    sizeof(ufi_inquiry_response),
+                                    (uint8_t *)response,
+                                    &asc,
+                                    &ascq,
+                                    &amount_transferred);
+}
+
+ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
+
+uint8_t ufi_capacity(_usb_state *const usb_state) {
+  usb_error result;
+  uint8_t   response[12];
+  uint8_t   asc  = 0;
+  uint8_t   ascq = 0;
+  uint16_t  amount_transferred;
+
+  // ch_configure_nak_retry_indefinite();
+
+  result = usb_execute_cbi_with_retry(usb_state,
+                                      (uint8_t *)&packet_read_format_capacities,
+                                      false,
+                                      true,
+                                      sizeof(response),
+                                      response,
+                                      &asc,
+                                      &ascq,
+                                      &amount_transferred);
+  if (result) {
+    printf("ERR %d\r\n", result);
+    return result;
+  }
+
+  // ;Useful information returned by the Read Format Capacities command:
+  // ;+6: High byte of disk capacity in sectors:
+  // ;    5h: 720K
+  // ;    4h: 1.25M
+  // ;    Bh: 1.44M
+  // ;+8: Disk format status:
+  // ;    01b: unformatted
+  // ;    10b: formatted
+  // ;    11b: no disk in drive
+
+  printf("CAP: ");
+  for (uint8_t i = 0; i < 12; i++)
+    printf("%02X ", response[i]);
+
+  printf("\r\n%d, %d, %d\r\n", asc, ascq, amount_transferred);
+
+  return result;
 }

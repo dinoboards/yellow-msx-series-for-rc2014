@@ -18,9 +18,11 @@ typedef enum {
   USB_ERR_DATA_ERROR                  = 4,
   USB_ERR_NO_DEVICE                   = 5,
   USB_ERR_PANIC_BUTTON_PRESSED        = 6,
-  USB_ERR_UNEXPECTED_STATUS_FROM_HOST = 7,
-  USB_ERR_CODE_EXCEPTION              = 8,
-  USB_ERR_MAX                         = 8,
+  USB_TOKEN_OUT_OF_SYNC               = 7,
+  USB_ERR_UNEXPECTED_STATUS_FROM_HOST = 8,
+  USB_ERR_CODE_EXCEPTION              = 9,
+  USB_ERR_MAX                         = 9,
+  USB_ERR_OTHER                       = 12,
   USB_ERR_DISK_READ                   = 0x1D,
   USB_ERR_DISK_WRITE                  = 0x1E,
   USB_FILERR_MIN                      = 0x41,
@@ -86,11 +88,12 @@ __sfr __at 0x84 CH376_DATA_PORT;
 __sfr __at 0x85 CH376_COMMAND_PORT;
 
 extern const void     setCommand(const uint8_t command) __z88dk_fastcall;
-extern usb_error      ch_wait_int_and_get_result();
+extern usb_error      ch_get_status();
+extern usb_error      ch_wait_int_and_get_result(const int16_t timeout_period) __z88dk_fastcall;
 extern uint8_t *      ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received);
 extern void           ch376_reset();
 extern uint8_t        ch376_probe();
-extern uint8_t        ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
+extern void           ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
 extern uint8_t        ch376_get_firmware_version();
 extern const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length);
 extern void           ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t toggle_bits);

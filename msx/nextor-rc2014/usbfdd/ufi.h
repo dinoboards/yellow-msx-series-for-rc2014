@@ -7,6 +7,18 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+typedef struct {
+  uint8_t operation_code;
+  uint8_t lun;
+  uint8_t reserved1[5];
+  uint8_t allocation_length[2];
+  uint8_t reserved[3];
+} ufi_read_format_capacities;
+
+// typedef struct {
+
+// } ufi_format_capacities_response;
+
 typedef struct _ufi_request_inquiry { // contains information about a specific device
   uint8_t operation_code;
   uint8_t lun;
@@ -80,5 +92,7 @@ extern usb_error usb_control_transfer(const _usb_state *const   usb_state,
                                       uint16_t *                amount_transferred);
 
 extern usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *response);
+
+extern uint8_t ufi_capacity(_usb_state *const usb_state);
 
 #endif
