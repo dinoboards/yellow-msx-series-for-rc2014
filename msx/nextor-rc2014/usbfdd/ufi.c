@@ -160,8 +160,11 @@ usb_error usb_process_error(_usb_state *const usb_state, const usb_error result)
     // usb_state->ascq => ??;
   }
 
+  if (result == USB_ERR_TIMEOUT)
+    return result;
+
   if (result != USB_ERR_STALL) {
-    yprintf(0, "EEEE %d", result);
+    printf("EEEE %d", result);
     // hw_bus_reset();
     // usb_init_dev();
 
@@ -257,8 +260,6 @@ usb_error usb_execute_cbi_core(_usb_state *const         usb_state,
 
   if (*asc != 0)
     return USB_ERR_STALL;
-
-  printf("U3(%d, %d) ", send, *asc);
 
   usb_clear_endpoint_halt(usb_state, ENDPOINT_BULK_IN);
   return USB_ERR_STALL;
