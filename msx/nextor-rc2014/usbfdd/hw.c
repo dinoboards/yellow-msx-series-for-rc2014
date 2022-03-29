@@ -58,10 +58,7 @@ retry:
   }
 
   ch_issue_token(0, CH_PID_IN, 0x80);
-  result = ch_wait_int_and_get_result(100);
-  ch_read_data((uint8_t *)0, 0, 0);
-
-  return result;
+  return ch_wait_int_and_get_result(100);
 }
 
 setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
