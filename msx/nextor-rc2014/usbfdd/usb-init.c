@@ -216,5 +216,12 @@ uint8_t usb_host_init() {
   //   printf("1.44MB");
   // }
   // printf("\r\n");
+
+  printf("--------------------\r\n");
+  ufi_write_sector(&p->ch376, 2);
+  printf("--------------------\r\n");
+  ufi_read_sector(&p->ch376, 2);
+  ufi_read_sector(&p->ch376, 3);
+
   return true;
 }

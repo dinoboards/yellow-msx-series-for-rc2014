@@ -1,11 +1,12 @@
 #include "ufi.h"
 #include "hw.h"
 #include "usb.h"
+#include <delay.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
 #include "print.h"
-#include <delay.h>
+#include <string.h>
 // ; -----------------------------------------------------------------------------
 // ; USB_DATA_IN_TRANSFER: Perform a USB data IN transfer
 // ;
@@ -291,7 +292,6 @@ usb_error usb_execute_cbi(_usb_state *const           usb_state,
                                 false,
                                 sizeof(ufi_response_inquiry),
                                 (uint8_t *)response_inquiry);
-
   if (result != USB_ERR_STALL)
     return result;
 
@@ -354,7 +354,7 @@ usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *r
 
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 
-uint8_t ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response) {
+usb_error ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response) {
   usb_error result;
   uint8_t   retryable = false;
 
@@ -371,6 +371,70 @@ uint8_t ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response
                                         (uint8_t *)response);
 
   } while (result == USB_ERR_TIMEOUT && retryable);
+
+  return result;
+}
+
+uint8_t packet_ufi_write_sector[] = {0x2A, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
+
+usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number) {
+  usb_error result;
+  uint8_t   buffer[512];
+  for (int a = 0; a < 512; a++)
+    buffer[a] = a + 5;
+
+  uint8_t cmd[12];
+  memcpy(cmd, packet_ufi_write_sector, 12);
+
+  cmd[4] = sector_number >> 8;
+  cmd[5] = sector_number & 0xFF;
+
+  uint8_t retryable = false;
+
+  do {
+    retryable = !retryable;
+    if (!retryable) {
+      printf("RetryW\r\n");
+      delay(180);
+    }
+    result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, true, true, 512, buffer);
+  } while (result == USB_ERR_TIMEOUT && retryable);
+
+  printf("ufi_write %d\r\n", result);
+
+  return result;
+}
+
+uint8_t packet_ufi_read_sector[] = {0x28, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
+
+usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_number) {
+  usb_error result;
+  uint8_t   buffer[512];
+  memset(buffer, 0, 512);
+  uint8_t cmd[12];
+  memcpy(cmd, packet_ufi_read_sector, 12);
+
+  cmd[4] = sector_number >> 8;
+  cmd[5] = sector_number & 0xFF;
+  int a;
+
+  uint8_t retryable = false;
+
+  do {
+    retryable = !retryable;
+    if (!retryable) {
+      printf("RetryR\r\n");
+      delay(180);
+    }
+    result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, false, true, 512, buffer);
+  } while (result == USB_ERR_TIMEOUT && retryable);
+
+  printf("ufi_read %d\r\n", result);
+
+  for (a = 0; a < 8; a++)
+    printf("%02X ", buffer[a]);
+
+  printf("\r\n");
 
   return result;
 }
