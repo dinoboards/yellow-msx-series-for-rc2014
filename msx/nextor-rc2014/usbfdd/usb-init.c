@@ -178,6 +178,7 @@ uint8_t usb_host_init() {
 
   ufi_format_capacities_response cap_response;
   result = ufi_capacity(&p->ch376, &cap_response);
+  printf("%d,%d\r\n", result, cap_response.descriptor_code);
   // ;Useful information returned by the Read Format Capacities command:
   // ;+6: High byte of disk capacity in sectors:
   // ;    5h: 720K
