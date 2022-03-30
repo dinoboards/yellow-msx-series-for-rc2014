@@ -23,6 +23,13 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   usb_error      result;
   endpoint_param endpoint = {0, 1, max_packet_size};
 
+  const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
+
+  if (transferIn && buffer == 0) {
+    printf("Err2 ");
+    return 98;
+  }
+
 retry:
   setCommand(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
@@ -32,22 +39,15 @@ retry:
   ch_issue_token(0, CH_PID_SETUP, 0);
 
   if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK) {
-    yprintf(0, "Err1 (%d) ", result);
+    printf("Err1 (%d) ", result);
     return result;
-  }
-
-  const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
-
-  if (transferIn && buffer == 0) {
-    yprintf(0, "Err2 ");
-    return 98;
   }
 
   result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint, amount_transferred)
                       : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
 
   if (result != USB_ERR_OK) {
-    yprintf(0, "Err3 (%d) ", result);
+    printf("Err3 (%d) ", result);
     return result;
   }
 

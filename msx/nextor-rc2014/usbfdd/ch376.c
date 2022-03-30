@@ -163,7 +163,7 @@ ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const 
   do {
     ch_issue_token(number, CH_PID_IN, endpoint->toggle ? 0x80 : 0x00);
 
-    if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK)
+    if ((result = ch_wait_int_and_get_result(5000)) != USB_ERR_OK)
       return result;
 
     endpoint->toggle = ~endpoint->toggle;
