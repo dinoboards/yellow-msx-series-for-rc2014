@@ -90,10 +90,8 @@ extern usb_error usb_clear_endpoint_halt(const _usb_state *const usb_state, cons
 
 extern usb_error usb_process_error(_usb_state *const usb_state, const usb_error result);
 
-extern usb_error usb_control_transfer(const _usb_state *const   usb_state,
-                                      const setup_packet *const cmd,
-                                      const uint8_t *const      buffer,
-                                      uint16_t *                amount_transferred);
+extern usb_error
+usb_control_transfer(const _usb_state *const usb_state, const setup_packet *const cmd, const uint8_t *const buffer);
 
 extern usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *response);
 
