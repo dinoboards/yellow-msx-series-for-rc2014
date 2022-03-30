@@ -174,7 +174,7 @@ uint8_t usb_host_init() {
 
   result = ufi_inquiry(&p->ch376, &inq_response);
   // printf("inq: %02x\r\n", result);
-  logInquiryResponse(&inq_response);
+  // logInquiryResponse(&inq_response);
 
   ufi_format_capacities_response cap_response;
   result = ufi_capacity(&p->ch376, &cap_response);
@@ -188,32 +188,32 @@ uint8_t usb_host_init() {
   // ;    10b: formatted
   // ;    11b: no disk in drive
 
-  printf("CAP: ");
-  switch (cap_response.descriptor_code) {
-  case 1:
-    printf("unformatted, ");
-    break;
+  // printf("CAP: ");
+  // switch (cap_response.descriptor_code) {
+  // case 1:
+  //   printf("unformatted, ");
+  //   break;
 
-  case 2:
-    printf("formatted, ");
-    break;
+  // case 2:
+  //   printf("formatted, ");
+  //   break;
 
-  case 3:
-    printf("no disk, ");
-  }
+  // case 3:
+  //   printf("no disk, ");
+  // }
 
-  switch (cap_response.number_of_blocks[2]) {
-  case 5:
-    printf("720K");
-    break;
+  // switch (cap_response.number_of_blocks[2]) {
+  // case 5:
+  //   printf("720K");
+  //   break;
 
-  case 4:
-    printf("1.25M");
-    break;
+  // case 4:
+  //   printf("1.25M");
+  //   break;
 
-  case 0x0B:
-    printf("1.44MB");
-  }
-  printf("\r\n");
+  // case 0x0B:
+  //   printf("1.44MB");
+  // }
+  // printf("\r\n");
   return true;
 }
