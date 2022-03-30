@@ -91,20 +91,15 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
                                         const bool                send,
                                         const uint16_t            buffer_size,
                                         uint8_t *const            buffer,
-                                        uint8_t *const            asc,
-                                        uint16_t *const           amount_transferred) {
+                                        uint8_t *const            asc) {
 
-  usb_error result;
+  usb_error      result;
+  uint16_t const amount_transferred = 0;
 
-  if (amount_transferred)
-    *amount_transferred = 0;
-
-  result = usb_control_transfer(usb_state, adsc, cmd, amount_transferred);
+  result = usb_control_transfer(usb_state, adsc, cmd);
 
   if (result != USB_ERR_OK) {
     *asc = 0;
-    if (amount_transferred)
-      *amount_transferred = 0;
 
     return result;
   }
@@ -113,9 +108,7 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
   if (send) {
     result = usb_data_out_transfer(usb_state, buffer, buffer_size);
   } else {
-    *amount_transferred = 0;
-
-    result = usb_data_in_transfer(usb_state, buffer, buffer_size, ENDPOINT_BULK_IN, amount_transferred);
+    result = usb_data_in_transfer(usb_state, buffer, buffer_size, ENDPOINT_BULK_IN, &amount_transferred);
   }
 
   if (result != USB_ERR_OK) {
@@ -193,15 +186,13 @@ usb_error usb_process_error(_usb_state *const usb_state, const usb_error result)
 // ;         buffer => DE = Address of the input or output data buffer
 // ; Output: A  = USB error code
 // ;         BC = Amount of data actually transferred (if IN transfer and no error)
-usb_error usb_control_transfer(_usb_state *const         usb_state,
-                               const setup_packet *const cmd,
-                               uint8_t *const            buffer,
-                               uint16_t *                amount_transferred) {
-  usb_error result;
+usb_error usb_control_transfer(_usb_state *const usb_state, const setup_packet *const cmd, uint8_t *const buffer) {
+  usb_error      result;
+  uint16_t const amount_transferred = 0;
 
   const uint8_t max_packet_size = usb_state->endpoints[ENDPOINT_BULK_OUT].max_packet_size;
 
-  result = hw_control_transfer(cmd, buffer, DEVICE_ADDRESS, max_packet_size, amount_transferred);
+  result = hw_control_transfer(cmd, buffer, DEVICE_ADDRESS, max_packet_size, &amount_transferred);
 
   if (result == USB_ERR_OK)
     return result;
@@ -225,7 +216,7 @@ usb_error usb_clear_endpoint_halt(_usb_state *const usb_state, const usb_endpoin
   cmd           = usb_cmd_clear_endpoint_halt;
   cmd.bIndex[0] = usb_state->endpoints[endpoint_type].number;
 
-  const uint8_t result = usb_control_transfer(usb_state, &cmd, (uint8_t *)0, 0);
+  const uint8_t result = usb_control_transfer(usb_state, &cmd, (uint8_t *)0);
 
   usb_state->endpoints[endpoint_type].toggle = false;
 
@@ -246,19 +237,19 @@ usb_error usb_execute_cbi_core(_usb_state *const         usb_state,
                                const uint8_t *const      cmd,
                                const bool                send,
                                const uint16_t            buffer_size,
-                               uint8_t *const            buffer,
-                               uint8_t *const            asc,
-                               uint16_t *const           amount_transferred) {
+                               uint8_t *const            buffer) {
+  uint8_t   asc;
   usb_error result;
+
   if (send) {
-    return usb_execute_cbi_core_no_clear(usb_state, adsc, cmd, send, buffer_size, buffer, asc, amount_transferred);
+    return usb_execute_cbi_core_no_clear(usb_state, adsc, cmd, send, buffer_size, buffer, &asc);
   }
 
-  result = usb_execute_cbi_core_no_clear(usb_state, adsc, cmd, send, buffer_size, buffer, asc, amount_transferred);
+  result = usb_execute_cbi_core_no_clear(usb_state, adsc, cmd, send, buffer_size, buffer, &asc);
   if (result != USB_ERR_STALL)
     return result;
 
-  if (*asc != 0)
+  if (asc != 0)
     return USB_ERR_STALL;
 
   usb_clear_endpoint_halt(usb_state, ENDPOINT_BULK_IN);
@@ -276,27 +267,20 @@ ufi_request_inquiry ufi_cmd_request_sense = {3, 0, 0, 0, 18, 0, {0, 0, 0, 0, 0, 
 // ;         BC = amount_received of data actually transferred (if IN transfer)
 // ;         D  = ASC (if no error)
 // ;         E  = ASCQ (if no error)
-usb_error usb_execute_cbi(_usb_state *const    usb_state,
-                          const uint8_t *const cmd,
-                          const bool           send,
-                          const uint16_t       buffer_size,
-                          uint8_t *const       buffer,
-                          uint8_t *const       asc,
-                          uint8_t *const       ascq,
-                          uint16_t *const      amount_transferred) {
-  uint8_t result;
-
-  *asc  = 0;
-  *ascq = 0;
-
+usb_error usb_execute_cbi(_usb_state *const           usb_state,
+                          const uint8_t *const        cmd,
+                          const bool                  send,
+                          const uint16_t              buffer_size,
+                          uint8_t *const              buffer,
+                          ufi_response_inquiry *const response_inquiry) {
+  uint8_t       result;
   const uint8_t interface_number = usb_state->interface_number;
 
   setup_packet setup_cmd_packet;
   setup_cmd_packet           = cbi_adsc;
   setup_cmd_packet.bIndex[0] = interface_number;
-  ufi_response_inquiry response_inquiry;
 
-  result = usb_execute_cbi_core(usb_state, &setup_cmd_packet, cmd, send, buffer_size, buffer, asc, amount_transferred);
+  result = usb_execute_cbi_core(usb_state, &setup_cmd_packet, cmd, send, buffer_size, buffer);
 
   if (result != USB_ERR_STALL)
     return result;
@@ -306,12 +290,7 @@ usb_error usb_execute_cbi(_usb_state *const    usb_state,
                                 (uint8_t *)&ufi_cmd_request_sense,
                                 false,
                                 sizeof(ufi_response_inquiry),
-                                (uint8_t *)&response_inquiry,
-                                asc,
-                                amount_transferred);
-
-  *asc  = response_inquiry.asc;
-  *ascq = response_inquiry.ascq;
+                                (uint8_t *)response_inquiry);
 
   if (result != USB_ERR_STALL)
     return result;
@@ -333,35 +312,33 @@ usb_error usb_execute_cbi_with_retry(_usb_state *const    usb_state,
                                      const bool           send,
                                      const bool           retry_on_media_change,
                                      const uint16_t       buffer_size,
-                                     uint8_t *const       buffer,
-                                     uint8_t *const       asc,
-                                     uint8_t *const       ascq,
-                                     uint16_t *const      amount_transferred) {
+                                     uint8_t *const       buffer) {
 
-  uint8_t result;
-
-  if (amount_transferred)
-    *amount_transferred = 0;
+  uint8_t              result;
+  ufi_response_inquiry response_inquiry;
 
 retry:
-  result = usb_execute_cbi(usb_state, (uint8_t *)cmd, send, buffer_size, buffer, asc, ascq, amount_transferred);
+  result = usb_execute_cbi(usb_state, (uint8_t *)cmd, send, buffer_size, buffer, &response_inquiry);
+
+  const uint8_t asc  = response_inquiry.asc;
+  const uint8_t ascq = response_inquiry.ascq;
 
   if (result)
     return result;
 
-  if (*asc == 0)
+  if (asc == 0)
     return 0;
 
-  if (*asc == 0x17 || *asc == 0x18)
-    return *asc;
+  if (asc == 0x17 || asc == 0x18)
+    return asc;
 
-  if (*asc == 4 && (*ascq == 1 || *ascq == 0xFF)) // Retry if *ASC=4 and *ASCQ=1 (unit becoming ready) or FFh (unit busy)
+  if (asc == 4 && (ascq == 1 || ascq == 0xFF)) // Retry if ASC=4 and *ASCQ=1 (unit becoming ready) or FFh (unit busy)
     goto retry;
 
-  if (*asc == 0x29) // device powered
+  if (asc == 0x29) // device powered
     goto retry;
 
-  if (*asc == 0x28 && retry_on_media_change) // Retry "media changed" only if we were instructed to do so
+  if (asc == 0x28 && retry_on_media_change) // Retry "media changed" only if we were instructed to do so
     goto retry;
 
   return result;
@@ -370,28 +347,15 @@ retry:
 ufi_request_inquiry packet_inquiry = {0x12, 0, 0, 0, 0x24, 0, {0, 0, 0, 0, 0, 0}};
 
 usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *response) {
-  uint16_t amount_transferred;
-  uint8_t  asc  = 0;
-  uint8_t  ascq = 0;
 
-  return usb_execute_cbi_with_retry(usb_state,
-                                    (uint8_t *)&packet_inquiry,
-                                    false,
-                                    true,
-                                    sizeof(ufi_inquiry_response),
-                                    (uint8_t *)response,
-                                    &asc,
-                                    &ascq,
-                                    &amount_transferred);
+  return usb_execute_cbi_with_retry(
+      usb_state, (uint8_t *)&packet_inquiry, false, true, sizeof(ufi_inquiry_response), (uint8_t *)response);
 }
 
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 
 uint8_t ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response) {
   usb_error result;
-  uint8_t   asc  = 0;
-  uint8_t   ascq = 0;
-  uint16_t  amount_transferred;
   uint8_t   retryable = false;
 
   do {
@@ -404,10 +368,7 @@ uint8_t ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response
                                         false,
                                         true,
                                         sizeof(ufi_format_capacities_response),
-                                        (uint8_t *)response,
-                                        &asc,
-                                        &ascq,
-                                        &amount_transferred);
+                                        (uint8_t *)response);
 
   } while (result == USB_ERR_TIMEOUT && retryable);
 
