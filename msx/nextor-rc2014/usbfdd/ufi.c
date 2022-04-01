@@ -145,28 +145,20 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
 usb_error usb_process_error(_usb_state *const usb_state, const usb_error result) {
   (void)usb_state;
 
-  if (result == USB_ERR_NO_DEVICE) {
+  if (result == USB_ERR_NO_DEVICE)
     return result;
-    // wk_zero
-
-    // usb_state->error = result;
-    // usb_state->asc => ??;
-    // usb_state->ascq => ??;
-  }
 
   if (result == USB_ERR_TIMEOUT)
     return result;
 
   if (result != USB_ERR_STALL) {
-    printf("EEEE %d", result);
+    yprintf(70, " Fail %02x ", result);
     // hw_bus_reset();
     // usb_init_dev();
 
     // usb_state->error = result;
     // usb_state->asc => ??;
     // usb_state->ascq => ??;
-
-    return result;
   }
 
   return result;
@@ -258,7 +250,7 @@ usb_error usb_execute_cbi_core(_usb_state *const         usb_state,
 }
 
 setup_packet        cbi_adsc              = {0x21, 0, {0, 0}, {255, 0}, 12}; // ;4th byte is interface number
-ufi_request_inquiry ufi_cmd_request_sense = {3, 0, 0, 0, 18, 0, {0, 0, 0, 0, 0, 0}};
+ufi_request_inquiry ufi_cmd_request_sense = {0x03, 0, 0, 0, 18, 0, {0, 0, 0, 0, 0, 0}};
 
 // ; Input:  HL => cmd Address of the 12 byte command to execute
 // ;         DE => buffer Address of the input or output data buffer
@@ -317,11 +309,15 @@ usb_error usb_execute_cbi_with_retry(_usb_state *const    usb_state,
   uint8_t              result;
   ufi_response_inquiry response_inquiry;
 
+  response_inquiry.asc  = 0;
+  response_inquiry.ascq = 0;
+
 retry:
   result = usb_execute_cbi(usb_state, (uint8_t *)cmd, send, buffer_size, buffer, &response_inquiry);
 
-  const uint8_t asc  = response_inquiry.asc;
-  const uint8_t ascq = response_inquiry.ascq;
+  const uint8_t asc       = response_inquiry.asc;
+  const uint8_t ascq      = response_inquiry.ascq;
+  const uint8_t sense_key = response_inquiry.sense_key;
 
   if (result)
     return result;
@@ -340,6 +336,12 @@ retry:
 
   if (asc == 0x28 && retry_on_media_change) // Retry "media changed" only if we were instructed to do so
     goto retry;
+
+  if (asc == 0x28)
+    return USB_ERR_MEDIA_CHANGED;
+
+  if (asc == 0x3A)
+    return USB_ERR_MEDIA_NOT_PRESENT;
 
   return result;
 }
@@ -375,6 +377,34 @@ usb_error ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_respon
   return result;
 }
 
+usb_error run_test_unit_ready(_usb_state *const usb_state) {
+  usb_error                   result;
+  ufi_request_test_unit_ready cmd;
+  uint8_t                     counter = 3;
+
+  memset(&cmd, 0, sizeof(ufi_request_test_unit_ready));
+
+  // do {
+  result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, false, false, 0, (uint8_t *)0);
+  // } while(result != USB_ERR_OK && --counter != 0);
+
+  return result;
+}
+
+uint8_t test_disk(_usb_state *const usb_state) {
+  usb_error result;
+  result = run_test_unit_ready(usb_state);
+
+  if (result == USB_ERR_MEDIA_NOT_PRESENT) {
+    result = run_test_unit_ready(usb_state);
+
+    if (result == USB_ERR_OK)
+      result = USB_ERR_MEDIA_CHANGED;
+  }
+
+  return result;
+}
+
 uint8_t packet_ufi_write_sector[] = {0x2A, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
 
 usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number) {
@@ -389,18 +419,15 @@ usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_nu
   cmd[4] = sector_number >> 8;
   cmd[5] = sector_number & 0xFF;
 
-  uint8_t retryable = false;
+  // uint8_t retryable = false;
 
-  do {
-    retryable = !retryable;
-    if (!retryable) {
-      printf("RetryW\r\n");
-      delay(180);
-    }
-    result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, true, true, 512, buffer);
-  } while (result == USB_ERR_TIMEOUT && retryable);
-
-  printf("ufi_write %d\r\n", result);
+  // do {
+  //   retryable = !retryable;
+  //   if (!retryable) {
+  //     delay(180);
+  //   }
+  result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, true, true, 512, buffer);
+  // } while (result == USB_ERR_TIMEOUT && retryable);
 
   return result;
 }
@@ -416,25 +443,16 @@ usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_num
 
   cmd[4] = sector_number >> 8;
   cmd[5] = sector_number & 0xFF;
-  int a;
 
-  uint8_t retryable = false;
+  // uint8_t retryable = false;
 
-  do {
-    retryable = !retryable;
-    if (!retryable) {
-      printf("RetryR\r\n");
-      delay(180);
-    }
-    result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, false, true, 512, buffer);
-  } while (result == USB_ERR_TIMEOUT && retryable);
-
-  printf("ufi_read %d\r\n", result);
-
-  for (a = 0; a < 8; a++)
-    printf("%02X ", buffer[a]);
-
-  printf("\r\n");
+  // do {
+  //   retryable = !retryable;
+  //   if (!retryable) {
+  //     delay(180);
+  //   }
+  result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, false, true, 512, buffer);
+  // } while (result == USB_ERR_TIMEOUT && retryable);
 
   return result;
 }

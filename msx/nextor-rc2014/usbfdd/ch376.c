@@ -5,19 +5,34 @@
 #include "print.h"
 
 const void setCommand(const uint8_t command) __z88dk_fastcall {
-  CH376_COMMAND_PORT = command;
-  for (uint8_t i = 255; i != 0; i--)
+  uint8_t counter = 255;
+  while ((CH376_COMMAND_PORT & PARA_STATE_BUSY) && --counter != 0)
     ;
+
+  if (counter == 0) {
+    // It appears that the Ch376 has become blocked
+    // command will fail and timeout will eventually be returned by the ch_wait_int_and_get_result
+    // todo consider a return value to allow callers to respond appropriately
+    // Experimentation would indicate that USB_RESET_ALL will still work to reset chip
+    return;
+  }
+
+  CH376_COMMAND_PORT = command;
 }
 
 usb_error ch_wait_int_and_get_result(const int16_t timeout_period) __z88dk_fastcall {
   const int16_t timeout_point = get_future_time(from_ms(timeout_period));
   bool          int_active    = false;
-  while (!int_active && !is_time_past(timeout_point))
-    int_active = !(CH376_COMMAND_PORT & 0x80);
 
-  if (!int_active)
+  while (!int_active && !is_time_past(timeout_point))
+    int_active = !(CH376_COMMAND_PORT & PARA_STATE_INTB);
+
+  if (!int_active) {
+    if (CH376_COMMAND_PORT & PARA_STATE_BUSY)
+      return USB_ERR_CH376_BLOCKED;
+
     return USB_ERR_TIMEOUT;
+  }
 
   return ch_get_status();
 }
@@ -78,11 +93,6 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
 
   if (count > buffer_size) {
     extra = count - buffer_size;
-
-    printf("\r\nY (%d,", count);
-    printf("%d,", buffer_size);
-    printf("%d)\r\n", extra);
-
     count = buffer_size;
   }
 
@@ -113,11 +123,11 @@ inline uint8_t ch376_test() {
 }
 
 uint8_t ch376_probe() {
-  for (int8_t i = 8; i > 0; i--) {
+  for (int8_t i = 16; i > 0; i--) {
     if (ch376_test())
       return true;
 
-    delay(5);
+    delay(10);
   }
 
   return false;
@@ -156,6 +166,9 @@ usb_error
 ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const endpoint, uint16_t *const amount_received) {
   uint8_t   count;
   usb_error result;
+
+  if (buffer_size == 0)
+    return USB_ERR_OK;
 
   const uint8_t number          = endpoint->number;
   const uint8_t max_packet_size = endpoint->max_packet_size;
