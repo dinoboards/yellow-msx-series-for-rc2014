@@ -110,9 +110,9 @@ extern usb_error usb_execute_cbi_with_retry(_usb_state *const    usb_state,
                                             const uint16_t       buffer_size,
                                             uint8_t *const       buffer);
 
-extern usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number);
+extern usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number, const uint8_t *const buffer);
 
-extern usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_number);
+extern usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_number, uint8_t *const buffer);
 
 extern uint8_t test_disk(_usb_state *const usb_state);
 
