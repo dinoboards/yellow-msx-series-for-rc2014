@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "debuggin.h"
+#include "nextor.h"
 #include "print.h"
 #include <string.h>
 
@@ -130,6 +131,8 @@ usb_error read_all_configs(_usb_state *const work_area) {
 
   return USB_ERR_OK;
 }
+
+extern uint8_t usb_lun_info(const uint8_t lun, nextor_lun_info *const info);
 
 uint8_t usb_host_init() {
   usb_error        result;

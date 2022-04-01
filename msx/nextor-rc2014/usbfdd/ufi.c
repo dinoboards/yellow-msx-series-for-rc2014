@@ -368,28 +368,19 @@ usb_error ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_respon
 }
 
 usb_error run_test_unit_ready(_usb_state *const usb_state) {
-  usb_error                   result;
   ufi_request_test_unit_ready cmd;
-  uint8_t                     counter = 3;
-
   memset(&cmd, 0, sizeof(ufi_request_test_unit_ready));
 
-  // do {
-  result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, false, false, 0, (uint8_t *)0);
-  // } while(result != USB_ERR_OK && --counter != 0);
-
-  return result;
+  return usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, false, false, 0, (uint8_t *)0);
 }
 
 uint8_t test_disk(_usb_state *const usb_state) {
   usb_error result;
   result = run_test_unit_ready(usb_state);
 
-  if (result == USB_ERR_MEDIA_NOT_PRESENT) {
+  if (result == USB_ERR_MEDIA_CHANGED) {
     result = run_test_unit_ready(usb_state);
-
-    if (result == USB_ERR_OK)
-      result = USB_ERR_MEDIA_CHANGED;
+    return (result == USB_ERR_OK) ? USB_ERR_MEDIA_CHANGED : result;
   }
 
   return result;
@@ -398,7 +389,6 @@ uint8_t test_disk(_usb_state *const usb_state) {
 uint8_t packet_ufi_write_sector[] = {0x2A, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
 
 usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number) {
-  usb_error result;
   uint8_t   buffer[512];
   for (int a = 0; a < 512; a++)
     buffer[a] = a + 5;
@@ -409,23 +399,12 @@ usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_nu
   cmd[4] = sector_number >> 8;
   cmd[5] = sector_number & 0xFF;
 
-  // uint8_t retryable = false;
-
-  // do {
-  //   retryable = !retryable;
-  //   if (!retryable) {
-  //     delay(180);
-  //   }
-  result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, true, true, 512, buffer);
-  // } while (result == USB_ERR_TIMEOUT && retryable);
-
-  return result;
+  return usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, true, true, 512, buffer);
 }
 
 uint8_t packet_ufi_read_sector[] = {0x28, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
 
 usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_number) {
-  usb_error result;
   uint8_t   buffer[512];
   memset(buffer, 0, 512);
   uint8_t cmd[12];
@@ -434,15 +413,5 @@ usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_num
   cmd[4] = sector_number >> 8;
   cmd[5] = sector_number & 0xFF;
 
-  // uint8_t retryable = false;
-
-  // do {
-  //   retryable = !retryable;
-  //   if (!retryable) {
-  //     delay(180);
-  //   }
-  result = usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, false, true, 512, buffer);
-  // } while (result == USB_ERR_TIMEOUT && retryable);
-
-  return result;
+  return usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, false, true, 512, buffer);
 }
