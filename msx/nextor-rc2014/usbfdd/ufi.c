@@ -388,25 +388,19 @@ uint8_t test_disk(_usb_state *const usb_state) {
 
 uint8_t packet_ufi_write_sector[] = {0x2A, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
 
-usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number) {
-  uint8_t   buffer[512];
-  for (int a = 0; a < 512; a++)
-    buffer[a] = a + 5;
-
+usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number, const uint8_t *const buffer) {
   uint8_t cmd[12];
   memcpy(cmd, packet_ufi_write_sector, 12);
 
   cmd[4] = sector_number >> 8;
   cmd[5] = sector_number & 0xFF;
 
-  return usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, true, true, 512, buffer);
+  return usb_execute_cbi_with_retry(usb_state, (uint8_t *)&cmd, true, true, 512, (uint8_t *)buffer);
 }
 
 uint8_t packet_ufi_read_sector[] = {0x28, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
 
-usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_number) {
-  uint8_t   buffer[512];
-  memset(buffer, 0, 512);
+usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_number, uint8_t *const buffer) {
   uint8_t cmd[12];
   memcpy(cmd, packet_ufi_read_sector, 12);
 
