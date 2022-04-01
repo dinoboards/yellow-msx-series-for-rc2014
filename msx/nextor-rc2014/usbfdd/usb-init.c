@@ -136,6 +136,7 @@ uint8_t usb_host_init() {
   work_area *const p = get_work_area();
   __asm__("EI");
   _usb_state *const work_area = &p->ch376;
+  memset(work_area, 0, sizeof(_usb_state));
 
   printf("usb_host_init %p\r\n", p);
 
@@ -153,7 +154,7 @@ uint8_t usb_host_init() {
   usb_host_bus_reset();
   delay(10);
 
-  read_all_configs(&p->ch376);
+  read_all_configs(work_area);
 
   if (p->ch376.usb_device) {
     if ((result = hw_set_address(DEVICE_ADDRESS, work_area->max_packet_size)) != USB_ERR_OK) {
@@ -168,16 +169,21 @@ uint8_t usb_host_init() {
     }
   }
 
-  // logWorkArea(&p->ch376);
+  // logWorkArea(work_area);
   ufi_inquiry_response inq_response;
   memset(&inq_response, 0, sizeof(ufi_inquiry_response));
 
-  result = ufi_inquiry(&p->ch376, &inq_response);
+  result = ufi_inquiry(work_area, &inq_response);
   // printf("inq: %02x\r\n", result);
   // logInquiryResponse(&inq_response);
 
+  printf(">");
+  result = test_disk(work_area);
+  printf("test=%d\r\n", result);
+  printf("<");
+
   ufi_format_capacities_response cap_response;
-  result = ufi_capacity(&p->ch376, &cap_response);
+  result = ufi_capacity(work_area, &cap_response);
   printf("%d,%d\r\n", result, cap_response.descriptor_code);
   // ;Useful information returned by the Read Format Capacities command:
   // ;+6: High byte of disk capacity in sectors:
@@ -217,11 +223,41 @@ uint8_t usb_host_init() {
   // }
   // printf("\r\n");
 
-  printf("--------------------\r\n");
-  ufi_write_sector(&p->ch376, 2);
-  printf("--------------------\r\n");
-  ufi_read_sector(&p->ch376, 2);
-  ufi_read_sector(&p->ch376, 3);
+  printf(">");
+  result = test_disk(work_area);
+  printf("test=%d\r\n", result);
+  printf("<");
+  ufi_read_sector(work_area, 0);
+
+  printf(">");
+  result = test_disk(work_area);
+  printf("test=%d\r\n", result);
+  printf("<");
+  ufi_write_sector(work_area, 2);
+  long_delay(8);
+
+  // full_reset(work_area);
+
+  // printf("> ");
+  // test_disk(work_area);
+  // printf("<");
+
+  printf(">>");
+  result = test_disk(work_area);
+  printf("test=%d\r\n", result);
+  printf("<<");
+  ufi_read_sector(work_area, 2);
+
+  printf(">>>");
+  test_disk(work_area);
+  printf("<<<");
+  ufi_write_sector(work_area, 1);
+
+  printf(">");
+  result = test_disk(work_area);
+  printf("test=%d\r\n", result);
+  printf("<");
+  ufi_read_sector(work_area, 1);
 
   return true;
 }

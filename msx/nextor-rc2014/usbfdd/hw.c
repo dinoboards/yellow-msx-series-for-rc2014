@@ -26,11 +26,10 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
 
   if (transferIn && buffer == 0) {
-    printf("Err2 ");
-    return 98;
+    yprintf(70, " Err1 ");
+    return USB_ERR_OTHER;
   }
 
-retry:
   setCommand(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
@@ -38,27 +37,23 @@ retry:
 
   ch_issue_token(0, CH_PID_SETUP, 0);
 
-  if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK) {
-    printf("Err1 (%d) ", result);
+  if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK)
     return result;
-  }
 
   result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint, amount_transferred)
                       : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
 
-  if (result != USB_ERR_OK) {
-    printf("Err3 (%d) ", result);
+  if (result != USB_ERR_OK)
     return result;
-  }
 
   if (transferIn) {
     ch_write_data((const uint8_t *)0, 0);
     ch_issue_token(0, CH_PID_OUT, 0x40);
-    return ch_wait_int_and_get_result(100);
+    return ch_wait_int_and_get_result(5000);
   }
 
   ch_issue_token(0, CH_PID_IN, 0x80);
-  return ch_wait_int_and_get_result(100);
+  return ch_wait_int_and_get_result(5000);
 }
 
 setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
