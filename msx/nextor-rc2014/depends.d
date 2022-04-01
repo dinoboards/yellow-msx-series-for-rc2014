@@ -2,14 +2,15 @@
 ./bin/usb-dev-read.c.asm: usbfdd/usb-dev-read.c usbfdd/nextor.h
 ./bin/ch376.c.asm: usbfdd/ch376.c usbfdd/ch376.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h usbfdd/print.h
-./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h
+./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h usbfdd/ufi.h \
+ usbfdd/ch376.h usbfdd/usb.h usbfdd/work-area.h
 ./bin/ufi.c.asm: usbfdd/ufi.c usbfdd/ufi.h usbfdd/ch376.h usbfdd/usb.h \
  usbfdd/work-area.h usbfdd/hw.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h usbfdd/print.h
 ./bin/usb-init.c.asm: usbfdd/usb-init.c usbfdd/ch376.h usbfdd/hw.h usbfdd/usb.h \
  usbfdd/work-area.h ../apps/libraries/delay/delay.h \
- ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h usbfdd/ufi.h \
- usbfdd/print.h
+ ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h \
+ usbfdd/nextor.h usbfdd/ufi.h usbfdd/print.h
 ./bin/print.c.asm: usbfdd/print.c usbfdd/print.h
 ./bin/usb-dev-write.c.asm: usbfdd/usb-dev-write.c usbfdd/nextor.h
 ./bin/hw.c.asm: usbfdd/hw.c usbfdd/hw.h usbfdd/ch376.h usbfdd/usb.h \
@@ -18,9 +19,11 @@
 ./bin/work-area.c.asm: usbfdd/work-area.c usbfdd/work-area.h usbfdd/ch376.h
 ./bin/usb-dev-info.c.asm: usbfdd/usb-dev-info.c usbfdd/nextor.h usbfdd/ufi.h \
  usbfdd/ch376.h usbfdd/usb.h usbfdd/work-area.h
-./bin/usb-dev-status.c.asm: usbfdd/usb-dev-status.c
-./bin/debuggin.c.asm: usbfdd/debuggin.c usbfdd/debuggin.h usbfdd/ufi.h \
- usbfdd/ch376.h usbfdd/usb.h usbfdd/work-area.h usbfdd/print.h
+./bin/usb-dev-status.c.asm: usbfdd/usb-dev-status.c usbfdd/nextor.h usbfdd/ufi.h \
+ usbfdd/ch376.h usbfdd/usb.h usbfdd/work-area.h
+./bin/debuggin.c.asm: usbfdd/debuggin.c usbfdd/debuggin.h usbfdd/nextor.h \
+ usbfdd/ufi.h usbfdd/ch376.h usbfdd/usb.h usbfdd/work-area.h \
+ usbfdd/print.h
 ./bin/usb-dev-read.c.asm: cexten/usb-dev-read.c cexten/ch376.h cexten/scsi.h \
  cexten/work-area.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h cexten/print.h

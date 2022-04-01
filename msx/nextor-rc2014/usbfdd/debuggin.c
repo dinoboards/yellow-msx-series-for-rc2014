@@ -1,4 +1,5 @@
 #include "debuggin.h"
+#include "nextor.h"
 #include "print.h"
 #include "usb.h"
 #include "work-area.h"
@@ -107,4 +108,14 @@
 //   printf("bValue = %d,%d", cmd_packet->bValue[0], cmd_packet->bValue[1]);
 //   printf("bIndex = %d,%d", cmd_packet->bIndex[0], cmd_packet->bIndex[1]);
 //   printf("wLength = %d\r\n", cmd_packet->wLength);
+// }
+
+// void logNextorLunInfo(const nextor_lun_info* const info) {
+//   printf("medium_type = %d,", info->medium_type);
+//   printf("sector_size = %d,", info->sector_size);
+//   printf("number_of_sectors = %ld,", info->number_of_sectors);
+//   printf("flags = %02x", info->flags);
+//   printf("number_of_cylinders = %d,", info->number_of_cylinders);
+//   printf("number_of_heads = %d,", info->number_of_heads);
+//   printf("number_of_sectors_per_track = %d,", info->number_of_sectors_per_track);
 // }
