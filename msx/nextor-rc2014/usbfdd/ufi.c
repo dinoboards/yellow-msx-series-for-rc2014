@@ -357,24 +357,14 @@ usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *r
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 
 usb_error ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response) {
-  usb_error result;
-  uint8_t   retryable = false;
+  test_disk(usb_state);
 
-  do {
-    retryable = !retryable;
-    if (!retryable)
-      delay(180);
-
-    result = usb_execute_cbi_with_retry(usb_state,
-                                        (uint8_t *)&packet_read_format_capacities,
-                                        false,
-                                        true,
-                                        sizeof(ufi_format_capacities_response),
-                                        (uint8_t *)response);
-
-  } while (result == USB_ERR_TIMEOUT && retryable);
-
-  return result;
+  return usb_execute_cbi_with_retry(usb_state,
+                                    (uint8_t *)&packet_read_format_capacities,
+                                    false,
+                                    true,
+                                    sizeof(ufi_format_capacities_response),
+                                    (uint8_t *)response);
 }
 
 usb_error run_test_unit_ready(_usb_state *const usb_state) {

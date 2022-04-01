@@ -189,47 +189,6 @@ uint8_t usb_host_init() {
   // printf("test=%d\r\n", result);
   // printf("<");
 
-  // ufi_format_capacities_response cap_response;
-  // result = ufi_capacity(work_area, &cap_response);
-  // printf("%d,%d\r\n", result, cap_response.descriptor_code);
-  // // ;Useful information returned by the Read Format Capacities command:
-  // // ;+6: High byte of disk capacity in sectors:
-  // // ;    5h: 720K
-  // // ;    4h: 1.25M
-  // // ;    Bh: 1.44M
-  // // ;+8: Disk format status:
-  // // ;    01b: unformatted
-  // // ;    10b: formatted
-  // // ;    11b: no disk in drive
-
-  // // printf("CAP: ");
-  // // switch (cap_response.descriptor_code) {
-  // // case 1:
-  // //   printf("unformatted, ");
-  // //   break;
-
-  // // case 2:
-  // //   printf("formatted, ");
-  // //   break;
-
-  // // case 3:
-  // //   printf("no disk, ");
-  // // }
-
-  // // switch (cap_response.number_of_blocks[2]) {
-  // // case 5:
-  // //   printf("720K");
-  // //   break;
-
-  // // case 4:
-  // //   printf("1.25M");
-  // //   break;
-
-  // // case 0x0B:
-  // //   printf("1.44MB");
-  // // }
-  // // printf("\r\n");
-
   // printf(">");
   // result = test_disk(work_area);
   // printf("test=%d\r\n", result);
