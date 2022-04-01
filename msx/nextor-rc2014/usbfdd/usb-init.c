@@ -138,8 +138,6 @@ uint8_t usb_host_init() {
   _usb_state *const work_area = &p->ch376;
   memset(work_area, 0, sizeof(_usb_state));
 
-  printf("usb_host_init %p\r\n", p);
-
   ch376_reset();
 
   if (!ch376_probe()) {
@@ -153,8 +151,17 @@ uint8_t usb_host_init() {
 
   usb_host_bus_reset();
   delay(10);
-
   read_all_configs(work_area);
+
+  switch (work_area->usb_device) {
+  case USB_IS_FLOPPY:
+    printf("USB:             FLOPPY\r\n");
+    break;
+
+  case USB_IS_MASS_STORAGE:
+    printf("USB:             STORAGE\r\n");
+    break;
+  }
 
   if (p->ch376.usb_device) {
     if ((result = hw_set_address(DEVICE_ADDRESS, work_area->max_packet_size)) != USB_ERR_OK) {
@@ -169,95 +176,95 @@ uint8_t usb_host_init() {
     }
   }
 
-  // logWorkArea(work_area);
-  ufi_inquiry_response inq_response;
-  memset(&inq_response, 0, sizeof(ufi_inquiry_response));
+  // // logWorkArea(work_area);
+  // ufi_inquiry_response inq_response;
+  // memset(&inq_response, 0, sizeof(ufi_inquiry_response));
 
-  result = ufi_inquiry(work_area, &inq_response);
-  // printf("inq: %02x\r\n", result);
-  // logInquiryResponse(&inq_response);
+  // result = ufi_inquiry(work_area, &inq_response);
+  // // printf("inq: %02x\r\n", result);
+  // // logInquiryResponse(&inq_response);
 
-  printf(">");
-  result = test_disk(work_area);
-  printf("test=%d\r\n", result);
-  printf("<");
-
-  ufi_format_capacities_response cap_response;
-  result = ufi_capacity(work_area, &cap_response);
-  printf("%d,%d\r\n", result, cap_response.descriptor_code);
-  // ;Useful information returned by the Read Format Capacities command:
-  // ;+6: High byte of disk capacity in sectors:
-  // ;    5h: 720K
-  // ;    4h: 1.25M
-  // ;    Bh: 1.44M
-  // ;+8: Disk format status:
-  // ;    01b: unformatted
-  // ;    10b: formatted
-  // ;    11b: no disk in drive
-
-  // printf("CAP: ");
-  // switch (cap_response.descriptor_code) {
-  // case 1:
-  //   printf("unformatted, ");
-  //   break;
-
-  // case 2:
-  //   printf("formatted, ");
-  //   break;
-
-  // case 3:
-  //   printf("no disk, ");
-  // }
-
-  // switch (cap_response.number_of_blocks[2]) {
-  // case 5:
-  //   printf("720K");
-  //   break;
-
-  // case 4:
-  //   printf("1.25M");
-  //   break;
-
-  // case 0x0B:
-  //   printf("1.44MB");
-  // }
-  // printf("\r\n");
-
-  printf(">");
-  result = test_disk(work_area);
-  printf("test=%d\r\n", result);
-  printf("<");
-  ufi_read_sector(work_area, 0);
-
-  printf(">");
-  result = test_disk(work_area);
-  printf("test=%d\r\n", result);
-  printf("<");
-  ufi_write_sector(work_area, 2);
-  long_delay(8);
-
-  // full_reset(work_area);
-
-  // printf("> ");
-  // test_disk(work_area);
+  // printf(">");
+  // result = test_disk(work_area);
+  // printf("test=%d\r\n", result);
   // printf("<");
 
-  printf(">>");
-  result = test_disk(work_area);
-  printf("test=%d\r\n", result);
-  printf("<<");
-  ufi_read_sector(work_area, 2);
+  // ufi_format_capacities_response cap_response;
+  // result = ufi_capacity(work_area, &cap_response);
+  // printf("%d,%d\r\n", result, cap_response.descriptor_code);
+  // // ;Useful information returned by the Read Format Capacities command:
+  // // ;+6: High byte of disk capacity in sectors:
+  // // ;    5h: 720K
+  // // ;    4h: 1.25M
+  // // ;    Bh: 1.44M
+  // // ;+8: Disk format status:
+  // // ;    01b: unformatted
+  // // ;    10b: formatted
+  // // ;    11b: no disk in drive
 
-  printf(">>>");
-  test_disk(work_area);
-  printf("<<<");
-  ufi_write_sector(work_area, 1);
+  // // printf("CAP: ");
+  // // switch (cap_response.descriptor_code) {
+  // // case 1:
+  // //   printf("unformatted, ");
+  // //   break;
 
-  printf(">");
-  result = test_disk(work_area);
-  printf("test=%d\r\n", result);
-  printf("<");
-  ufi_read_sector(work_area, 1);
+  // // case 2:
+  // //   printf("formatted, ");
+  // //   break;
+
+  // // case 3:
+  // //   printf("no disk, ");
+  // // }
+
+  // // switch (cap_response.number_of_blocks[2]) {
+  // // case 5:
+  // //   printf("720K");
+  // //   break;
+
+  // // case 4:
+  // //   printf("1.25M");
+  // //   break;
+
+  // // case 0x0B:
+  // //   printf("1.44MB");
+  // // }
+  // // printf("\r\n");
+
+  // printf(">");
+  // result = test_disk(work_area);
+  // printf("test=%d\r\n", result);
+  // printf("<");
+  // ufi_read_sector(work_area, 0);
+
+  // printf(">");
+  // result = test_disk(work_area);
+  // printf("test=%d\r\n", result);
+  // printf("<");
+  // ufi_write_sector(work_area, 2);
+  // long_delay(8);
+
+  // // full_reset(work_area);
+
+  // // printf("> ");
+  // // test_disk(work_area);
+  // // printf("<");
+
+  // printf(">>");
+  // result = test_disk(work_area);
+  // printf("test=%d\r\n", result);
+  // printf("<<");
+  // ufi_read_sector(work_area, 2);
+
+  // printf(">>>");
+  // test_disk(work_area);
+  // printf("<<<");
+  // ufi_write_sector(work_area, 1);
+
+  // printf(">");
+  // result = test_disk(work_area);
+  // printf("test=%d\r\n", result);
+  // printf("<");
+  // ufi_read_sector(work_area, 1);
 
   return true;
 }

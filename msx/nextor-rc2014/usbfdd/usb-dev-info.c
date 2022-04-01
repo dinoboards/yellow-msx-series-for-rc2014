@@ -1,43 +1,44 @@
 #include "nextor.h"
+#include "ufi.h"
+#include "work-area.h"
 #include <stdlib.h>
 #include <string.h>
 
-void usb_dev_info_basic_information(uint8_t *buffer) __z88dk_fastcall {
+inline uint8_t usb_dev_info_basic_information(uint8_t *buffer) {
   *buffer++ = 1;
   *buffer   = 0;
-}
-
-void usb_dev_info_manufacturer_name(uint8_t *const buffer) __z88dk_fastcall {
-  memcpy(buffer, "VENDOR123456", 8);
-  buffer[8] = 0;
-}
-
-void usb_dev_info_device_name(uint8_t *const buffer) __z88dk_fastcall {
-  memcpy(buffer, "DEVICE_NAME12345678", 16);
-  buffer[16] = 0;
-}
-
-void usb_dev_info_serial_number(uint8_t *const buffer) __z88dk_fastcall {
-  memcpy(buffer, "1234", 4);
-  buffer[4] = 0;
+  return 0;
 }
 
 uint8_t usb_dev_info(const dev_info_request request_info, uint8_t *const buffer) {
-  switch (request_info) {
-  case BASIC_INFORMATION:
-    usb_dev_info_basic_information(buffer);
-    return 0;
+  _usb_state *const work_area = get_usb_work_area();
 
+  if (work_area->usb_device != USB_IS_FLOPPY)
+    return 1;
+
+  if (request_info == BASIC_INFORMATION)
+    return usb_dev_info_basic_information(buffer);
+
+  ufi_inquiry_response response;
+  memset(&response, 0, sizeof(ufi_inquiry_response));
+  const usb_error result = ufi_inquiry(work_area, &response);
+
+  if (result != USB_ERR_OK)
+    return 2;
+
+  memset(buffer, ' ', 64);
+
+  switch (request_info) {
   case MANUFACTURER_NAME:
-    usb_dev_info_manufacturer_name(buffer);
+    memcpy(buffer, response.vendor_information, 8);
     return 0;
 
   case DEVICE_NAME:
-    usb_dev_info_device_name(buffer);
+    memcpy(buffer, response.product_id, 16);
     return 0;
 
   case SERIAL_NUMBER:
-    usb_dev_info_serial_number(buffer);
+    memcpy(buffer, response.product_revision, 4);
     return 0;
 
   default:
