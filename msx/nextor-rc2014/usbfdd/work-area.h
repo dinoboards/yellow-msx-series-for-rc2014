@@ -27,6 +27,7 @@ typedef struct _work_area {
   _usb_state ch376;
 } work_area;
 
-extern work_area *get_work_area();
+extern work_area * get_work_area();
+extern _usb_state *get_usb_work_area();
 
 #endif
