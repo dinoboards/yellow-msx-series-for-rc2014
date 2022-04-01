@@ -21,6 +21,11 @@
 #define INFO_FLAG_READ_ONLY 0x02
 #define INFO_FLAG_FLOPPY    0x04
 
+#define DEV_STATUS_NOT_AVAILABLE_OR_INVALID  0
+#define DEV_STATUS_AVAILABLE_AND_NOT_CHANGED 1
+#define DEV_STATUS_AVAILABLE_AND_CHANGED     2
+#define DEV_STATUS_AVAILABLE                 3
+
 typedef struct _nextor_lun_info {
   uint8_t  medium_type;
   uint16_t sector_size;

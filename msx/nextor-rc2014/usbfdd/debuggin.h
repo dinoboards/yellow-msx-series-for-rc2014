@@ -1,6 +1,7 @@
 #ifndef __DEBUGGIN
 #define __DEBUGGIN
 
+#include "nextor.h"
 #include "ufi.h"
 #include "usb.h"
 #include "work-area.h"
@@ -18,5 +19,7 @@ extern void logWorkArea(const _usb_state *const p);
 extern void logInquiryResponse(const ufi_inquiry_response *const response);
 
 extern void logSetupPacket(const setup_packet *const cmd_packet);
+
+extern void logNextorLunInfo(const nextor_lun_info *const info);
 
 #endif
