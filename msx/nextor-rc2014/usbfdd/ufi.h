@@ -23,6 +23,12 @@ typedef struct {
   uint8_t block_size[3];
 } ufi_format_capacities_response;
 
+typedef struct {
+  uint8_t operation_code;
+  uint8_t lun;
+  uint8_t reserved[10];
+} ufi_request_test_unit_ready;
+
 typedef struct _ufi_request_inquiry { // contains information about a specific device
   uint8_t operation_code;
   uint8_t lun;
@@ -107,5 +113,7 @@ extern usb_error usb_execute_cbi_with_retry(_usb_state *const    usb_state,
 extern usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number);
 
 extern usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_number);
+
+extern uint8_t test_disk(_usb_state *const usb_state);
 
 #endif

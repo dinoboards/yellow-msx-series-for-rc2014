@@ -4,6 +4,13 @@
 
 #include <stdlib.h>
 
+/* ************************************************ **************************************************** ***************** */
+/* Parallel port mode, bit definition of status port (read command port) */
+#ifndef PARA_STATE_INTB
+#define PARA_STATE_INTB 0x80 /* Bit 7 of parallel port status port: interrupt flag, active low */
+#define PARA_STATE_BUSY 0x10 /* Bit 4 of parallel port status port: busy flag, active high */
+#endif
+
 typedef struct {
   uint8_t number;
   uint8_t toggle;
@@ -21,8 +28,11 @@ typedef enum {
   USB_TOKEN_OUT_OF_SYNC               = 7,
   USB_ERR_UNEXPECTED_STATUS_FROM_HOST = 8,
   USB_ERR_CODE_EXCEPTION              = 9,
-  USB_ERR_MAX                         = 9,
-  USB_ERR_OTHER                       = 12,
+  USB_ERR_MEDIA_CHANGED               = 10,
+  USB_ERR_MEDIA_NOT_PRESENT           = 11,
+  USB_ERR_CH376_BLOCKED               = 12,
+  USB_ERR_MAX                         = 13,
+  USB_ERR_OTHER                       = 14,
   USB_ERR_DISK_READ                   = 0x1D,
   USB_ERR_DISK_WRITE                  = 0x1E,
   USB_FILERR_MIN                      = 0x41,
@@ -37,6 +47,8 @@ typedef enum {
 #define CH_CMD_SET_SPEED   0x04
 #define CH_CMD_RESET_ALL   0x05
 #define CH_CMD_CHECK_EXIST 0x06
+#define CMD00_UNLOCK_USB   0x23 /* Device mode: release the current USB buffer */
+#define CMD00_ABORT_NAK    0x17 /* Host mode: Abort current NAK retry */
 
 // #define CH_CMD_SET_RETRY             0x0B
 #define CH_CMD_WRITE_VAR8 0x0B
