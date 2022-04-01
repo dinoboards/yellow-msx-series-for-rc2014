@@ -5,60 +5,60 @@
 #include "work-area.h"
 #include <string.h>
 
-// void logInterface(const interface_descriptor *const p) {
-//   printf("len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,clas=%d,sub=%d,prot=%d,int=%d\r\n",
-//          p->bLength,
-//          p->bDescriptorType,
-//          p->bInterfaceNumber,
-//          p->bAlternateSetting,
-//          p->bNumEndpoints,
-//          p->bInterfaceClass,
-//          p->bInterfaceSubClass,
-//          p->bInterfaceProtocol,
-//          p->iInterface);
-// }
+void logInterface(const interface_descriptor *const p) {
+  printf("int len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,clas=%d,sub=%d,prot=%d,int=%d\r\n",
+         p->bLength,
+         p->bDescriptorType,
+         p->bInterfaceNumber,
+         p->bAlternateSetting,
+         p->bNumEndpoints,
+         p->bInterfaceClass,
+         p->bInterfaceSubClass,
+         p->bInterfaceProtocol,
+         p->iInterface);
+}
 
-// void logConfig(const config_descriptor *const p) {
-//   printf("len=%d,typ=%d,tlen=%d,numI=%d,bcfgv=%d,icfg=%d,bmA=%d,max=%d\r\n",
-//          p->bLength,
-//          p->bDescriptorType,
-//          p->wTotalLength,
-//          p->bNumInterfaces,
-//          p->bConfigurationvalue,
-//          p->iConfiguration,
-//          p->bmAttributes,
-//          p->bMaxPower);
-// }
+void logConfig(const config_descriptor *const p) {
+  printf("cfg len=%d,typ=%d,tlen=%d,numI=%d,bcfgv=%d,icfg=%d,bmA=%d,max=%d\r\n",
+         p->bLength,
+         p->bDescriptorType,
+         p->wTotalLength,
+         p->bNumInterfaces,
+         p->bConfigurationvalue,
+         p->iConfiguration,
+         p->bmAttributes,
+         p->bMaxPower);
+}
 
-// void logDevice(const device_descriptor *const p) {
-//   printf("len=%d,", p->bLength);
-//   printf("typ=%d,", p->bDescriptorType);
-//   printf("USB=%d,", p->bcdUSB);
-//   printf("cls=%d,", p->bDeviceClass);
-//   printf("sub=%d,", p->bDeviceSubClass);
-//   printf("pro=%d,", p->bDeviceProtocol);
-//   printf("siz=%d,", p->bMaxPacketSize0);
-//   printf("ven=%04X,", p->idVendor);
-//   printf("prd=%04X,", p->idProduct);
-//   printf("dev=%d,", p->bcdDevice);
-//   printf("man=%d,", p->iManufacturer);
-//   printf("ipd=%d,", p->iProduct);
-//   printf("ser=%d,", p->iSerialNumber);
-//   printf("num=%d\r\n", p->bNumConfigurations);
-// }
+void logDevice(const device_descriptor *const p) {
+  printf("dev len=%d,", p->bLength);
+  printf("typ=%d,", p->bDescriptorType);
+  printf("USB=%02X,", p->bcdUSB);
+  printf("cls=%02x,", p->bDeviceClass);
+  printf("sub=%02x,", p->bDeviceSubClass);
+  printf("pro=%02x,", p->bDeviceProtocol);
+  printf("siz=%d,", p->bMaxPacketSize0);
+  printf("ven=%04X,", p->idVendor);
+  printf("prd=%04X,", p->idProduct);
+  printf("dev=%d,", p->bcdDevice);
+  printf("man=%d,", p->iManufacturer);
+  printf("ipd=%d,", p->iProduct);
+  printf("ser=%d,", p->iSerialNumber);
+  printf("num=%d\r\n", p->bNumConfigurations);
+}
 
-// void logEndPointDescription(const endpoint_descriptor *const p) {
-//   printf("len=%d,t=%d,e=%d,a=%d,size=%d,intv=%d\r\n",
-//          p->bLength,
-//          p->bDescriptorType,
-//          p->bEndpointAddress,
-//          p->bmAttributes,
-//          p->wMaxPacketSize,
-//          p->bInterval);
-// }
+void logEndPointDescription(const endpoint_descriptor *const p) {
+  printf("ep: len=%d,t=%d,e=%d,a=%d,size=%d,intv=%d\r\n",
+         p->bLength,
+         p->bDescriptorType,
+         p->bEndpointAddress,
+         p->bmAttributes,
+         p->wMaxPacketSize,
+         p->bInterval);
+}
 
 // void logEndPointParam(const endpoint_param *const p) {
-//   printf("(num=%d,tog=%d,max=%d)", p->number, p->toggle, p->max_packet_size);
+//   printf("enp (num=%d,tog=%d,max=%d)", p->number, p->toggle, p->max_packet_size);
 // }
 
 // void logWorkArea(const _usb_state *const p) {
