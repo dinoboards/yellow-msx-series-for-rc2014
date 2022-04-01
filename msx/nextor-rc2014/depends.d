@@ -4,8 +4,8 @@
  ../apps/libraries/msxbios/system_vars.h usbfdd/print.h
 ./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h
 ./bin/ufi.c.asm: usbfdd/ufi.c usbfdd/ufi.h usbfdd/ch376.h usbfdd/usb.h \
- usbfdd/work-area.h usbfdd/hw.h usbfdd/print.h \
- ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h
+ usbfdd/work-area.h usbfdd/hw.h ../apps/libraries/delay/delay.h \
+ ../apps/libraries/msxbios/system_vars.h usbfdd/print.h
 ./bin/usb-init.c.asm: usbfdd/usb-init.c usbfdd/ch376.h usbfdd/hw.h usbfdd/usb.h \
  usbfdd/work-area.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h usbfdd/ufi.h \
@@ -16,7 +16,8 @@
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
  usbfdd/print.h
 ./bin/work-area.c.asm: usbfdd/work-area.c usbfdd/work-area.h usbfdd/ch376.h
-./bin/usb-dev-info.c.asm: usbfdd/usb-dev-info.c usbfdd/nextor.h
+./bin/usb-dev-info.c.asm: usbfdd/usb-dev-info.c usbfdd/nextor.h usbfdd/ufi.h \
+ usbfdd/ch376.h usbfdd/usb.h usbfdd/work-area.h
 ./bin/usb-dev-status.c.asm: usbfdd/usb-dev-status.c
 ./bin/debuggin.c.asm: usbfdd/debuggin.c usbfdd/debuggin.h usbfdd/ufi.h \
  usbfdd/ch376.h usbfdd/usb.h usbfdd/work-area.h usbfdd/print.h
