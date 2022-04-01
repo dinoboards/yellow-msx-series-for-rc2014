@@ -50,12 +50,12 @@ const endpoint_descriptor *parse_endpoint(_usb_state *const work_area, const end
     }
   }
 
-  // logEndPointDescription(pEndpoint);
+  logEndPointDescription(pEndpoint);
   return pEndpoint + 1;
 }
 
 const interface_descriptor *parse_interface(_usb_state *const work_area, const interface_descriptor *p) {
-  // logInterface(p);
+  logInterface(p);
 
   work_area->interface_number = p->bInterfaceNumber;
 
@@ -87,7 +87,7 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
     yprintf(15, "X1 (%d)", result);
     return result;
   }
-  // logConfig(config_desc);
+  logConfig(config_desc);
 
   result = hw_get_config_descriptor(
       config_desc, config_index, desc->bMaxPacketSize0, config_desc->wTotalLength, 0, &amount_transferred);
@@ -115,8 +115,11 @@ usb_error read_all_configs(_usb_state *const work_area) {
   uint8_t           result;
 
   result = hw_get_description(0, &desc);
-  // printf("Desc %02x\r\n", result);
-  // logDevice(&desc);
+  if (result != USB_ERR_OK)
+    return result;
+
+  printf("Desc: ");
+  logDevice(&desc);
 
   work_area->usb_device      = 0;
   work_area->max_packet_size = desc.bMaxPacketSize0;
@@ -132,7 +135,62 @@ usb_error read_all_configs(_usb_state *const work_area) {
   return USB_ERR_OK;
 }
 
-extern uint8_t usb_lun_info(const uint8_t lun, nextor_lun_info *const info);
+setup_packet cmd_port_power      = {0b00100011, 3, {8, 0}, {1, 0}, 0};
+setup_packet cmd_port_reset      = {0b00100011, 3, {4, 0}, {1, 0}, 0};
+setup_packet cmd_get_status_port = {0b10100011, 0, {0, 0}, {1, 0}, 4};
+
+void hub_spike(_usb_state *const work_area) {
+  usb_error result;
+  uint16_t  amount = 0;
+  uint8_t   buffer[4];
+
+  setup_packet cmd;
+  memcpy(&cmd, &cmd_get_status_port, sizeof(setup_packet));
+
+  if ((result = hw_set_address(2, work_area->max_packet_size)) != USB_ERR_OK) {
+    printf("hub1 err: %d\r\n", result);
+    return;
+  }
+
+  if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, 2)) != USB_ERR_OK) {
+    printf("hub2 err: %d\r\n", result);
+    return;
+  }
+
+  result = hw_control_transfer(&cmd_port_power, (uint8_t *)0, 2, 64, 0);
+
+  if (result != USB_ERR_OK) {
+    printf("hub3 err:%d\r\n", result);
+    return;
+  }
+
+  endpoint_param endpoint;
+  endpoint.number          = 0x81;
+  endpoint.toggle          = 0;
+  endpoint.max_packet_size = 2;
+
+  // result = hw_data_in_transfer(buffer, 2, 2, &endpoint, &amount);
+  printf("INT IN %d, %d, %d %d\r\n", result, buffer[0], buffer[1], amount);
+
+  result = hw_control_transfer(&cmd_port_reset, (uint8_t *)0, 2, 64, 0);
+
+  if (result != USB_ERR_OK) {
+    printf("hub4 err:%d\r\n", result);
+    return;
+  }
+
+  for (uint i = 1; i <= 4; i++) {
+    cmd.bIndex[0] = i;
+    amount        = 0;
+    result        = hw_control_transfer(&cmd, buffer, 2, 64, &amount);
+    if (result != USB_ERR_OK) {
+      printf("hub[%d] err: %d \r\n", i, result);
+      return;
+    }
+
+    printf("stat: %d, %02x, %02x, %02x, %02x", amount, buffer[0], buffer[1], buffer[2], buffer[3]);
+  }
+}
 
 uint8_t usb_host_init() {
   usb_error        result;
@@ -148,12 +206,16 @@ uint8_t usb_host_init() {
     return false;
   }
 
-  // p->ch376.present  = true;
   const uint8_t ver = ch376_get_firmware_version();
   printf("CH376:           PRESENT (VER %d)\r\n", ver);
 
   usb_host_bus_reset();
   delay(10);
+
+  // read_all_configs(work_area);
+
+  // hub_spike(work_area);
+
   read_all_configs(work_area);
 
   switch (work_area->usb_device) {
@@ -178,55 +240,6 @@ uint8_t usb_host_init() {
       return result;
     }
   }
-
-  // // logWorkArea(work_area);
-  // ufi_inquiry_response inq_response;
-  // memset(&inq_response, 0, sizeof(ufi_inquiry_response));
-
-  // result = ufi_inquiry(work_area, &inq_response);
-  // // printf("inq: %02x\r\n", result);
-  // // logInquiryResponse(&inq_response);
-
-  // printf(">");
-  // result = test_disk(work_area);
-  // printf("test=%d\r\n", result);
-  // printf("<");
-
-  // printf(">");
-  // result = test_disk(work_area);
-  // printf("test=%d\r\n", result);
-  // printf("<");
-  // ufi_read_sector(work_area, 0);
-
-  // printf(">");
-  // result = test_disk(work_area);
-  // printf("test=%d\r\n", result);
-  // printf("<");
-  // ufi_write_sector(work_area, 2);
-  // long_delay(8);
-
-  // // full_reset(work_area);
-
-  // // printf("> ");
-  // // test_disk(work_area);
-  // // printf("<");
-
-  // printf(">>");
-  // result = test_disk(work_area);
-  // printf("test=%d\r\n", result);
-  // printf("<<");
-  // ufi_read_sector(work_area, 2);
-
-  // printf(">>>");
-  // test_disk(work_area);
-  // printf("<<<");
-  // ufi_write_sector(work_area, 1);
-
-  // printf(">");
-  // result = test_disk(work_area);
-  // printf("test=%d\r\n", result);
-  // printf("<");
-  // ufi_read_sector(work_area, 1);
 
   return true;
 }

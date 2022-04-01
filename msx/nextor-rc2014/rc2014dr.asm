@@ -178,7 +178,7 @@ DRV_NAME:
 	jp	DRV_BASSTAT
 	jp	DRV_BASDEV
 	jp	DRV_EXTBIO
-	jp	UNAPI_ENTRY
+	jp	DRV_DIRECT0
 	jp	DRV_DIRECT1
 	jp	DRV_DIRECT2
 	jp	DRV_DIRECT3
@@ -251,7 +251,7 @@ DRV_INIT1:
 
 	;NOTE THAT CY IS 0 (NO INTERRUPT HOOKING NEEDED)
 	XOR	A
-	LD	HL, WRKAREA
+	LD	HL, ST_WRKAREA
 	RET
 
 DRV_INIT2:
@@ -382,7 +382,7 @@ DRV_EXTBIO:
 ; to DIRECT0/1/2/3/4 respectively.
 ; Receives all register data from the caller except IX and AF'.
 
-; DRV_DIRECT0:
+DRV_DIRECT0:
 DRV_DIRECT1:
 DRV_DIRECT2:
 DRV_DIRECT3:
@@ -1051,7 +1051,7 @@ _NTH2:
     or 0F0h
     daa
     add a, 0A0h
-    adc a, 040h ; Ascii hex at this point (0 to F)   
+    adc a, 040h ; Ascii hex at this point (0 to F)
     ret
 ;-----------------------------------------------------------------------------
 ;
@@ -1133,19 +1133,6 @@ no_rest:
 
 	include		cfdrv.asm
 	include		musicdriver.asm
-
-	DEFINE RC2014
-CH_DATA_PORT	EQU	$84
-CH_COMMAND_PORT	EQU	$85
-
-	; include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/flashdisk.asm"
-	; include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/driver_helpers_low.asm"
-	; include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/print_bios.asm"
-	include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/ch376s.asm"
-	include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/usbhost.asm"
-	include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/nextordirect.asm"
-	include "../../referened-repos/msx-usb/drivers/NextorUsbHost/src/scsi.asm"
-
 
 ;-----------------------------------------------------------------------------
 ;
