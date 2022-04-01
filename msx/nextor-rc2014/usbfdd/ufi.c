@@ -151,6 +151,9 @@ usb_error usb_process_error(_usb_state *const usb_state, const usb_error result)
   if (result == USB_ERR_TIMEOUT)
     return result;
 
+  if (result == USB_ERR_CH376_BLOCKED)
+    return USB_ERR_TIMEOUT;
+
   if (result != USB_ERR_STALL) {
     yprintf(70, " Fail %02x ", result);
     // hw_bus_reset();
