@@ -27,9 +27,9 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm rcembdrv.inc
 	fi
 	echo "Assembled $@"
 
-$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc version.asm ch376drv.asm $(BINDIR)spike.bin drvend.asm
+$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc.asm version.asm ch376drv.asm $(BINDIR)spike.bin drvend.asm
 	@mkdir -p $(BINDIR)
-	$(ASM) rc2014dr.asm ch376drv.asm rc2014dr.inc drvend.asm
+	$(ASM) rc2014dr.asm ch376drv.asm rc2014dr.inc.asm drvend.asm
 	cat $(BINDIR)rc2014dr.bin $(BINDIR)spike.bin > $(BINDIR)tmp.bin
 	rm $(BINDIR)rc2014dr.bin
 	mv $(BINDIR)tmp.bin $(BINDIR)rc2014dr.bin

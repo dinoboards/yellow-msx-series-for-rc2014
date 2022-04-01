@@ -45,6 +45,7 @@
  cexten/debuggin.h cexten/print.h cexten/work-area.h cexten/scsi.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h
 ./bin/chgbnk.o: ./chgbnk.asm
+./bin/rc2014dr.inc.o: ./rc2014dr.inc.asm
 ./bin/rcembdrv.o: ./rcembdrv.asm
 ./bin/cfdrv.o: ./cfdrv.asm
 ./bin/drvend.o: ./drvend.asm
@@ -55,7 +56,7 @@
 ./bin/version.o: ./version.asm
 ./bin/scsi_helpers.o: ./scsi_helpers.asm 
 ./bin/musicdriver.o: ./musicdriver.asm
-./bin/rc2014dr.o: ./rc2014dr.asm    
+./bin/rc2014dr.o: ./rc2014dr.asm
 ./bin/embinc.o: ./embinc.asm
 ./bin/print.o: ./cexten/print.asm ./cexten/asm.inc
 ./bin/crt.o: ./cexten/crt.asm
