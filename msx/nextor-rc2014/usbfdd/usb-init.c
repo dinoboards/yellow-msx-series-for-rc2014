@@ -135,15 +135,16 @@ usb_error read_all_configs(_usb_state *const work_area) {
   return USB_ERR_OK;
 }
 
-setup_packet cmd_port_power      = {0b00100011, 3, {8, 0}, {1, 0}, 0};
-setup_packet cmd_port_reset      = {0b00100011, 3, {4, 0}, {1, 0}, 0};
-setup_packet cmd_get_status_port = {0b10100011, 0, {0, 0}, {1, 0}, 4};
+setup_packet cmd_port_power         = {0b00100011, 3, {8, 0}, {1, 0}, 0};
+setup_packet cmd_port_reset         = {0b00100011, 3, {4, 0}, {1, 0}, 0};
+setup_packet cmd_get_status_port    = {0b10100011, 0, {0, 0}, {1, 0}, 4};
+setup_packet cmd_get_hub_descriptor = {0b10100000, 6, {0, 0x29}, {0, 0}, 8};
 
 void hub_spike(_usb_state *const work_area) {
   usb_error result;
   uint16_t  amount = 0;
-  uint8_t   buffer[4];
-
+  uint8_t   buffer[10];
+  uint8_t i;
   setup_packet cmd;
   memcpy(&cmd, &cmd_get_status_port, sizeof(setup_packet));
 
@@ -164,13 +165,22 @@ void hub_spike(_usb_state *const work_area) {
     return;
   }
 
-  endpoint_param endpoint;
-  endpoint.number          = 0x81;
-  endpoint.toggle          = 0;
-  endpoint.max_packet_size = 2;
+  result = hw_control_transfer(&cmd_get_hub_descriptor, buffer, 2, 64, &amount);
+  printf("hub: %d, %d ", result, amount);
+  for(i = 0; i < amount; i++)
+    printf("%02X ", buffer[i]);
+
+  printf("\r\n");
+
+
+
+  // endpoint_param endpoint;
+  // endpoint.number          = 0x81;
+  // endpoint.toggle          = 0;
+  // endpoint.max_packet_size = 2;
 
   // result = hw_data_in_transfer(buffer, 2, 2, &endpoint, &amount);
-  printf("INT IN %d, %d, %d %d\r\n", result, buffer[0], buffer[1], amount);
+  // printf("INT IN %d, %d, %d %d\r\n", result, buffer[0], buffer[1], amount);
 
   result = hw_control_transfer(&cmd_port_reset, (uint8_t *)0, 2, 64, 0);
 
@@ -179,7 +189,7 @@ void hub_spike(_usb_state *const work_area) {
     return;
   }
 
-  for (uint i = 1; i <= 4; i++) {
+  for (i = 1; i <= 4; i++) {
     cmd.bIndex[0] = i;
     amount        = 0;
     result        = hw_control_transfer(&cmd, buffer, 2, 64, &amount);
@@ -212,9 +222,9 @@ uint8_t usb_host_init() {
   usb_host_bus_reset();
   delay(10);
 
-  // read_all_configs(work_area);
+  read_all_configs(work_area);
 
-  // hub_spike(work_area);
+  hub_spike(work_area);
 
   read_all_configs(work_area);
 
