@@ -96,6 +96,5 @@ endef
 $(eval $(call BUILD_versions,cbios))
 $(eval $(call BUILD_versions,rc2014))
 
-# include ./cexten/Makefile
 include ./usbfdd/Makefile
 include ./depends.d
