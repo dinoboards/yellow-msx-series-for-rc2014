@@ -141,10 +141,10 @@ setup_packet cmd_get_status_port    = {0b10100011, 0, {0, 0}, {1, 0}, 4};
 setup_packet cmd_get_hub_descriptor = {0b10100000, 6, {0, 0x29}, {0, 0}, 8};
 
 void hub_spike(_usb_state *const work_area) {
-  usb_error result;
-  uint16_t  amount = 0;
-  uint8_t   buffer[10];
-  uint8_t i;
+  usb_error    result;
+  uint16_t     amount = 0;
+  uint8_t      buffer[10];
+  uint8_t      i;
   setup_packet cmd;
   memcpy(&cmd, &cmd_get_status_port, sizeof(setup_packet));
 
@@ -167,12 +167,10 @@ void hub_spike(_usb_state *const work_area) {
 
   result = hw_control_transfer(&cmd_get_hub_descriptor, buffer, 2, 64, &amount);
   printf("hub: %d, %d ", result, amount);
-  for(i = 0; i < amount; i++)
+  for (i = 0; i < amount; i++)
     printf("%02X ", buffer[i]);
 
   printf("\r\n");
-
-
 
   // endpoint_param endpoint;
   // endpoint.number          = 0x81;
