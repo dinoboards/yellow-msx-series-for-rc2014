@@ -32,9 +32,10 @@ USB		usb_work_area
 
 	DISPLAY "WRKAREA bytes: ",/D,ST_WRKAREA
 
-_usb_host_init:		EQU		$5800	; entry point within cextens section
-_usb_dev_info:		EQU  	        $5803
-_usb_lun_info:		EQU		$5806
-_usb_dev_status:	EQU		$5809
-_usb_dev_read:		EQU		$580C
-_usb_dev_write:		EQU		$580F
+DRIVER_ASM_END		EQU		$5000
+_usb_host_init:		EQU		DRIVER_ASM_END	; entry point within cextens section
+_usb_dev_info:		EQU  	        DRIVER_ASM_END+3
+_usb_lun_info:		EQU		DRIVER_ASM_END+6
+_usb_dev_status:	EQU		DRIVER_ASM_END+9
+_usb_dev_read:		EQU		DRIVER_ASM_END+12
+_usb_dev_write:		EQU		DRIVER_ASM_END+15
