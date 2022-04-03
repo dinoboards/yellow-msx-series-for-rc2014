@@ -6,7 +6,7 @@
 	EXTERN	_usb_dev_read
 	EXTERN	_usb_dev_write
 
-	ORG	$5800
+	ORG	$5000
 usb_host_init:
 	JP	_usb_host_init
 usb_dev_info:
