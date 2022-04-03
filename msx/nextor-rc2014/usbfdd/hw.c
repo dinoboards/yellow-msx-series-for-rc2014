@@ -18,8 +18,7 @@
 usb_error hw_control_transfer(const setup_packet *const cmd_packet,
                               uint8_t *const            buffer,
                               const uint8_t             device_address,
-                              const uint8_t             max_packet_size,
-                              uint16_t *const           amount_transferred) {
+                              const uint8_t             max_packet_size) {
   usb_error      result;
   endpoint_param endpoint = {0, 1, max_packet_size};
 
@@ -40,7 +39,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   if ((result = ch_short_wait_int_and_get_status()) != USB_ERR_OK)
     return result;
 
-  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint, amount_transferred)
+  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint)
                       : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
 
   if (result != USB_ERR_OK)
@@ -60,10 +59,8 @@ setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
 
 usb_error hw_get_description(const uint8_t device_address, device_descriptor *const buffer) {
   usb_error result;
-  uint16_t  amount_received = 0;
 
-  result = hw_control_transfer(
-      &cmd_get_device_descriptor, (uint8_t *)buffer, device_address, sizeof(device_descriptor), &amount_received);
+  result = hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, device_address, sizeof(device_descriptor));
 
   if (result != USB_ERR_OK)
     return result;
@@ -81,44 +78,38 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
                                    const uint8_t            config_index,
                                    const uint8_t            max_packet_size,
                                    const uint8_t            buffer_size,
-                                   const uint8_t            device_address,
-                                   uint16_t *const          amount_transferred) {
+                                   const uint8_t            device_address) {
 
   setup_packet cmd;
   cmd = cmd_get_config_descriptor;
-  if (amount_transferred)
-    *amount_transferred = 0;
 
   cmd.bValue[0] = config_index;
   cmd.wLength   = (uint16_t)buffer_size;
 
-  return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size, amount_transferred);
+  return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size);
 }
 
 #define PLACEHOLDER_TARGET_DEVICE_ADDRESS 0
 setup_packet cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 0}, {0, 0}, 0};
 
 usb_error hw_set_address(const uint8_t usb_address, const uint8_t packet_size) {
-  uint16_t amount_transferred = 0;
 
   setup_packet cmd;
   cmd           = cmd_set_address;
   cmd.bValue[0] = usb_address;
 
-  return hw_control_transfer(&cmd, (uint8_t *)0, 0, packet_size, &amount_transferred);
+  return hw_control_transfer(&cmd, (uint8_t *)0, 0, packet_size);
 }
 
 #define PLACEHOLDER_CONFIGURATION_VALUE 0
 setup_packet usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
 
 usb_error usb_set_configuration(const uint8_t configuration_value, const uint8_t packet_size, const uint8_t device_address) {
-  uint16_t amount_transferred = 0;
-
   setup_packet cmd;
   cmd           = usb_cmd_set_configuration;
   cmd.bValue[0] = configuration_value;
 
-  return hw_control_transfer(&cmd, (uint8_t *)0, device_address, packet_size, &amount_transferred);
+  return hw_control_transfer(&cmd, (uint8_t *)0, device_address, packet_size);
 }
 
 // ; -----------------------------------------------------------------------------
@@ -137,13 +128,12 @@ usb_error usb_set_configuration(const uint8_t configuration_value, const uint8_t
 usb_error hw_data_in_transfer(uint8_t *             buffer,
                               const uint16_t        buffer_size,
                               const uint8_t         device_address,
-                              endpoint_param *const endpoint,
-                              uint16_t *const       amount_received) {
+                              endpoint_param *const endpoint) {
 
   ch_command(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
-  return ch_data_in_transfer(buffer, buffer_size, endpoint, amount_received);
+  return ch_data_in_transfer(buffer, buffer_size, endpoint);
 }
 
 // ; -----------------------------------------------------------------------------
