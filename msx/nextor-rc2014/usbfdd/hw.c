@@ -25,7 +25,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
 
   if (transferIn && buffer == 0) {
-    yprintf(70, " Err1 ");
+    // yprintf(70, " Err1 ");
     return USB_ERR_OTHER;
   }
 

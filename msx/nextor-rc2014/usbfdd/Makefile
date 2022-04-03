@@ -12,24 +12,25 @@ endif
 LIBS := -I./../apps/libraries/msxbios/ -I./../apps/libraries/delay/
 SRC := ./usbfdd/
 
-ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
+ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
 $(BINDIR)spike.bin: $(BINDIR)crt.o \
- 	$(BINDIR)usb-init.c.o \
+ 	$(BINDIR)print.o \
+ 	$(BINDIR)print.c.o \
+ 	$(BINDIR)work-area.o \
+ 	$(BINDIR)work-area.c.o \
+ 	$(BINDIR)ch376.c.o \
+ 	$(BINDIR)hw.c.o \
+ 	$(BINDIR)ufi.c.o \
  	$(BINDIR)usb-dev-info.c.o \
  	$(BINDIR)usb-dev-read.c.o \
  	$(BINDIR)usb-dev-write.c.o \
  	$(BINDIR)usb-dev-status.c.o \
  	$(BINDIR)usb-lun-info.c.o \
- 	$(BINDIR)work-area.o \
- 	$(BINDIR)work-area.c.o \
- 	$(BINDIR)print.o \
- 	$(BINDIR)print.c.o \
- 	$(BINDIR)ch376.c.o \
- 	$(BINDIR)debuggin.c.o \
- 	$(BINDIR)hw.c.o \
- 	$(BINDIR)ufi.c.o \
+ 	$(BINDIR)usb-init.c.o \
 	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
+
+ 	# $(BINDIR)debuggin.c.o \
 
 $(BINDIR)%.bin:
 	@mkdir -p $(dir $@)

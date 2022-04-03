@@ -103,12 +103,12 @@ extern usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response c
 
 extern usb_error ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response);
 
-extern usb_error usb_execute_cbi_with_retry(_usb_state *const    usb_state,
-                                            const uint8_t *const cmd,
-                                            const bool           send,
-                                            const bool           retry_on_media_change,
-                                            const uint16_t       buffer_size,
-                                            uint8_t *const       buffer);
+// extern usb_error usb_execute_cbi_with_retry(_usb_state *const    usb_state,
+//                                             const uint8_t *const cmd,
+//                                             const bool           send,
+//                                             const bool           retry_on_media_change,
+//                                             const uint16_t       buffer_size,
+//                                             uint8_t *const       buffer);
 
 extern usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number, const uint8_t *const buffer);
 
