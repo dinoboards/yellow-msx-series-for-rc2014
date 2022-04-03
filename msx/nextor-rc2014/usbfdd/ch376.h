@@ -58,7 +58,6 @@ extern uint8_t        ch376_probe();
 extern void           ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
 extern uint8_t        ch376_get_firmware_version();
 extern const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length);
-extern void           ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t toggle_bits);
 
 extern usb_error
 ch_data_in_transfer(uint8_t *buffer, int16_t data_length, endpoint_param *const endpoint, uint16_t *const amount_received);
@@ -74,5 +73,9 @@ inline void ch_configure_nak_retry(const ch_nak_retry_type retry, const uint8_t 
 #define ch_configure_nak_retry_indefinite() ch_configure_nak_retry(CH_NAK_RETRY_INDEFINITE, 0x1F)
 #define ch_configure_nak_retry_disable()    ch_configure_nak_retry(CH_NAK_RETRY_DONT, 0x1F)
 #define ch_configure_nak_retry_3s()         ch_configure_nak_retry(CH_NAK_RETRY_3S, 0x1F)
+
+extern void ch_issue_token_setup();
+extern void ch_issue_token_out_ep0();
+extern void ch_issue_token_in_ep0();
 
 #endif
