@@ -4,7 +4,7 @@
 
 #include "print.h"
 
-const void setCommand(const uint8_t command) __z88dk_fastcall {
+void ch_command(const uint8_t command) __z88dk_fastcall {
   uint8_t counter = 255;
   while ((CH376_COMMAND_PORT & PARA_STATE_BUSY) && --counter != 0)
     ;
@@ -38,7 +38,7 @@ usb_error ch_wait_int_and_get_result(const int16_t timeout_period) __z88dk_fastc
 }
 
 usb_error ch_get_status() {
-  setCommand(CH_CMD_GET_STATUS);
+  ch_command(CH_CMD_GET_STATUS);
   uint8_t ch_status = CH376_DATA_PORT;
 
   if (ch_status >= USB_FILERR_MIN && ch_status <= USB_FILERR_MAX) {
@@ -85,7 +85,7 @@ usb_error ch_get_status() {
 }
 
 uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received) {
-  setCommand(CH_CMD_RD_USB_DATA0);
+  ch_command(CH_CMD_RD_USB_DATA0);
   uint8_t count = CH376_DATA_PORT;
   if (amount_received)
     *amount_received = count;
@@ -107,17 +107,17 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
 
 void ch376_reset() {
   delay(30);
-  setCommand(CH_CMD_RESET_ALL);
+  ch_command(CH_CMD_RESET_ALL);
   delay(30);
 }
 
 inline uint8_t ch376_test() {
-  setCommand(CH_CMD_CHECK_EXIST);
+  ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x34;
   if (CH376_DATA_PORT != 0x34)
     return false;
 
-  setCommand(CH_CMD_CHECK_EXIST);
+  ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x89;
   return CH376_DATA_PORT == 0x89;
 }
@@ -134,19 +134,19 @@ uint8_t ch376_probe() {
 }
 
 void ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
-  setCommand(CH_CMD_SET_USB_MODE);
+  ch_command(CH_CMD_SET_USB_MODE);
   CH376_DATA_PORT = mode;
 
   // return ch_get_status();
 }
 
 uint8_t ch376_get_firmware_version() {
-  setCommand(CH_CMD_GET_IC_VER);
+  ch_command(CH_CMD_GET_IC_VER);
   return CH376_DATA_PORT & 0x1f;
 }
 
 const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
-  setCommand(CH_CMD_WR_HOST_DATA);
+  ch_command(CH_CMD_WR_HOST_DATA);
   CH376_DATA_PORT = length;
 
   while (length-- != 0) {
@@ -157,7 +157,7 @@ const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
 }
 
 void ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t toggle_bits) {
-  setCommand(CH_CMD_ISSUE_TKN_X);
+  ch_command(CH_CMD_ISSUE_TKN_X);
   CH376_DATA_PORT = toggle_bits;
   CH376_DATA_PORT = endpoint << 4 | pid;
 }

@@ -30,7 +30,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
     return USB_ERR_OTHER;
   }
 
-  setCommand(CH_CMD_SET_USB_ADDR);
+  ch_command(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
   ch_write_data((const uint8_t *)cmd_packet, sizeof(setup_packet));
@@ -140,7 +140,7 @@ usb_error hw_data_in_transfer(uint8_t *             buffer,
                               endpoint_param *const endpoint,
                               uint16_t *const       amount_received) {
 
-  setCommand(CH_CMD_SET_USB_ADDR);
+  ch_command(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
   return ch_data_in_transfer(buffer, buffer_size, endpoint, amount_received);
@@ -162,7 +162,7 @@ usb_error hw_data_out_transfer(const uint8_t *       buffer,
                                const uint8_t         device_address,
                                endpoint_param *const endpoint) {
 
-  setCommand(CH_CMD_SET_USB_ADDR);
+  ch_command(CH_CMD_SET_USB_ADDR);
   CH376_DATA_PORT = device_address;
 
   return ch_data_out_transfer(buffer, buffer_size, endpoint);
