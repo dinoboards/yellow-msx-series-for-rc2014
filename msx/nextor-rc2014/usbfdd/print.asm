@@ -78,3 +78,36 @@ SetVdp_Write:
     ei
     out ($99),a
     ret
+
+	PUBLIC	_print_hex
+; extern void print_hex(const char c) __z88dk_fastcall;
+
+_print_hex:
+    call __NUMTOHEX
+    ld a, d
+    call CHPUT
+    ld a, e
+    JP CHPUT
+
+;       Subroutine      Convert 8-bit hexidecimal number to ASCII reprentation
+;       Inputs          L - number to be printed
+;       Outputs         DE - two byte ASCII values - D=65 / 'A' and E=66 / 'B'
+__NUMTOHEX:
+	ld	c, l   ; a = number to convert
+    call _NTH1
+    ld d, a
+    ld a, c
+    call _NTH2
+    ld e, a
+    ret  ; return with hex number in de
+_NTH1:
+    rra
+    rra
+    rra
+    rra
+_NTH2:
+    or 0F0h
+    daa
+    add a, 0A0h
+    adc a, 040h ; Ascii hex at this point (0 to F)
+    ret

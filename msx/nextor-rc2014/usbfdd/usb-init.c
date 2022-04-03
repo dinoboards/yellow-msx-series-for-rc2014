@@ -50,12 +50,12 @@ const endpoint_descriptor *parse_endpoint(_usb_state *const work_area, const end
     }
   }
 
-  logEndPointDescription(pEndpoint);
+  // logEndPointDescription(pEndpoint);
   return pEndpoint + 1;
 }
 
 const interface_descriptor *parse_interface(_usb_state *const work_area, const interface_descriptor *p) {
-  logInterface(p);
+  // logInterface(p);
 
   work_area->interface_number = p->bInterfaceNumber;
 
@@ -82,14 +82,14 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
   result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), 0);
   if (result != USB_ERR_OK) {
-    yprintf(15, "X1 (%d)", result);
+    // yprintf(15, "X1 (%d)", result);
     return result;
   }
-  logConfig(config_desc);
+  // logConfig(config_desc);
 
   result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, config_desc->wTotalLength, 0);
   if (result != USB_ERR_OK) {
-    yprintf(15, "X2 (%d)", result);
+    // yprintf(15, "X2 (%d)", result);
     return result;
   }
 
@@ -115,8 +115,8 @@ usb_error read_all_configs(_usb_state *const work_area) {
   if (result != USB_ERR_OK)
     return result;
 
-  printf("Desc: ");
-  logDevice(&desc);
+  // printf("Desc: ");
+  // logDevice(&desc);
 
   work_area->usb_device      = 0;
   work_area->max_packet_size = desc.bMaxPacketSize0;
@@ -145,28 +145,28 @@ void hub_spike(_usb_state *const work_area) {
   memcpy(&cmd, &cmd_get_status_port, sizeof(setup_packet));
 
   if ((result = hw_set_address(2, work_area->max_packet_size)) != USB_ERR_OK) {
-    printf("hub1 err: %d\r\n", result);
+    // printf("hub1 err: %d\r\n", result);
     return;
   }
 
   if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, 2)) != USB_ERR_OK) {
-    printf("hub2 err: %d\r\n", result);
+    // printf("hub2 err: %d\r\n", result);
     return;
   }
 
   result = hw_control_transfer(&cmd_port_power, (uint8_t *)0, 2, 64);
 
   if (result != USB_ERR_OK) {
-    printf("hub3 err:%d\r\n", result);
+    // printf("hub3 err:%d\r\n", result);
     return;
   }
 
   result = hw_control_transfer(&cmd_get_hub_descriptor, buffer, 2, 64);
-  printf("hub: %d ", result);
-  for (i = 0; i < 8; i++)
-    printf("%02X ", buffer[i]);
+  // printf("hub: %d ", result);
+  // for (i = 0; i < 8; i++)
+  //   printf("%02X ", buffer[i]);
 
-  printf("\r\n");
+  // printf("\r\n");
 
   // endpoint_param endpoint;
   // endpoint.number          = 0x81;
@@ -179,7 +179,7 @@ void hub_spike(_usb_state *const work_area) {
   result = hw_control_transfer(&cmd_port_reset, (uint8_t *)0, 2, 64);
 
   if (result != USB_ERR_OK) {
-    printf("hub4 err:%d\r\n", result);
+    // printf("hub4 err:%d\r\n", result);
     return;
   }
 
@@ -187,11 +187,11 @@ void hub_spike(_usb_state *const work_area) {
     cmd.bIndex[0] = i;
     result        = hw_control_transfer(&cmd, buffer, 2, 64);
     if (result != USB_ERR_OK) {
-      printf("hub[%d] err: %d \r\n", i, result);
+      // printf("hub[%d] err: %d \r\n", i, result);
       return;
     }
 
-    printf("stat: %d, %02x, %02x, %02x", buffer[0], buffer[1], buffer[2], buffer[3]);
+    // printf("stat: %d, %02x, %02x, %02x", buffer[0], buffer[1], buffer[2], buffer[3]);
   }
 }
 
@@ -205,12 +205,14 @@ uint8_t usb_host_init() {
   ch376_reset();
 
   if (!ch376_probe()) {
-    printf("CH376:           NOT PRESENT\r\n");
+    print_string("CH376:           NOT PRESENT\r\n");
     return false;
   }
 
   const uint8_t ver = ch376_get_firmware_version();
-  printf("CH376:           PRESENT (VER %d)\r\n", ver);
+  print_string("CH376:           PRESENT (VER ");
+  print_hex(ver);
+  print_string(")\r\n");
 
   usb_host_bus_reset();
   delay(10);
@@ -223,23 +225,23 @@ uint8_t usb_host_init() {
 
   switch (work_area->usb_device) {
   case USB_IS_FLOPPY:
-    printf("USB:             FLOPPY\r\n");
+    print_string("USB:             FLOPPY\r\n");
     break;
 
   case USB_IS_MASS_STORAGE:
-    printf("USB:             STORAGE\r\n");
+    print_string("USB:             STORAGE\r\n");
     break;
   }
 
   if (p->ch376.usb_device) {
     if ((result = hw_set_address(DEVICE_ADDRESS, work_area->max_packet_size)) != USB_ERR_OK) {
-      yprintf(15, "X2 (%d)", result);
+      // yprintf(15, "X2 (%d)", result);
       return result;
     }
 
     if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, DEVICE_ADDRESS)) !=
         USB_ERR_OK) {
-      yprintf(15, "X3 (%d)", result);
+      // yprintf(15, "X3 (%d)", result);
       return result;
     }
   }

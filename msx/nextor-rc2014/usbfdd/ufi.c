@@ -36,9 +36,6 @@ usb_error usb_data_in_transfer(_usb_state *const       usb_state,
 
   result = hw_data_in_transfer(buffer, buffer_size, DEVICE_ADDRESS, endpoint);
 
-  if (result == USB_ERR_OK)
-    return result;
-
   if (result == USB_ERR_STALL) {
     usb_clear_endpoint_halt(usb_state, endpoint_type);
     return USB_ERR_STALL;
@@ -60,7 +57,7 @@ usb_error usb_data_in_transfer(_usb_state *const       usb_state,
 // ; Input:  HL = Address of a buffer for the data to send data
 // ;         BC = Data length
 // ; Output: A  = USB error code
-usb_error usb_data_out_transfer(_usb_state *const usb_state, uint8_t *const buffer, const uint16_t buffer_size) {
+inline usb_error usb_data_out_transfer(_usb_state *const usb_state, uint8_t *const buffer, const uint16_t buffer_size) {
 
   usb_error result;
 
@@ -142,6 +139,9 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
 usb_error usb_process_error(_usb_state *const usb_state, const usb_error result) {
   (void)usb_state;
 
+  if (result == USB_ERR_OK)
+    return result;
+
   if (result == USB_ERR_NO_DEVICE)
     return result;
 
@@ -151,15 +151,15 @@ usb_error usb_process_error(_usb_state *const usb_state, const usb_error result)
   if (result == USB_ERR_CH376_BLOCKED)
     return USB_ERR_TIMEOUT;
 
-  if (result != USB_ERR_STALL) {
-    yprintf(70, " Fail %02x ", result);
-    // hw_bus_reset();
-    // usb_init_dev();
+  // if (result != USB_ERR_STALL) {
+  // yprintf(70, " Fail %02x ", result);
+  // hw_bus_reset();
+  // usb_init_dev();
 
-    // usb_state->error = result;
-    // usb_state->asc => ??;
-    // usb_state->ascq => ??;
-  }
+  // usb_state->error = result;
+  // usb_state->asc => ??;
+  // usb_state->ascq => ??;
+  // }
 
   return result;
 }
@@ -230,14 +230,13 @@ usb_error usb_execute_cbi_core(_usb_state *const         usb_state,
                                const bool                send,
                                const uint16_t            buffer_size,
                                uint8_t *const            buffer) {
-  uint8_t   asc;
-  usb_error result;
+  uint8_t asc;
 
-  if (send) {
-    return usb_execute_cbi_core_no_clear(usb_state, adsc, cmd, send, buffer_size, buffer, &asc);
-  }
+  const usb_error result = usb_execute_cbi_core_no_clear(usb_state, adsc, cmd, send, buffer_size, buffer, &asc);
 
-  result = usb_execute_cbi_core_no_clear(usb_state, adsc, cmd, send, buffer_size, buffer, &asc);
+  if (send)
+    return result;
+
   if (result != USB_ERR_STALL)
     return result;
 
