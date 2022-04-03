@@ -37,7 +37,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 
   ch_issue_token_setup();
 
-  if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK)
+  if ((result = ch_short_wait_int_and_get_status()) != USB_ERR_OK)
     return result;
 
   result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint, amount_transferred)
@@ -49,11 +49,11 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   if (transferIn) {
     ch_write_data((const uint8_t *)0, 0);
     ch_issue_token_out_ep0();
-    return ch_wait_int_and_get_result(5000);
+    return ch_long_wait_int_and_get_status();
   }
 
   ch_issue_token_in_ep0();
-  return ch_wait_int_and_get_result(5000);
+  return ch_long_wait_int_and_get_status();
 }
 
 setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
