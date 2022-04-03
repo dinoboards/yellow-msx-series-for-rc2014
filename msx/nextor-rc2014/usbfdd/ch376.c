@@ -45,24 +45,24 @@ usb_error ch_get_status() {
     return ch_status;
   }
 
-  if (ch_status == CH_ST_RET_SUCCESS)
+  if (ch_status == CH_CMD_RET_SUCCESS)
     return USB_ERR_OK;
 
-  if (ch_status == CH_ST_INT_SUCCESS)
+  if (ch_status == CH_USB_INT_SUCCESS)
     return USB_ERR_OK;
 
-  if (ch_status == CH_ST_INT_DISK_READ)
+  if (ch_status == CH_USB_INT_DISK_READ)
     return USB_ERR_DISK_READ;
 
-  if (ch_status == CH_ST_INT_DISK_WRITE)
+  if (ch_status == CH_USB_INT_DISK_WRITE)
     return USB_ERR_DISK_WRITE;
 
-  if (ch_status == CH_ST_INT_DISCONNECT) {
+  if (ch_status == CH_USB_INT_DISCONNECT) {
     ch376_set_usb_mode(5);
     return USB_ERR_NO_DEVICE;
   }
 
-  if (ch_status == CH_ST_INT_BUF_OVER)
+  if (ch_status == CH_USB_INT_BUF_OVER)
     return USB_ERR_DATA_ERROR;
 
   ch_status &= 0x2F;

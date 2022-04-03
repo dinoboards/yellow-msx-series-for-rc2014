@@ -2,14 +2,8 @@
 #ifndef __CH376
 #define __CH376
 
+#include "ch376inc.h"
 #include <stdlib.h>
-
-/* ************************************************ **************************************************** ***************** */
-/* Parallel port mode, bit definition of status port (read command port) */
-#ifndef PARA_STATE_INTB
-#define PARA_STATE_INTB 0x80 /* Bit 7 of parallel port status port: interrupt flag, active low */
-#define PARA_STATE_BUSY 0x10 /* Bit 4 of parallel port status port: busy flag, active high */
-#endif
 
 typedef struct {
   uint8_t number;
@@ -41,60 +35,16 @@ typedef enum {
   USB_FILERR_MAX                      = 0xB4
 } usb_error;
 
-#define CH_CMD_GET_IC_VER  0x01
-#define CH_CMD_ENTER_SLEEP 0x03
-
-#define CH_CMD_SET_SPEED   0x04
-#define CH_CMD_RESET_ALL   0x05
-#define CH_CMD_CHECK_EXIST 0x06
-#define CMD00_UNLOCK_USB   0x23 /* Device mode: release the current USB buffer */
-#define CMD00_ABORT_NAK    0x17 /* Host mode: Abort current NAK retry */
-
-// #define CH_CMD_SET_RETRY             0x0B
-#define CH_CMD_WRITE_VAR8 0x0B
-#define CH_VAR_NAK_RETRY  0x25
-
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
 
-#define CH_CMD_SET_USB_ADDR          0x13
-#define CH_CMD_SET_USB_MODE          0x15
-#define CH_CMD_GET_STATUS            0x22
-#define CH375_CMD_UNLOCK_USB         0x23
-#define CH_CMD_RD_USB_DATA0          0x27
-#define CH375_CMD_RD_USB_DATA_UNLOCK 0x28
-#define CH_CMD_WR_HOST_DATA          0x2C
-#define CH_CMD_CLR_STALL             0x41
-#define CH_CMD_GET_DESCR             0x46
-#define CH_CMD_ISSUE_TKN_X           0x4E
-
-#define CH_SPEED_LOW  2
-#define CH_SPEED_HIGH 0
-
-#define CH_ENTER_SLEEP     3
 #define CH_MODE_HOST_RESET 7
 #define CH_MODE_HOST       6
 
-// return codes
-#define CH_ST_RET_SUCCESS 0x51
-#define CH_ST_RET_ABORT   0x5F
-
-// CH376 result codes
-#define CH_USB_INT_SUCCESS    0x14
-#define CH_USB_ERR_FOUND_NAME 0x43
-
-#define CH_ST_INT_SUCCESS    0x14
-#define CH_ST_INT_CONNECT    0x15
-#define CH_ST_INT_DISCONNECT 0x16
-#define CH_ST_INT_BUF_OVER   0x17
-#define CH_ST_INT_DISK_READ  0x1D
-#define CH_ST_INT_DISK_WRITE 0x1E
-#define CH_ST_INT_DISK_ERR   0x1F
-#define CH_ST_RET_SUCCESS    0x51
-#define CH_ST_RET_ABORT      0x5F
-
-#define USB_STALL 0x2e
-
-typedef enum _ch376_pid { CH_PID_SETUP = 0x0D, CH_PID_IN = 0x09, CH_PID_OUT = 0x01 } ch376_pid;
+typedef enum _ch376_pid {
+  CH_PID_SETUP = DEF_USB_PID_SETUP,
+  CH_PID_IN    = DEF_USB_PID_IN,
+  CH_PID_OUT   = DEF_USB_PID_OUT
+} ch376_pid;
 
 __sfr __at 0x84 CH376_DATA_PORT;
 __sfr __at 0x85 CH376_COMMAND_PORT;
@@ -117,7 +67,7 @@ extern usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_leng
 
 inline void ch_configure_nak_retry(const ch_nak_retry_type retry, const uint8_t number_of_retries) {
   setCommand(CH_CMD_WRITE_VAR8);
-  CH376_DATA_PORT = CH_VAR_NAK_RETRY;
+  CH376_DATA_PORT = CH_VAR_RETRY_TIMES;
   CH376_DATA_PORT = retry << 6 | (number_of_retries & 0x1F);
 }
 
