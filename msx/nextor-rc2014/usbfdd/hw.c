@@ -35,7 +35,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 
   ch_write_data((const uint8_t *)cmd_packet, sizeof(setup_packet));
 
-  ch_issue_token(0, CH_PID_SETUP, 0);
+  ch_issue_token_setup();
 
   if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK)
     return result;
@@ -48,11 +48,11 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 
   if (transferIn) {
     ch_write_data((const uint8_t *)0, 0);
-    ch_issue_token(0, CH_PID_OUT, 0x40);
+    ch_issue_token_out_ep0();
     return ch_wait_int_and_get_result(5000);
   }
 
-  ch_issue_token(0, CH_PID_IN, 0x80);
+  ch_issue_token_in_ep0();
   return ch_wait_int_and_get_result(5000);
 }
 

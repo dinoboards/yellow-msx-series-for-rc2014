@@ -156,11 +156,25 @@ const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
   return buffer;
 }
 
-void ch_issue_token(const uint8_t endpoint, const ch376_pid pid, const uint8_t toggle_bits) {
+void ch_issue_token(const uint8_t toggle_bit, const uint8_t endpoint, const ch376_pid pid) {
   ch_command(CH_CMD_ISSUE_TKN_X);
-  CH376_DATA_PORT = toggle_bits;
+  CH376_DATA_PORT = toggle_bit;
   CH376_DATA_PORT = endpoint << 4 | pid;
 }
+
+void ch_issue_token_in(const endpoint_param *const endpoint) __z88dk_fastcall {
+  ch_issue_token(endpoint->toggle ? 0x80 : 0x00, endpoint->number, CH_PID_IN);
+}
+
+void ch_issue_token_out(const endpoint_param *const endpoint) __z88dk_fastcall {
+  ch_issue_token(endpoint->toggle ? 0x40 : 0x00, endpoint->number, CH_PID_OUT);
+}
+
+void ch_issue_token_out_ep0() { ch_issue_token(0, 0, CH_PID_OUT); }
+
+void ch_issue_token_in_ep0() { ch_issue_token(0x80, 0, CH_PID_IN); }
+
+void ch_issue_token_setup() { ch_issue_token(0, 0, CH_PID_SETUP); }
 
 usb_error
 ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const endpoint, uint16_t *const amount_received) {
@@ -170,11 +184,10 @@ ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const 
   if (buffer_size == 0)
     return USB_ERR_OK;
 
-  const uint8_t number          = endpoint->number;
   const uint8_t max_packet_size = endpoint->max_packet_size;
 
   do {
-    ch_issue_token(number, CH_PID_IN, endpoint->toggle ? 0x80 : 0x00);
+    ch_issue_token_in(endpoint);
 
     if ((result = ch_wait_int_and_get_result(5000)) != USB_ERR_OK)
       return result;
@@ -198,7 +211,7 @@ usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, end
     const uint8_t size = max_packet_size < buffer_length ? max_packet_size : buffer_length;
     buffer             = ch_write_data(buffer, size);
     buffer_length -= size;
-    ch_issue_token(number, CH_PID_OUT, endpoint->toggle ? 0x40 : 0x00);
+    ch_issue_token_out(endpoint);
     if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK)
       return result;
 
