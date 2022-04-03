@@ -51,7 +51,8 @@ __sfr __at 0x85 CH376_COMMAND_PORT;
 
 extern void           ch_command(const uint8_t command) __z88dk_fastcall;
 extern usb_error      ch_get_status();
-extern usb_error      ch_wait_int_and_get_result(const int16_t timeout_period) __z88dk_fastcall;
+extern usb_error      ch_long_wait_int_and_get_status();
+extern usb_error      ch_short_wait_int_and_get_status();
 extern uint8_t *      ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received);
 extern void           ch376_reset();
 extern uint8_t        ch376_probe();
