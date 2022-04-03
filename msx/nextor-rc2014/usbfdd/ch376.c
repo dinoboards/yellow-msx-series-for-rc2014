@@ -179,8 +179,7 @@ void ch_issue_token_in_ep0() { ch_issue_token(0x80, 0, CH_PID_IN); }
 
 void ch_issue_token_setup() { ch_issue_token(0, 0, CH_PID_SETUP); }
 
-usb_error
-ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const endpoint, uint16_t *const amount_received) {
+usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const endpoint) {
   uint8_t   count;
   usb_error result;
 
@@ -199,7 +198,6 @@ ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const 
 
     buffer = ch_read_data(buffer, buffer_size, &count);
     buffer_size -= count;
-    *amount_received += count;
   } while (buffer_size > 0 && count <= max_packet_size);
 
   return USB_ERR_OK;

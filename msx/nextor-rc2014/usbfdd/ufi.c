@@ -25,8 +25,7 @@
 usb_error usb_data_in_transfer(_usb_state *const       usb_state,
                                uint8_t *const          buffer,
                                const uint16_t          buffer_size,
-                               const usb_endpoint_type endpoint_type,
-                               uint16_t *              amount_received) {
+                               const usb_endpoint_type endpoint_type) {
 
   usb_error result;
 
@@ -35,7 +34,7 @@ usb_error usb_data_in_transfer(_usb_state *const       usb_state,
 
   endpoint_param *const endpoint = &usb_state->endpoints[endpoint_type];
 
-  result = hw_data_in_transfer(buffer, buffer_size, DEVICE_ADDRESS, endpoint, amount_received);
+  result = hw_data_in_transfer(buffer, buffer_size, DEVICE_ADDRESS, endpoint);
 
   if (result == USB_ERR_OK)
     return result;
@@ -94,8 +93,7 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
                                         uint8_t *const            buffer,
                                         uint8_t *const            asc) {
 
-  usb_error      result;
-  uint16_t const amount_transferred = 0;
+  usb_error result;
 
   result = usb_control_transfer(usb_state, adsc, cmd);
 
@@ -109,7 +107,7 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
   if (send) {
     result = usb_data_out_transfer(usb_state, buffer, buffer_size);
   } else {
-    result = usb_data_in_transfer(usb_state, buffer, buffer_size, ENDPOINT_BULK_IN, &amount_transferred);
+    result = usb_data_in_transfer(usb_state, buffer, buffer_size, ENDPOINT_BULK_IN);
   }
 
   if (result != USB_ERR_OK) {
@@ -117,15 +115,14 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
     return result;
   }
 
-  uint16_t sense_codes_transferred = 0; // = *amount_transferred;
-  uint8_t  sense_codes[2]          = {0, 0};
-  // _USB_EXE_CBI_STEP_3
-  result = usb_data_in_transfer(usb_state, sense_codes, 2, ENDPOINT_INTERRUPT_IN, &sense_codes_transferred);
+  uint8_t sense_codes[2] = {255, 255};
+
+  result = usb_data_in_transfer(usb_state, sense_codes, 2, ENDPOINT_INTERRUPT_IN);
 
   if (result != USB_ERR_OK)
     return result;
 
-  if (sense_codes_transferred == 0)
+  if (sense_codes[0] == 255 && sense_codes[1] == 255)
     return USB_ERR_STALL;
 
   if (sense_codes[0] == 0 && sense_codes[1] == 0)
@@ -183,12 +180,11 @@ usb_error usb_process_error(_usb_state *const usb_state, const usb_error result)
 // ; Output: A  = USB error code
 // ;         BC = Amount of data actually transferred (if IN transfer and no error)
 usb_error usb_control_transfer(_usb_state *const usb_state, const setup_packet *const cmd, uint8_t *const buffer) {
-  usb_error      result;
-  uint16_t const amount_transferred = 0;
+  usb_error result;
 
   const uint8_t max_packet_size = usb_state->endpoints[ENDPOINT_BULK_OUT].max_packet_size;
 
-  result = hw_control_transfer(cmd, buffer, DEVICE_ADDRESS, max_packet_size, &amount_transferred);
+  result = hw_control_transfer(cmd, buffer, DEVICE_ADDRESS, max_packet_size);
 
   if (result == USB_ERR_OK)
     return result;
