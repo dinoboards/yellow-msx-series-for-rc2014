@@ -11,7 +11,7 @@ void ch_command(const uint8_t command) __z88dk_fastcall {
 
   if (counter == 0) {
     // It appears that the Ch376 has become blocked
-    // command will fail and timeout will eventually be returned by the ch_wait_int_and_get_result
+    // command will fail and timeout will eventually be returned by the ch_xxx_wait_int_and_get_status
     // todo consider a return value to allow callers to respond appropriately
     // Experimentation would indicate that USB_RESET_ALL will still work to reset chip
     return;
@@ -20,7 +20,7 @@ void ch_command(const uint8_t command) __z88dk_fastcall {
   CH376_COMMAND_PORT = command;
 }
 
-usb_error ch_wait_int_and_get_result(const int16_t timeout_period) __z88dk_fastcall {
+usb_error ch_wait_int_and_get_status(const int16_t timeout_period) __z88dk_fastcall {
   const int16_t timeout_point = get_future_time(from_ms(timeout_period));
   bool          int_active    = false;
 
@@ -37,13 +37,16 @@ usb_error ch_wait_int_and_get_result(const int16_t timeout_period) __z88dk_fastc
   return ch_get_status();
 }
 
+usb_error ch_long_wait_int_and_get_status() { return ch_wait_int_and_get_status(5000); }
+
+usb_error ch_short_wait_int_and_get_status() { return ch_wait_int_and_get_status(100); }
+
 usb_error ch_get_status() {
   ch_command(CH_CMD_GET_STATUS);
   uint8_t ch_status = CH376_DATA_PORT;
 
-  if (ch_status >= USB_FILERR_MIN && ch_status <= USB_FILERR_MAX) {
+  if (ch_status >= USB_FILERR_MIN && ch_status <= USB_FILERR_MAX)
     return ch_status;
-  }
 
   if (ch_status == CH_CMD_RET_SUCCESS)
     return USB_ERR_OK;
@@ -189,7 +192,7 @@ ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const 
   do {
     ch_issue_token_in(endpoint);
 
-    if ((result = ch_wait_int_and_get_result(5000)) != USB_ERR_OK)
+    if ((result = ch_long_wait_int_and_get_status()) != USB_ERR_OK)
       return result;
 
     endpoint->toggle = ~endpoint->toggle;
@@ -212,7 +215,7 @@ usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, end
     buffer             = ch_write_data(buffer, size);
     buffer_length -= size;
     ch_issue_token_out(endpoint);
-    if ((result = ch_wait_int_and_get_result(100)) != USB_ERR_OK)
+    if ((result = ch_short_wait_int_and_get_status()) != USB_ERR_OK)
       return result;
 
     endpoint->toggle = ~endpoint->toggle;
