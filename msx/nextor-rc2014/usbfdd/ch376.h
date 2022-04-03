@@ -49,7 +49,7 @@ typedef enum _ch376_pid {
 __sfr __at 0x84 CH376_DATA_PORT;
 __sfr __at 0x85 CH376_COMMAND_PORT;
 
-extern const void     setCommand(const uint8_t command) __z88dk_fastcall;
+extern void           ch_command(const uint8_t command) __z88dk_fastcall;
 extern usb_error      ch_get_status();
 extern usb_error      ch_wait_int_and_get_result(const int16_t timeout_period) __z88dk_fastcall;
 extern uint8_t *      ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received);
@@ -66,7 +66,7 @@ ch_data_in_transfer(uint8_t *buffer, int16_t data_length, endpoint_param *const 
 extern usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint);
 
 inline void ch_configure_nak_retry(const ch_nak_retry_type retry, const uint8_t number_of_retries) {
-  setCommand(CH_CMD_WRITE_VAR8);
+  ch_command(CH_CMD_WRITE_VAR8);
   CH376_DATA_PORT = CH_VAR_RETRY_TIMES;
   CH376_DATA_PORT = retry << 6 | (number_of_retries & 0x1F);
 }
