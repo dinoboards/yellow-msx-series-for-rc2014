@@ -59,7 +59,7 @@ typedef struct _interface_descriptor {
   uint8_t bInterfaceSubClass;
   uint8_t bInterfaceProtocol;
   uint8_t iInterface;
-} interface_descriptor;
+} interface_descriptor, *p_interface_descriptor;
 
 typedef struct _endpoint_descriptor {
   uint8_t  bLength;

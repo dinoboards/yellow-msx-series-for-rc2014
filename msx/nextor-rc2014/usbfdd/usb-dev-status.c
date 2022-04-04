@@ -9,7 +9,7 @@ uint8_t usb_dev_status(const uint8_t lun) __z88dk_fastcall {
 
   _usb_state *const work_area = get_usb_work_area();
 
-  if (work_area->usb_device != USB_IS_FLOPPY)
+  if (!(work_area->usb_device & USB_IS_FLOPPY))
     return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
 
   const usb_error result = test_disk(work_area);
