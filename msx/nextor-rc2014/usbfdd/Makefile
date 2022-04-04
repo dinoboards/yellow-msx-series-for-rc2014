@@ -27,10 +27,13 @@ $(BINDIR)spike.bin: $(BINDIR)crt.o \
  	$(BINDIR)usb-dev-write.c.o \
  	$(BINDIR)usb-dev-status.c.o \
  	$(BINDIR)usb-lun-info.c.o \
+ 	$(BINDIR)usb-enumerate-floppy.c.o \
+ 	$(BINDIR)usb-enumerate-hub.c.o \
+ 	$(BINDIR)usb-enumerate.c.o \
+ 	$(BINDIR)debuggin.c.o \
  	$(BINDIR)usb-init.c.o \
 	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
 
- 	# $(BINDIR)debuggin.c.o \
 
 $(BINDIR)%.bin:
 	@mkdir -p $(dir $@)

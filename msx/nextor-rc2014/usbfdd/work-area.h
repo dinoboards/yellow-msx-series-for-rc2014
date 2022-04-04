@@ -6,7 +6,7 @@
 
 #define DEVICE_ADDRESS 1
 
-typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2 } usb_device_type;
+typedef enum { USB_IS_HUB = 1, USB_IS_FLOPPY = 2, USB_IS_MASS_STORAGE = 4 } usb_device_type;
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
 

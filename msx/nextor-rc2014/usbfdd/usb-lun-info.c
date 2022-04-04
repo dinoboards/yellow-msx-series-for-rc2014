@@ -9,7 +9,7 @@ uint8_t usb_lun_info(const uint8_t lun, nextor_lun_info *const info) {
   ufi_format_capacities_response response;
   _usb_state *const              work_area = get_usb_work_area();
 
-  if (work_area->usb_device != USB_IS_FLOPPY)
+  if (!(work_area->usb_device & USB_IS_FLOPPY))
     return 1;
 
   const usb_error result = ufi_capacity(work_area, &response);
