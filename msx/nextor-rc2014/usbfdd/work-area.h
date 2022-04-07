@@ -4,14 +4,16 @@
 #include "ch376.h"
 #include <stdlib.h>
 
-#define DEVICE_ADDRESS 1
+#define DEVICE_ADDRESS_FLOPPY 2
+#define DEVICE_ADDRESS_HUB 1
 
 typedef enum { USB_IS_HUB = 1, USB_IS_FLOPPY = 2, USB_IS_MASS_STORAGE = 4 } usb_device_type;
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
 
 typedef struct __usb_state {
-  endpoint_param  endpoints[3];
+  endpoint_param  endpoints[3]; //floppy endpoints
+  endpoint_param  hub_endpoint;
   usb_device_type usb_device;
   uint8_t         max_packet_size;
   uint8_t         bConfigurationvalue;

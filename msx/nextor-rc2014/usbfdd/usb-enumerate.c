@@ -29,7 +29,7 @@ usb_device_type identify_class_driver(_usb_state *const work_area, const interfa
 }
 
 const interface_descriptor *parse_interface(_usb_state *const work_area, const interface_descriptor *const p) {
-  logInterface(p);
+  // logInterface(p);
 
   work_area->interface_number = p->bInterfaceNumber;
 
@@ -38,7 +38,6 @@ const interface_descriptor *parse_interface(_usb_state *const work_area, const i
   const endpoint_descriptor *pEndpoint = (const endpoint_descriptor *)(p + 1);
 
   for (uint8_t endpoint_index = p->bNumEndpoints; endpoint_index != 0; endpoint_index--) {
-    logEndPointDescription(pEndpoint);
 
     switch (usb_device) {
     case USB_IS_FLOPPY:
@@ -69,7 +68,7 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
   uint8_t                  buffer[140];
   config_descriptor *const config_desc = (config_descriptor *)buffer;
 
-  printf("Config %d: ", config_index);
+  // printf("Config %d: ", config_index);
 
   result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), 0);
   if (result != USB_ERR_OK) {
@@ -88,7 +87,7 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
   const interface_descriptor *p = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
   for (uint8_t interface_index = 0; interface_index < config_desc->bNumInterfaces; interface_index++) {
-    printf("Interf %d: ", interface_index);
+    // printf("Interf %d: ", interface_index);
     p = parse_interface(work_area, p);
   }
 
@@ -103,8 +102,8 @@ usb_error read_all_configs(_usb_state *const work_area) {
   if (result != USB_ERR_OK)
     return result;
 
-  printf("Desc: ");
-  logDevice(&desc);
+  // printf("Desc: ");
+  // logDevice(&desc);
 
   work_area->max_packet_size = desc.bMaxPacketSize0;
 
