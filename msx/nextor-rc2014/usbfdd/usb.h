@@ -3,15 +3,22 @@
 
 #include <stdlib.h>
 
-// typedef union _usb_request_type {
-//   struct _bm {
-//       uint8_t   Recipient:2;
-//       uint8_t   Reserved:3;
-//       uint8_t   Type:2;
-//       uint8_t   Dir:1;
-//   };
-//   uint8_t byte;
-// } usb_request_type;
+#define GET_STATUS    0
+#define CLEAR_FEATURE 1
+#define SET_FEATURE   3
+
+#define FEAT_PORT_POWER 8
+#define FEAT_PORT_RESET 4
+
+#define RT_HOST_TO_DEVICE 0b00000000
+#define RT_DEVICE_TO_HOST 0b10000000
+#define RT_STANDARD       0b00000000
+#define RT_CLASS          0b00100000
+#define RT_VENDOR         0b01000000
+#define RT_DEVICE         0b00000000
+#define RT_INTERFACE      0b00000001
+#define RT_ENDPOINT       0b00000010
+#define RT_OTHER          0b00000011
 
 typedef struct _setup_packet {
   uint8_t  bmRequestType;
@@ -69,5 +76,50 @@ typedef struct _endpoint_descriptor {
   uint16_t wMaxPacketSize;
   uint8_t  bInterval;
 } endpoint_descriptor;
+
+typedef struct {
+  uint8_t  bDescLength;
+  uint8_t  bDescriptorType;
+  uint8_t  bNbrPorts;
+  uint16_t wHubCharacteristics;
+  uint8_t  bPwrOn2PwrGood;
+  uint8_t  bHubContrCurrent;
+  uint8_t  DeviceRemovable[1];
+} hub_descriptor;
+
+typedef struct {
+  union {
+    struct {
+      uint8_t port_connection : 1;
+      uint8_t port_enable : 1;
+      uint8_t port_suspend : 1;
+      uint8_t port_over_current : 1;
+      uint8_t port_reset : 1;
+      uint8_t reserved : 3;
+      uint8_t port_power : 1;
+      uint8_t port_low_speed : 1;
+      uint8_t port_high_speed : 1;
+      uint8_t port_test : 1;
+      uint8_t port_indicator : 1;
+    };
+
+    uint16_t val;
+
+  } wPortStatus;
+
+  union {
+    struct {
+      uint8_t c_port_connection : 1;
+      uint8_t c_port_enable : 1;
+      uint8_t c_port_suspend : 1;
+      uint8_t c_port_over_current : 1;
+      uint8_t c_port_reset : 1;
+    };
+
+    uint16_t val;
+
+  } wPortChange;
+
+} hub_port_status;
 
 #endif
