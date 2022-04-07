@@ -51,15 +51,12 @@ usb_error hub_get_descriptor(hub_descriptor *const hub_description) __z88dk_fast
 }
 
 usb_error configure_usb_hub(_usb_state *const work_area) {
-  const uint8_t   max_packet_size = work_area->max_packet_size;
   usb_error       result;
   uint8_t         i;
   hub_descriptor  hub_description;
   hub_port_status port_status;
 
-  CHECK(hw_set_address(DEVICE_ADDRESS_HUB, max_packet_size));
-
-  CHECK(usb_set_configuration(work_area->bConfigurationvalue, max_packet_size, DEVICE_ADDRESS_HUB));
+  CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_HUB));
 
   CHECK(hub_get_descriptor(&hub_description));
 

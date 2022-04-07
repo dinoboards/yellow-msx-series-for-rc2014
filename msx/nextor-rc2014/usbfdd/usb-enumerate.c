@@ -52,7 +52,7 @@ const interface_descriptor *parse_interface(_usb_state *const work_area, const i
 
   switch (usb_device) {
   case USB_IS_FLOPPY:
-    configure_usb_floppy(work_area);
+    hw_set_address_and_configuration(DEVICE_ADDRESS_FLOPPY);
     break;
 
   case USB_IS_HUB:
