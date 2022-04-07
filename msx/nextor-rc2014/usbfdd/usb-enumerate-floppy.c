@@ -27,17 +27,5 @@ void parse_endpoint_floppy(_usb_state *const work_area, const endpoint_descripto
   }
 }
 
-void configure_usb_floppy(_usb_state *const work_area) {
-  usb_error result;
-
-  if ((result = hw_set_address(DEVICE_ADDRESS_FLOPPY, work_area->max_packet_size)) != USB_ERR_OK) {
-    // yprintf(15, "X2 (%d)", result);
-    return;
-  }
-
-  if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, DEVICE_ADDRESS_FLOPPY)) !=
-      USB_ERR_OK) {
-    // yprintf(15, "X3 (%d)", result);
-    return;
-  }
-}
+// void configure_usb_floppy() {
+// }
