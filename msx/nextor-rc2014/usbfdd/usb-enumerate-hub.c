@@ -1,7 +1,10 @@
 #include "usb-enumerate-hub.h"
 #include "hw.h"
 #include "usb-enumerate.h"
+#include <delay.h>
 #include <string.h>
+
+#include "print.h"
 
 void parse_endpoint_hub(_usb_state *const work_area, const endpoint_descriptor const *pEndpoint) {
   work_area->hub_endpoint.number          = pEndpoint->bEndpointAddress;
@@ -9,72 +12,75 @@ void parse_endpoint_hub(_usb_state *const work_area, const endpoint_descriptor c
   work_area->hub_endpoint.max_packet_size = pEndpoint->wMaxPacketSize;
 }
 
-setup_packet cmd_port_power         = {0b00100011, 3, {8, 0}, {1, 0}, 0};
-setup_packet cmd_port_reset         = {0b00100011, 3, {4, 0}, {1, 0}, 0};
-setup_packet cmd_get_status_port    = {0b10100011, 0, {0, 0}, {1, 0}, 4};
-setup_packet cmd_get_hub_descriptor = {0b10100000, 6, {0, 0x29}, {0, 0}, 8};
+const setup_packet cmd_set_feature = {RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, SET_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
+const setup_packet cmd_clear_feature = {
+    RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, CLEAR_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
+const setup_packet cmd_get_status_port = {
+    RT_DEVICE_TO_HOST | RT_CLASS | RT_OTHER, GET_STATUS, {0, 0}, {1, 0}, sizeof(hub_port_status)};
+const setup_packet cmd_get_hub_descriptor = {RT_DEVICE_TO_HOST | RT_CLASS | RT_DEVICE, 6, {0, 0x29}, {0, 0}, 8};
 
-void configure_usb_hub(_usb_state *const work_area) {
-  usb_error    result;
-  uint8_t      buffer[10];
-  uint8_t      i;
-  setup_packet cmd;
-  memcpy(&cmd, &cmd_get_status_port, sizeof(setup_packet));
+usb_error hub_set_feature(const uint8_t feature, const uint8_t index) {
+  setup_packet set_feature;
+  set_feature = cmd_set_feature;
 
-  if ((result = hw_set_address(DEVICE_ADDRESS_HUB, work_area->max_packet_size)) != USB_ERR_OK) {
-    // printf("hub1 err: %d\r\n", result);
-    return;
-  }
+  set_feature.bValue[0] = feature;
+  set_feature.bIndex[0] = index;
+  return hw_control_transfer(&set_feature, 0, DEVICE_ADDRESS_HUB, get_usb_work_area()->max_packet_size);
+}
 
-  if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, DEVICE_ADDRESS_HUB)) != USB_ERR_OK) {
-    // printf("hub2 err: %d\r\n", result);
-    return;
-  }
+usb_error hub_clear_feature(const uint8_t feature, const uint8_t index) {
+  setup_packet clear_feature;
+  clear_feature = cmd_clear_feature;
 
-  result = hw_control_transfer(&cmd_port_power, (uint8_t *)0, DEVICE_ADDRESS_HUB, work_area->max_packet_size);
+  clear_feature.bValue[0] = feature;
+  clear_feature.bIndex[0] = index;
+  return hw_control_transfer(&clear_feature, 0, DEVICE_ADDRESS_HUB, get_usb_work_area()->max_packet_size);
+}
 
-  if (result != USB_ERR_OK) {
-    // printf("hub3 err:%d\r\n", result);
-    return;
-  }
+usb_error hub_get_status_port(const uint8_t index, hub_port_status *const port_status) {
+  setup_packet get_status_port;
+  get_status_port = cmd_get_status_port;
 
-TODO:
- 1 - extract port count from response structure
- 2 - loop for number of product_revision
- 3 - update procedure to activate each port one by one - device should be able to be plug into any port
- 
-  result = hw_control_transfer(&cmd_get_hub_descriptor, buffer, DEVICE_ADDRESS_HUB, work_area->max_packet_size);
-  // printf("hub: %d ", result);
-  // for (i = 0; i < 8; i++)
-  //   printf("%02X ", buffer[i]);
+  get_status_port.bIndex[0] = index;
+  return hw_control_transfer(&get_status_port, port_status, DEVICE_ADDRESS_HUB, get_usb_work_area()->max_packet_size);
+}
 
-  // printf("\r\n");
+usb_error hub_get_descriptor(hub_descriptor *const hub_description) __z88dk_fastcall {
+  return hw_control_transfer(
+      &cmd_get_hub_descriptor, hub_description, DEVICE_ADDRESS_HUB, get_usb_work_area()->max_packet_size);
+}
 
-  // endpoint_param endpoint;
-  // endpoint.number          = 0x81;
-  // endpoint.toggle          = 0;
-  // endpoint.max_packet_size = 2;
+usb_error configure_usb_hub(_usb_state *const work_area) {
+  const uint8_t   max_packet_size = work_area->max_packet_size;
+  usb_error       result;
+  uint8_t         i;
+  hub_descriptor  hub_description;
+  hub_port_status port_status;
 
-  // result = hw_data_in_transfer(buffer, 2, 2, &endpoint, &amount);
-  // printf("INT IN %d, %d, %d %d\r\n", result, buffer[0], buffer[1], amount);
+  CHECK(hw_set_address(DEVICE_ADDRESS_HUB, max_packet_size));
 
-  result = hw_control_transfer(&cmd_port_reset, (uint8_t *)0, DEVICE_ADDRESS_HUB, work_area->max_packet_size);
+  CHECK(usb_set_configuration(work_area->bConfigurationvalue, max_packet_size, DEVICE_ADDRESS_HUB));
 
-  if (result != USB_ERR_OK) {
-    // printf("hub4 err:%d\r\n", result);
-    return;
-  }
+  CHECK(hub_get_descriptor(&hub_description));
 
-  for (i = 1; i <= 4; i++) {
-    cmd.bIndex[0] = i;
-    result        = hw_control_transfer(&cmd, buffer, DEVICE_ADDRESS_HUB, work_area->max_packet_size);
-    if (result != USB_ERR_OK) {
-      // printf("hub[%d] err: %d \r\n", i, result);
-      return;
+  for (i = 1; i <= hub_description.bNbrPorts; i++) {
+    CHECK(hub_set_feature(FEAT_PORT_POWER, i));
+
+    CHECK(hub_set_feature(FEAT_PORT_RESET, i), x_printf("hub4 err:%d\r\n", result));
+
+    CHECK(hub_get_status_port(i, &port_status), x_printf("hub[%d] err: %d \r\n", 0, result));
+
+    if (port_status.wPortStatus.port_connection) {
+      delay(5);
+
+      CHECK(read_all_configs(work_area), x_printf("err5: %d\r\n", result));
     }
 
-    // printf("stat: %d, %02x, %02x, %02x", buffer[0], buffer[1], buffer[2], buffer[3]);
+    if (work_area->usb_device != USB_IS_HUB)
+      break;
+
+    CHECK(hub_clear_feature(FEAT_PORT_POWER, i), x_printf("hub5 err:%d\r\n", result));
   }
 
-  read_all_configs(work_area);
+  return USB_ERR_OK;
 }

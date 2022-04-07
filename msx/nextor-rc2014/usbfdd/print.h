@@ -20,4 +20,6 @@ extern void print_init_screen0(const uint16_t p) __z88dk_fastcall;
     xprintf(fmt, ##__VA_ARGS__);                                                                                            \
   }
 
+#define x_printf(...) /* disabled */
+
 #endif

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 extern usb_error hw_control_transfer(const setup_packet *const cmd_packet,
-                                     uint8_t *const            buffer,
+                                     void *const               buffer,
                                      const uint8_t             device_address,
                                      const uint8_t             max_packet_size);
 

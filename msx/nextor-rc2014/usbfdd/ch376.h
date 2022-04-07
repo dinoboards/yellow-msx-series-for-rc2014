@@ -35,6 +35,15 @@ typedef enum {
   USB_FILERR_MAX                      = 0xB4
 } usb_error;
 
+#define CHECK(fn, ...)                                                                                                      \
+  {                                                                                                                         \
+    result = fn;                                                                                                            \
+    if (result != USB_ERR_OK) {                                                                                             \
+      __VA_ARGS__;                                                                                                          \
+      return result;                                                                                                        \
+    }                                                                                                                       \
+  }
+
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
 
 #define CH_MODE_HOST_RESET 7
