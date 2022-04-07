@@ -1,5 +1,6 @@
 #include "hw.h"
 #include "ch376.h"
+#include "work-area.h"
 #include <delay.h>
 #include <stdlib.h>
 
@@ -92,24 +93,22 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
 #define PLACEHOLDER_TARGET_DEVICE_ADDRESS 0
 setup_packet cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 0}, {0, 0}, 0};
 
-usb_error hw_set_address(const uint8_t usb_address, const uint8_t packet_size) {
+// #define PLACEHOLDER_CONFIGURATION_VALUE 0
+// setup_packet usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
 
-  setup_packet cmd;
+usb_error hw_set_address_and_configuration(const uint8_t usb_address) __z88dk_fastcall {
+  const _usb_state *const p               = get_usb_work_area();
+  const uint8_t           max_packet_size = p->max_packet_size;
+  setup_packet            cmd;
+  usb_error               result;
+
   cmd           = cmd_set_address;
   cmd.bValue[0] = usb_address;
+  CHECK(hw_control_transfer(&cmd, (uint8_t *)0, 0, max_packet_size));
 
-  return hw_control_transfer(&cmd, (uint8_t *)0, 0, packet_size);
-}
-
-#define PLACEHOLDER_CONFIGURATION_VALUE 0
-setup_packet usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
-
-usb_error usb_set_configuration(const uint8_t configuration_value, const uint8_t packet_size, const uint8_t device_address) {
-  setup_packet cmd;
-  cmd           = usb_cmd_set_configuration;
-  cmd.bValue[0] = configuration_value;
-
-  return hw_control_transfer(&cmd, (uint8_t *)0, device_address, packet_size);
+  cmd.bRequest  = 0x09;
+  cmd.bValue[0] = p->bConfigurationvalue;
+  return hw_control_transfer(&cmd, (uint8_t *)0, usb_address, max_packet_size);
 }
 
 // ; -----------------------------------------------------------------------------
