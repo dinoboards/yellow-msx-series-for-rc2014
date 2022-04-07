@@ -13,6 +13,7 @@ BASE:					; Offset to the base of the data structure
 bulk_out_endpoint	endpoint_param
 bulk_in_endpoint	endpoint_param
 intr_in_endpoint	endpoint_param
+hub_endpoint		endpoint_param
 usb_device		db
 max_packet_size		db
 bConfigurationvalue	db

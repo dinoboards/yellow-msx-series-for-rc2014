@@ -3,11 +3,10 @@
 #include "usb-enumerate.h"
 #include <string.h>
 
-#include "print.h"
-
 void parse_endpoint_hub(_usb_state *const work_area, const endpoint_descriptor const *pEndpoint) {
-  (void)work_area;
-  (void)pEndpoint;
+  work_area->hub_endpoint.number          = pEndpoint->bEndpointAddress;
+  work_area->hub_endpoint.toggle          = 0;
+  work_area->hub_endpoint.max_packet_size = pEndpoint->wMaxPacketSize;
 }
 
 setup_packet cmd_port_power         = {0b00100011, 3, {8, 0}, {1, 0}, 0};
@@ -22,26 +21,29 @@ void configure_usb_hub(_usb_state *const work_area) {
   setup_packet cmd;
   memcpy(&cmd, &cmd_get_status_port, sizeof(setup_packet));
 
-  printf(" H1 ");
-
-  if ((result = hw_set_address(2, work_area->max_packet_size)) != USB_ERR_OK) {
+  if ((result = hw_set_address(DEVICE_ADDRESS_HUB, work_area->max_packet_size)) != USB_ERR_OK) {
     // printf("hub1 err: %d\r\n", result);
     return;
   }
 
-  if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, 2)) != USB_ERR_OK) {
+  if ((result = usb_set_configuration(work_area->bConfigurationvalue, work_area->max_packet_size, DEVICE_ADDRESS_HUB)) != USB_ERR_OK) {
     // printf("hub2 err: %d\r\n", result);
     return;
   }
 
-  result = hw_control_transfer(&cmd_port_power, (uint8_t *)0, 2, 64);
+  result = hw_control_transfer(&cmd_port_power, (uint8_t *)0, DEVICE_ADDRESS_HUB, work_area->max_packet_size);
 
   if (result != USB_ERR_OK) {
     // printf("hub3 err:%d\r\n", result);
     return;
   }
 
-  result = hw_control_transfer(&cmd_get_hub_descriptor, buffer, 2, 64);
+TODO:
+ 1 - extract port count from response structure
+ 2 - loop for number of product_revision
+ 3 - update procedure to activate each port one by one - device should be able to be plug into any port
+ 
+  result = hw_control_transfer(&cmd_get_hub_descriptor, buffer, DEVICE_ADDRESS_HUB, work_area->max_packet_size);
   // printf("hub: %d ", result);
   // for (i = 0; i < 8; i++)
   //   printf("%02X ", buffer[i]);
@@ -56,7 +58,7 @@ void configure_usb_hub(_usb_state *const work_area) {
   // result = hw_data_in_transfer(buffer, 2, 2, &endpoint, &amount);
   // printf("INT IN %d, %d, %d %d\r\n", result, buffer[0], buffer[1], amount);
 
-  result = hw_control_transfer(&cmd_port_reset, (uint8_t *)0, 2, 64);
+  result = hw_control_transfer(&cmd_port_reset, (uint8_t *)0, DEVICE_ADDRESS_HUB, work_area->max_packet_size);
 
   if (result != USB_ERR_OK) {
     // printf("hub4 err:%d\r\n", result);
@@ -65,7 +67,7 @@ void configure_usb_hub(_usb_state *const work_area) {
 
   for (i = 1; i <= 4; i++) {
     cmd.bIndex[0] = i;
-    result        = hw_control_transfer(&cmd, buffer, 2, 64);
+    result        = hw_control_transfer(&cmd, buffer, DEVICE_ADDRESS_HUB, work_area->max_packet_size);
     if (result != USB_ERR_OK) {
       // printf("hub[%d] err: %d \r\n", i, result);
       return;
@@ -74,7 +76,5 @@ void configure_usb_hub(_usb_state *const work_area) {
     // printf("stat: %d, %02x, %02x, %02x", buffer[0], buffer[1], buffer[2], buffer[3]);
   }
 
-  printf("--->\r\n");
   read_all_configs(work_area);
-  printf("<---\r\n");
 }
