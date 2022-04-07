@@ -2,6 +2,7 @@
 ./bin/usb-enumerate-hub.c.asm: usbfdd/usb-enumerate-hub.c \
  usbfdd/usb-enumerate-hub.h usbfdd/usb.h usbfdd/work-area.h \
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h usbfdd/usb-enumerate.h \
+ ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
  usbfdd/print.h
 ./bin/usb-dev-read.c.asm: usbfdd/usb-dev-read.c usbfdd/nextor.h usbfdd/ufi.h \
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h usbfdd/work-area.h
