@@ -3,8 +3,8 @@
 #include "work-area.h"
 #include <stdlib.h>
 
-uint8_t usb_dev_status(const uint8_t lun) __z88dk_fastcall {
-  if (lun != 1)
+uint8_t usb_dev_status(const uint8_t device_index, const uint8_t lun) {
+  if (lun != 1 || device_index != 1)
     return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
 
   _usb_state *const work_area = get_usb_work_area();
