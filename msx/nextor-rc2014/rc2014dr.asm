@@ -296,7 +296,7 @@ DRV_CF_STATE_STORE:
 
 	LD	A, (IX+ST_WRKAREA.PRESENT)
 	OR	PRES_USB
-	LD	(IX+ST_WRKAREA.PRESENT), A	; SET BIT FLAG TO INDICATE MSX-MUSIC ROM IS PRESENT
+	LD	(IX+ST_WRKAREA.PRESENT), A	; SET BIT FLAG TO INDICATE USB IS PRESENT
 
 	RET
 
@@ -503,8 +503,10 @@ DEV_RW:
 	CP	DEV_MAP_CF
 	JP	Z, DEV_WRT_CF
 
-	CP	DEV_MAP_USB
-	JP	Z, DEV_WRT_USB
+	CP	DEV_MAP_USB1
+	JR	C, DEV_RW_ERR		; jump to err if < usb1
+	CP	DEV_MAP_USB4+1
+	JP	C, DEV_WRT_USB		; jump to usb if <= usb4
 
 	JR	DEV_RW_ERR
 
@@ -519,8 +521,10 @@ DEV_READ:
 	CP	DEV_MAP_MS
 	JP	Z, DEV_READ_MS
 
-	CP	DEV_MAP_USB
-	JP	Z, DEV_READ_USB
+	CP	DEV_MAP_USB1
+	JR	C, DEV_RW_ERR		; jump to err if < usb1
+	CP	DEV_MAP_USB4+1
+	JP	C, DEV_READ_USB		; jump to usb if <= usb4
 
 DEV_RW_ERR:
 	LD	A, ERR.IDEVL
@@ -574,8 +578,10 @@ DEV_INFO:
 	CP	DEV_MAP_MS
 	JR	Z, DEV_INFO_MS
 
-	CP	DEV_MAP_USB
-	JP	Z, DEV_INFO_USB
+	CP	DEV_MAP_USB1
+	JR	C, DEV_INFO_NO_DEV		; jump to err if < usb1
+	CP	DEV_MAP_USB4+1
+	JP	C, DEV_INFO_USB		; jump to usb if <= usb4
 
 DEV_INFO_NO_DEV:
 	LD	A, 1
@@ -721,8 +727,11 @@ DEV_STATUS:
 	JR	Z, DEV_STATUS_CF
 	CP	DEV_MAP_MS
 	JR	Z, DEV_STATUS_MS
-	CP	DEV_MAP_USB
-	JP	Z, DEV_STATUS_USB
+
+	CP	DEV_MAP_USB1
+	JR	C, DEV_STATUS_ERR		; jump to err if < usb1
+	CP	DEV_MAP_USB4+1
+	JP	C, DEV_STATUS_USB		; jump to usb if <= usb4
 
 DEV_STATUS_ERR:
 	XOR	A
@@ -779,8 +788,10 @@ LUN_INFO:
 	JP	Z, LUN_INFO_CF
 	CP	DEV_MAP_MS
 	JP	Z, LUN_INFO_MS
-	CP	DEV_MAP_USB
-	JP	Z, LUN_INFO_USB
+	CP	DEV_MAP_USB1
+	JR	C, LUN_INFO_ERR		; jump to err if < usb1
+	CP	DEV_MAP_USB4+1
+	JP	C, LUN_INFO_USB		; jump to usb if <= usb4
 
 LUN_INFO_ERR:
 	LD	A, 1
@@ -912,44 +923,29 @@ LUN_INFO_ROM_INVALID:
 ;	    = 4 -> USB-STORAGE
 ;	    = 0 -> no drive present
 
-; | ROM | CF  | MUSIC | USB | INDX 1  | INDX 2  | INDX 3  | INDX 4  |
-; | T   | F   | F     | F   | ROM     | NONE    | NONE    | NONE    | 000
-; | T   | T   | F     | F   | CF      | ROM     | NONE    | NONE    | 001
-; | T   | F   | T     | F   | MUSIC   | ROM     | NONE    | NONE    | 010
-; | T   | T   | T     | F   | CF      | MUSIC   | ROM     | NONE    | 011
-; | T   | F   | F     | T   | USB     | ROM     | NONE    | NONE    | 100
-; | T   | T   | F     | T   | CF      | USB     | ROM     | NONE    | 101
-; | T   | F   | T     | T   | USB     | MUSIC   | ROM     | NONE    | 110
-; | T   | T   | T     | T   | CF      | USB     | MUSIC   | ROM     | 111
+; | ROM | CF  | MUSIC | USB | INDX 1  | INDX 2  | INDX 3  | INDX 4  | INDX 5 | INDX 6 | INDX 7 |
+; | T   | F   | F     | F   | ROM     | NONE    | NONE    | NONE    | NONE   | NONE   | NONE   | 000
+; | T   | T   | F     | F   | CF      | ROM     | NONE    | NONE    | NONE   | NONE   | NONE   | 001
+; | T   | F   | T     | F   | MUSIC   | ROM     | NONE    | NONE    | NONE   | NONE   | NONE   | 010
+; | T   | T   | T     | F   | CF      | MUSIC   | ROM     | NONE    | NONE   | NONE   | NONE   | 011
+; | T   | F   | F     | T   | USB1    | ROM     | USB2    | USB3    | USB4   | NONE   | NONE   | 100
+; | T   | T   | F     | T   | CF      | USB     | ROM     | USB2    | USB3   | USB4   | NONE   | 101
+; | T   | F   | T     | T   | USB1    | MUSIC   | ROM     | USB2    | USB3   | USB4   | NONE   | 110
+; | T   | T   | T     | T   | CF      | USB1    | MUSIC   | ROM     | USB2   | USB3   | USB4   | 111
 
 ;
 DEVICE_MAPPING:
 	PUSH	HL
 	PUSH	BC
 	LD	HL, TBL_IDX1
-	CP	1
-	JR	Z, DEVICE_INDX
-
-	LD	HL, TBL_IDX2
-	CP	2
-	JR	Z, DEVICE_INDX
-
-	LD	HL, TBL_IDX3
-	CP	3
-	JR	Z, DEVICE_INDX
-
-	LD	HL, TBL_IDX4
-	CP	4
-	JR	Z, DEVICE_INDX
-
-	POP	BC
-	POP	HL
-	XOR	A
-	RET
-
-DEVICE_INDX:
-	CALL	DRV_GET_PRESENT
+	SUB	1			; sub 1 from a and multiple by 8
+	RLCA
+	RLCA
+	RLCA
+	LD	C, A
 	LD	B, 0
+	ADD	HL, BC			; CALC OFFSET TO CORRECT TABLE
+	CALL	DRV_GET_PRESENT
 	LD	C, A
 	ADD	HL, BC
 	LD	A, (HL)
@@ -962,9 +958,9 @@ TBL_IDX1:
 	DB	DEV_MAP_CF
 	DB	DEV_MAP_MS
 	DB	DEV_MAP_CF
-	DB	DEV_MAP_USB
+	DB	DEV_MAP_USB1
 	DB	DEV_MAP_CF
-	DB	DEV_MAP_USB
+	DB	DEV_MAP_USB1
 	DB	DEV_MAP_CF
 
 TBL_IDX2:
@@ -973,16 +969,16 @@ TBL_IDX2:
 	DB	DEV_MAP_ROM
 	DB	DEV_MAP_MS
 	DB	DEV_MAP_ROM
-	DB	DEV_MAP_USB
+	DB	DEV_MAP_USB1
 	DB	DEV_MAP_MS
-	DB	DEV_MAP_USB
+	DB	DEV_MAP_USB1
 
 TBL_IDX3:
 	DB	DEV_MAP_NONE
 	DB	DEV_MAP_NONE
 	DB	DEV_MAP_NONE
 	DB	DEV_MAP_ROM
-	DB	DEV_MAP_NONE
+	DB	DEV_MAP_USB2
 	DB	DEV_MAP_ROM
 	DB	DEV_MAP_ROM
 	DB	DEV_MAP_MS
@@ -992,10 +988,40 @@ TBL_IDX4:
 	DB	DEV_MAP_NONE
 	DB	DEV_MAP_NONE
 	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
+	DB	DEV_MAP_USB3
+	DB	DEV_MAP_USB2
+	DB	DEV_MAP_USB2
 	DB	DEV_MAP_ROM
+
+TBL_IDX5:
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_USB3
+	DB	DEV_MAP_USB3
+	DB	DEV_MAP_USB3
+	DB	DEV_MAP_USB2
+
+TBL_IDX6:
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_USB4
+	DB	DEV_MAP_USB4
+	DB	DEV_MAP_USB3
+
+TBL_IDX7:
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_NONE
+	DB	DEV_MAP_USB4
 
 ;-----------------------------------------------------------------------------
 ;

@@ -10,7 +10,10 @@ inline uint8_t usb_dev_info_basic_information(uint8_t *buffer) {
   return 0;
 }
 
-uint8_t usb_dev_info(const dev_info_request request_info, uint8_t *const buffer) {
+uint8_t usb_dev_info(const uint8_t device_index, const dev_info_request request_info, uint8_t *const buffer) {
+  if (device_index != 1)
+    return 1;
+
   _usb_state *const work_area = get_usb_work_area();
 
   if (!(work_area->usb_device & USB_IS_FLOPPY))
