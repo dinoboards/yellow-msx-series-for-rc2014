@@ -13,7 +13,6 @@
 #include "debuggin.h"
 #include "print.h"
 
-usb_error read_all_configs(_usb_state *const work_area);
 
 usb_error usb_host_bus_reset() {
   ch376_set_usb_mode(CH_MODE_HOST);
@@ -81,7 +80,7 @@ uint8_t usb_host_init() {
   usb_host_bus_reset();
   delay(10);
 
-  read_all_configs(work_area);
+  read_all_configs();
 
   state_devices(work_area);
 

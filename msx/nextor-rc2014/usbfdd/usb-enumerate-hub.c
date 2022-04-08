@@ -70,7 +70,7 @@ usb_error configure_usb_hub(_usb_state *const work_area) {
     if (port_status.wPortStatus.port_connection) {
       delay(5);
 
-      CHECK(read_all_configs(work_area), x_printf("err5: %d\r\n", result));
+      CHECK(read_all_configs(), x_printf("err5: %d\r\n", result));
     }
 
     if (work_area->usb_device != USB_IS_HUB)
