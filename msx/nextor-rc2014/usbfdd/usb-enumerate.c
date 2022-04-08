@@ -94,7 +94,8 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
   return USB_ERR_OK;
 }
 
-usb_error read_all_configs(_usb_state *const work_area) {
+usb_error read_all_configs() {
+  _usb_state *const work_area = get_usb_work_area();
   device_descriptor desc;
   uint8_t           result;
 
