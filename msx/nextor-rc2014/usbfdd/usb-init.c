@@ -13,7 +13,6 @@
 #include "debuggin.h"
 #include "print.h"
 
-
 usb_error usb_host_bus_reset() {
   ch376_set_usb_mode(CH_MODE_HOST);
   delay(60 / 4);
@@ -84,5 +83,5 @@ uint8_t usb_host_init() {
 
   state_devices(work_area);
 
-  return true;
+  return work_area->usb_device != USB_IS_HUB && work_area->usb_device != 0;
 }

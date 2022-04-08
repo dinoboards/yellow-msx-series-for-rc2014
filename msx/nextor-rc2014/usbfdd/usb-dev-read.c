@@ -3,12 +3,13 @@
 #include "work-area.h"
 #include <stdlib.h>
 
-uint8_t usb_dev_read(const uint8_t  lun,
+uint8_t usb_dev_read(const uint8_t  device_index,
+                     const uint8_t  lun,
                      uint8_t        number_sectors_to_read,
                      uint32_t       sector_number,
                      uint8_t *      buffer,
                      uint8_t *const number_of_sectors_read) {
-  if (lun != 1)
+  if (lun != 1 || device_index != 1)
     return NEXTOR_ERR_IDEVL;
 
   _usb_state *const work_area = get_usb_work_area();

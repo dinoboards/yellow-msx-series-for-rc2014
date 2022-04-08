@@ -123,7 +123,7 @@ _extbio_sio_get_clock:
 	RET
 
 ;
-; extern uint8_t extbio_sio_set_clock(const unit8_t new_code) __z88dk_fastcall;
+; extern uint8_t extbio_sio_set_clock(const uint8_t new_code) __z88dk_fastcall;
 ;
 	PUBLIC	_extbio_sio_set_clock
 _extbio_sio_set_clock:
