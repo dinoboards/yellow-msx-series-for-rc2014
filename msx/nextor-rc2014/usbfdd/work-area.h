@@ -15,7 +15,8 @@ typedef struct __usb_state {
   endpoint_param  endpoints[3]; // floppy endpoints
   endpoint_param  hub_endpoint;
   usb_device_type usb_device;
-  uint8_t         max_packet_size;
+  device_config   hub_config;
+  device_config   floppy_config;
   uint8_t         bConfigurationvalue;
   uint8_t         interface_number;
 } _usb_state;

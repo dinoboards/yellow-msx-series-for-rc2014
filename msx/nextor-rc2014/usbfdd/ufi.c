@@ -276,16 +276,24 @@ usb_error usb_execute_cbi(_usb_state *const           usb_state,
   if (result != USB_ERR_STALL)
     return result;
 
-  result = usb_execute_cbi_core(usb_state,
-                                &setup_cmd_packet,
-                                (uint8_t *)&ufi_cmd_request_sense,
-                                false,
-                                sizeof(ufi_response_inquiry),
-                                (uint8_t *)response_inquiry);
-  if (result != USB_ERR_STALL)
-    return result;
+  return usb_execute_cbi_core(usb_state,
+                              &setup_cmd_packet,
+                              (uint8_t *)&ufi_cmd_request_sense,
+                              false,
+                              sizeof(ufi_response_inquiry),
+                              (uint8_t *)response_inquiry);
 
-  return USB_ERR_OK;
+  // printf(" a3(%d, %d, %d, %d, %d) ",
+  //   result,
+  //   response_inquiry->asc,
+  //   response_inquiry->ascq,
+  //   response_inquiry->error_code,
+  //   response_inquiry->sense_key
+  // );
+  // if (result != USB_ERR_STALL)
+  //   return result;
+
+  // return result;
 }
 
 // ; Input:  HL => cmd Address of the 12 byte command to execute
@@ -355,7 +363,7 @@ usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *r
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 
 usb_error ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response) {
-  test_disk(usb_state);
+  test_disk(usb_state); //, x_printf(" XX %d ", result));
 
   return usb_execute_cbi_with_retry(usb_state,
                                     (uint8_t *)&packet_read_format_capacities,

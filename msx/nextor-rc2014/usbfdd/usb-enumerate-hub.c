@@ -25,7 +25,7 @@ usb_error hub_set_feature(const uint8_t feature, const uint8_t index) {
 
   set_feature.bValue[0] = feature;
   set_feature.bIndex[0] = index;
-  return hw_control_transfer(&set_feature, 0, DEVICE_ADDRESS_HUB, get_usb_work_area()->max_packet_size);
+  return hw_control_transfer(&set_feature, 0, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
 }
 
 usb_error hub_clear_feature(const uint8_t feature, const uint8_t index) {
@@ -34,7 +34,7 @@ usb_error hub_clear_feature(const uint8_t feature, const uint8_t index) {
 
   clear_feature.bValue[0] = feature;
   clear_feature.bIndex[0] = index;
-  return hw_control_transfer(&clear_feature, 0, DEVICE_ADDRESS_HUB, get_usb_work_area()->max_packet_size);
+  return hw_control_transfer(&clear_feature, 0, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
 }
 
 usb_error hub_get_status_port(const uint8_t index, hub_port_status *const port_status) {
@@ -42,12 +42,13 @@ usb_error hub_get_status_port(const uint8_t index, hub_port_status *const port_s
   get_status_port = cmd_get_status_port;
 
   get_status_port.bIndex[0] = index;
-  return hw_control_transfer(&get_status_port, port_status, DEVICE_ADDRESS_HUB, get_usb_work_area()->max_packet_size);
+  return hw_control_transfer(
+      &get_status_port, port_status, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
 }
 
 usb_error hub_get_descriptor(hub_descriptor *const hub_description) __z88dk_fastcall {
   return hw_control_transfer(
-      &cmd_get_hub_descriptor, hub_description, DEVICE_ADDRESS_HUB, get_usb_work_area()->max_packet_size);
+      &cmd_get_hub_descriptor, hub_description, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
 }
 
 usb_error configure_usb_hub(_usb_state *const work_area) {
@@ -56,7 +57,7 @@ usb_error configure_usb_hub(_usb_state *const work_area) {
   hub_descriptor  hub_description;
   hub_port_status port_status;
 
-  CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_HUB));
+  CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_HUB, &work_area->hub_config));
 
   CHECK(hub_get_descriptor(&hub_description));
 

@@ -11,6 +11,11 @@ typedef struct {
   uint8_t max_packet_size;
 } endpoint_param;
 
+typedef struct {
+  uint8_t max_packet_size;
+  uint8_t value;
+} device_config;
+
 typedef enum {
   USB_ERR_OK                          = 0,
   USB_ERR_NAK                         = 1,
@@ -25,6 +30,7 @@ typedef enum {
   USB_ERR_MEDIA_CHANGED               = 10,
   USB_ERR_MEDIA_NOT_PRESENT           = 11,
   USB_ERR_CH376_BLOCKED               = 12,
+  USB_ERR_CH376_TIMEOUT               = 13,
   USB_ERR_MAX                         = 13,
   USB_ERR_OTHER                       = 14,
   USB_ERR_DISK_READ                   = 0x1D,
@@ -45,6 +51,10 @@ typedef enum {
   }
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
+
+#define CH_SPEED_FULL     0 /* 12Mbps full speed FullSpeed ​​(default value) */
+#define CH_SPEED_LOW_FREQ 1 /*1.5Mbps (modify frequency only) */
+#define CH_SPEED_LOW      2 /*=1.5Mbps low speed LowSpeed*/
 
 #define CH_MODE_HOST_RESET 7
 #define CH_MODE_HOST       6
