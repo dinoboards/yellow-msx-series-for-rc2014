@@ -26,6 +26,3 @@ void parse_endpoint_floppy(_usb_state *const work_area, const endpoint_descripto
     }
   }
 }
-
-// void configure_usb_floppy() {
-// }

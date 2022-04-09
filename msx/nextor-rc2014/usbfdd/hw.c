@@ -20,13 +20,14 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
                               void *const               buffer,
                               const uint8_t             device_address,
                               const uint8_t             max_packet_size) {
-  usb_error      result;
+  usb_error result;
+  (void)max_packet_size;
   endpoint_param endpoint = {0, 1, max_packet_size};
 
   const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
 
   if (transferIn && buffer == 0) {
-    // yprintf(70, " Err1 ");
+    x_printf(" Err1 ");
     return USB_ERR_OTHER;
   }
 
@@ -37,14 +38,15 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 
   ch_issue_token_setup();
 
-  if ((result = ch_short_wait_int_and_get_status()) != USB_ERR_OK)
-    return result;
+  CHECK(ch_short_wait_int_and_get_status(), x_printf("Tok1 %02x\r\n", result));
 
   result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint)
                       : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
 
-  if (result != USB_ERR_OK)
+  if (result != USB_ERR_OK) {
+    x_printf(" Err2 (%d, %d, %d, %d) ", transferIn, cmd_packet->wLength, result, max_packet_size);
     return result;
+  }
 
   if (transferIn) {
     ch_write_data((const uint8_t *)0, 0);
@@ -58,10 +60,10 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 
 setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
 
-usb_error hw_get_description(const uint8_t device_address, device_descriptor *const buffer) {
+usb_error hw_get_description(const uint8_t device_address, const uint8_t max_packet_size, device_descriptor *const buffer) {
   usb_error result;
 
-  result = hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, device_address, sizeof(device_descriptor));
+  result = hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, device_address, max_packet_size);
 
   if (result != USB_ERR_OK)
     return result;
@@ -96,19 +98,17 @@ setup_packet cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 
 // #define PLACEHOLDER_CONFIGURATION_VALUE 0
 // setup_packet usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
 
-usb_error hw_set_address_and_configuration(const uint8_t usb_address) __z88dk_fastcall {
-  const _usb_state *const p               = get_usb_work_area();
-  const uint8_t           max_packet_size = p->max_packet_size;
-  setup_packet            cmd;
-  usb_error               result;
+usb_error hw_set_address_and_configuration(const uint8_t usb_address, const device_config *const config) {
+  setup_packet cmd;
+  usb_error    result;
 
   cmd           = cmd_set_address;
   cmd.bValue[0] = usb_address;
-  CHECK(hw_control_transfer(&cmd, (uint8_t *)0, 0, max_packet_size));
+  CHECK(hw_control_transfer(&cmd, (uint8_t *)0, 0, config->max_packet_size));
 
   cmd.bRequest  = 0x09;
-  cmd.bValue[0] = p->bConfigurationvalue;
-  return hw_control_transfer(&cmd, (uint8_t *)0, usb_address, max_packet_size);
+  cmd.bValue[0] = config->value;
+  return hw_control_transfer(&cmd, (uint8_t *)0, usb_address, config->max_packet_size);
 }
 
 // ; -----------------------------------------------------------------------------

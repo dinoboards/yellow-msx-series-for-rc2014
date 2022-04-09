@@ -57,50 +57,56 @@ void logEndPointDescription(const endpoint_descriptor *const p) {
          p->bInterval);
 }
 
-// void logEndPointParam(const endpoint_param *const p) {
-//   printf("enp (num=%d,tog=%d,max=%d)", p->number, p->toggle, p->max_packet_size);
-// }
+void logEndPointParam(const endpoint_param *const p) {
+  printf("enp (num=%d,tog=%d,max=%d)", p->number, p->toggle, p->max_packet_size);
+}
 
-// void logWorkArea(const _usb_state *const p) {
-//   printf("dev: %d: max: %d, cfg: %d, int: %d, BLKOUT: ",
-//          p->usb_device,
-//          p->max_packet_size,
-//          p->bConfigurationvalue,
-//          p->interface_number);
-//   logEndPointParam(&p->endpoints[ENDPOINT_BULK_OUT]);
-//   printf(" BLKIN: ");
-//   logEndPointParam(&p->endpoints[ENDPOINT_BULK_IN]);
-//   printf(" INTIN: ");
-//   logEndPointParam(&p->endpoints[ENDPOINT_INTERRUPT_IN]);
-//   printf("\r\n");
-// }
+void logWorkArea(const _usb_state *const p) {
+  printf("dev: %d: h-max: %d, h-cfg: %d, f-max: %d, f-cfg: %d, int: %d, BLKOUT: ",
+         p->usb_device,
+         p->hub_config.max_packet_size,
+         p->hub_config.value,
+         p->floppy_config.max_packet_size,
+         p->floppy_config.value,
+         p->interface_number);
+  logEndPointParam(&p->endpoints[ENDPOINT_BULK_OUT]);
+  printf(" BLKIN: ");
+  logEndPointParam(&p->endpoints[ENDPOINT_BULK_IN]);
+  printf(" INTIN: ");
+  logEndPointParam(&p->endpoints[ENDPOINT_INTERRUPT_IN]);
+  printf("\r\n");
+}
 
-// void logInquiryResponse(const ufi_inquiry_response *const response) {
-//   // printf("typ: %d,", response->device_type);
-//   // printf("rmb: %d", response->removable_media);
-//   // printf("ans: %d,", response->ansi_version);
-//   // printf("ecma: %d,", response->ecma);
-//   // printf("iso: %d,", response->iso_version);
-//   // printf("fmt: %d,", response->response_data_format);
-//   // printf("add: %d,", response->additional_length);
+void logInquiryResponse(const ufi_inquiry_response *const response) {
+  printf("typ: %d,", response->device_type);
+  printf("rmb: %d", response->removable_media);
+  printf("ans: %d,", response->ansi_version);
+  printf("ecma: %d,", response->ecma);
+  printf("iso: %d,", response->iso_version);
+  printf("fmt: %d,", response->response_data_format);
+  printf("add: %d,", response->additional_length);
 
-//   char buffer[20];
+  printf("\r\nid: ");
+  for (uint8_t i = 0; i < 16; i++)
+    printf("%02x ", response->product_id[i]);
+  // char buffer[20];
+  printf("\r\n");
 
-//   memset(buffer, 0, 20);
-//   memcpy(buffer, response->product_id, 16);
-//   print_string(buffer);
-//   print_string(",");
+  // memset(buffer, 0, 20);
+  // memcpy(buffer, response->product_id, 16);
+  // print_string(buffer);
+  // print_string(",");
 
-//   memset(buffer, 0, 20);
-//   memcpy(buffer, response->vendor_information, 8);
-//   print_string(buffer);
-//   print_string(",");
+  // memset(buffer, 0, 20);
+  // memcpy(buffer, response->vendor_information, 8);
+  // print_string(buffer);
+  // print_string(",");
 
-//   memset(buffer, 0, 20);
-//   memcpy(buffer, response->product_revision, 4);
-//   print_string(buffer);
-//   print_string("\r\n");
-// }
+  // memset(buffer, 0, 20);
+  // memcpy(buffer, response->product_revision, 4);
+  // print_string(buffer);
+  // print_string("\r\n");
+}
 
 // void logSetupPacket(const setup_packet *const cmd_packet) {
 //   printf("bmRequestType = %d", cmd_packet->bmRequestType);

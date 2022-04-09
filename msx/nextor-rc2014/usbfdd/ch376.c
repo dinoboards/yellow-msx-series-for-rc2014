@@ -31,7 +31,7 @@ usb_error ch_wait_int_and_get_status(const int16_t timeout_period) __z88dk_fastc
     if (CH376_COMMAND_PORT & PARA_STATE_BUSY)
       return USB_ERR_CH376_BLOCKED;
 
-    return USB_ERR_TIMEOUT;
+    return USB_ERR_CH376_TIMEOUT;
   }
 
   return ch_get_status();
@@ -191,10 +191,9 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
   do {
     ch_issue_token_in(endpoint);
 
-    if ((result = ch_long_wait_int_and_get_status()) != USB_ERR_OK)
-      return result;
+    CHECK(ch_long_wait_int_and_get_status(), x_printf(" Err4 %d ", result));
 
-    endpoint->toggle = ~endpoint->toggle;
+    endpoint->toggle = !endpoint->toggle;
 
     buffer = ch_read_data(buffer, buffer_size, &count);
     buffer_size -= count;
@@ -216,7 +215,7 @@ usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, end
     if ((result = ch_short_wait_int_and_get_status()) != USB_ERR_OK)
       return result;
 
-    endpoint->toggle = ~endpoint->toggle;
+    endpoint->toggle = !endpoint->toggle;
   }
 
   return USB_ERR_OK;
