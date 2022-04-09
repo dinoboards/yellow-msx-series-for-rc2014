@@ -8,16 +8,23 @@ toggle		db
 max_packet_size	db
 	ENDS
 
+	STRUCT device_config
+BASE:
+max_packet_size	db
+values		db
+	ENDS
+
 	STRUCT usb_work_area
 BASE:					; Offset to the base of the data structure
-bulk_out_endpoint	endpoint_param
-bulk_in_endpoint	endpoint_param
-intr_in_endpoint	endpoint_param
-hub_endpoint		endpoint_param
-usb_device		db
-max_packet_size		db
-bConfigurationvalue	db
-interface_number	db
+bulk_out_endpoint		endpoint_param
+bulk_in_endpoint		endpoint_param
+intr_in_endpoint		endpoint_param
+hub_endpoint			endpoint_param
+usb_device			db
+hub_config			device_config
+floppy_config			device_config
+bConfigurationvalue		db
+interface_number		db
 	ENDS
 
 	STRUCT ST_WRKAREA
