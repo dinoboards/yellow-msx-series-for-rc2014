@@ -9,13 +9,13 @@ uint8_t usb_dev_read(const uint8_t  device_index,
                      uint32_t       sector_number,
                      uint8_t *      buffer,
                      uint8_t *const number_of_sectors_read) {
-  if (lun != 1 || device_index != 1)
+  if (lun != 1)
     return NEXTOR_ERR_IDEVL;
 
   _usb_state *const work_area = get_usb_work_area();
 
   while (number_sectors_to_read-- != 0) {
-    if (ufi_read_sector(&work_area->storage_device[0], sector_number, buffer) != USB_ERR_OK)
+    if (ufi_read_sector(&work_area->storage_device[device_index - 1], sector_number, buffer) != USB_ERR_OK)
       return NEXTOR_ERR_DISK;
 
     sector_number++;
