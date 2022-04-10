@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 typedef struct __usb_state {
-  storage_device_config storage_device;
+  storage_device_config storage_device[1];
   usb_device_type       xusb_device;
   device_config         hub_config;
   endpoint_param        hub_endpoint;

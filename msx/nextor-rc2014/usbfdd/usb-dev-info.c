@@ -16,7 +16,7 @@ uint8_t usb_dev_info(const uint8_t device_index, const dev_info_request request_
 
   _usb_state *const work_area = get_usb_work_area();
 
-  if (work_area->storage_device.type != USB_IS_FLOPPY)
+  if (work_area->storage_device[0].type != USB_IS_FLOPPY)
     return 1;
 
   if (request_info == BASIC_INFORMATION)
@@ -24,7 +24,7 @@ uint8_t usb_dev_info(const uint8_t device_index, const dev_info_request request_
 
   ufi_inquiry_response response;
   memset(&response, 0, sizeof(ufi_inquiry_response));
-  const usb_error result = ufi_inquiry(&work_area->storage_device, &response);
+  const usb_error result = ufi_inquiry(&work_area->storage_device[0], &response);
 
   if (result != USB_ERR_OK)
     return 2;
