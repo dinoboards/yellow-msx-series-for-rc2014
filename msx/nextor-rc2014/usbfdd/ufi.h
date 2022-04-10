@@ -92,21 +92,24 @@ typedef struct _ufi_inquiry_response {
   char product_revision[4];
 } ufi_inquiry_response;
 
-extern usb_error usb_clear_endpoint_halt(const _usb_state *const usb_state, const usb_endpoint_type endpoint_type);
+extern usb_error usb_clear_endpoint_halt(storage_device_config *const storage_device, const usb_endpoint_type endpoint_type);
 
-extern usb_error usb_process_error(_usb_state *const usb_state, const usb_error result);
+extern usb_error usb_process_error(const usb_error result);
+
+extern usb_error usb_control_transfer(storage_device_config *const storage_device,
+                                      const setup_packet *const    cmd,
+                                      const uint8_t *const         buffer);
+
+extern usb_error ufi_inquiry(storage_device_config *const storage_device, ufi_inquiry_response const *response);
+
+extern usb_error ufi_capacity(storage_device_config *const storage_device, ufi_format_capacities_response const *response);
 
 extern usb_error
-usb_control_transfer(const _usb_state *const usb_state, const setup_packet *const cmd, const uint8_t *const buffer);
+ufi_write_sector(storage_device_config *const storage_device, const uint16_t sector_number, const uint8_t *const buffer);
 
-extern usb_error ufi_inquiry(_usb_state *const usb_state, ufi_inquiry_response const *response);
+extern usb_error
+ufi_read_sector(storage_device_config *const storage_device, const uint16_t sector_number, uint8_t *const buffer);
 
-extern usb_error ufi_capacity(_usb_state *const usb_state, ufi_format_capacities_response const *response);
-
-extern usb_error ufi_write_sector(_usb_state *const usb_state, const uint16_t sector_number, const uint8_t *const buffer);
-
-extern usb_error ufi_read_sector(_usb_state *const usb_state, const uint16_t sector_number, uint8_t *const buffer);
-
-extern uint8_t test_disk(_usb_state *const usb_state);
+extern uint8_t test_disk(storage_device_config *const storage_device);
 
 #endif

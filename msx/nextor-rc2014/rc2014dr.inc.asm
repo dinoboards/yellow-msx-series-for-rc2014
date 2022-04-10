@@ -10,21 +10,27 @@ max_packet_size	db
 
 	STRUCT device_config
 BASE:
-max_packet_size	db
-values		db
+max_packet_size		db
+value			db
+interface_number	db
+scsi_tag		db
+	ENDS
+
+	STRUCT storage_device_config
+BASE:
+type  				db; //floppy or mass storage
+config  			device_config   ;
+bulk_out_endpoint		endpoint_param
+bulk_in_endpoint		endpoint_param
+intr_in_endpoint		endpoint_param
 	ENDS
 
 	STRUCT usb_work_area
 BASE:					; Offset to the base of the data structure
-bulk_out_endpoint		endpoint_param
-bulk_in_endpoint		endpoint_param
-intr_in_endpoint		endpoint_param
+storage_device			storage_device_config;
 hub_endpoint			endpoint_param
 usb_device			db
 hub_config			device_config
-floppy_config			device_config
-bConfigurationvalue		db
-interface_number		db
 	ENDS
 
 	STRUCT ST_WRKAREA

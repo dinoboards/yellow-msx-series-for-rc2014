@@ -30,12 +30,12 @@ usb_error usb_host_bus_reset() {
 }
 
 void state_devices(const _usb_state *const work_area) {
-  if (work_area->usb_device == 0)
+  if (work_area->xusb_device == 0)
     return;
 
   print_string("USB:             ");
 
-  usb_device_type dev = work_area->usb_device;
+  usb_device_type dev = work_area->xusb_device;
 
   if (dev & USB_IS_HUB) {
     print_string("HUB");
@@ -86,36 +86,36 @@ uint8_t usb_host_init() {
 
   // logWorkArea(work_area);
 
-  usb_error result;
-  // result = get_scsi_max_luns();
-  // printf("max-luns %d\r\n", result);
+  // usb_error result;
+  // // result = get_scsi_max_luns();
+  // // printf("max-luns %d\r\n", result);
 
-  scsi_inquiry_result inq_result;
+  // scsi_inquiry_result inq_result;
 
-  result = get_scsi_inquiry(&inq_result);
+  // result = get_scsi_inquiry(&inq_result);
 
-  if (result == USB_ERR_OK) {
-    uint8_t buffer[10];
-    memset(buffer, 0, 10);
-    memcpy(buffer, &inq_result.buffer[8], 8);
+  // if (result == USB_ERR_OK) {
+  //   uint8_t buffer[10];
+  //   memset(buffer, 0, 10);
+  //   memcpy(buffer, &inq_result.buffer[8], 8);
 
-    printf("Ven: %s\r\n", buffer);
-  }
+  //   printf("Ven: %s\r\n", buffer);
+  // }
 
-  wait_for_mounting();
+  // wait_for_mounting();
 
-  scsi_read_capacity_result cap;
+  // scsi_read_capacity_result cap;
 
-  result = get_scsi_read_capacity(&cap);
+  // result = get_scsi_read_capacity(&cap);
 
-  uint32_t number_of_blocks;
-  uint8_t *n = (uint8_t *)&number_of_blocks;
-  *n++       = cap.number_of_blocks[3];
-  *n++       = cap.number_of_blocks[2];
-  *n++       = cap.number_of_blocks[1];
-  *n         = cap.number_of_blocks[0];
+  // uint32_t number_of_blocks;
+  // uint8_t *n = (uint8_t *)&number_of_blocks;
+  // *n++       = cap.number_of_blocks[3];
+  // *n++       = cap.number_of_blocks[2];
+  // *n++       = cap.number_of_blocks[1];
+  // *n         = cap.number_of_blocks[0];
 
-  printf("r(%d), number of blks %ld\r\n", result, number_of_blocks);
+  // printf("r(%d), number of blks %ld\r\n", result, number_of_blocks);
 
   // ufi_format_capacities_response response;
   // memset(&response, 0, sizeof(ufi_format_capacities_response));
@@ -125,7 +125,7 @@ uint8_t usb_host_init() {
 
   // ufi_inquiry_response resp;
   // memset(&resp, 0, sizeof(ufi_inquiry_response));
-  // result = ufi_inquiry(work_area, &resp);
+  // result = ufi_inquiry(&work_area->storage_device, &resp);
   // if (result == USB_ERR_OK)
   //   logInquiryResponse(&resp);
   // else
@@ -135,5 +135,5 @@ uint8_t usb_host_init() {
   // result = ufi_read_sector(work_area, 2, buffer);
   // printf("read %d\r\n", result);
 
-  return work_area->usb_device != USB_IS_HUB && work_area->usb_device != 0;
+  return work_area->xusb_device != USB_IS_HUB && work_area->xusb_device != 0;
 }
