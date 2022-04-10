@@ -27,7 +27,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
 
   if (transferIn && buffer == 0) {
-    x_printf(" Err1 ");
+    x_printf(" !!Err1 ");
     return USB_ERR_OTHER;
   }
 
@@ -48,14 +48,19 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
     return result;
   }
 
+  delay(6);
+
   if (transferIn) {
     ch_write_data((const uint8_t *)0, 0);
     ch_issue_token_out_ep0();
-    return ch_long_wait_int_and_get_status();
+    CHECK(ch_long_wait_int_and_get_status(), x_printf(" E4(%d) ", result));
+    return result;
   }
 
   ch_issue_token_in_ep0();
-  return ch_long_wait_int_and_get_status();
+  CHECK(ch_long_wait_int_and_get_status(), x_printf(" E5 %d ", result));
+
+  return result;
 }
 
 setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};

@@ -30,7 +30,7 @@ usb_device_type identify_class_driver(_usb_state *const work_area, const interfa
 
 const interface_descriptor *
 parse_interface(_usb_state *const work_area, const interface_descriptor *const p, usb_device_type *const usb_device) {
-  logInterface(p);
+  // logInterface(p);
 
   work_area->interface_number = p->bInterfaceNumber;
 
@@ -39,7 +39,7 @@ parse_interface(_usb_state *const work_area, const interface_descriptor *const p
   const endpoint_descriptor *pEndpoint = (const endpoint_descriptor *)(p + 1);
 
   for (uint8_t endpoint_index = p->bNumEndpoints; endpoint_index != 0; endpoint_index--) {
-    logEndPointDescription(pEndpoint);
+    // logEndPointDescription(pEndpoint);
 
     switch (*usb_device) {
     case USB_IS_FLOPPY:
@@ -60,14 +60,14 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
   uint8_t                  buffer[140];
   config_descriptor *const config_desc = (config_descriptor *)buffer;
 
-  printf("Config %d: ", config_index);
+  // printf("Config %d: ", config_index);
 
   result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), 0);
   if (result != USB_ERR_OK) {
     // yprintf(15, "X1 (%d)", result);
     return result;
   }
-  logConfig(config_desc);
+  // logConfig(config_desc);
 
   result = hw_get_config_descriptor(config_desc, config_index, desc->bMaxPacketSize0, config_desc->wTotalLength, 0);
   if (result != USB_ERR_OK) {
@@ -79,7 +79,7 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
   const interface_descriptor *p = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
   for (uint8_t interface_index = 0; interface_index < config_desc->bNumInterfaces; interface_index++) {
-    printf("Interf %d: ", interface_index);
+    // printf("Interf %d: ", interface_index);
     p = parse_interface(work_area, p, &usb_device);
 
     switch (usb_device) {
@@ -107,8 +107,8 @@ usb_error read_all_configs() {
 
   CHECK(hw_get_description(0, 64, &desc), x_printf("ErrX %02x\r\n", result));
 
-  printf("Desc: ");
-  logDevice(&desc);
+  // printf("Desc: ");
+  // logDevice(&desc);
 
   for (uint8_t config_index = 0; config_index < desc.bNumConfigurations; config_index++) {
     if ((result = parse_config(work_area, &desc, config_index)) != USB_ERR_OK)

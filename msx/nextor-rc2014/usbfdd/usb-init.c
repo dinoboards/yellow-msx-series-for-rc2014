@@ -83,27 +83,5 @@ uint8_t usb_host_init() {
 
   state_devices(work_area);
 
-  logWorkArea(work_area);
-
-  // usb_error result;
-
-  // ufi_format_capacities_response response;
-  // memset(&response, 0, sizeof(ufi_format_capacities_response));
-
-  // result = ufi_capacity(work_area, &response);
-  // printf("CAP result: %d\r\n", result);
-
-  // ufi_inquiry_response resp;
-  // memset(&resp, 0, sizeof(ufi_inquiry_response));
-  // usb_error result = ufi_inquiry(work_area, &resp);
-  // if (result == USB_ERR_OK)
-  //   logInquiryResponse(&resp);
-  // else
-  //   printf("Err %d\r\n", result);
-
-  // __asm
-  //   DI
-  //   HALT
-  // __endasm;
   return work_area->usb_device != USB_IS_HUB && work_area->usb_device != 0;
 }
