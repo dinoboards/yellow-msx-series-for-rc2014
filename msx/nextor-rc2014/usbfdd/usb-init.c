@@ -125,7 +125,7 @@ uint8_t usb_host_init() {
 
   // ufi_inquiry_response resp;
   // memset(&resp, 0, sizeof(ufi_inquiry_response));
-  // result = ufi_inquiry(&work_area->storage_device, &resp);
+  // result = ufi_inquiry(&work_area->storage_device[0], &resp);
   // if (result == USB_ERR_OK)
   //   logInquiryResponse(&resp);
   // else

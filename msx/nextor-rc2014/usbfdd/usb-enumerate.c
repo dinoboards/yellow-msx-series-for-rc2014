@@ -12,13 +12,13 @@ usb_device_type identify_class_driver(_usb_state *const work_area, const interfa
   if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 6 && p->bInterfaceProtocol == 80 &&
       !(*dev & USB_IS_MASS_STORAGE)) {
     *dev |= USB_IS_MASS_STORAGE;
-    work_area->storage_device.type = USB_IS_MASS_STORAGE;
+    work_area->storage_device[0].type = USB_IS_MASS_STORAGE;
     return USB_IS_MASS_STORAGE;
   }
 
   if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0 && !(*dev & USB_IS_FLOPPY)) {
     *dev |= USB_IS_FLOPPY;
-    work_area->storage_device.type = USB_IS_FLOPPY;
+    work_area->storage_device[0].type = USB_IS_FLOPPY;
     return USB_IS_FLOPPY;
   }
 
@@ -39,7 +39,7 @@ parse_interface(_usb_state *const work_area, const interface_descriptor *const p
   switch (*usb_device) {
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE:
-    work_area->storage_device.config.interface_number = p->bInterfaceNumber;
+    work_area->storage_device[0].config.interface_number = p->bInterfaceNumber;
     break;
 
   case USB_IS_HUB:
@@ -95,9 +95,9 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
     switch (usb_device) {
     case USB_IS_FLOPPY:
-      work_area->storage_device.config.max_packet_size = desc->bMaxPacketSize0;
-      work_area->storage_device.config.value           = config_desc->bConfigurationvalue;
-      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_FLOPPY, &work_area->storage_device.config));
+      work_area->storage_device[0].config.max_packet_size = desc->bMaxPacketSize0;
+      work_area->storage_device[0].config.value           = config_desc->bConfigurationvalue;
+      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_FLOPPY, &work_area->storage_device[0].config));
       break;
 
     case USB_IS_HUB:
@@ -108,9 +108,9 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
     case USB_IS_MASS_STORAGE:
       // temp re-use the floppy config entries
-      work_area->storage_device.config.max_packet_size = desc->bMaxPacketSize0;
-      work_area->storage_device.config.value           = config_desc->bConfigurationvalue;
-      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_MASS, &work_area->storage_device.config));
+      work_area->storage_device[0].config.max_packet_size = desc->bMaxPacketSize0;
+      work_area->storage_device[0].config.value           = config_desc->bConfigurationvalue;
+      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_MASS, &work_area->storage_device[0].config));
     }
   }
 
