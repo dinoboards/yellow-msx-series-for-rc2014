@@ -15,7 +15,7 @@ uint8_t usb_dev_write(const uint8_t  device_index,
   _usb_state *const work_area = get_usb_work_area();
 
   while (number_sectors_to_write-- != 0) {
-    if (ufi_write_sector(work_area, sector_number, buffer) != USB_ERR_OK)
+    if (ufi_write_sector(&work_area->storage_device, sector_number, buffer) != USB_ERR_OK)
       return NEXTOR_ERR_DISK;
 
     sector_number++;

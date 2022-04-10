@@ -7,16 +7,18 @@
 #include "print.h"
 
 usb_device_type identify_class_driver(_usb_state *const work_area, const interface_descriptor *const p) {
-  usb_device_type *const dev = &work_area->usb_device;
+  usb_device_type *const dev = &work_area->xusb_device;
 
   if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 6 && p->bInterfaceProtocol == 80 &&
       !(*dev & USB_IS_MASS_STORAGE)) {
     *dev |= USB_IS_MASS_STORAGE;
+    work_area->storage_device.type = USB_IS_MASS_STORAGE;
     return USB_IS_MASS_STORAGE;
   }
 
   if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0 && !(*dev & USB_IS_FLOPPY)) {
     *dev |= USB_IS_FLOPPY;
+    work_area->storage_device.type = USB_IS_FLOPPY;
     return USB_IS_FLOPPY;
   }
 
@@ -32,9 +34,17 @@ const interface_descriptor *
 parse_interface(_usb_state *const work_area, const interface_descriptor *const p, usb_device_type *const usb_device) {
   // logInterface(p);
 
-  work_area->interface_number = p->bInterfaceNumber;
-
   *usb_device = identify_class_driver(work_area, p);
+
+  switch (*usb_device) {
+  case USB_IS_FLOPPY:
+  case USB_IS_MASS_STORAGE:
+    work_area->storage_device.config.interface_number = p->bInterfaceNumber;
+    break;
+
+  case USB_IS_HUB:
+    work_area->hub_config.interface_number = p->bInterfaceNumber;
+  }
 
   const endpoint_descriptor *pEndpoint = (const endpoint_descriptor *)(p + 1);
 
@@ -85,9 +95,9 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
     switch (usb_device) {
     case USB_IS_FLOPPY:
-      work_area->floppy_config.max_packet_size = desc->bMaxPacketSize0;
-      work_area->floppy_config.value           = config_desc->bConfigurationvalue;
-      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_FLOPPY, &work_area->floppy_config));
+      work_area->storage_device.config.max_packet_size = desc->bMaxPacketSize0;
+      work_area->storage_device.config.value           = config_desc->bConfigurationvalue;
+      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_FLOPPY, &work_area->storage_device.config));
       break;
 
     case USB_IS_HUB:
@@ -98,9 +108,9 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
     case USB_IS_MASS_STORAGE:
       // temp re-use the floppy config entries
-      work_area->floppy_config.max_packet_size = desc->bMaxPacketSize0;
-      work_area->floppy_config.value           = config_desc->bConfigurationvalue;
-      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_MASS, &work_area->floppy_config));
+      work_area->storage_device.config.max_packet_size = desc->bMaxPacketSize0;
+      work_area->storage_device.config.value           = config_desc->bConfigurationvalue;
+      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_MASS, &work_area->storage_device.config));
     }
   }
 
