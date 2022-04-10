@@ -4,6 +4,7 @@
 #include "ch376.h"
 #include <stdlib.h>
 
+#define DEVICE_ADDRESS_MASS   3
 #define DEVICE_ADDRESS_FLOPPY 2
 #define DEVICE_ADDRESS_HUB    1
 
@@ -17,7 +18,7 @@ typedef struct __usb_state {
   usb_device_type usb_device;
   device_config   hub_config;
   device_config   floppy_config;
-  uint8_t         bConfigurationvalue;
+  uint8_t         scsi_tag;
   uint8_t         interface_number;
 } _usb_state;
 
