@@ -3,8 +3,7 @@
 
 	STRUCT endpoint_param
 BASE:					; Offset to the base of the data structure
-number		db
-toggle		db
+number_toggle	db
 max_packet_size	db
 	ENDS
 
@@ -27,7 +26,10 @@ intr_in_endpoint		endpoint_param
 
 	STRUCT usb_work_area
 BASE:					; Offset to the base of the data structure
-storage_device			storage_device_config;
+storage_device1			storage_device_config;
+storage_device2			storage_device_config;
+storage_device3			storage_device_config;
+storage_device4			storage_device_config;
 hub_endpoint			endpoint_param
 usb_device			db
 hub_config			device_config
