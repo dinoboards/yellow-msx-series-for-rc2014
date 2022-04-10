@@ -43,6 +43,7 @@ parse_interface(_usb_state *const work_area, const interface_descriptor *const p
 
     switch (*usb_device) {
     case USB_IS_FLOPPY:
+    case USB_IS_MASS_STORAGE:
       parse_endpoint_floppy(work_area, pEndpoint);
       break;
 
@@ -86,7 +87,7 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
     case USB_IS_FLOPPY:
       work_area->floppy_config.max_packet_size = desc->bMaxPacketSize0;
       work_area->floppy_config.value           = config_desc->bConfigurationvalue;
-      hw_set_address_and_configuration(DEVICE_ADDRESS_FLOPPY, &work_area->floppy_config);
+      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_FLOPPY, &work_area->floppy_config));
       break;
 
     case USB_IS_HUB:
@@ -94,6 +95,12 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
       work_area->hub_config.value           = config_desc->bConfigurationvalue;
       configure_usb_hub(work_area);
       break;
+
+    case USB_IS_MASS_STORAGE:
+      // temp re-use the floppy config entries
+      work_area->floppy_config.max_packet_size = desc->bMaxPacketSize0;
+      work_area->floppy_config.value           = config_desc->bConfigurationvalue;
+      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_MASS, &work_area->floppy_config));
     }
   }
 
