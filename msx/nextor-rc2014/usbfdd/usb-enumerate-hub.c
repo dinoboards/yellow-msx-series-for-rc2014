@@ -74,7 +74,7 @@ usb_error configure_usb_hub(_usb_state *const work_area) {
       CHECK(read_all_configs(), x_printf("err5: %d\r\n", result));
     }
 
-    if (work_area->usb_device != USB_IS_HUB)
+    if (work_area->xusb_device != USB_IS_HUB)
       break;
 
     CHECK(hub_clear_feature(FEAT_PORT_POWER, i), x_printf("hub5 err:%d\r\n", result));
