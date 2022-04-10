@@ -46,8 +46,8 @@ typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_I
   }
 
 typedef struct {
-  uint8_t number;
-  uint8_t toggle;
+  uint8_t toggle : 1;
+  uint8_t number : 4;
   uint8_t max_packet_size;
 } endpoint_param;
 

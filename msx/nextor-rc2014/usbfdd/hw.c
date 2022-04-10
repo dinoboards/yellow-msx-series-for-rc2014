@@ -20,9 +20,8 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
                               void *const               buffer,
                               const uint8_t             device_address,
                               const uint8_t             max_packet_size) {
-  usb_error result;
-  (void)max_packet_size;
-  endpoint_param endpoint = {0, 1, max_packet_size};
+  usb_error      result;
+  endpoint_param endpoint = {1, 0, max_packet_size};
 
   const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
 
