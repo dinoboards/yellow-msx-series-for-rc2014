@@ -212,8 +212,8 @@ usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, end
     buffer             = ch_write_data(buffer, size);
     buffer_length -= size;
     ch_issue_token_out(endpoint);
-    if ((result = ch_short_wait_int_and_get_status()) != USB_ERR_OK)
-      return result;
+
+    CHECK(ch_short_wait_int_and_get_status());
 
     endpoint->toggle = !endpoint->toggle;
   }

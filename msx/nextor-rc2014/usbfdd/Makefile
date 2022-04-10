@@ -32,6 +32,7 @@ $(BINDIR)spike.bin: $(BINDIR)crt.o \
  	$(BINDIR)usb-enumerate.c.o \
  	$(BINDIR)debuggin.c.o \
  	$(BINDIR)usb-init.c.o \
+ 	$(BINDIR)scsi.c.o \
 	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
 
 

@@ -1,6 +1,7 @@
 #include "ch376.h"
 #include "hw.h"
 #include "nextor.h"
+#include "scsi.h"
 #include "usb-enumerate-hub.h"
 #include "usb-enumerate.h"
 #include "usb.h"
@@ -82,6 +83,57 @@ uint8_t usb_host_init() {
   read_all_configs();
 
   state_devices(work_area);
+
+  // logWorkArea(work_area);
+
+  usb_error result;
+  // result = get_scsi_max_luns();
+  // printf("max-luns %d\r\n", result);
+
+  scsi_inquiry_result inq_result;
+
+  result = get_scsi_inquiry(&inq_result);
+
+  if (result == USB_ERR_OK) {
+    uint8_t buffer[10];
+    memset(buffer, 0, 10);
+    memcpy(buffer, &inq_result.buffer[8], 8);
+
+    printf("Ven: %s\r\n", buffer);
+  }
+
+  wait_for_mounting();
+
+  scsi_read_capacity_result cap;
+
+  result = get_scsi_read_capacity(&cap);
+
+  uint32_t number_of_blocks;
+  uint8_t *n = (uint8_t *)&number_of_blocks;
+  *n++       = cap.number_of_blocks[3];
+  *n++       = cap.number_of_blocks[2];
+  *n++       = cap.number_of_blocks[1];
+  *n         = cap.number_of_blocks[0];
+
+  printf("r(%d), number of blks %ld\r\n", result, number_of_blocks);
+
+  // ufi_format_capacities_response response;
+  // memset(&response, 0, sizeof(ufi_format_capacities_response));
+
+  // result = scsi_capacity(work_area, &response);
+  // printf("CAP result: %d, %d\r\n", result, response.block_size[1]);
+
+  // ufi_inquiry_response resp;
+  // memset(&resp, 0, sizeof(ufi_inquiry_response));
+  // result = ufi_inquiry(work_area, &resp);
+  // if (result == USB_ERR_OK)
+  //   logInquiryResponse(&resp);
+  // else
+  //   printf("Err %d\r\n", result);
+
+  // uint8_t buffer[512];
+  // result = ufi_read_sector(work_area, 2, buffer);
+  // printf("read %d\r\n", result);
 
   return work_area->usb_device != USB_IS_HUB && work_area->usb_device != 0;
 }
