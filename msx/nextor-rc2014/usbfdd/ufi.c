@@ -109,6 +109,10 @@ usb_error usb_execute_cbi_core_no_clear(_usb_state *const         usb_state,
 
   if (result != USB_ERR_OK) {
     *asc = 0;
+
+    // Token error here, asc = 0
+
+    x_printf(" a2(%d) ", result);
     return result;
   }
 
@@ -182,7 +186,7 @@ usb_error usb_process_error(_usb_state *const usb_state, const usb_error result)
 usb_error usb_control_transfer(_usb_state *const usb_state, const setup_packet *const cmd, uint8_t *const buffer) {
   usb_error result;
 
-  const uint8_t max_packet_size = usb_state->endpoints[ENDPOINT_BULK_OUT].max_packet_size;
+  const uint8_t max_packet_size = usb_state->floppy_config.max_packet_size;
 
   result = hw_control_transfer(cmd, buffer, DEVICE_ADDRESS_FLOPPY, max_packet_size);
 
@@ -282,18 +286,6 @@ usb_error usb_execute_cbi(_usb_state *const           usb_state,
                               false,
                               sizeof(ufi_response_inquiry),
                               (uint8_t *)response_inquiry);
-
-  // printf(" a3(%d, %d, %d, %d, %d) ",
-  //   result,
-  //   response_inquiry->asc,
-  //   response_inquiry->ascq,
-  //   response_inquiry->error_code,
-  //   response_inquiry->sense_key
-  // );
-  // if (result != USB_ERR_STALL)
-  //   return result;
-
-  // return result;
 }
 
 // ; Input:  HL => cmd Address of the 12 byte command to execute
@@ -384,7 +376,7 @@ uint8_t test_disk(_usb_state *const usb_state) {
   usb_error result;
   result = run_test_unit_ready(usb_state);
 
-  if (result == USB_ERR_MEDIA_CHANGED) {
+  if (result == USB_ERR_MEDIA_CHANGED || result == USB_TOKEN_OUT_OF_SYNC) {
     result = run_test_unit_ready(usb_state);
     return (result == USB_ERR_OK) ? USB_ERR_MEDIA_CHANGED : result;
   }

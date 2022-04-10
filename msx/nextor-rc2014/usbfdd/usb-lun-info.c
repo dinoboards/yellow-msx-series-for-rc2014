@@ -2,6 +2,8 @@
 #include "ufi.h"
 #include <stdlib.h>
 
+#include "print.h"
+
 uint8_t usb_lun_info(const uint8_t device_index, const uint8_t lun, nextor_lun_info *const info) {
   if (lun != 1 || device_index != 1)
     return 1;
