@@ -51,7 +51,7 @@ usb_error hub_get_descriptor(hub_descriptor *const hub_description) __z88dk_fast
       &cmd_get_hub_descriptor, hub_description, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
 }
 
-usb_error configure_usb_hub(_usb_state *const work_area) {
+usb_error configure_usb_hub(_usb_state *const work_area, uint8_t const *next_storage_device_index) {
   usb_error       result;
   uint8_t         i;
   hub_descriptor  hub_description;
@@ -73,7 +73,7 @@ usb_error configure_usb_hub(_usb_state *const work_area) {
     if (port_status.wPortStatus.port_connection) {
       delay(5);
 
-      CHECK(read_all_configs(), x_printf("err5: %d\r\n", result));
+      CHECK(read_all_configs(next_storage_device_index), x_printf("err5: %d\r\n", result));
     }
 
     if (work_area->xusb_device != USB_IS_HUB)
