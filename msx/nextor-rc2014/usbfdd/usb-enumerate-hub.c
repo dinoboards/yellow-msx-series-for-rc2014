@@ -57,7 +57,9 @@ usb_error configure_usb_hub(_usb_state *const work_area) {
   hub_descriptor  hub_description;
   hub_port_status port_status;
 
-  CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_HUB, &work_area->hub_config));
+  work_area->hub_config.address = DEVICE_ADDRESS_HUB;
+
+  CHECK(hw_set_address_and_configuration(&work_area->hub_config));
 
   CHECK(hub_get_descriptor(&hub_description));
 

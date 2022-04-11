@@ -18,6 +18,7 @@ scsi_tag		db
 	STRUCT storage_device_config
 BASE:
 type  				db; //floppy or mass storage
+device_address			db
 config  			device_config   ;
 bulk_out_endpoint		endpoint_param
 bulk_in_endpoint		endpoint_param
