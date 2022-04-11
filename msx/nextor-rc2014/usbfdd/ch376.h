@@ -56,6 +56,7 @@ typedef struct {
   uint8_t value;
   uint8_t interface_number;
   uint8_t tag;
+  uint8_t address;
 } device_config;
 
 typedef struct {

@@ -97,7 +97,8 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
     case USB_IS_FLOPPY:
       work_area->storage_device[0].config.max_packet_size = desc->bMaxPacketSize0;
       work_area->storage_device[0].config.value           = config_desc->bConfigurationvalue;
-      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_FLOPPY, &work_area->storage_device[0].config));
+      work_area->storage_device[0].config.address         = 20;
+      CHECK(hw_set_address_and_configuration(&work_area->storage_device[0].config));
       break;
 
     case USB_IS_HUB:
@@ -110,7 +111,8 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
       // temp re-use the floppy config entries
       work_area->storage_device[0].config.max_packet_size = desc->bMaxPacketSize0;
       work_area->storage_device[0].config.value           = config_desc->bConfigurationvalue;
-      CHECK(hw_set_address_and_configuration(DEVICE_ADDRESS_MASS, &work_area->storage_device[0].config));
+      work_area->storage_device[0].config.address         = 20;
+      CHECK(hw_set_address_and_configuration(&work_area->storage_device[0].config));
     }
   }
 
