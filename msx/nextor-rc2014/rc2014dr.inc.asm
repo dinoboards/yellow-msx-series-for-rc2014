@@ -13,12 +13,12 @@ max_packet_size		db
 value			db
 interface_number	db
 scsi_tag		db
+address			db
 	ENDS
 
 	STRUCT storage_device_config
 BASE:
 type  				db; //floppy or mass storage
-device_address			db
 config  			device_config   ;
 bulk_out_endpoint		endpoint_param
 bulk_in_endpoint		endpoint_param

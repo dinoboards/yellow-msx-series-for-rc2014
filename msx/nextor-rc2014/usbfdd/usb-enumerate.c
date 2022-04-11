@@ -6,24 +6,17 @@
 #include "debuggin.h"
 #include "print.h"
 
-usb_device_type identify_class_driver(_usb_state *const work_area, const interface_descriptor *const p) {
-  usb_device_type *const dev = &work_area->xusb_device;
+usb_device_type identify_class_driver(const interface_descriptor *const p) {
 
-  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 6 && p->bInterfaceProtocol == 80 &&
-      !(*dev & USB_IS_MASS_STORAGE)) {
-    *dev |= USB_IS_MASS_STORAGE;
-    work_area->storage_device[0].type = USB_IS_MASS_STORAGE;
+  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 6 && p->bInterfaceProtocol == 80) {
     return USB_IS_MASS_STORAGE;
   }
 
-  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0 && !(*dev & USB_IS_FLOPPY)) {
-    *dev |= USB_IS_FLOPPY;
-    work_area->storage_device[0].type = USB_IS_FLOPPY;
+  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0) {
     return USB_IS_FLOPPY;
   }
 
-  if (p->bInterfaceClass == 9 && p->bInterfaceSubClass == 0 && p->bInterfaceProtocol == 0 && !(*dev & USB_IS_HUB)) {
-    *dev |= USB_IS_HUB;
+  if (p->bInterfaceClass == 9 && p->bInterfaceSubClass == 0 && p->bInterfaceProtocol == 0) {
     return USB_IS_HUB;
   }
 
@@ -34,11 +27,17 @@ const interface_descriptor *
 parse_interface(_usb_state *const work_area, const interface_descriptor *const p, usb_device_type *const usb_device) {
   // logInterface(p);
 
-  *usb_device = identify_class_driver(work_area, p);
+  *usb_device = identify_class_driver(p);
+
+  if (work_area->xusb_device & *usb_device)
+    *usb_device = 0;
+
+  work_area->xusb_device |= *usb_device;
 
   switch (*usb_device) {
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE:
+    work_area->storage_device[0].type                    = *usb_device;
     work_area->storage_device[0].config.interface_number = p->bInterfaceNumber;
     break;
 
@@ -66,7 +65,10 @@ parse_interface(_usb_state *const work_area, const interface_descriptor *const p
   return (interface_descriptor *)pEndpoint;
 }
 
-usb_error parse_config(_usb_state *const work_area, const device_descriptor *const desc, const uint8_t config_index) {
+usb_error parse_config(_usb_state *const              work_area,
+                       const device_descriptor *const desc,
+                       const uint8_t                  config_index,
+                       uint8_t *const                 next_storage_device_index) {
   uint8_t                  result;
   uint8_t                  buffer[140];
   config_descriptor *const config_desc = (config_descriptor *)buffer;
@@ -88,38 +90,35 @@ usb_error parse_config(_usb_state *const work_area, const device_descriptor *con
 
   usb_device_type usb_device = 0;
 
-  const interface_descriptor *p = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
+  const interface_descriptor *p       = (const interface_descriptor *)(buffer + sizeof(config_descriptor));
+  device_config *const        dev_cfg = &work_area->storage_device[*next_storage_device_index].config;
+
   for (uint8_t interface_index = 0; interface_index < config_desc->bNumInterfaces; interface_index++) {
     // printf("Interf %d: ", interface_index);
     p = parse_interface(work_area, p, &usb_device);
 
     switch (usb_device) {
     case USB_IS_FLOPPY:
-      work_area->storage_device[0].config.max_packet_size = desc->bMaxPacketSize0;
-      work_area->storage_device[0].config.value           = config_desc->bConfigurationvalue;
-      work_area->storage_device[0].config.address         = 20;
-      CHECK(hw_set_address_and_configuration(&work_area->storage_device[0].config));
+    case USB_IS_MASS_STORAGE:
+      dev_cfg->max_packet_size = desc->bMaxPacketSize0;
+      dev_cfg->value           = config_desc->bConfigurationvalue;
+      dev_cfg->address         = 20 + *next_storage_device_index;
+      CHECK(hw_set_address_and_configuration(dev_cfg));
+      (*next_storage_device_index)++;
       break;
 
     case USB_IS_HUB:
       work_area->hub_config.max_packet_size = desc->bMaxPacketSize0;
       work_area->hub_config.value           = config_desc->bConfigurationvalue;
-      configure_usb_hub(work_area);
+      configure_usb_hub(work_area, next_storage_device_index);
       break;
-
-    case USB_IS_MASS_STORAGE:
-      // temp re-use the floppy config entries
-      work_area->storage_device[0].config.max_packet_size = desc->bMaxPacketSize0;
-      work_area->storage_device[0].config.value           = config_desc->bConfigurationvalue;
-      work_area->storage_device[0].config.address         = 20;
-      CHECK(hw_set_address_and_configuration(&work_area->storage_device[0].config));
     }
   }
 
   return USB_ERR_OK;
 }
 
-usb_error read_all_configs() {
+usb_error read_all_configs(uint8_t *const next_storage_device_index) {
   _usb_state *const work_area = get_usb_work_area();
   device_descriptor desc;
   uint8_t           result;
@@ -129,10 +128,16 @@ usb_error read_all_configs() {
   // printf("Desc: ");
   // logDevice(&desc);
 
-  for (uint8_t config_index = 0; config_index < desc.bNumConfigurations; config_index++) {
-    if ((result = parse_config(work_area, &desc, config_index)) != USB_ERR_OK)
-      return result;
-  }
+  for (uint8_t config_index = 0; config_index < desc.bNumConfigurations; config_index++)
+    CHECK(parse_config(work_area, &desc, config_index, next_storage_device_index));
 
   return USB_ERR_OK;
+}
+
+usb_error enumerate_all_devices() {
+  uint8_t next_storage_device_index = 0;
+
+  const usb_error result = read_all_configs(&next_storage_device_index);
+  printf("dev-count: %d\r\n", next_storage_device_index);
+  return result;
 }

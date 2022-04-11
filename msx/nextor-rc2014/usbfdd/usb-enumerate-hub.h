@@ -5,6 +5,6 @@
 #include "work-area.h"
 
 extern void      parse_endpoint_hub(_usb_state *const work_area, const endpoint_descriptor const *pEndpoint);
-extern usb_error configure_usb_hub(_usb_state *const work_area);
+extern usb_error configure_usb_hub(_usb_state *const work_area, uint8_t const *next_storage_device_index);
 
 #endif

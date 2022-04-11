@@ -80,7 +80,7 @@ uint8_t usb_host_init() {
   usb_host_bus_reset();
   delay(10);
 
-  read_all_configs();
+  enumerate_all_devices();
 
   state_devices(work_area);
 
