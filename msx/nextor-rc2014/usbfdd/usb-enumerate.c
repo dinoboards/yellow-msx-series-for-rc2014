@@ -15,6 +15,7 @@ typedef struct __working {
   uint8_t                  config_index;
   uint8_t                  interface_count;
   uint8_t                  endpoint_count;
+  uint8_t                  bInterfaceNumber;
 
   const void *ptr;
 
@@ -75,16 +76,20 @@ usb_error op_capture_driver_2(_working *const working) __z88dk_fastcall {
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE:
-    dev_cfg->max_packet_size = working->desc->bMaxPacketSize0;
-    dev_cfg->value           = working->config.desc.bConfigurationvalue;
-    dev_cfg->address         = 20 + *working->next_storage_device_index;
+    dev_cfg->max_packet_size  = working->desc->bMaxPacketSize0;
+    dev_cfg->value            = working->config.desc.bConfigurationvalue;
+    dev_cfg->address          = 20 + *working->next_storage_device_index;
+    dev_cfg->interface_number = working->bInterfaceNumber;
+    storage_dev->type         = working->usb_device;
+
     CHECK(hw_set_address_and_configuration(dev_cfg));
     (*working->next_storage_device_index)++;
     break;
 
   case USB_IS_HUB:
-    work_area->hub_config.max_packet_size = working->desc->bMaxPacketSize0;
-    work_area->hub_config.value           = working->config.desc.bConfigurationvalue;
+    work_area->hub_config.interface_number = working->bInterfaceNumber;
+    work_area->hub_config.max_packet_size  = working->desc->bMaxPacketSize0;
+    work_area->hub_config.value            = working->config.desc.bConfigurationvalue;
     configure_usb_hub(work_area, working->next_storage_device_index);
     break;
   }
@@ -123,31 +128,17 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
 }
 
 usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall {
-  _usb_state *const           work_area        = get_usb_work_area();
-  const interface_descriptor *interface        = (interface_descriptor *)working->ptr;
-  const uint8_t               bInterfaceNumber = interface->bInterfaceNumber;
-
-  // printf("Inter: %d ", working->usb_device);
-  // logInterface(interface);
+  _usb_state *const           work_area = get_usb_work_area();
+  const interface_descriptor *interface = (interface_descriptor *)working->ptr;
 
   // if (work_area->xusb_device & working->usb_device)
   //   *usb_device = 0;
 
   work_area->xusb_device |= working->usb_device;
 
-  switch (working->usb_device) {
-  case USB_IS_FLOPPY:
-  case USB_IS_MASS_STORAGE:
-    work_area->storage_device[0].type                    = working->usb_device;
-    work_area->storage_device[0].config.interface_number = bInterfaceNumber;
-    break;
-
-  case USB_IS_HUB:
-    work_area->hub_config.interface_number = bInterfaceNumber;
-  }
-
-  working->ptr            = interface + 1;
-  working->endpoint_count = interface->bNumEndpoints;
+  working->bInterfaceNumber = interface->bInterfaceNumber;
+  working->ptr              = interface + 1;
+  working->endpoint_count   = interface->bNumEndpoints;
   return op_parse_endpoint(working);
 }
 
