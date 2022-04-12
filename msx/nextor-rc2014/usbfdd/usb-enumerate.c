@@ -15,7 +15,6 @@ typedef struct __working {
   uint8_t                  config_index;
   uint8_t                  interface_count;
   uint8_t                  endpoint_count;
-  uint8_t                  bInterfaceNumber;
 
   const void *ptr;
 
@@ -66,44 +65,13 @@ usb_error op_interface_next(_working *const working) __z88dk_fastcall {
   return op_identify_class_driver(working);
 }
 
-usb_error op_capture_driver_2(_working *const working) __z88dk_fastcall {
-  usb_error         result;
-  _usb_state *const work_area = get_usb_work_area();
-
-  storage_device_config *const storage_dev = &work_area->storage_device[*working->next_storage_device_index];
-  device_config *const         dev_cfg     = &storage_dev->config;
-
-  switch (working->usb_device) {
-  case USB_IS_FLOPPY:
-  case USB_IS_MASS_STORAGE:
-    dev_cfg->max_packet_size  = working->desc->bMaxPacketSize0;
-    dev_cfg->value            = working->config.desc.bConfigurationvalue;
-    dev_cfg->address          = 20 + *working->next_storage_device_index;
-    dev_cfg->interface_number = working->bInterfaceNumber;
-    storage_dev->type         = working->usb_device;
-
-    CHECK(hw_set_address_and_configuration(dev_cfg));
-    (*working->next_storage_device_index)++;
-    break;
-
-  case USB_IS_HUB:
-    work_area->hub_config.interface_number = working->bInterfaceNumber;
-    work_area->hub_config.max_packet_size  = working->desc->bMaxPacketSize0;
-    work_area->hub_config.value            = working->config.desc.bConfigurationvalue;
-    configure_usb_hub(work_area, working->next_storage_device_index);
-    break;
-  }
-
-  return op_interface_next(working);
-}
-
 usb_error op_endpoint_next(_working *const working) __z88dk_fastcall {
   if (--working->endpoint_count > 0) {
     working->ptr = ((endpoint_descriptor *)working->ptr) + 1;
     return op_parse_endpoint(working);
   }
 
-  return op_capture_driver_2(working);
+  return op_interface_next(working);
 }
 
 usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
@@ -128,6 +96,7 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
 }
 
 usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall {
+  usb_error                   result;
   _usb_state *const           work_area = get_usb_work_area();
   const interface_descriptor *interface = (interface_descriptor *)working->ptr;
 
@@ -136,9 +105,33 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 
   work_area->xusb_device |= working->usb_device;
 
-  working->bInterfaceNumber = interface->bInterfaceNumber;
   working->ptr              = interface + 1;
   working->endpoint_count   = interface->bNumEndpoints;
+
+  storage_device_config *const storage_dev = &work_area->storage_device[*working->next_storage_device_index];
+  device_config *const         dev_cfg     = &storage_dev->config;
+
+  switch (working->usb_device) {
+  case USB_IS_FLOPPY:
+  case USB_IS_MASS_STORAGE:
+    dev_cfg->max_packet_size  = working->desc->bMaxPacketSize0;
+    dev_cfg->value            = working->config.desc.bConfigurationvalue;
+    dev_cfg->address          = 20 + *working->next_storage_device_index;
+    dev_cfg->interface_number = interface->bInterfaceNumber;
+    storage_dev->type         = working->usb_device;
+
+    CHECK(hw_set_address_and_configuration(dev_cfg));
+    (*working->next_storage_device_index)++;
+    break;
+
+  case USB_IS_HUB:
+    work_area->hub_config.interface_number = interface->bInterfaceNumber;
+    work_area->hub_config.max_packet_size  = working->desc->bMaxPacketSize0;
+    work_area->hub_config.value            = working->config.desc.bConfigurationvalue;
+    CHECK(configure_usb_hub(work_area, working->next_storage_device_index));
+    break;
+  }
+
   return op_parse_endpoint(working);
 }
 
