@@ -11,27 +11,18 @@ typedef uint8_t (*usb_dev_info_driver)(storage_device_config *const dev,
                                        const dev_info_request       request_info,
                                        uint8_t *const               buffer);
 
-// const usb_dev_info_driver drivers[] = {
-//   &usb_dev_info_ufi, &usb_dev_info_scsi
-// };
+static uint8_t no_driver(storage_device_config *const dev, const dev_info_request request_info, uint8_t *const buffer) {
+  (void)dev;
+  (void)request_info;
+  (void)buffer;
+  return 1;
+}
+
+static const usb_dev_info_driver drivers[] = {&no_driver, &usb_dev_info_ufi, &usb_dev_info_scsi};
 
 uint8_t usb_dev_info(const uint8_t device_index, const dev_info_request request_info, uint8_t *const buffer) {
-  storage_device_config *const dev = get_usb_driver(device_index);
+  storage_device_config *const dev  = get_usb_driver(device_index);
+  const usb_device_type        type = dev->type;
 
-  usb_dev_info_driver t;
-
-  switch (dev->type) {
-  case USB_IS_FLOPPY:
-    t = &usb_dev_info_ufi;
-    break;
-
-  case USB_IS_MASS_STORAGE:
-    t = &usb_dev_info_scsi;
-    break;
-
-  default:
-    return 1;
-  }
-
-  return t(dev, request_info, buffer);
+  return drivers[type](dev, request_info, buffer);
 }
