@@ -84,11 +84,6 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   _usb_state *const           work_area = get_usb_work_area();
   const interface_descriptor *interface = (interface_descriptor *)working->ptr;
 
-  // if (work_area->xusb_device & working->usb_device)
-  //   *usb_device = 0;
-
-  work_area->xusb_device |= working->usb_device;
-
   working->ptr            = interface + 1;
   working->endpoint_count = interface->bNumEndpoints;
 

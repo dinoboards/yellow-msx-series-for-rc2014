@@ -29,34 +29,44 @@ usb_error usb_host_bus_reset() {
   return USB_ERR_OK;
 }
 
-void state_devices(const _usb_state *const work_area) {
-  if (work_area->xusb_device == 0)
-    return;
+bool state_devices(const _usb_state *const work_area) {
+  const bool hasUsb = work_area->hub_config.address != 0;
+
+  uint8_t floppy_count       = 0;
+  uint8_t mass_storage_count = 0;
+  for (int8_t index = MAX_NUMBER_OF_STORAGE_DEVICES - 1; index >= 0; index--) {
+    const usb_device_type t = work_area->storage_device[index].type;
+    if (t == USB_IS_FLOPPY)
+      floppy_count++;
+    else if (t == USB_IS_MASS_STORAGE)
+      mass_storage_count++;
+  }
+
+  if (!hasUsb && floppy_count == 0 && mass_storage_count == 0)
+    return false;
 
   print_string("USB:             ");
 
-  usb_device_type dev = work_area->xusb_device;
-
-  if (dev & USB_IS_HUB) {
+  if (hasUsb) {
     print_string("HUB");
 
-    dev &= ~USB_IS_HUB;
-    if (dev)
+    if (floppy_count != 0 || mass_storage_count != 0)
       print_string(", ");
   }
 
-  if (dev & USB_IS_FLOPPY) {
+  if (floppy_count != 0) {
     print_string("FLOPPY");
 
-    dev &= ~USB_IS_FLOPPY;
-    if (dev)
+    if (mass_storage_count != 0)
       print_string(", ");
   }
 
-  if (dev & USB_IS_MASS_STORAGE)
+  if (mass_storage_count != 0)
     print_string("STORAGE");
 
   print_string("\r\n");
+
+  return floppy_count != 0 || mass_storage_count != 0;
 }
 
 uint8_t usb_host_init() {
@@ -82,7 +92,7 @@ uint8_t usb_host_init() {
 
   enumerate_all_devices();
 
-  state_devices(work_area);
+  return state_devices(work_area);
 
   // logWorkArea(work_area);
 
@@ -135,5 +145,5 @@ uint8_t usb_host_init() {
   // result = ufi_read_sector(work_area, 2, buffer);
   // printf("read %d\r\n", result);
 
-  return work_area->xusb_device != USB_IS_HUB && work_area->xusb_device != 0;
+  // return work_area->xusb_device != USB_IS_HUB && work_area->xusb_device != 0;
 }
