@@ -137,8 +137,8 @@ usb_error op_get_config_descriptor(_working *const working) __z88dk_fastcall {
 }
 
 usb_error read_all_configs(uint8_t *const next_storage_device_index) {
-  _usb_state *const work_area = get_usb_work_area();
   uint8_t           result;
+  _usb_state *const work_area = get_usb_work_area();
 
   _working working;
   memset(&working, 0, sizeof(_working));
@@ -163,9 +163,7 @@ usb_error read_all_configs(uint8_t *const next_storage_device_index) {
 usb_error enumerate_all_devices() {
   uint8_t next_storage_device_index = (uint8_t)-1;
 
-  const usb_error result = read_all_configs(&next_storage_device_index);
-  printf("dev-count: %d\r\n", next_storage_device_index);
-  return result;
+  return read_all_configs(&next_storage_device_index);
 }
 
 /*
