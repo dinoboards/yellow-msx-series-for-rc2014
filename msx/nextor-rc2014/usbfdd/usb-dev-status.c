@@ -1,5 +1,6 @@
 #include "nextor.h"
 #include "ufi.h"
+#include "usb-dev-status-scsi.h"
 #include "usb-dev-status-ufi.h"
 #include "usb-dev.h"
 #include "work-area.h"
@@ -11,6 +12,9 @@ uint8_t usb_dev_status(const uint8_t device_index, const uint8_t lun) {
   switch (dev->type) {
   case USB_IS_FLOPPY:
     return usb_dev_status_ufi(dev, lun);
+
+  case USB_IS_MASS_STORAGE:
+    return usb_dev_status_scsi(dev, lun);
 
   default:
     return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
