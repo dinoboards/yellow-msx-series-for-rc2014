@@ -1,24 +1,18 @@
 #include "nextor.h"
 #include "ufi.h"
+#include "usb-dev-status-ufi.h"
+#include "usb-dev.h"
 #include "work-area.h"
 #include <stdlib.h>
 
 uint8_t usb_dev_status(const uint8_t device_index, const uint8_t lun) {
-  if (lun != 1)
+  storage_device_config *const dev = get_usb_driver(device_index);
+
+  switch (dev->type) {
+  case USB_IS_FLOPPY:
+    return usb_dev_status_ufi(dev, lun);
+
+  default:
     return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
-
-  _usb_state *const work_area = get_usb_work_area();
-
-  if (work_area->storage_device[device_index - 1].type != USB_IS_FLOPPY)
-    return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
-
-  const usb_error result = test_disk(&work_area->storage_device[device_index - 1]);
-
-  if (result == USB_ERR_MEDIA_NOT_PRESENT)
-    return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
-
-  if (result == USB_ERR_MEDIA_CHANGED)
-    return DEV_STATUS_AVAILABLE_AND_CHANGED;
-
-  return DEV_STATUS_AVAILABLE_AND_NOT_CHANGED;
+  }
 }
