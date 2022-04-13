@@ -68,7 +68,6 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
   CHECK(hub_get_descriptor(&hub_description));
 
   for (i = 1; i <= hub_description.bNbrPorts; i++) {
-    printf("Scanning %d ", i);
     CHECK(hub_set_feature(FEAT_PORT_POWER, i));
 
     CHECK(hub_set_feature(FEAT_PORT_RESET, i), x_printf("hub4 err:%d\r\n", result));
@@ -77,19 +76,11 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
 
     if (port_status.wPortStatus.port_connection) {
       delay(5);
-      printf("Connected");
       CHECK(read_all_configs(&working->next_storage_device_index), x_printf("err5: %d\r\n", result));
+
     } else {
-      printf("Not Connected");
+      CHECK(hub_clear_feature(FEAT_PORT_POWER, i), x_printf("hub5 err:%d\r\n", result));
     }
-
-    if (work_area->xusb_device != USB_IS_HUB)
-      break;
-
-    printf("clearing");
-    CHECK(hub_clear_feature(FEAT_PORT_POWER, i), x_printf("hub5 err:%d\r\n", result));
-
-    printf("\r\n");
   }
 
   return USB_ERR_OK;
