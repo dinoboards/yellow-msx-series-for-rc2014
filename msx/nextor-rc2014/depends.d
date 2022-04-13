@@ -1,24 +1,27 @@
 
 ./bin/usb-enumerate-hub.c.asm: usbfdd/usb-enumerate-hub.c \
- usbfdd/usb-enumerate-hub.h usbfdd/usb.h usbfdd/work-area.h \
- usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h usbfdd/usb-enumerate.h \
+ usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h usbfdd/usb.h \
+ usbfdd/work-area.h usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
  usbfdd/print.h
 ./bin/usb-dev-read.c.asm: usbfdd/usb-dev-read.c usbfdd/nextor.h usbfdd/ufi.h \
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h usbfdd/work-area.h
+./bin/usb-dev-status-ufi.c.asm: usbfdd/usb-dev-status-ufi.c usbfdd/nextor.h \
+ usbfdd/ufi.h usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h \
+ usbfdd/work-area.h
 ./bin/ch376.c.asm: usbfdd/ch376.c usbfdd/ch376.h usbfdd/ch376inc.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
  usbfdd/print.h
-./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h usbfdd/ufi.h \
- usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h usbfdd/work-area.h \
- usbfdd/print.h
+./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h usbfdd/usb-dev.h \
+ usbfdd/work-area.h usbfdd/ch376.h usbfdd/ch376inc.h \
+ usbfdd/usb-lun-info-ufi.h
 ./bin/ufi.c.asm: usbfdd/ufi.c usbfdd/ufi.h usbfdd/ch376.h usbfdd/ch376inc.h \
  usbfdd/usb.h usbfdd/work-area.h usbfdd/hw.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
  usbfdd/print.h
 ./bin/usb-init.c.asm: usbfdd/usb-init.c usbfdd/ch376.h usbfdd/ch376inc.h \
  usbfdd/hw.h usbfdd/usb.h usbfdd/nextor.h usbfdd/scsi.h \
- usbfdd/usb-enumerate-hub.h usbfdd/work-area.h usbfdd/usb-enumerate.h \
+ usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h usbfdd/work-area.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
  usbfdd/debuggin.h usbfdd/ufi.h usbfdd/print.h
 ./bin/print.c.asm: usbfdd/print.c usbfdd/print.h
@@ -36,15 +39,25 @@
 ./bin/work-area.c.asm: usbfdd/work-area.c usbfdd/work-area.h usbfdd/ch376.h \
  usbfdd/ch376inc.h
 ./bin/usb-dev-info.c.asm: usbfdd/usb-dev-info.c usbfdd/nextor.h usbfdd/ufi.h \
- usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h usbfdd/work-area.h
+ usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h usbfdd/work-area.h \
+ usbfdd/usb-dev-info-ufi.h usbfdd/usb-dev.h
+./bin/usb-lun-info-ufi.c.asm: usbfdd/usb-lun-info-ufi.c usbfdd/usb-lun-info-ufi.h \
+ usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/nextor.h usbfdd/ufi.h \
+ usbfdd/usb.h usbfdd/work-area.h
 ./bin/usb-dev-status.c.asm: usbfdd/usb-dev-status.c usbfdd/nextor.h usbfdd/ufi.h \
- usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h usbfdd/work-area.h
+ usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h usbfdd/work-area.h \
+ usbfdd/usb-dev-status-ufi.h usbfdd/usb-dev.h
 ./bin/debuggin.c.asm: usbfdd/debuggin.c usbfdd/debuggin.h usbfdd/nextor.h \
  usbfdd/ufi.h usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb.h \
  usbfdd/work-area.h usbfdd/print.h
 ./bin/usb-enumerate-floppy.c.asm: usbfdd/usb-enumerate-floppy.c \
  usbfdd/usb-enumerate-floppy.h usbfdd/usb.h usbfdd/work-area.h \
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h usbfdd/usb-enumerate.h
+./bin/usb-dev.c.asm: usbfdd/usb-dev.c usbfdd/usb-dev.h usbfdd/work-area.h \
+ usbfdd/ch376.h usbfdd/ch376inc.h
+./bin/usb-dev-info-ufi.c.asm: usbfdd/usb-dev-info-ufi.c usbfdd/usb-dev-info-ufi.h \
+ usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/nextor.h usbfdd/ufi.h \
+ usbfdd/usb.h usbfdd/work-area.h usbfdd/usb-dev-info.h
 ./bin/chgbnk.o: ./chgbnk.asm
 ./bin/rc2014dr.inc.o: ./rc2014dr.inc.asm
 ./bin/rcembdrv.o: ./rcembdrv.asm
