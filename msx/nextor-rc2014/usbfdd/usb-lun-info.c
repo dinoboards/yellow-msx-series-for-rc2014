@@ -1,38 +1,17 @@
 #include "nextor.h"
-#include "ufi.h"
+#include "usb-dev.h"
+#include "usb-lun-info-ufi.h"
+#include "work-area.h"
 #include <stdlib.h>
 
-#include "print.h"
-
 uint8_t usb_lun_info(const uint8_t device_index, const uint8_t lun, nextor_lun_info *const info) {
-  if (lun != 1)
+  storage_device_config *const dev = get_usb_driver(device_index);
+
+  switch (dev->type) {
+  case USB_IS_FLOPPY:
+    return usb_lun_info_ufi(dev, lun, info);
+
+  default:
     return 1;
-
-  ufi_format_capacities_response response;
-  _usb_state *const              work_area = get_usb_work_area();
-
-  if (work_area->storage_device[device_index - 1].type != USB_IS_FLOPPY)
-    return 1;
-
-  const usb_error result = ufi_capacity(&work_area->storage_device[device_index - 1], &response);
-  if (result != USB_ERR_OK)
-    return 1;
-
-  info->medium_type = 0; // block_device
-  info->sector_size = response.block_size[1] << 8 + response.block_size[0];
-
-  uint8_t *      no_sectors = ((uint8_t *)&info->number_of_sectors);
-  const uint8_t *no_blocks  = response.number_of_blocks + 3;
-
-  *no_sectors++ = *no_blocks--;
-  *no_sectors++ = *no_blocks--;
-  *no_sectors++ = *no_blocks--;
-  *no_sectors   = *no_blocks--;
-
-  info->flags                       = INFO_FLAG_REMOVABLE | INFO_FLAG_FLOPPY;
-  info->number_of_cylinders         = 0;
-  info->number_of_heads             = 0;
-  info->number_of_sectors_per_track = 0;
-
-  return 0;
+  }
 }
