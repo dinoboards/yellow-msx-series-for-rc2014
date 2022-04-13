@@ -32,7 +32,7 @@ typedef enum {
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
 
-typedef enum { USB_IS_HUB = 1, USB_IS_FLOPPY = 2, USB_IS_MASS_STORAGE = 4 } usb_device_type;
+typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2, USB_IS_HUB = 128 } usb_device_type;
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
 

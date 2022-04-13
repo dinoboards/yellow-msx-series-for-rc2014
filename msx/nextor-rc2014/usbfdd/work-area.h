@@ -4,9 +4,10 @@
 #include "ch376.h"
 #include <stdlib.h>
 
+#define MAX_NUMBER_OF_STORAGE_DEVICES 4
+
 typedef struct __usb_state {
-  storage_device_config storage_device[4];
-  usb_device_type       xusb_device;
+  storage_device_config storage_device[MAX_NUMBER_OF_STORAGE_DEVICES];
   device_config         hub_config;
   endpoint_param        hub_endpoint;
 } _usb_state;
