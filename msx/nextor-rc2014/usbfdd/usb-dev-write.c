@@ -1,7 +1,35 @@
 #include "nextor.h"
-#include "ufi.h"
+#include "usb-dev-write-scsi.h"
+#include "usb-dev-write-ufi.h"
+#include "usb-dev.h"
 #include "work-area.h"
 #include <stdlib.h>
+
+typedef uint8_t (*usb_dev_write_driver)(storage_device_config *const dev,
+                                        const uint8_t                lun,
+                                        uint8_t                      number_sectors_to_write,
+                                        uint32_t                     sector_number,
+                                        uint8_t *                    buffer,
+                                        uint8_t *const               number_of_sectors_written);
+
+static uint8_t no_driver(storage_device_config *const dev,
+                         const uint8_t                lun,
+                         uint8_t                      number_sectors_to_write,
+                         uint32_t                     sector_number,
+                         uint8_t *                    buffer,
+                         uint8_t *const               number_of_sectors_written) {
+
+  (void)dev;
+  (void)lun;
+  (void)number_sectors_to_write;
+  (void)sector_number;
+  (void)buffer;
+  (void)number_of_sectors_written;
+
+  return NEXTOR_ERR_IDEVL;
+}
+
+static const usb_dev_write_driver drivers[] = {&no_driver, &usb_dev_write_ufi, &usb_dev_write_scsi};
 
 uint8_t usb_dev_write(const uint8_t  device_index,
                       const uint8_t  lun,
@@ -9,19 +37,9 @@ uint8_t usb_dev_write(const uint8_t  device_index,
                       uint32_t       sector_number,
                       uint8_t *      buffer,
                       uint8_t *const number_of_sectors_written) {
-  if (lun != 1)
-    return NEXTOR_ERR_IDEVL;
 
-  _usb_state *const work_area = get_usb_work_area();
+  storage_device_config *const dev  = get_usb_driver(device_index);
+  const usb_device_type        type = dev->type;
 
-  while (number_sectors_to_write-- != 0) {
-    if (ufi_write_sector(&work_area->storage_device[device_index - 1], sector_number, buffer) != USB_ERR_OK)
-      return NEXTOR_ERR_DISK;
-
-    sector_number++;
-    buffer += 512;
-    (*number_of_sectors_written)++;
-  }
-
-  return NEXTOR_ERR_OK;
+  return drivers[type](dev, lun, number_sectors_to_write, sector_number, buffer, number_of_sectors_written);
 }

@@ -25,10 +25,14 @@ $(BINDIR)spike.bin: $(BINDIR)crt.o \
  	$(BINDIR)usb-dev-info-scsi.c.o \
  	$(BINDIR)usb-dev-info-ufi.c.o \
  	$(BINDIR)usb-dev-info.c.o \
+ 	$(BINDIR)usb-dev-read-scsi.c.o \
+ 	$(BINDIR)usb-dev-read-ufi.c.o \
  	$(BINDIR)usb-dev-read.c.o \
  	$(BINDIR)usb-dev-status-scsi.c.o \
  	$(BINDIR)usb-dev-status-ufi.c.o \
  	$(BINDIR)usb-dev-status.c.o \
+ 	$(BINDIR)usb-dev-write-scsi.c.o \
+ 	$(BINDIR)usb-dev-write-ufi.c.o \
  	$(BINDIR)usb-dev-write.c.o \
  	$(BINDIR)usb-dev.c.o \
  	$(BINDIR)usb-enumerate-floppy.c.o \
