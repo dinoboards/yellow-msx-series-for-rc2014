@@ -8,7 +8,7 @@ uint8_t usb_dev_status_ufi(storage_device_config *const storage_device, const ui
   if (lun != 1)
     return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
 
-  const usb_error result = test_disk(storage_device);
+  const usb_error result = ufi_test_disk(storage_device);
 
   if (result == USB_ERR_MEDIA_NOT_PRESENT)
     return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
