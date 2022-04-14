@@ -197,7 +197,7 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
 
     buffer = ch_read_data(buffer, buffer_size, &count);
     buffer_size -= count;
-  } while (buffer_size > 0 && count <= max_packet_size);
+  } while (buffer_size > 0 && count == max_packet_size);
 
   return USB_ERR_OK;
 }

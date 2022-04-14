@@ -70,61 +70,46 @@ typedef struct {
 } cbw_scsi_inquiry;
 
 typedef struct {
-  uint8_t buffer[95];
-
-  //  UCHAR DeviceType : 5;
-  //     UCHAR DeviceTypeQualifier : 3;
-  //     UCHAR DeviceTypeModifier : 7;
-  //     UCHAR RemovableMedia : 1;
-  //     union {
-  //         UCHAR Versions;
-  //         struct {
-  //             UCHAR ANSIVersion : 3;
-  //             UCHAR ECMAVersion : 3;
-  //             UCHAR ISOVersion : 2;
-  //         };
-  //     };
-  //     UCHAR ResponseDataFormat : 4;
-  //     UCHAR HiSupport : 1;
-  //     UCHAR NormACA : 1;
-  //     UCHAR TerminateTask : 1;
-  //     UCHAR AERC : 1;
-  //     UCHAR AdditionalLength;
-  //     union {
-  //         UCHAR Reserved;
-  //         struct {
-  //             UCHAR PROTECT : 1;
-  //             UCHAR Reserved_1 : 2;
-  //             UCHAR ThirdPartyCoppy : 1;
-  //             UCHAR TPGS : 2;
-  //             UCHAR ACC : 1;
-  //             UCHAR SCCS : 1;
-  //        };
-  //     };
-  //     UCHAR Addr16 : 1;               // defined only for SIP devices.
-  //     UCHAR Addr32 : 1;               // defined only for SIP devices.
-  //     UCHAR AckReqQ: 1;               // defined only for SIP devices.
-  //     UCHAR MediumChanger : 1;
-  //     UCHAR MultiPort : 1;
-  //     UCHAR ReservedBit2 : 1;
-  //     UCHAR EnclosureServices : 1;
-  //     UCHAR ReservedBit3 : 1;
-  //     UCHAR SoftReset : 1;
-  //     UCHAR CommandQueue : 1;
-  //     UCHAR TransferDisable : 1;      // defined only for SIP devices.
-  //     UCHAR LinkedCommands : 1;
-  //     UCHAR Synchronous : 1;          // defined only for SIP devices.
-  //     UCHAR Wide16Bit : 1;            // defined only for SIP devices.
-  //     UCHAR Wide32Bit : 1;            // defined only for SIP devices.
-  //     UCHAR RelativeAddressing : 1;
-  //     UCHAR VendorId[8];
-  //     UCHAR ProductId[16];
-  //     UCHAR ProductRevisionLevel[4];
-  //     UCHAR VendorSpecific[20];
-  //     UCHAR Reserved3[2];
-  //     VERSION_DESCRIPTOR VersionDescriptors[8];
-  //     UCHAR Reserved4[30];
-
+  uint8_t device_type : 5;
+  uint8_t device_type_qualifier : 3;
+  uint8_t device_type_modifier : 7;
+  uint8_t removable_media : 1;
+  union {
+    uint8_t versions;
+    struct {
+      uint8_t ansi_version : 3;
+      uint8_t ecma_version : 3;
+      uint8_t iso_version : 2;
+    };
+  };
+  uint8_t response_data_format : 4;
+  uint8_t hi_support : 1;
+  uint8_t norm_aca : 1;
+  uint8_t terminate_task : 1;
+  uint8_t aerc : 1;
+  uint8_t additional_length;
+  uint8_t reserved;
+  uint8_t addr16 : 1;
+  uint8_t addr32 : 1;
+  uint8_t ack_req_q : 1;
+  uint8_t medium_changer : 1;
+  uint8_t multi_port : 1;
+  uint8_t reserved_bit2 : 1;
+  uint8_t enclosure_services : 1;
+  uint8_t reserved_bit3 : 1;
+  uint8_t soft_reset : 1;
+  uint8_t command_queue : 1;
+  uint8_t transfer_disable : 1;
+  uint8_t linked_commands : 1;
+  uint8_t synchronous : 1;
+  uint8_t wide16_bit : 1;
+  uint8_t wide32_bit : 1;
+  uint8_t relative_addressing : 1;
+  uint8_t vendor_information[8];
+  uint8_t product_id[16];
+  uint8_t product_revision[4];
+  uint8_t vendor_specific[20];
+  uint8_t reserved3[40];
 } scsi_inquiry_result;
 
 typedef struct __scsi_command_status_wrapper {
@@ -136,8 +121,26 @@ typedef struct __scsi_command_status_wrapper {
 
 typedef struct {
   uint8_t number_of_blocks[4];
-  uint8_t block_length[4];
+  uint8_t block_size[4];
 } scsi_read_capacity_result;
+
+typedef struct {
+  uint8_t error_code : 7;
+  uint8_t valid : 1;
+  uint8_t segment_number;
+  uint8_t sense_key : 4;
+  uint8_t reserved : 1;
+  uint8_t incorrect_length : 1;
+  uint8_t end_of_media : 1;
+  uint8_t file_mark : 1;
+  uint8_t information[4];
+  uint8_t additional_sense_length;
+  uint8_t command_specific_information[4];
+  uint8_t additional_sense_code;
+  uint8_t additional_sense_code_qualifier;
+  uint8_t field_replaceable_unit_code;
+  uint8_t sense_key_specific[3];
+} scsi_sense_result;
 
 // typedef struct __scsi_devinfo {
 //   uint8_t                      tag;
@@ -152,9 +155,11 @@ typedef struct {
 //   uint8_t                      ignored3;
 // } _scsi_devinfo;
 
-extern usb_error get_scsi_read_capacity(scsi_read_capacity_result *result);
-extern usb_error get_scsi_max_luns();
-extern usb_error get_scsi_inquiry(scsi_inquiry_result *inq_result);
-extern usb_error wait_for_mounting();
+extern usb_error get_scsi_read_capacity(storage_device_config *const dev, scsi_read_capacity_result *result);
+// extern usb_error get_scsi_max_luns(storage_device_config *const dev);
+extern usb_error scsi_inquiry(storage_device_config *const dev, scsi_inquiry_result *inq_result);
+extern usb_error scsi_sense_init(storage_device_config *const dev);
+extern usb_error scsi_test(storage_device_config *const dev);
+extern usb_error scsi_request_sense(storage_device_config *const dev, scsi_sense_result *const sens_result);
 
 #endif

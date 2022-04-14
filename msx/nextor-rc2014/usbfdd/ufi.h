@@ -110,6 +110,6 @@ ufi_write_sector(storage_device_config *const storage_device, const uint16_t sec
 extern usb_error
 ufi_read_sector(storage_device_config *const storage_device, const uint16_t sector_number, uint8_t *const buffer);
 
-extern uint8_t test_disk(storage_device_config *const storage_device);
+extern uint8_t ufi_test_disk(storage_device_config *const storage_device);
 
 #endif

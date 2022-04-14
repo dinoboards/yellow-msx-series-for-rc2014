@@ -34,6 +34,7 @@ bool state_devices(const _usb_state *const work_area) {
 
   uint8_t floppy_count       = 0;
   uint8_t mass_storage_count = 0;
+
   for (int8_t index = MAX_NUMBER_OF_STORAGE_DEVICES - 1; index >= 0; index--) {
     const usb_device_type t = work_area->storage_device[index].type;
     if (t == USB_IS_FLOPPY)
@@ -92,7 +93,18 @@ uint8_t usb_host_init() {
 
   enumerate_all_devices();
 
-  return state_devices(work_area);
+  const usb_error result = state_devices(work_area);
+
+  uint8_t                mass_storage_count = 0;
+  storage_device_config *storage_device     = &work_area->storage_device[0];
+
+  for (int8_t index = MAX_NUMBER_OF_STORAGE_DEVICES - 1; index >= 0; index--) {
+    if (storage_device->type == USB_IS_MASS_STORAGE)
+      scsi_sense_init(storage_device);
+    storage_device++;
+  }
+
+  return result;
 
   // logWorkArea(work_area);
 
