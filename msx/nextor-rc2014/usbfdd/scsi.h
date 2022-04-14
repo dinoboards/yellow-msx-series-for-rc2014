@@ -142,24 +142,27 @@ typedef struct {
   uint8_t sense_key_specific[3];
 } scsi_sense_result;
 
-// typedef struct __scsi_devinfo {
-//   uint8_t                      tag;
-//   uint8_t                      max_luns;
-//   uint8_t                      buffer[0x24]; // longest response (inquiry) we want to absorb during init
-//   _scsi_command_status_wrapper csw;
-//   uint8_t                      vendorid[8];
-//   uint8_t                      ignored1;
-//   uint8_t                      productid[16];
-//   uint8_t                      ignored2;
-//   uint8_t                      productrev[8];
-//   uint8_t                      ignored3;
-// } _scsi_devinfo;
+typedef struct {
+  uint8_t operation_code;
+  uint8_t lun;
+  uint8_t lba[4]; // high-endian block number
+  uint8_t reserved1;
+  uint8_t transfer_len[2]; // high-endian in blocks of block_len (see scsi_capacity)
+  uint8_t reserved2;
+  uint8_t pad[2];
+} _scsi_packet_read_write;
+
+typedef struct {
+  _scsi_command_block_wrapper cbw;
+  _scsi_packet_read_write     scsi_cmd;
+} cbw_scsi_read_write;
 
 extern usb_error get_scsi_read_capacity(storage_device_config *const dev, scsi_read_capacity_result *result);
-// extern usb_error get_scsi_max_luns(storage_device_config *const dev);
 extern usb_error scsi_inquiry(storage_device_config *const dev, scsi_inquiry_result *inq_result);
 extern usb_error scsi_sense_init(storage_device_config *const dev);
 extern usb_error scsi_test(storage_device_config *const dev);
 extern usb_error scsi_request_sense(storage_device_config *const dev, scsi_sense_result *const sens_result);
+extern usb_error scsi_read(storage_device_config *const dev, uint32_t sector_number, uint8_t *const buffer);
+extern usb_error scsi_write(storage_device_config *const dev, uint32_t sector_number, const uint8_t *const buffer);
 
 #endif
