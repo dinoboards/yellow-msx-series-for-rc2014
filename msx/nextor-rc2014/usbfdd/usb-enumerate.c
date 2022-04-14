@@ -84,6 +84,9 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   _usb_state *const           work_area = get_usb_work_area();
   const interface_descriptor *interface = (interface_descriptor *)working->ptr;
 
+  // printf("Intf ");
+  // logInterface(interface);
+
   working->ptr            = interface + 1;
   working->endpoint_count = interface->bNumEndpoints;
 
@@ -139,10 +142,12 @@ usb_error read_all_configs(uint8_t *const next_storage_device_index) {
   memset(&working, 0, sizeof(_working));
   working.next_storage_device_index = *next_storage_device_index;
 
-  CHECK(hw_get_description(0, 64, &working.desc), x_printf("ErrX %02x\r\n", result));
+  CHECK(hw_get_description(0, 8, &working.desc), x_printf("ErrX %02x\r\n", result));
 
-  // printf("Desc: ");
+  // printf("Desc: ", sizeof(device_descriptor));
   // logDevice(&working.desc);
+
+  CHECK(hw_get_description(0, working.desc.bMaxPacketSize0, &working.desc), x_printf("ErrX %02x\r\n", result));
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;
