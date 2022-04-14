@@ -104,7 +104,7 @@ usb_error get_scsi_inquiry(scsi_inquiry_result *inq_result) {
   cbw_scsi.cbw.dCBWDataTransferLength = 0x24;
   cbw_scsi.cbw.dCBWTag[0]             = ++usb_state->storage_device[0].config.tag;
 
-  CHECK(do_scsi_cmd(usb_state, &cbw_scsi.cbw, inq_result, false), printf("ErrI %d", result));
+  CHECK(do_scsi_cmd(usb_state, &cbw_scsi.cbw, inq_result, false), x_printf("ErrI %d", result));
 
   return USB_ERR_OK;
 }
@@ -124,7 +124,7 @@ usb_error get_scsi_max_luns() {
 
   result = hw_control_transfer(&cmd, buffer, DEVICE_ADDRESS_MASS, max_packet_size);
 
-  printf("max-luns %d, %d, %d\r\n", result, max_packet_size, buffer[0]);
+  x_printf("max-luns %d, %d, %d\r\n", result, max_packet_size, buffer[0]);
 
   return result;
 }
