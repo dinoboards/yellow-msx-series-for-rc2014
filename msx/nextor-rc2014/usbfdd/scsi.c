@@ -104,25 +104,6 @@ usb_error scsi_inquiry(storage_device_config *const dev, scsi_inquiry_result *in
   return USB_ERR_OK;
 }
 
-// setup_packet cmd_get_max_luns = {0b10100001, 0b11111110, {0, 0}, {0, 0}, 1};
-
-// usb_error get_scsi_max_luns(storage_device_config *const dev) {
-//   usb_error         result;
-
-//   setup_packet cmd;
-//   cmd           = cmd_get_max_luns;
-//   cmd.bIndex[0] = 0; // TODO get retrieve interface_id;
-
-//   uint8_t       buffer[4];
-//   const uint8_t max_packet_size = dev->config.max_packet_size;
-
-//   result = hw_control_transfer(&cmd, buffer, dev->config.address, max_packet_size);
-
-//   printf("max-luns %d, %d, %d, %d, %d\r\n", result, buffer[0], buffer[1], buffer[2], buffer[3]);
-
-//   return result;
-// }
-
 usb_error scsi_test(storage_device_config *const dev) {
   cbw_scsi_test cbw_scsi;
   cbw_scsi.cbw = scsi_command_block_wrapper;
@@ -161,4 +142,46 @@ usb_error scsi_sense_init(storage_device_config *const dev) {
     scsi_request_sense(dev, &response);
 
   return result;
+}
+
+_scsi_packet_read_write scsi_packet_read = {0x28, 0, {0, 0, 0, 0}, 0, {0, 0}, 0, {0, 0}};
+
+usb_error scsi_read(storage_device_config *const dev, uint32_t sector_number, uint8_t *const buffer) {
+  cbw_scsi_read_write cbw;
+  cbw.cbw      = scsi_command_block_wrapper;
+  cbw.scsi_cmd = scsi_packet_read;
+
+  cbw.cbw.bCBWLUN                = 0;
+  cbw.cbw.bCBWCBLength           = sizeof(_scsi_packet_read_write);
+  cbw.cbw.dCBWDataTransferLength = 512;
+  cbw.cbw.dCBWTag[0]             = ++dev->config.tag;
+
+  cbw.scsi_cmd.transfer_len[1] = 1;
+  cbw.scsi_cmd.lba[0]          = sector_number >> 24;
+  cbw.scsi_cmd.lba[1]          = sector_number >> 16;
+  cbw.scsi_cmd.lba[2]          = sector_number >> 8;
+  cbw.scsi_cmd.lba[3]          = sector_number;
+
+  return do_scsi_cmd(dev, &cbw.cbw, buffer, false);
+}
+
+_scsi_packet_read_write scsi_packet_write = {0x2A, 0, {0, 0, 0, 0}, 0, {0, 0}, 0, {0, 0}};
+
+usb_error scsi_write(storage_device_config *const dev, uint32_t sector_number, const uint8_t *const buffer) {
+  cbw_scsi_read_write cbw;
+  cbw.cbw      = scsi_command_block_wrapper;
+  cbw.scsi_cmd = scsi_packet_write;
+
+  cbw.cbw.bCBWLUN                = 0;
+  cbw.cbw.bCBWCBLength           = sizeof(_scsi_packet_read_write);
+  cbw.cbw.dCBWDataTransferLength = 512;
+  cbw.cbw.dCBWTag[0]             = ++dev->config.tag;
+
+  cbw.scsi_cmd.transfer_len[1] = 1;
+  cbw.scsi_cmd.lba[0]          = sector_number >> 24;
+  cbw.scsi_cmd.lba[1]          = sector_number >> 16;
+  cbw.scsi_cmd.lba[2]          = sector_number >> 8;
+  cbw.scsi_cmd.lba[3]          = sector_number;
+
+  return do_scsi_cmd(dev, &cbw.cbw, buffer, true);
 }

@@ -8,12 +8,18 @@ uint8_t usb_dev_read_scsi(storage_device_config *const dev,
                           uint32_t                     sector_number,
                           uint8_t *                    buffer,
                           uint8_t *const               number_of_sectors_read) {
-  (void)dev;
-  (void)lun;
-  (void)number_sectors_to_read;
-  (void)sector_number;
-  (void)buffer;
-  (void)number_of_sectors_read;
 
-  return NEXTOR_ERR_IDEVL;
+  if (lun != 1)
+    return NEXTOR_ERR_IDEVL;
+
+  while (number_sectors_to_read-- != 0) {
+    if (scsi_read(dev, sector_number, buffer) != USB_ERR_OK)
+      return NEXTOR_ERR_DISK;
+
+    sector_number++;
+    buffer += 512;
+    (*number_of_sectors_read)++;
+  }
+
+  return NEXTOR_ERR_OK;
 }
