@@ -355,7 +355,7 @@ usb_error ufi_inquiry(storage_device_config *const storage_device, ufi_inquiry_r
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 
 usb_error ufi_capacity(storage_device_config *const storage_device, ufi_format_capacities_response const *response) {
-  test_disk(storage_device); //, x_printf(" XX %d ", result));
+  ufi_test_disk(storage_device); //, x_printf(" XX %d ", result));
 
   return usb_execute_cbi_with_retry(storage_device,
                                     (uint8_t *)&packet_read_format_capacities,
@@ -372,7 +372,7 @@ usb_error run_test_unit_ready(storage_device_config *const storage_device) {
   return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&cmd, false, false, 0, (uint8_t *)0);
 }
 
-usb_error test_disk(storage_device_config *const storage_device) {
+usb_error ufi_test_disk(storage_device_config *const storage_device) {
   usb_error result;
   result = run_test_unit_ready(storage_device);
 
