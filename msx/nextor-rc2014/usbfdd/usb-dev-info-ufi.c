@@ -20,20 +20,29 @@ uint8_t usb_dev_info_ufi(storage_device_config *const dev, const dev_info_reques
 
   memset(buffer, ' ', 64);
 
+  void *  src;
+  uint8_t size;
+
   switch (request_info) {
   case MANUFACTURER_NAME:
-    memcpy(buffer, response.vendor_information, 8);
-    return 0;
+    src  = response.vendor_information;
+    size = 8;
+    break;
 
   case DEVICE_NAME:
-    memcpy(buffer, response.product_id, 16);
-    return 0;
+    src  = response.product_id;
+    size = 16;
+    break;
 
   case SERIAL_NUMBER:
-    memcpy(buffer, response.product_revision, 4);
-    return 0;
+    src  = response.product_revision;
+    size = 4;
+    break;
 
   default:
     return 1;
   }
+
+  memcpy(buffer, src, size);
+  return 0;
 }
