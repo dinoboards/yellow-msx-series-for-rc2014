@@ -20,8 +20,9 @@ typedef enum {
   USB_ERR_MEDIA_NOT_PRESENT           = 11,
   USB_ERR_CH376_BLOCKED               = 12,
   USB_ERR_CH376_TIMEOUT               = 13,
-  USB_ERR_MAX                         = 13,
-  USB_ERR_OTHER                       = 14,
+  USB_ERR_FAIL                        = 14,
+  USB_ERR_MAX                         = 14,
+  USB_ERR_OTHER                       = 15,
   USB_ERR_DISK_READ                   = 0x1D,
   USB_ERR_DISK_WRITE                  = 0x1E,
   USB_FILERR_MIN                      = 0x41,
@@ -88,7 +89,7 @@ extern usb_error      ch_short_wait_int_and_get_status();
 extern uint8_t *      ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received);
 extern void           ch376_reset();
 extern uint8_t        ch376_probe();
-extern void           ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
+extern usb_error      ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
 extern uint8_t        ch376_get_firmware_version();
 extern const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length);
 
