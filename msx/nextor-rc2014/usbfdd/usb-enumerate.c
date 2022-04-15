@@ -99,10 +99,9 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 
     dev_cfg->max_packet_size  = working->desc.bMaxPacketSize0;
     dev_cfg->value            = working->config.desc.bConfigurationvalue;
-    dev_cfg->address          = 20 + working->next_storage_device_index;
+    dev_cfg->address          = working->next_device_address++;
     dev_cfg->interface_number = interface->bInterfaceNumber;
     storage_dev->type         = working->usb_device;
-
     CHECK(hw_set_address_and_configuration(dev_cfg));
     break;
   }
@@ -111,6 +110,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     work_area->hub_config.interface_number = interface->bInterfaceNumber;
     work_area->hub_config.max_packet_size  = working->desc.bMaxPacketSize0;
     work_area->hub_config.value            = working->config.desc.bConfigurationvalue;
+    work_area->hub_config.address          = working->next_device_address++;
     CHECK(configure_usb_hub(working));
     break;
   }
@@ -141,6 +141,7 @@ usb_error read_all_configs(uint8_t *const next_storage_device_index) {
   _working working;
   memset(&working, 0, sizeof(_working));
   working.next_storage_device_index = *next_storage_device_index;
+  working.next_device_address       = 20;
 
   CHECK(hw_get_description_short(&working.desc), printf("ErrX %02x\r\n", result));
 

@@ -5,7 +5,7 @@
 #include "usb.h"
 #include <stdlib.h>
 
-#define DEVICE_ADDRESS_HUB 1
+// #define DEVICE_ADDRESS_HUB 1
 
 extern usb_error hw_control_transfer(const setup_packet *const cmd_packet,
                                      void *const               buffer,

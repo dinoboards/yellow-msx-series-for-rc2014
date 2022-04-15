@@ -22,35 +22,43 @@ const setup_packet cmd_get_status_port = {
 const setup_packet cmd_get_hub_descriptor = {RT_DEVICE_TO_HOST | RT_CLASS | RT_DEVICE, 6, {0, 0x29}, {0, 0}, 8};
 
 usb_error hub_set_feature(const uint8_t feature, const uint8_t index) {
+  _usb_state *const work_area = get_usb_work_area();
+
   setup_packet set_feature;
   set_feature = cmd_set_feature;
 
   set_feature.bValue[0] = feature;
   set_feature.bIndex[0] = index;
-  return hw_control_transfer(&set_feature, 0, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
+  return hw_control_transfer(&set_feature, 0, work_area->hub_config.address, work_area->hub_config.max_packet_size);
 }
 
 usb_error hub_clear_feature(const uint8_t feature, const uint8_t index) {
+  _usb_state *const work_area = get_usb_work_area();
+
   setup_packet clear_feature;
   clear_feature = cmd_clear_feature;
 
   clear_feature.bValue[0] = feature;
   clear_feature.bIndex[0] = index;
-  return hw_control_transfer(&clear_feature, 0, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
+  return hw_control_transfer(&clear_feature, 0, work_area->hub_config.address, work_area->hub_config.max_packet_size);
 }
 
 usb_error hub_get_status_port(const uint8_t index, hub_port_status *const port_status) {
+  _usb_state *const work_area = get_usb_work_area();
+
   setup_packet get_status_port;
   get_status_port = cmd_get_status_port;
 
   get_status_port.bIndex[0] = index;
   return hw_control_transfer(
-      &get_status_port, port_status, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
+      &get_status_port, port_status, work_area->hub_config.address, work_area->hub_config.max_packet_size);
 }
 
 usb_error hub_get_descriptor(hub_descriptor *const hub_description) __z88dk_fastcall {
+  _usb_state *const work_area = get_usb_work_area();
+
   return hw_control_transfer(
-      &cmd_get_hub_descriptor, hub_description, DEVICE_ADDRESS_HUB, get_usb_work_area()->hub_config.max_packet_size);
+      &cmd_get_hub_descriptor, hub_description, work_area->hub_config.address, work_area->hub_config.max_packet_size);
 }
 
 usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
@@ -60,8 +68,6 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
   uint8_t         i;
   hub_descriptor  hub_description;
   hub_port_status port_status;
-
-  work_area->hub_config.address = DEVICE_ADDRESS_HUB;
 
   CHECK(hw_set_address_and_configuration(&work_area->hub_config));
 
