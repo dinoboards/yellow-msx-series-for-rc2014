@@ -142,10 +142,10 @@ usb_error read_all_configs(uint8_t *const next_storage_device_index) {
   memset(&working, 0, sizeof(_working));
   working.next_storage_device_index = *next_storage_device_index;
 
-  CHECK(hw_get_description(0, 8, &working.desc), x_printf("ErrX %02x\r\n", result));
+  CHECK(hw_get_description_short(&working.desc), printf("ErrX %02x\r\n", result));
 
-  // printf("Desc: ", sizeof(device_descriptor));
-  // logDevice(&working.desc);
+  printf("Desc: ", sizeof(device_descriptor));
+  logDevice(&working.desc);
 
   CHECK(hw_get_description(0, working.desc.bMaxPacketSize0, &working.desc), x_printf("ErrX %02x\r\n", result));
 
