@@ -16,13 +16,10 @@
 
 usb_error usb_host_bus_reset() {
   ch376_set_usb_mode(CH_MODE_HOST);
-  delay(60 / 4);
 
   ch376_set_usb_mode(CH_MODE_HOST_RESET);
-  delay(60 / 2);
 
   ch376_set_usb_mode(CH_MODE_HOST);
-  delay(60 / 4);
 
   ch_configure_nak_retry_indefinite();
 

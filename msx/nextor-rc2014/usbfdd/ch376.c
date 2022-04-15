@@ -9,13 +9,13 @@ void ch_command(const uint8_t command) __z88dk_fastcall {
   while ((CH376_COMMAND_PORT & PARA_STATE_BUSY) && --counter != 0)
     ;
 
-  if (counter == 0) {
-    // It appears that the Ch376 has become blocked
-    // command will fail and timeout will eventually be returned by the ch_xxx_wait_int_and_get_status
-    // todo consider a return value to allow callers to respond appropriately
-    // Experimentation would indicate that USB_RESET_ALL will still work to reset chip
-    return;
-  }
+  // if (counter == 0) {
+  // It appears that the Ch376 has become blocked
+  // command will fail and timeout will eventually be returned by the ch_xxx_wait_int_and_get_status
+  // todo consider a return value to allow callers to respond appropriately
+  // Experimentation would indicate that USB_RESET_ALL will still work to reset chip
+  // return;
+  // }
 
   CH376_COMMAND_PORT = command;
 }
@@ -136,11 +136,20 @@ uint8_t ch376_probe() {
   return false;
 }
 
-void ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
-  ch_command(CH_CMD_SET_USB_MODE);
-  CH376_DATA_PORT = mode;
+uint8_t ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
+  CH376_COMMAND_PORT = CH_CMD_SET_USB_MODE;
+  CH376_DATA_PORT    = mode;
 
-  // return ch_get_status();
+  uint8_t result = 0;
+  int8_t  count  = 127;
+
+  while (result != CH_CMD_RET_SUCCESS && result != CH_CMD_RET_ABORT && count-- > 0)
+    result = CH376_DATA_PORT;
+
+  if (result == CH_CMD_RET_SUCCESS)
+    return USB_ERR_OK;
+
+  return USB_ERR_FAIL;
 }
 
 uint8_t ch376_get_firmware_version() {
