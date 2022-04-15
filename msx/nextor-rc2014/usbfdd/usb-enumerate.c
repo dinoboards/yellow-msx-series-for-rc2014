@@ -12,7 +12,7 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall;
 
 usb_device_type identify_class_driver(const interface_descriptor *const p) {
 
-  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 6 && p->bInterfaceProtocol == 80) {
+  if (p->bInterfaceClass == 8 && (p->bInterfaceSubClass == 6 || p->bInterfaceSubClass == 5) && p->bInterfaceProtocol == 80) {
     return USB_IS_MASS_STORAGE;
   }
 
