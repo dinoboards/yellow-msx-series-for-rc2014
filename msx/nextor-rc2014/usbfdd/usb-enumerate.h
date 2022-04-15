@@ -8,6 +8,7 @@ struct __working;
 
 typedef struct __working {
   uint8_t next_storage_device_index;
+  uint8_t next_device_address;
 
   usb_device_type   usb_device;
   device_descriptor desc;
