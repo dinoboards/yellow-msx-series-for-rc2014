@@ -6,9 +6,13 @@
 
 struct __working;
 
-typedef struct __working {
+typedef struct {
   uint8_t next_storage_device_index;
   uint8_t next_device_address;
+} enumeration_state;
+
+typedef struct __working {
+  enumeration_state *state;
 
   usb_device_type   usb_device;
   device_descriptor desc;
@@ -24,7 +28,7 @@ typedef struct __working {
   } config;
 } _working;
 
-extern usb_error read_all_configs(uint8_t *const next_storage_device_index);
+extern usb_error read_all_configs(enumeration_state *const state);
 extern usb_error enumerate_all_devices();
 
 #endif

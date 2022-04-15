@@ -110,17 +110,21 @@ setup_packet cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 
 // #define PLACEHOLDER_CONFIGURATION_VALUE 0
 // setup_packet usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
 
-usb_error hw_set_address_and_configuration(const device_config *const config) {
+usb_error hw_set_configuration(const device_config *const config) {
   setup_packet cmd;
-  usb_error    result;
 
   cmd           = cmd_set_address;
-  cmd.bValue[0] = config->address;
-  CHECK(hw_control_transfer(&cmd, (uint8_t *)0, 0, config->max_packet_size));
-
   cmd.bRequest  = 0x09;
   cmd.bValue[0] = config->value;
   return hw_control_transfer(&cmd, (uint8_t *)0, config->address, config->max_packet_size);
+}
+
+usb_error hw_set_address(const uint8_t device_address, const uint8_t max_packet_size) {
+  setup_packet cmd;
+
+  cmd           = cmd_set_address;
+  cmd.bValue[0] = device_address;
+  return hw_control_transfer(&cmd, (uint8_t *)0, 0, max_packet_size);
 }
 
 // ; -----------------------------------------------------------------------------

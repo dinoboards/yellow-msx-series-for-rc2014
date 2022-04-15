@@ -69,7 +69,7 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
   hub_descriptor  hub_description;
   hub_port_status port_status;
 
-  CHECK(hw_set_address_and_configuration(&work_area->hub_config));
+  CHECK(hw_set_configuration(&work_area->hub_config));
 
   CHECK(hub_get_descriptor(&hub_description));
 
@@ -82,7 +82,7 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
 
     if (port_status.wPortStatus.port_connection) {
       delay(5);
-      CHECK(read_all_configs(&working->next_storage_device_index), x_printf("err5: %d\r\n", result));
+      CHECK(read_all_configs(working->state), x_printf("err5: %d\r\n", result));
 
     } else {
       CHECK(hub_clear_feature(FEAT_PORT_POWER, i), x_printf("hub5 err:%d\r\n", result));
