@@ -15,6 +15,8 @@ extern usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 extern usb_error
 hw_get_description(const uint8_t device_address, const uint8_t max_packet_size, device_descriptor *const buffer);
 
+usb_error hw_get_description_short(device_descriptor *const buffer);
+
 extern usb_error hw_get_config_descriptor(config_descriptor *const buffer,
                                           const uint8_t            config_index,
                                           const uint8_t            max_packet_size,

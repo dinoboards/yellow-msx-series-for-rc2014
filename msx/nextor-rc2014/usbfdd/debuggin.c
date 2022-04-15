@@ -30,22 +30,22 @@
 //          p->bMaxPower);
 // }
 
-// void logDevice(const device_descriptor *const p) {
-//   printf("dev len=%d,", p->bLength);
-//   printf("typ=%d,", p->bDescriptorType);
-//   printf("USB=%02X,", p->bcdUSB);
-//   printf("cls=%02x,", p->bDeviceClass);
-//   printf("sub=%02x,", p->bDeviceSubClass);
-//   printf("pro=%02x,", p->bDeviceProtocol);
-//   printf("siz=%d,", p->bMaxPacketSize0);
-//   printf("ven=%04X,", p->idVendor);
-//   printf("prd=%04X,", p->idProduct);
-//   printf("dev=%d,", p->bcdDevice);
-//   printf("man=%d,", p->iManufacturer);
-//   printf("ipd=%d,", p->iProduct);
-//   printf("ser=%d,", p->iSerialNumber);
-//   printf("num=%d\r\n", p->bNumConfigurations);
-// }
+void logDevice(const device_descriptor *const p) {
+  printf("dev len=%d,", p->bLength);
+  printf("typ=%d,", p->bDescriptorType);
+  printf("USB=%02X,", p->bcdUSB);
+  // printf("cls=%02x,", p->bDeviceClass);
+  // printf("sub=%02x,", p->bDeviceSubClass);
+  // printf("pro=%02x,", p->bDeviceProtocol);
+  printf("siz=%d,", p->bMaxPacketSize0);
+  // printf("ven=%04X,", p->idVendor);
+  // printf("prd=%04X,", p->idProduct);
+  // printf("dev=%d,", p->bcdDevice);
+  // printf("man=%d,", p->iManufacturer);
+  // printf("ipd=%d,", p->iProduct);
+  // printf("ser=%d,", p->iSerialNumber);
+  printf("num=%d\r\n", p->bNumConfigurations);
+}
 
 // void logEndPointDescription(const endpoint_descriptor *const p) {
 //   printf("ep: len=%d,t=%d,e=%d,a=%d,size=%d,intv=%d\r\n",

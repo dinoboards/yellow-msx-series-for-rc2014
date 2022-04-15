@@ -75,6 +75,14 @@ usb_error hw_get_description(const uint8_t device_address, const uint8_t max_pac
   return USB_ERR_OK;
 }
 
+usb_error hw_get_description_short(device_descriptor *const buffer) {
+  setup_packet cmd;
+  cmd         = cmd_get_device_descriptor;
+  cmd.wLength = 8;
+
+  return hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, 0, 8);
+}
+
 #define PLACEHOLDER_CONFIGURATION_ID       0
 #define PLACEHOLDER_CONFIG_DESCRIPTOR_SIZE (sizeof(config_descriptor))
 
