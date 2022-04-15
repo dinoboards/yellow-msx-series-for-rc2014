@@ -1,6 +1,8 @@
-#if 1
 
 #include "print.h"
+
+#if 0
+
 #include <stdarg.h>
 #include <stdio.h>
 
