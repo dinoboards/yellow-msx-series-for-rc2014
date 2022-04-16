@@ -108,6 +108,11 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   return buffer;
 }
 
+void ch_read_datax() {
+  ch_command(CH_CMD_RD_USB_DATA0);
+  CH376_DATA_PORT;
+}
+
 void ch376_reset() {
   delay(30);
   ch_command(CH_CMD_RESET_ALL);
@@ -137,11 +142,18 @@ uint8_t ch376_probe() {
 }
 
 uint8_t ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
+  int8_t  count  = 64;
+  uint8_t result = 0;
+
+  // clear buffer
+  do {
+    CH376_DATA_PORT;
+  } while (--count != 0);
+
   CH376_COMMAND_PORT = CH_CMD_SET_USB_MODE;
   CH376_DATA_PORT    = mode;
 
-  uint8_t result = 0;
-  int8_t  count  = 127;
+  count = 127;
 
   while (result != CH_CMD_RET_SUCCESS && result != CH_CMD_RET_ABORT && count-- > 0)
     result = CH376_DATA_PORT;
@@ -166,6 +178,11 @@ const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
   }
 
   return buffer;
+}
+
+void ch_write_datax() {
+  ch_command(CH_CMD_WR_HOST_DATA);
+  CH376_DATA_PORT = 0;
 }
 
 void ch_issue_token(const uint8_t toggle_bit, const uint8_t endpoint, const ch376_pid pid) {

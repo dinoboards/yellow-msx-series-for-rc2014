@@ -92,6 +92,8 @@ extern uint8_t        ch376_probe();
 extern usb_error      ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
 extern uint8_t        ch376_get_firmware_version();
 extern const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length);
+extern void           ch_write_datax();
+extern void           ch_read_datax();
 
 extern usb_error ch_data_in_transfer(uint8_t *buffer, int16_t data_length, endpoint_param *const endpoint);
 

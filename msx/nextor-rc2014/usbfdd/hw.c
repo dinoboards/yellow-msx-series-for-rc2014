@@ -34,9 +34,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   CH376_DATA_PORT = device_address;
 
   ch_write_data((const uint8_t *)cmd_packet, sizeof(setup_packet));
-
   ch_issue_token_setup();
-
   CHECK(ch_short_wait_int_and_get_status(), x_printf("Tok1 %02x\r\n", result));
 
   result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint)
@@ -50,14 +48,21 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   delay(6);
 
   if (transferIn) {
-    ch_write_data((const uint8_t *)0, 0);
+    ch_write_datax();
     ch_issue_token_out_ep0();
     CHECK(ch_long_wait_int_and_get_status(), x_printf(" E4(%d) ", result));
     return result;
   }
 
   ch_issue_token_in_ep0();
-  CHECK(ch_long_wait_int_and_get_status(), x_printf(" E5 %d ", result));
+  result = ch_long_wait_int_and_get_status();
+
+  if (result == USB_ERR_NAK) {
+    ch_issue_token_in_ep0();
+    CHECK(ch_long_wait_int_and_get_status(), x_printf(" E5 %d ", result));
+  }
+
+  ch_read_datax();
 
   return result;
 }
@@ -65,14 +70,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
 
 usb_error hw_get_description(const uint8_t device_address, const uint8_t max_packet_size, device_descriptor *const buffer) {
-  usb_error result;
-
-  result = hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, device_address, max_packet_size);
-
-  if (result != USB_ERR_OK)
-    return result;
-
-  return USB_ERR_OK;
+  return hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, device_address, max_packet_size);
 }
 
 usb_error hw_get_description_short(device_descriptor *const buffer) {
