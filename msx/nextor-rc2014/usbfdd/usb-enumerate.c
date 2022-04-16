@@ -27,22 +27,18 @@ usb_device_type identify_class_driver(const interface_descriptor *const p) {
   return 0;
 }
 
-usb_error get_config_descriptor(const device_descriptor *const desc,
-                                const uint8_t                  config_index,
-                                const uint8_t                  device_address,
-                                uint8_t *const                 buffer) {
+usb_error get_config_descriptor(const uint8_t config_index, const uint8_t device_address, uint8_t *const buffer) {
   usb_error result;
 
   // printf("Config %d, %d: ", config_index, device_address);
-  CHECK(hw_get_config_descriptor(
-      (config_descriptor *)buffer, config_index, desc->bMaxPacketSize0, sizeof(config_descriptor), device_address));
+  CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address),
+        x_printf("a %02x\r\n", result));
   // logConfig((config_descriptor *)buffer);
 
-  CHECK(hw_get_config_descriptor((config_descriptor *)buffer,
-                                 config_index,
-                                 desc->bMaxPacketSize0,
-                                 ((config_descriptor *)buffer)->wTotalLength,
-                                 device_address));
+  // printf("len: %d\r\n", ((config_descriptor *)buffer)->wTotalLength);
+  CHECK(hw_get_config_descriptor(
+            (config_descriptor *)buffer, config_index, ((config_descriptor *)buffer)->wTotalLength, device_address),
+        x_printf("b %02x\r\n", result));
   // logConfig((config_descriptor *)buffer);
 
   return USB_ERR_OK;
@@ -133,8 +129,7 @@ usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall {
 usb_error op_get_config_descriptor(_working *const working) __z88dk_fastcall {
   usb_error result;
 
-  CHECK(get_config_descriptor(
-      &working->desc, working->config_index, working->state->next_device_address, working->config.buffer));
+  CHECK(get_config_descriptor(working->config_index, working->state->next_device_address, working->config.buffer));
 
   working->ptr             = (working->config.buffer + sizeof(config_descriptor));
   working->interface_count = working->config.desc.bNumInterfaces;
@@ -150,16 +145,12 @@ usb_error read_all_configs(enumeration_state *const state) {
   memset(&working, 0, sizeof(_working));
   working.state = state;
 
-  CHECK(hw_get_description_short(&working.desc), x_printf("ErrX %02x\r\n", result));
-
-  // printf("Desc: ", sizeof(device_descriptor));
+  CHECK(hw_get_description(&working.desc), x_printf("ErrY %02x\r\n", result));
   // logDevice(&working.desc);
 
   const uint8_t dev_address = state->next_device_address;
 
-  result = hw_set_address(dev_address, working.desc.bMaxPacketSize0);
-
-  CHECK(hw_get_description(dev_address, working.desc.bMaxPacketSize0, &working.desc), x_printf("ErrY %02x\r\n", result));
+  CHECK(hw_set_address(dev_address), x_printf("ErrZ %02x\r\n", result));
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;

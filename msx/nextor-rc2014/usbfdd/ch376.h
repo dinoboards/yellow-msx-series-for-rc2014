@@ -95,6 +95,11 @@ extern const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length);
 extern void           ch_write_datax();
 extern void           ch_read_datax();
 
+extern void ch_set_usb_address(const uint8_t device_address) __z88dk_fastcall;
+
+extern usb_error ch_control_transfer_request_descriptor(const uint8_t descriptor_type) __z88dk_fastcall;
+extern usb_error ch_control_transfer_set_address(const uint8_t device_address) __z88dk_fastcall;
+
 extern usb_error ch_data_in_transfer(uint8_t *buffer, int16_t data_length, endpoint_param *const endpoint);
 
 extern usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint);
