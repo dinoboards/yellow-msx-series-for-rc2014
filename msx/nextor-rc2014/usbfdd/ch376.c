@@ -246,3 +246,22 @@ usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, end
 
   return USB_ERR_OK;
 }
+
+void ch_set_usb_address(const uint8_t device_address) __z88dk_fastcall {
+  ch_command(CH_CMD_SET_USB_ADDR);
+  CH376_DATA_PORT = device_address;
+}
+
+usb_error ch_control_transfer_request_descriptor(const uint8_t descriptor_type) __z88dk_fastcall {
+  ch_command(CMD1H_GET_DESCR);
+  CH376_DATA_PORT = descriptor_type;
+
+  return ch_long_wait_int_and_get_status();
+}
+
+usb_error ch_control_transfer_set_address(const uint8_t device_address) __z88dk_fastcall {
+  ch_command(CMD1H_SET_ADDRESS);
+  CH376_DATA_PORT = device_address;
+
+  return ch_long_wait_int_and_get_status();
+}

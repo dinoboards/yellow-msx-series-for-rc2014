@@ -67,46 +67,43 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   return result;
 }
 
-setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 18};
+usb_error hw_get_description(device_descriptor *const buffer) {
+  ch_set_usb_address(0);
 
-usb_error hw_get_description(const uint8_t device_address, const uint8_t max_packet_size, device_descriptor *const buffer) {
-  return hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, device_address, max_packet_size);
+  usb_error result;
+
+  CHECK(ch_control_transfer_request_descriptor(1));
+
+  uint8_t amount_received;
+  ch_read_data((uint8_t *)buffer, 18, &amount_received);
+
+  if (amount_received != 18)
+    return USB_ERR_DATA_ERROR;
+
+  return USB_ERR_OK;
 }
-
-usb_error hw_get_description_short(device_descriptor *const buffer) {
-  setup_packet cmd;
-  cmd         = cmd_get_device_descriptor;
-  cmd.wLength = 8;
-
-  return hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8);
-}
-
-#define PLACEHOLDER_CONFIGURATION_ID       0
-#define PLACEHOLDER_CONFIG_DESCRIPTOR_SIZE (sizeof(config_descriptor))
-
-setup_packet cmd_get_config_descriptor = {
-    0x80, 6, {PLACEHOLDER_CONFIGURATION_ID, 2}, {0, 0}, PLACEHOLDER_CONFIG_DESCRIPTOR_SIZE};
 
 usb_error hw_get_config_descriptor(config_descriptor *const buffer,
                                    const uint8_t            config_index,
-                                   const uint8_t            max_packet_size,
                                    const uint8_t            buffer_size,
                                    const uint8_t            device_address) {
 
-  setup_packet cmd;
-  cmd = cmd_get_config_descriptor;
+  usb_error result;
 
-  cmd.bValue[0] = config_index;
-  cmd.wLength   = (uint16_t)buffer_size;
+  if (config_index != 0)
+    return USB_ERR_FAIL;
 
-  return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size);
+  ch_set_usb_address(device_address);
+  CHECK(ch_control_transfer_request_descriptor(2));
+
+  uint8_t amount_received;
+  ch_read_data((uint8_t *)buffer, buffer_size, &amount_received);
+
+  return USB_ERR_OK;
 }
 
 #define PLACEHOLDER_TARGET_DEVICE_ADDRESS 0
 setup_packet cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 0}, {0, 0}, 0};
-
-// #define PLACEHOLDER_CONFIGURATION_VALUE 0
-// setup_packet usb_cmd_set_configuration = {0x00, 0x09, {PLACEHOLDER_CONFIGURATION_VALUE, 0}, {0, 0}, 0};
 
 usb_error hw_set_configuration(const device_config *const config) {
   setup_packet cmd;
@@ -115,14 +112,6 @@ usb_error hw_set_configuration(const device_config *const config) {
   cmd.bRequest  = 0x09;
   cmd.bValue[0] = config->value;
   return hw_control_transfer(&cmd, (uint8_t *)0, config->address, config->max_packet_size);
-}
-
-usb_error hw_set_address(const uint8_t device_address, const uint8_t max_packet_size) {
-  setup_packet cmd;
-
-  cmd           = cmd_set_address;
-  cmd.bValue[0] = device_address;
-  return hw_control_transfer(&cmd, (uint8_t *)0, 0, max_packet_size);
 }
 
 // ; -----------------------------------------------------------------------------
