@@ -152,14 +152,14 @@ usb_error read_all_configs(enumeration_state *const state) {
 
   CHECK(hw_get_description_short(&working.desc), x_printf("ErrX %02x\r\n", result));
 
-  const uint8_t dev_address = state->next_device_address;
-
-  CHECK(hw_set_address(dev_address, working.desc.bMaxPacketSize0))
-
-  CHECK(hw_get_description(dev_address, working.desc.bMaxPacketSize0, &working.desc), x_printf("ErrX %02x\r\n", result));
-
   // printf("Desc: ", sizeof(device_descriptor));
   // logDevice(&working.desc);
+
+  const uint8_t dev_address = state->next_device_address;
+
+  result = hw_set_address(dev_address, working.desc.bMaxPacketSize0);
+
+  CHECK(hw_get_description(dev_address, working.desc.bMaxPacketSize0, &working.desc), x_printf("ErrY %02x\r\n", result));
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;
