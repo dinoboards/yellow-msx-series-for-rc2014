@@ -78,7 +78,7 @@ usb_error hw_get_description_short(device_descriptor *const buffer) {
   cmd         = cmd_get_device_descriptor;
   cmd.wLength = 8;
 
-  return hw_control_transfer(&cmd_get_device_descriptor, (uint8_t *)buffer, 0, 8);
+  return hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8);
 }
 
 #define PLACEHOLDER_CONFIGURATION_ID       0
