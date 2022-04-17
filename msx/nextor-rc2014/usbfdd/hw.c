@@ -103,18 +103,6 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
   return USB_ERR_OK;
 }
 
-#define PLACEHOLDER_TARGET_DEVICE_ADDRESS 0
-setup_packet cmd_set_address = {0x00, 0x05, {PLACEHOLDER_TARGET_DEVICE_ADDRESS, 0}, {0, 0}, 0};
-
-usb_error hw_set_configuration(const device_config *const config) {
-  setup_packet cmd;
-
-  cmd           = cmd_set_address;
-  cmd.bRequest  = 0x09;
-  cmd.bValue[0] = config->value;
-  return hw_control_transfer(&cmd, (uint8_t *)0, config->address, config->max_packet_size);
-}
-
 // ; -----------------------------------------------------------------------------
 // ; HW_DATA_IN_TRANSFER: Perform a USB data IN transfer
 // ; -----------------------------------------------------------------------------
