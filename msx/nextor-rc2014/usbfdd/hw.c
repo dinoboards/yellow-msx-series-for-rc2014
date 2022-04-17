@@ -64,11 +64,7 @@ usb_error hw_get_description(device_descriptor *const buffer) {
 
   CHECK(ch_control_transfer_request_descriptor(1));
 
-  uint8_t amount_received;
-  ch_read_data((uint8_t *)buffer, 18, &amount_received);
-
-  if (amount_received != 18)
-    return USB_ERR_DATA_ERROR;
+  ch_read_data((uint8_t *)buffer, 18);
 
   return USB_ERR_OK;
 }
@@ -102,8 +98,7 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
 
   CHECK(ch_control_transfer_request_descriptor(2));
 
-  uint8_t amount_received;
-  ch_read_data((uint8_t *)buffer, buffer_size, &amount_received);
+  ch_read_data((uint8_t *)buffer, buffer_size);
 
   return USB_ERR_OK;
 }
