@@ -24,8 +24,8 @@ void ch_command(const uint8_t command) __z88dk_fastcall {
   CH376_COMMAND_PORT = command;
 }
 
-usb_error ch_wait_int_and_get_status(const int16_t timeout_period) __z88dk_fastcall {
-  const int16_t timeout_point = get_future_time(from_ms(timeout_period));
+usb_error ch_wait_int_and_get_status(const int16_t timeout) __z88dk_fastcall {
+  const int16_t timeout_point = get_future_time(timeout);
   bool          int_active    = false;
 
   while (!int_active && !is_time_past(timeout_point))
@@ -41,9 +41,9 @@ usb_error ch_wait_int_and_get_status(const int16_t timeout_period) __z88dk_fastc
   return ch_get_status();
 }
 
-usb_error ch_long_wait_int_and_get_status() { return ch_wait_int_and_get_status(5000); }
+usb_error ch_long_wait_int_and_get_status() { return ch_wait_int_and_get_status(from_ms_50hz(5000)); }
 
-usb_error ch_short_wait_int_and_get_status() { return ch_wait_int_and_get_status(100); }
+usb_error ch_short_wait_int_and_get_status() { return ch_wait_int_and_get_status(from_ms_50hz(100)); }
 
 usb_error ch_get_status() {
   ch_command(CH_CMD_GET_STATUS);
