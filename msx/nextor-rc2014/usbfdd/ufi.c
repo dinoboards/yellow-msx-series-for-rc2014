@@ -384,27 +384,17 @@ usb_error ufi_test_disk(storage_device_config *const storage_device) {
   return result;
 }
 
-uint8_t packet_ufi_write_sector[] = {0x2A, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
+usb_error ufi_read_write_sector(storage_device_config *const storage_device,
+                                const bool                   send,
+                                const uint16_t               sector_number,
+                                const uint8_t                sector_count,
+                                const uint8_t *const         buffer) {
+  ufi_read_write cmd;
+  memset(&cmd, 0, sizeof(ufi_read_write));
+  cmd.operation_code     = send ? 0x2A : 0x28;
+  cmd.lba[2]             = sector_number >> 8;
+  cmd.lba[3]             = sector_number & 0xFF;
+  cmd.transfer_length[1] = sector_count;
 
-usb_error
-ufi_write_sector(storage_device_config *const storage_device, const uint16_t sector_number, const uint8_t *const buffer) {
-  uint8_t cmd[12];
-  memcpy(cmd, packet_ufi_write_sector, 12);
-
-  cmd[4] = sector_number >> 8;
-  cmd[5] = sector_number & 0xFF;
-
-  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&cmd, true, true, 512, (uint8_t *)buffer);
-}
-
-uint8_t packet_ufi_read_sector[] = {0x28, 0, 0, 0, 255, 255, 0, 0, 1, 0, 0, 0};
-
-usb_error ufi_read_sector(storage_device_config *const storage_device, const uint16_t sector_number, uint8_t *const buffer) {
-  uint8_t cmd[12];
-  memcpy(cmd, packet_ufi_read_sector, 12);
-
-  cmd[4] = sector_number >> 8;
-  cmd[5] = sector_number & 0xFF;
-
-  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&cmd, false, true, 512, buffer);
+  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&cmd, send, true, 512 * sector_count, (uint8_t *)buffer);
 }

@@ -220,7 +220,7 @@ usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, end
     buffer_length -= size;
     ch_issue_token_out(endpoint);
 
-    CHECK(ch_short_wait_int_and_get_status());
+    CHECK(ch_long_wait_int_and_get_status());
 
     endpoint->toggle = !endpoint->toggle;
   }
