@@ -126,6 +126,9 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     work_area->hub_config.address          = working->state->next_device_address++;
     CHECK(configure_usb_hub(working));
     break;
+
+  default:
+    working->state->next_device_address++;
   }
 
   return op_parse_endpoint(working);
@@ -161,17 +164,17 @@ usb_error read_all_configs(enumeration_state *const state) {
   memset(&working, 0, sizeof(_working));
   working.state = state;
 
-  CHECK(hw_get_description(&working.desc), x_printf("ErrY %02x\r\n", result));
+  CHECK(hw_get_description(&working.desc), x_printf("ErrX %02x\r\n", result));
   // logDevice(&working.desc);
 
   const uint8_t dev_address = state->next_device_address;
 
-  CHECK(hw_set_address(dev_address), x_printf("ErrZ %02x\r\n", result));
+  CHECK(hw_set_address(dev_address), x_printf("ErrY %02x\r\n", result));
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;
 
-    CHECK(op_get_config_descriptor(&working));
+    CHECK(op_get_config_descriptor(&working), x_printf("ErrZ %02x\r\n", result));
   }
 
   return USB_ERR_OK;
