@@ -15,13 +15,13 @@
 #include "print.h"
 
 usb_error usb_host_bus_reset() {
-  ch_set_usb_mode(CH_MODE_HOST);
+  ch_cmd_set_usb_mode(CH_MODE_HOST);
   delay_medium();
 
-  ch_set_usb_mode(CH_MODE_HOST_RESET);
+  ch_cmd_set_usb_mode(CH_MODE_HOST_RESET);
   delay_medium();
 
-  ch_set_usb_mode(CH_MODE_HOST);
+  ch_cmd_set_usb_mode(CH_MODE_HOST);
   delay_medium();
 
   ch_configure_nak_retry_3s();
@@ -76,14 +76,14 @@ uint8_t usb_host_init() {
   _usb_state *const work_area = &p->ch376;
   memset(work_area, 0, sizeof(_usb_state));
 
-  ch376_reset();
+  ch_cmd_reset_all();
 
-  if (!ch376_probe()) {
+  if (!ch_probe()) {
     print_string("CH376:           NOT PRESENT\r\n");
     return false;
   }
 
-  const uint8_t ver = ch376_get_firmware_version();
+  const uint8_t ver = ch_cmd_get_ic_version();
   print_string("CH376:           PRESENT (VER ");
   print_hex(ver);
   print_string(")\r\n");
