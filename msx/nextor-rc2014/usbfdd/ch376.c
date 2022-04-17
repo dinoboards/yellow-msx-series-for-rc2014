@@ -108,11 +108,6 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   return buffer;
 }
 
-void ch_read_datax() {
-  ch_command(CH_CMD_RD_USB_DATA0);
-  CH376_DATA_PORT;
-}
-
 void ch376_reset() {
   delay(30);
   ch_command(CH_CMD_RESET_ALL);
@@ -178,11 +173,6 @@ const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
   }
 
   return buffer;
-}
-
-void ch_write_datax() {
-  ch_command(CH_CMD_WR_HOST_DATA);
-  CH376_DATA_PORT = 0;
 }
 
 void ch_issue_token(const uint8_t toggle_bit, const uint8_t endpoint, const ch376_pid pid) {
