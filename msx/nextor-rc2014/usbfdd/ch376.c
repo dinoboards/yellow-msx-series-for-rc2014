@@ -127,12 +127,13 @@ inline uint8_t ch376_test() {
 }
 
 uint8_t ch376_probe() {
-  for (int8_t i = 16; i > 0; i--) {
+  uint8_t i = 16;
+  do {
     if (ch376_test())
       return true;
 
     delay_short();
-  }
+  } while (--i != 0);
 
   return false;
 }
