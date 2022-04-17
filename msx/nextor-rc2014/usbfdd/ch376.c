@@ -64,7 +64,7 @@ usb_error ch_get_status() {
     return USB_ERR_DISK_WRITE;
 
   if (ch_status == CH_USB_INT_DISCONNECT) {
-    ch_set_usb_mode(5);
+    ch_cmd_set_usb_mode(5);
     return USB_ERR_NO_DEVICE;
   }
 
@@ -110,12 +110,12 @@ uint8_t ch_read_data(uint8_t *buffer, uint16_t buffer_size) {
   return amount_received;
 }
 
-void ch376_reset() {
+void ch_cmd_reset_all() {
   ch_command(CH_CMD_RESET_ALL);
   delay_medium();
 }
 
-inline uint8_t ch376_test() {
+inline uint8_t ch_cmd_check_exist() {
   ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x34;
   if (CH376_DATA_PORT != 0x34)
@@ -126,10 +126,10 @@ inline uint8_t ch376_test() {
   return CH376_DATA_PORT == 0x89;
 }
 
-uint8_t ch376_probe() {
+uint8_t ch_probe() {
   uint8_t i = 16;
   do {
-    if (ch376_test())
+    if (ch_cmd_check_exist())
       return true;
 
     delay_short();
@@ -138,7 +138,7 @@ uint8_t ch376_probe() {
   return false;
 }
 
-uint8_t ch_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
+uint8_t ch_cmd_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
   uint8_t result = 0;
 
   CH376_COMMAND_PORT = CH_CMD_SET_USB_MODE;
@@ -152,7 +152,7 @@ uint8_t ch_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
   return (result == CH_CMD_RET_SUCCESS) ? USB_ERR_OK : USB_ERR_FAIL;
 }
 
-uint8_t ch376_get_firmware_version() {
+uint8_t ch_cmd_get_ic_version() {
   ch_command(CH_CMD_GET_IC_VER);
   return CH376_DATA_PORT & 0x1f;
 }
