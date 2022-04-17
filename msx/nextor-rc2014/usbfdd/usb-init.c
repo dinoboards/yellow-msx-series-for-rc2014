@@ -85,6 +85,8 @@ inline void initialise_mass_storage_devices(_usb_state *const work_area) {
   } while (--index != 0);
 }
 
+#define ERASE_LINE "\x1B\x6C\r"
+
 uint8_t usb_host_init() {
   work_area *const p = get_work_area();
   __asm__("EI");
@@ -103,13 +105,15 @@ uint8_t usb_host_init() {
   print_hex(ver);
   print_string(")\r\n");
 
+  print_string("USB:             SCANNING...");
+
   usb_host_bus_reset();
 
   enumerate_all_devices();
 
-  const bool result = state_devices(work_area);
-
   initialise_mass_storage_devices(work_area);
 
-  return result;
+  print_string(ERASE_LINE);
+
+  return state_devices(work_area);
 }
