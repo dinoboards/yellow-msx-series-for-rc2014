@@ -64,7 +64,7 @@ usb_error ch_get_status() {
     return USB_ERR_DISK_WRITE;
 
   if (ch_status == CH_USB_INT_DISCONNECT) {
-    ch376_set_usb_mode(5);
+    ch_set_usb_mode(5);
     return USB_ERR_NO_DEVICE;
   }
 
@@ -138,27 +138,18 @@ uint8_t ch376_probe() {
   return false;
 }
 
-uint8_t ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
-  int8_t  count  = 64;
+uint8_t ch_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
   uint8_t result = 0;
-
-  // clear buffer
-  do {
-    CH376_DATA_PORT;
-  } while (--count != 0);
 
   CH376_COMMAND_PORT = CH_CMD_SET_USB_MODE;
   CH376_DATA_PORT    = mode;
 
-  count = 127;
+  uint8_t count = 127;
 
-  while (result != CH_CMD_RET_SUCCESS && result != CH_CMD_RET_ABORT && count-- > 0)
+  while (result != CH_CMD_RET_SUCCESS && result != CH_CMD_RET_ABORT && --count != 0)
     result = CH376_DATA_PORT;
 
-  if (result == CH_CMD_RET_SUCCESS)
-    return USB_ERR_OK;
-
-  return USB_ERR_FAIL;
+  return (result == CH_CMD_RET_SUCCESS) ? USB_ERR_OK : USB_ERR_FAIL;
 }
 
 uint8_t ch376_get_firmware_version() {
