@@ -4,6 +4,8 @@
 #include "usb.h"
 #include "work-area.h"
 
+#define MAX_CONFIG_SIZE 140
+
 struct __working;
 
 typedef struct {
@@ -20,10 +22,10 @@ typedef struct __working {
   uint8_t           interface_count;
   uint8_t           endpoint_count;
 
-  const void *ptr;
+  const uint8_t *ptr;
 
   union {
-    uint8_t           buffer[140];
+    uint8_t           buffer[MAX_CONFIG_SIZE];
     config_descriptor desc;
   } config;
 } _working;

@@ -24,21 +24,31 @@ usb_device_type identify_class_driver(const interface_descriptor *const p) {
     return USB_IS_HUB;
   }
 
+  print_string("USB-CLASS:       ");
+
+  print_hex(p->bInterfaceClass);
+  print_string(", ");
+  print_hex(p->bInterfaceSubClass);
+  print_string(", ");
+  print_hex(p->bInterfaceProtocol);
+  print_string("\r\n");
+
   return 0;
 }
 
 usb_error get_config_descriptor(const uint8_t config_index, const uint8_t device_address, uint8_t *const buffer) {
   usb_error result;
 
-  // printf("Config %d, %d: ", config_index, device_address);
+  x_printf("Config %d, %d: ", config_index, device_address);
   CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address),
         x_printf("a %02x\r\n", result));
   // logConfig((config_descriptor *)buffer);
 
-  // printf("len: %d\r\n", ((config_descriptor *)buffer)->wTotalLength);
   CHECK(hw_get_config_descriptor(
             (config_descriptor *)buffer, config_index, ((config_descriptor *)buffer)->wTotalLength, device_address),
         x_printf("b %02x\r\n", result));
+  // printf("len: %d\r\n", ((config_descriptor *)buffer)->wTotalLength);
+
   // logConfig((config_descriptor *)buffer);
 
   return USB_ERR_OK;
@@ -53,7 +63,7 @@ usb_error op_interface_next(_working *const working) __z88dk_fastcall {
 
 usb_error op_endpoint_next(_working *const working) __z88dk_fastcall {
   if (--working->endpoint_count > 0) {
-    working->ptr = ((endpoint_descriptor *)working->ptr) + 1;
+    working->ptr += ((endpoint_descriptor *)working->ptr)->bLength;
     return op_parse_endpoint(working);
   }
 
@@ -83,14 +93,14 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
 }
 
 usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall {
-  usb_error                   result;
-  _usb_state *const           work_area = get_usb_work_area();
-  const interface_descriptor *interface = (interface_descriptor *)working->ptr;
+  usb_error                         result;
+  _usb_state *const                 work_area = get_usb_work_area();
+  const interface_descriptor *const interface = (interface_descriptor *)working->ptr;
 
   // printf("Intf ");
   // logInterface(interface);
 
-  working->ptr            = interface + 1;
+  working->ptr += interface->bLength;
   working->endpoint_count = interface->bNumEndpoints;
 
   switch (working->usb_device) {
@@ -122,14 +132,20 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 }
 
 usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall {
-  working->usb_device = identify_class_driver((interface_descriptor *)working->ptr);
+  const interface_descriptor *const ptr = (const interface_descriptor *)working->ptr;
+  if (ptr->bLength > 5)
+    working->usb_device = identify_class_driver(ptr);
+
   return op_capture_driver_interface(working);
 }
 
 usb_error op_get_config_descriptor(_working *const working) __z88dk_fastcall {
   usb_error result;
 
-  CHECK(get_config_descriptor(working->config_index, working->state->next_device_address, working->config.buffer));
+  memset(working->config.buffer, 0, MAX_CONFIG_SIZE);
+
+  CHECK(get_config_descriptor(working->config_index, working->state->next_device_address, working->config.buffer),
+        x_printf("XXX %d\r\n", result));
 
   working->ptr             = (working->config.buffer + sizeof(config_descriptor));
   working->interface_count = working->config.desc.bNumInterfaces;

@@ -45,26 +45,16 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
     return result;
   }
 
-  delay(6);
-
   if (transferIn) {
-    ch_write_datax();
     ch_issue_token_out_ep0();
-    CHECK(ch_long_wait_int_and_get_status(), x_printf(" E4(%d) ", result));
-    return result;
+    result = ch_long_wait_int_and_get_status(); /* sometimes we get STALL here - seems to be ok to ignore */
+    // printf(" E4(%d, %d) ", result, cmd_packet->wLength);
+    if (result == USB_ERR_OK || result == USB_ERR_STALL)
+      return USB_ERR_OK;
   }
 
   ch_issue_token_in_ep0();
-  result = ch_long_wait_int_and_get_status();
-
-  if (result == USB_ERR_NAK) {
-    ch_issue_token_in_ep0();
-    CHECK(ch_long_wait_int_and_get_status(), x_printf(" E5 %d ", result));
-  }
-
-  ch_read_datax();
-
-  return result;
+  return ch_long_wait_int_and_get_status();
 }
 
 usb_error hw_get_description(device_descriptor *const buffer) {
@@ -83,6 +73,21 @@ usb_error hw_get_description(device_descriptor *const buffer) {
   return USB_ERR_OK;
 }
 
+setup_packet cmd_get_config_descriptor = {0x80, 6, {0, 2}, {0, 0}, 0};
+
+usb_error __hw_get_config_descriptor(config_descriptor *const buffer,
+                                     const uint8_t            config_index,
+                                     const uint8_t            buffer_size,
+                                     const uint8_t            device_address) {
+
+  setup_packet cmd;
+  cmd           = cmd_get_config_descriptor;
+  cmd.bValue[0] = config_index;
+  cmd.wLength   = (uint16_t)buffer_size;
+
+  return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, 64);
+}
+
 usb_error hw_get_config_descriptor(config_descriptor *const buffer,
                                    const uint8_t            config_index,
                                    const uint8_t            buffer_size,
@@ -90,10 +95,11 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
 
   usb_error result;
 
-  if (config_index != 0)
-    return USB_ERR_FAIL;
-
   ch_set_usb_address(device_address);
+
+  if (config_index != 0)
+    return __hw_get_config_descriptor(buffer, config_index, buffer_size, device_address);
+
   CHECK(ch_control_transfer_request_descriptor(2));
 
   uint8_t amount_received;
