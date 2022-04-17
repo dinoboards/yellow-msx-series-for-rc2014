@@ -81,7 +81,7 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
     CHECK(hub_get_status_port(i, &port_status), x_printf("hub[%d] err: %d \r\n", 0, result));
 
     if (port_status.wPortStatus.port_connection) {
-      delay(5);
+      delay_short();
       CHECK(read_all_configs(working->state), x_printf("err5: %d\r\n", result));
 
     } else {

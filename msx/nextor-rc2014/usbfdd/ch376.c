@@ -4,6 +4,10 @@
 
 #include "print.h"
 
+void delay_short() { delay(3); }
+
+void delay_medium() { delay(30); }
+
 void ch_command(const uint8_t command) __z88dk_fastcall {
   uint8_t counter = 255;
   while ((CH376_COMMAND_PORT & PARA_STATE_BUSY) && --counter != 0)
@@ -109,9 +113,8 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
 }
 
 void ch376_reset() {
-  delay(30);
   ch_command(CH_CMD_RESET_ALL);
-  delay(30);
+  delay_medium();
 }
 
 inline uint8_t ch376_test() {
@@ -130,7 +133,7 @@ uint8_t ch376_probe() {
     if (ch376_test())
       return true;
 
-    delay(10);
+    delay_short();
   }
 
   return false;
