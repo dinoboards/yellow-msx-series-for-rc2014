@@ -7,21 +7,7 @@
 
 #include "print.h"
 #include <string.h>
-// ; -----------------------------------------------------------------------------
-// ; USB_DATA_IN_TRANSFER: Perform a USB data IN transfer
-// ;
-// ; This routine differs from HW_DATA_IN_TRANSFER in that:
-// ;
-// ; - Passing the device address is not needed
-// ; - Passing endpoint max packet size is not needed, it's taken from work area
-// ; - Endpoint number is not (directly) passed
-// ; - It manages the state of the toggle bit in work area
-// ; -----------------------------------------------------------------------------
-// ; Input:  buffer => HL = Address of a buffer for the received data
-// ;         buffer_size => BC = Data length
-// ;         send => Cy = 0 for bulk IN endpoint, 1 for interrupt endpoint
-// ; Output: A  = USB error code
-// ;         BC = Amount of data actually received
+
 usb_error usb_data_in_transfer(storage_device_config *const storage_device,
                                uint8_t *const               buffer,
                                const uint16_t               buffer_size,
@@ -44,19 +30,6 @@ usb_error usb_data_in_transfer(storage_device_config *const storage_device,
   return usb_process_error(result);
 }
 
-// ; -----------------------------------------------------------------------------
-// ; USB_DATA_OUT_TRANSFER: Perform a USB data OUT transfer
-// ;
-// ; This routine differs from HW_DATA_OUT_TRANSFER in that:
-// ;
-// ; - Passing the device address is not needed
-// ; - Passing endpoint max packet size is not needed, it's taken from work area
-// ; - Endpoint number is assumed to be the bulk out one
-// ; - It manages the state of the toggle bit in work area
-// ; -----------------------------------------------------------------------------
-// ; Input:  HL = Address of a buffer for the data to send data
-// ;         BC = Data length
-// ; Output: A  = USB error code
 inline usb_error
 usb_data_out_transfer(storage_device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size) {
 
@@ -74,15 +47,6 @@ usb_data_out_transfer(storage_device_config *const storage_device, uint8_t *cons
   return result;
 }
 
-// IX => adsc ;In: IX=Prepared ADSC,
-// HL => command,
-// DE => buffer,
-// BC => buffer_size?? data length,
-// Cy => send (0 to receive, 1 to write)
-// Returns:
-//  A = USB error code (STALL if non-zero ASC),
-//  BC=data transferred
-//  D=ASC if STALL (0 if not available)
 usb_error usb_execute_cbi_core_no_clear(storage_device_config *const storage_device,
                                         const setup_packet *const    adsc,
                                         const uint8_t *const         cmd,
@@ -101,7 +65,6 @@ usb_error usb_execute_cbi_core_no_clear(storage_device_config *const storage_dev
     return result;
   }
 
-  //_USB_EXE_CBI_STEP_2
   if (send) {
     result = usb_data_out_transfer(storage_device, buffer, buffer_size);
   } else {
@@ -110,9 +73,7 @@ usb_error usb_execute_cbi_core_no_clear(storage_device_config *const storage_dev
 
   if (result != USB_ERR_OK) {
     *asc = 0;
-
     // Token error here, asc = 0
-
     x_printf(" a2(%d) ", result);
     return result;
   }
@@ -135,12 +96,6 @@ usb_error usb_execute_cbi_core_no_clear(storage_device_config *const storage_dev
   return USB_ERR_STALL;
 }
 
-// ; -----------------------------------------------------------------------------
-// ; USB_PROCESS_ERROR
-// ;
-// ; If USB error is "device disconnected", clear work area.
-// ; Otherwise, if it's not STALL, reset device.
-// ; -----------------------------------------------------------------------------
 usb_error usb_process_error(const usb_error result) {
   if (result == USB_ERR_OK)
     return result;
@@ -154,34 +109,9 @@ usb_error usb_process_error(const usb_error result) {
   if (result == USB_ERR_CH376_BLOCKED)
     return USB_ERR_TIMEOUT;
 
-  // if (result != USB_ERR_STALL) {
-  // yprintf(70, " Fail %02x ", result);
-  // hw_bus_reset();
-  // usb_init_dev();
-
-  // usb_state->error = result;
-  // usb_state->asc => ??;
-  // usb_state->ascq => ??;
-  // }
-
   return result;
 }
 
-// ; -----------------------------------------------------------------------------
-// ; USB_CONTROL_TRANSFER: Perform a USB control transfer on endpoint 0
-// ;
-// ; The size and direction of the transfer are taken from the contents
-// ; of the setup packet.
-// ;
-// ; This routine differs from HW_CONTROL_TRANSFER in that:
-// ;
-// ; - Passing the device address is not needed
-// ; - Passing endpoint 0 max packet size is not needed, it's taken from work area
-// ; -----------------------------------------------------------------------------
-// ; Input:  cmd => HL = Address of a 8 byte buffer with the setup packet
-// ;         buffer => DE = Address of the input or output data buffer
-// ; Output: A  = USB error code
-// ;         BC = Amount of data actually transferred (if IN transfer and no error)
 usb_error
 usb_control_transfer(storage_device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer) {
   usb_error result;
@@ -198,15 +128,6 @@ usb_control_transfer(storage_device_config *const storage_device, const setup_pa
 
 setup_packet usb_cmd_clear_endpoint_halt = {2, 1, {0, 0}, {255, 0}, 0}; //    ;byte 4 is the endpoint to be cleared
 
-// ; -----------------------------------------------------------------------------
-// ; USB_CLEAR_ENDPOINT_HALT
-// ;
-// ; Also clears the toggle bit in the work area.
-// ; -----------------------------------------------------------------------------
-// ; Input: A = which endpoint to clear:
-// ;            0: bulk OUT
-// ;            1: bulk IN
-// ;            2: interrupt IN
 usb_error usb_clear_endpoint_halt(storage_device_config *const storage_device, const usb_endpoint_type endpoint_type) {
   setup_packet cmd;
   cmd           = usb_cmd_clear_endpoint_halt;
@@ -219,15 +140,6 @@ usb_error usb_clear_endpoint_halt(storage_device_config *const storage_device, c
   return result;
 }
 
-// IX => adsc ;In: IX=Prepared ADSC,
-// HL => command,
-// DE => buffer,
-// BC => buffer_size?? data length,
-// Cy => send (0 to receive, 1 to write)
-// Returns:
-//  A = USB error code (STALL if non-zero ASC),
-//  BC=data transferred
-//  D=ASC if STALL (0 if not available)
 usb_error usb_execute_cbi_core(storage_device_config *const storage_device,
                                const setup_packet *const    adsc,
                                const uint8_t *const         cmd,
@@ -254,14 +166,6 @@ usb_error usb_execute_cbi_core(storage_device_config *const storage_device,
 setup_packet        cbi_adsc              = {0x21, 0, {0, 0}, {255, 0}, 12}; // ;4th byte is interface number
 ufi_request_inquiry ufi_cmd_request_sense = {0x03, 0, 0, 0, 18, 0, {0, 0, 0, 0, 0, 0}};
 
-// ; Input:  HL => cmd Address of the 12 byte command to execute
-// ;         DE => buffer Address of the input or output data buffer
-// ;         BC => buffer_size Length of data to send or receive
-// ;         Cy => send, 0 to receive data, 1 to send data
-// ; Output: A  = USB error code
-// ;         BC = amount_received of data actually transferred (if IN transfer)
-// ;         D  = ASC (if no error)
-// ;         E  = ASCQ (if no error)
 usb_error usb_execute_cbi(storage_device_config *const storage_device,
                           const uint8_t *const         cmd,
                           const bool                   send,
@@ -288,15 +192,6 @@ usb_error usb_execute_cbi(storage_device_config *const storage_device,
                               (uint8_t *)response_inquiry);
 }
 
-// ; Input:  HL => cmd Address of the 12 byte command to execute
-// ;         DE => buffer Address of the input or output data buffer
-// ;         BC => buffer_size Length of data to send or receive
-// ;         Cy => send, 0 to receive data, 1 to send data
-//           A => retry_on_media_change
-// ; Output: A  = USB error code
-// ;         BC = amount_received of data actually transferred (if IN transfer)
-// ;         D  = ASC (if no error)
-// ;         E  = ASCQ (if no error)
 usb_error usb_execute_cbi_with_retry(storage_device_config *const storage_device,
                                      const uint8_t *const         cmd,
                                      const bool                   send,
@@ -355,7 +250,7 @@ usb_error ufi_inquiry(storage_device_config *const storage_device, ufi_inquiry_r
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 
 usb_error ufi_capacity(storage_device_config *const storage_device, ufi_format_capacities_response const *response) {
-  ufi_test_disk(storage_device); //, x_printf(" XX %d ", result));
+  ufi_test_disk(storage_device);
 
   return usb_execute_cbi_with_retry(storage_device,
                                     (uint8_t *)&packet_read_format_capacities,

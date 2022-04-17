@@ -29,19 +29,23 @@ usb_error usb_host_bus_reset() {
   return USB_ERR_OK;
 }
 
-bool state_devices(const _usb_state *const work_area) {
+bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   const bool hasUsb = work_area->hub_config.address != 0;
 
-  uint8_t floppy_count       = 0;
-  uint8_t mass_storage_count = 0;
+  uint8_t                      floppy_count       = 0;
+  uint8_t                      mass_storage_count = 0;
+  uint8_t                      index              = MAX_NUMBER_OF_STORAGE_DEVICES;
+  const storage_device_config *storage_device     = &work_area->storage_device[0];
 
-  for (int8_t index = MAX_NUMBER_OF_STORAGE_DEVICES - 1; index >= 0; index--) {
-    const usb_device_type t = work_area->storage_device[index].type;
+  do {
+    const usb_device_type t = storage_device->type;
     if (t == USB_IS_FLOPPY)
       floppy_count++;
     else if (t == USB_IS_MASS_STORAGE)
       mass_storage_count++;
-  }
+
+    storage_device++;
+  } while (--index != 0);
 
   if (!hasUsb && floppy_count == 0 && mass_storage_count == 0)
     return false;
@@ -70,6 +74,17 @@ bool state_devices(const _usb_state *const work_area) {
   return floppy_count != 0 || mass_storage_count != 0;
 }
 
+inline void initialise_mass_storage_devices(_usb_state *const work_area) {
+  uint8_t                index          = MAX_NUMBER_OF_STORAGE_DEVICES;
+  storage_device_config *storage_device = &work_area->storage_device[0];
+
+  do {
+    if (storage_device->type == USB_IS_MASS_STORAGE)
+      scsi_sense_init(storage_device);
+    storage_device++;
+  } while (--index != 0);
+}
+
 uint8_t usb_host_init() {
   work_area *const p = get_work_area();
   __asm__("EI");
@@ -92,21 +107,9 @@ uint8_t usb_host_init() {
 
   enumerate_all_devices();
 
-  const usb_error result = state_devices(work_area);
+  const bool result = state_devices(work_area);
 
-  uint8_t                mass_storage_count = 0;
-  storage_device_config *storage_device     = &work_area->storage_device[0];
-
-  for (int8_t index = MAX_NUMBER_OF_STORAGE_DEVICES - 1; index >= 0; index--) {
-    if (storage_device->type == USB_IS_MASS_STORAGE)
-      scsi_sense_init(storage_device);
-    storage_device++;
-  }
-
-  // printf("Doing a read\r\n");
-  // uint8_t buffer[512];
-  // const usb_error read_result = scsi_read(&work_area->storage_device[0], 0, buffer);
-  // printf("result %d, %02x %02x %02x %02x", read_result, buffer[0], buffer[1], buffer[2], buffer[3]);
+  initialise_mass_storage_devices(work_area);
 
   return result;
 }
