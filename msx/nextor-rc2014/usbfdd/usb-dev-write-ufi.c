@@ -13,14 +13,10 @@ uint8_t usb_dev_write_ufi(storage_device_config *const dev,
   if (lun != 1)
     return NEXTOR_ERR_IDEVL;
 
-  while (number_sectors_to_write-- != 0) {
-    if (ufi_write_sector(dev, sector_number, buffer) != USB_ERR_OK)
-      return NEXTOR_ERR_DISK;
+  if (ufi_read_write_sector(dev, true, sector_number, number_sectors_to_write, buffer) != USB_ERR_OK)
+    return NEXTOR_ERR_DISK;
 
-    sector_number++;
-    buffer += 512;
-    (*number_of_sectors_written)++;
-  }
+  *number_of_sectors_written = number_sectors_to_write;
 
   return NEXTOR_ERR_OK;
 }
