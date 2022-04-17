@@ -82,6 +82,9 @@ typedef enum _ch376_pid {
 __sfr __at 0x84 CH376_DATA_PORT;
 __sfr __at 0x85 CH376_COMMAND_PORT;
 
+extern void delay_short();
+extern void delay_medium();
+
 extern void           ch_command(const uint8_t command) __z88dk_fastcall;
 extern usb_error      ch_get_status();
 extern usb_error      ch_long_wait_int_and_get_status();

@@ -16,13 +16,13 @@
 
 usb_error usb_host_bus_reset() {
   ch376_set_usb_mode(CH_MODE_HOST);
-  delay(30);
+  delay_medium();
 
   ch376_set_usb_mode(CH_MODE_HOST_RESET);
-  delay(30);
+  delay_medium();
 
   ch376_set_usb_mode(CH_MODE_HOST);
-  delay(30);
+  delay_medium();
 
   ch_configure_nak_retry_3s();
 
@@ -89,7 +89,6 @@ uint8_t usb_host_init() {
   print_string(")\r\n");
 
   usb_host_bus_reset();
-  delay(10);
 
   enumerate_all_devices();
 
