@@ -50,18 +50,8 @@ usb_error do_scsi_cmd(storage_device_config *const       dev,
             (uint8_t *)&csw, sizeof(_scsi_command_status_wrapper), dev->config.address, &dev->endpoints[ENDPOINT_BULK_IN]),
         x_printf("Err9 %d ", result));
 
-  if (csw.cbwstatus != 0) {
-    // printf(" cbwstatus(%d, %d, %d, %d, %d, %d, %d) ",
-    //   csw.cbwtag[0],
-    //   csw.cbwtag[3],
-    //   csw.cbwresidue[0],
-    //   csw.cbwresidue[1],
-    //   csw.cbwresidue[2],
-    //   csw.cbwresidue[3],
-    //   csw.cbwstatus
-    //   );
-    return 99;
-  }
+  if (csw.cbwstatus != 0)
+    return USB_ERR_FAIL;
 
   return USB_ERR_OK;
 }
@@ -138,7 +128,7 @@ usb_error scsi_sense_init(storage_device_config *const dev) {
   usb_error         result;
   uint8_t           counter = 3;
 
-  while ((result = scsi_test(dev)) && counter-- > 0)
+  while ((result = scsi_test(dev)) && --counter > 0)
     scsi_request_sense(dev, &response);
 
   return result;
