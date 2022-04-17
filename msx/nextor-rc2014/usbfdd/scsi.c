@@ -144,44 +144,26 @@ usb_error scsi_sense_init(storage_device_config *const dev) {
   return result;
 }
 
-_scsi_packet_read_write scsi_packet_read = {0x28, 0, {0, 0, 0, 0}, 0, {0, 0}, 0, {0, 0}};
-
-usb_error scsi_read(storage_device_config *const dev, uint32_t sector_number, uint8_t *const buffer) {
+usb_error scsi_read_write(storage_device_config *const dev,
+                          const bool                   send,
+                          uint32_t                     sector_number,
+                          const uint8_t                sector_count,
+                          uint8_t *const               buffer) {
   cbw_scsi_read_write cbw;
-  cbw.cbw      = scsi_command_block_wrapper;
-  cbw.scsi_cmd = scsi_packet_read;
+  memset(&cbw, 0, sizeof(cbw_scsi_read_write));
+  cbw.cbw = scsi_command_block_wrapper;
 
   cbw.cbw.bCBWLUN                = 0;
   cbw.cbw.bCBWCBLength           = sizeof(_scsi_packet_read_write);
-  cbw.cbw.dCBWDataTransferLength = 512;
+  cbw.cbw.dCBWDataTransferLength = 512 * sector_count;
   cbw.cbw.dCBWTag[0]             = ++dev->config.tag;
 
-  cbw.scsi_cmd.transfer_len[1] = 1;
+  cbw.scsi_cmd.operation_code  = send ? 0x2A : 0x28;
+  cbw.scsi_cmd.transfer_len[1] = sector_count;
   cbw.scsi_cmd.lba[0]          = sector_number >> 24;
   cbw.scsi_cmd.lba[1]          = sector_number >> 16;
   cbw.scsi_cmd.lba[2]          = sector_number >> 8;
   cbw.scsi_cmd.lba[3]          = sector_number;
 
-  return do_scsi_cmd(dev, &cbw.cbw, buffer, false);
-}
-
-_scsi_packet_read_write scsi_packet_write = {0x2A, 0, {0, 0, 0, 0}, 0, {0, 0}, 0, {0, 0}};
-
-usb_error scsi_write(storage_device_config *const dev, uint32_t sector_number, const uint8_t *const buffer) {
-  cbw_scsi_read_write cbw;
-  cbw.cbw      = scsi_command_block_wrapper;
-  cbw.scsi_cmd = scsi_packet_write;
-
-  cbw.cbw.bCBWLUN                = 0;
-  cbw.cbw.bCBWCBLength           = sizeof(_scsi_packet_read_write);
-  cbw.cbw.dCBWDataTransferLength = 512;
-  cbw.cbw.dCBWTag[0]             = ++dev->config.tag;
-
-  cbw.scsi_cmd.transfer_len[1] = 1;
-  cbw.scsi_cmd.lba[0]          = sector_number >> 24;
-  cbw.scsi_cmd.lba[1]          = sector_number >> 16;
-  cbw.scsi_cmd.lba[2]          = sector_number >> 8;
-  cbw.scsi_cmd.lba[3]          = sector_number;
-
-  return do_scsi_cmd(dev, &cbw.cbw, buffer, true);
+  return do_scsi_cmd(dev, &cbw.cbw, buffer, send);
 }
