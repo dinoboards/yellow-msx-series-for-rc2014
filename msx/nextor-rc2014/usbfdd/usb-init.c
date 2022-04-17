@@ -15,13 +15,13 @@
 #include "print.h"
 
 usb_error usb_host_bus_reset() {
-  ch376_set_usb_mode(CH_MODE_HOST);
+  ch_set_usb_mode(CH_MODE_HOST);
   delay_medium();
 
-  ch376_set_usb_mode(CH_MODE_HOST_RESET);
+  ch_set_usb_mode(CH_MODE_HOST_RESET);
   delay_medium();
 
-  ch376_set_usb_mode(CH_MODE_HOST);
+  ch_set_usb_mode(CH_MODE_HOST);
   delay_medium();
 
   ch_configure_nak_retry_3s();
