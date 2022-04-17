@@ -8,6 +8,24 @@
 #include <stdlib.h>
 
 typedef struct {
+  uint8_t operation_code; /*0*/
+  union {                 /*1*/
+    uint8_t byte_1;
+    struct {
+      uint8_t rel_adr : 1;
+      uint8_t reserved1 : 2;
+      uint8_t fua : 1;
+      uint8_t dpo : 1;
+      uint8_t lun : 3;
+    };
+  };
+  uint8_t lba[4];             /*2, 3, 4, 5*/
+  uint8_t reserved2;          /*6*/
+  uint8_t transfer_length[2]; /*7, 8*/
+  uint8_t reserved3[3];       /*9, 10, 11*/
+} ufi_read_write;
+
+typedef struct {
   uint8_t operation_code;
   uint8_t lun;
   uint8_t reserved1[5];
@@ -104,11 +122,11 @@ extern usb_error ufi_inquiry(storage_device_config *const storage_device, ufi_in
 
 extern usb_error ufi_capacity(storage_device_config *const storage_device, ufi_format_capacities_response const *response);
 
-extern usb_error
-ufi_write_sector(storage_device_config *const storage_device, const uint16_t sector_number, const uint8_t *const buffer);
-
-extern usb_error
-ufi_read_sector(storage_device_config *const storage_device, const uint16_t sector_number, uint8_t *const buffer);
+extern usb_error ufi_read_write_sector(storage_device_config *const storage_device,
+                                       const bool                   send,
+                                       const uint16_t               sector_number,
+                                       const uint8_t                sector_count,
+                                       const uint8_t *const         buffer);
 
 extern uint8_t ufi_test_disk(storage_device_config *const storage_device);
 
