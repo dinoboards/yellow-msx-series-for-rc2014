@@ -75,8 +75,10 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
 
   for (i = 1; i <= hub_description.bNbrPorts; i++) {
     CHECK(hub_set_feature(FEAT_PORT_POWER, i));
+    delay_short();
 
     CHECK(hub_set_feature(FEAT_PORT_RESET, i), x_printf("hub4 err:%d\r\n", result));
+    delay_short();
 
     CHECK(hub_get_status_port(i, &port_status), x_printf("hub[%d] err: %d \r\n", 0, result));
 

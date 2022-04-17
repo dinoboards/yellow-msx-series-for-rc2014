@@ -127,7 +127,7 @@ inline uint8_t ch_cmd_check_exist() {
 }
 
 uint8_t ch_probe() {
-  uint8_t i = 16;
+  uint8_t i = 20;
   do {
     if (ch_cmd_check_exist())
       return true;
