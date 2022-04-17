@@ -89,7 +89,7 @@ extern void           ch_command(const uint8_t command) __z88dk_fastcall;
 extern usb_error      ch_get_status();
 extern usb_error      ch_long_wait_int_and_get_status();
 extern usb_error      ch_short_wait_int_and_get_status();
-extern uint8_t *      ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received);
+extern uint8_t        ch_read_data(uint8_t *buffer, uint16_t buffer_size);
 extern void           ch376_reset();
 extern uint8_t        ch376_probe();
 extern usb_error      ch376_set_usb_mode(const uint8_t mode) __z88dk_fastcall;

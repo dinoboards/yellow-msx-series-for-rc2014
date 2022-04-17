@@ -90,12 +90,11 @@ usb_error ch_get_status() {
   return USB_ERR_UNEXPECTED_STATUS_FROM_HOST;
 }
 
-uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amount_received) {
+uint8_t ch_read_data(uint8_t *buffer, uint16_t buffer_size) {
   ch_command(CH_CMD_RD_USB_DATA0);
-  uint8_t count = CH376_DATA_PORT;
-  if (amount_received)
-    *amount_received = count;
-  uint8_t extra = 0;
+  const uint8_t amount_received = CH376_DATA_PORT;
+  uint8_t       count           = amount_received;
+  uint8_t       extra           = 0;
 
   if (count > buffer_size) {
     extra = count - buffer_size;
@@ -108,7 +107,7 @@ uint8_t *ch_read_data(uint8_t *buffer, uint16_t buffer_size, int8_t *const amoun
   while (extra-- != 0) // do we need to flush buffer?
     CH376_DATA_PORT;
 
-  return buffer;
+  return amount_received;
 }
 
 void ch376_reset() {
@@ -213,7 +212,8 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
 
     endpoint->toggle = !endpoint->toggle;
 
-    buffer = ch_read_data(buffer, buffer_size, &count);
+    count = ch_read_data(buffer, buffer_size);
+    buffer += count;
     buffer_size -= count;
   } while (buffer_size > 0 && count == max_packet_size);
 
