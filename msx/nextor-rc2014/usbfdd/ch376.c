@@ -161,9 +161,8 @@ const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
   ch_command(CH_CMD_WR_HOST_DATA);
   CH376_DATA_PORT = length;
 
-  while (length-- != 0) {
+  while (length-- != 0)
     CH376_DATA_PORT = *buffer++;
-  }
 
   return buffer;
 }
@@ -195,8 +194,6 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
   if (buffer_size == 0)
     return USB_ERR_OK;
 
-  const uint8_t max_packet_size = endpoint->max_packet_size;
-
   do {
     ch_issue_token_in(endpoint);
 
@@ -207,7 +204,7 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
     count = ch_read_data(buffer, buffer_size);
     buffer += count;
     buffer_size -= count;
-  } while (buffer_size > 0 && count == max_packet_size);
+  } while (buffer_size > 0 && count == endpoint->max_packet_size);
 
   return USB_ERR_OK;
 }
@@ -246,6 +243,13 @@ usb_error ch_control_transfer_request_descriptor(const uint8_t descriptor_type) 
 usb_error ch_control_transfer_set_address(const uint8_t device_address) __z88dk_fastcall {
   ch_command(CMD1H_SET_ADDRESS);
   CH376_DATA_PORT = device_address;
+
+  return ch_long_wait_int_and_get_status();
+}
+
+usb_error ch_control_transfer_set_config(const uint8_t config_value) __z88dk_fastcall {
+  ch_command(CMD1H_SET_CONFIG);
+  CH376_DATA_PORT = config_value;
 
   return ch_long_wait_int_and_get_status();
 }
