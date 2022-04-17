@@ -26,12 +26,11 @@ void ch_command(const uint8_t command) __z88dk_fastcall {
 
 usb_error ch_wait_int_and_get_status(const int16_t timeout) __z88dk_fastcall {
   const int16_t timeout_point = get_future_time(timeout);
-  bool          int_active    = false;
 
-  while (!int_active && !is_time_past(timeout_point))
-    int_active = !(CH376_COMMAND_PORT & PARA_STATE_INTB);
+  while ((CH376_COMMAND_PORT & PARA_STATE_INTB) && !is_time_past(timeout_point))
+    ;
 
-  if (!int_active) {
+  if ((CH376_COMMAND_PORT & PARA_STATE_INTB)) {
     if (CH376_COMMAND_PORT & PARA_STATE_BUSY)
       return USB_ERR_CH376_BLOCKED;
 
