@@ -90,10 +90,10 @@ extern usb_error      ch_get_status();
 extern usb_error      ch_long_wait_int_and_get_status();
 extern usb_error      ch_short_wait_int_and_get_status();
 extern uint8_t        ch_read_data(uint8_t *buffer, uint16_t buffer_size);
-extern void           ch376_reset();
-extern uint8_t        ch376_probe();
-extern usb_error      ch_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
-extern uint8_t        ch376_get_firmware_version();
+extern void           ch_cmd_reset_all();
+extern uint8_t        ch_probe();
+extern usb_error      ch_cmd_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
+extern uint8_t        ch_cmd_get_ic_version();
 extern const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length);
 
 extern void ch_set_usb_address(const uint8_t device_address) __z88dk_fastcall;
