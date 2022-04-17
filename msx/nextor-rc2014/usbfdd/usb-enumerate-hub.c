@@ -65,7 +65,6 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
 
   usb_error       result;
-  uint8_t         i;
   hub_descriptor  hub_description;
   hub_port_status port_status;
 
@@ -73,7 +72,8 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
 
   CHECK(hub_get_descriptor(&hub_description));
 
-  for (i = 1; i <= hub_description.bNbrPorts; i++) {
+  uint8_t i = hub_description.bNbrPorts;
+  do {
     CHECK(hub_set_feature(FEAT_PORT_POWER, i));
     delay_short();
 
@@ -89,7 +89,7 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
     } else {
       CHECK(hub_clear_feature(FEAT_PORT_POWER, i), x_printf("hub5 err:%d\r\n", result));
     }
-  }
+  } while (--i != 0);
 
   return USB_ERR_OK;
 }

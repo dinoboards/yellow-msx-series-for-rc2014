@@ -121,6 +121,8 @@ inline uint8_t ch_cmd_check_exist() {
   if (CH376_DATA_PORT != 0x34)
     return false;
 
+  delay_short();
+
   ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x89;
   return CH376_DATA_PORT == 0x89;
