@@ -31,4 +31,3 @@ ROM_HEADER:
 	include "segment1.asm"
 
 	DS	$C000 - $
-

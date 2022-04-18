@@ -1,7 +1,7 @@
 
 #include "print.h"
 
-#if 0
+#if 1
 
 #include <stdarg.h>
 #include <stdio.h>
