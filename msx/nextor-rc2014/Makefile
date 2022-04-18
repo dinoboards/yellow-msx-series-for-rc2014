@@ -40,6 +40,10 @@ $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014d
 	fi
 	echo "Assembled $@"
 
+$(BINDIR)unapi-nextor-id.dat: unapi-nextor-id.asm
+	@mkdir -p $(BINDIR)
+	$(ASM) unapi-nextor-id.asm
+
 $(BINDIR)chgbnk.bin: chgbnk.asm
 	@mkdir -p $(BINDIR)
 	$(ASM) $^
@@ -87,9 +91,9 @@ $(BINDIR)$1.driver-with-sectors.bin: $(BINDIR)rc2014dr.bin $(BINDIR)rcembdrv.bin
 	# echo "Built image $(BINDIR)$1.driver-with-sectors.bin"
 
 #Package rom with driver and disk image
-$(BINDIR)$1.nextor.rom: $(BINDIR)$1.driver-with-sectors.bin $(BINDIR)chgbnk.bin
+$(BINDIR)$1.nextor.rom: $(BINDIR)$1.driver-with-sectors.bin $(BINDIR)chgbnk.bin $(BINDIR)unapi-nextor-id.dat
 	@cd $(BINDIR)
-	../../nextor/linuxtools/mknexrom ../../nextor/bin/working/$1/dos250ba.dat $1.nextor.rom -q -d:$1.driver-with-sectors.bin -m:chgbnk.bin
+	../../nextor/linuxtools/mknexrom ../../nextor/bin/working/$1/dos250ba.dat $1.nextor.rom -q -e:unapi-nextor-id.dat -d:$1.driver-with-sectors.bin -m:chgbnk.bin
 
 endef
 

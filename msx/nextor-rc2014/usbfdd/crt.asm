@@ -5,6 +5,7 @@
 	EXTERN	_usb_dev_status
 	EXTERN	_usb_dev_read
 	EXTERN	_usb_dev_write
+	EXTERN  _fn_enum
 
 	ORG	$5000
 usb_host_init:
@@ -19,3 +20,6 @@ usb_dev_read:
 	JP	_usb_dev_read
 usb_dev_write:
 	JP	_usb_dev_write
+fn_enum:
+	JP	_fn_enum
+
