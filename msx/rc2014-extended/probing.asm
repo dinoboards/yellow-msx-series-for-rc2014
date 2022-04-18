@@ -73,7 +73,9 @@ GAME_NOT_FOUND:
 	LD	DE, MSG.VDP_FREQ
 	CALL	PRINT
 
-	JP	PROBE_VDP
+	CALL	PROBE_VDP
+
+	JP	_usb_init
 
 MSG.CPU
 	DB	"CPU              ", 0

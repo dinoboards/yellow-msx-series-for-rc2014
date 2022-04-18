@@ -30,5 +30,7 @@ ROM_HEADER:
 	include	"extended-bios.asm"
 	include "segment1.asm"
 
-	DS	$C000 - $
+_usb_init:	EQU	$9000
+
+	DS	$9000 - $
 
