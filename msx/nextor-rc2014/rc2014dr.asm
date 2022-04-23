@@ -13,23 +13,32 @@ MSXDOS_RC2014_INIT	EQU	$8100
 SLOT_3_3_ID		EQU	$8F	;
 SLOT_3_1_ID		EQU	$87	;
 RDSLT			EQU	$000C
-
+ARG			EQU	$F847
 ;-----------------------------------------------------------------------------
 ;
 ; Error codes for DEV_RW
 ;
-_NCOMP	equ	0FFh
-_WRERR	equ	0FEh
-_DISK	equ	0FDh
-_NRDY	equ	0FCh
-_DATA	equ	0FAh
-_RNF	equ	0F9h
-_WPROT	equ	0F8h
-_UFORM	equ	0F7h
-_SEEK	equ	0F3h
-_IFORM	equ	0F0h
-_IDEVL	equ	0B5h
-_IPARM	equ	08Bh
+_NCOMP		equ	0FFh
+_WRERR		equ	0FEh
+_DISK		equ	0FDh
+_NRDY		equ	0FCh
+_DATA		equ	0FAh
+_RNF		equ	0F9h
+_WPROT		equ	0F8h
+_UFORM		equ	0F7h
+_SEEK		equ	0F3h
+_IFORM		equ	0F0h
+_IDEVL		equ	0B5h
+_IPARM		equ	08Bh
+
+
+MAX_FN		equ	1
+API_V_P:	equ	1
+API_V_S:	equ	0
+ROM_V_P:	equ	1
+ROM_V_S:	equ	0
+;Start of unused space in Nextor kernel, used here for the UNAPI implementation name
+APIINFO: 	equ 	$7BD0
 
 DRV_START:
 
@@ -177,8 +186,8 @@ DRV_NAME:
 	jp	DRV_INIT
 	jp	DRV_BASSTAT
 	jp	DRV_BASDEV
-	jp	DRV_EXTBIO
-	jp	DRV_DIRECT0
+	jp	UNAPI_EXTBIO
+	jp	UNAPI_ENTRY
 	jp	DRV_DIRECT1
 	jp	DRV_DIRECT2
 	jp	DRV_DIRECT3
@@ -372,10 +381,186 @@ DRV_BASDEV:
 ; D'=1 if the old hook must be called, D'=0 otherwise.
 ; It is entered with D'=1.
 
-DRV_EXTBIO:
+;==============================
+;===  UNAPI EXTBIO HANDLER  ===
+;==============================
+
+; Works the expected way, except that it must return
+; D'=1 if the old hook must be called, D'=0 otherwise.
+; It is entered with D'=1.
+
+UNAPI_EXTBIO:
+	push	hl
+	push	bc
+	push	af
+	ld	a,d
+	cp	$22
+	jr	nz, JUMP_OLD
+	cp	e
+	jr	nz, JUMP_OLD
+
+	;Check API ID
+
+	ld	hl, UNAPI_ID
+	ld	de, ARG
+LOOP:	ld	a, (de)
+	call	TOUPPER
+	cp	(hl)
+	jr	nz, JUMP_OLD2
+	inc	hl
+	inc	de
+	or	a
+	jr	nz, LOOP
+
+	;A=255: Jump to old hook
+
+	pop	af
+	push	af
+	inc	a
+	jr	z, JUMP_OLD2
+
+	;A=0: B=B+1 and jump to old hook
+
+	pop	af
+	pop	bc
+	or	a
+	jr	nz, DO_EXTBIO2
+	inc	b
+	pop	hl
+	ld	de, $2222
+	ret
+
+DO_EXTBIO2:
+	;A=1: Return A=Slot, B=Segment, HL=UNAPI entry address
+
+	dec	a
+	jr	nz, DO_EXTBIO3
+	pop	hl
+	xor	a
+	ld	ix, GSLOT1
+	call	CALBNK
+	ld	b, $FF
+	ld	hl, DRV_DIRECT0
+	ld	de, $2222
+	exx
+	ld	d, 0  ;D'=0 --> don't execute old hook
+	exx
+	ret
+
+	;A>1: A=A-1, and jump to old hook
+
+DO_EXTBIO3:	;A=A-1 already done
+	pop	hl
+	ld	de, $2222
+	ret
+
+	;--- Jump here to execute old EXTBIO code
+
+JUMP_OLD2:
+	ld	de, $2222
+
+JUMP_OLD:	;Assumes "push hl,bc,af" done
+	pop	af
+	pop	bc
+	pop	hl
+	ret
+
+UNAPI_ID:
+	db	"USB_ENUM",0
+
+TOUPPER:
+	cp	"a"
+	ret	c
+	cp	"z"+1
+	ret	nc
+	and	$DF
+	ret
+
+
+;================================
+;===  UNAPI ENTRY POINT CODE  ===
+;================================
+
+UNAPI_ENTRY:
+	push	hl
+	push	af
+	ld	hl, FN_TABLE
+	bit	7, a
+	jr	nz, UNDEFINED
+
+	cp	MAX_FN
+	jr	z, OK_FNUM
+	jr	nc, UNDEFINED
+
+OK_FNUM:
+	add	a, a
+	push	de
+	ld	e, a
+	ld	d, 0
+	add	hl, de
+	pop	de
+
+	ld	a, (hl)
+	inc	hl
+	ld	h, (hl)
+	ld	l, a
+
+	pop	af
+	ex	(sp), hl
+	ret
+
+	;--- Undefined function: return with registers unmodified
+
+UNDEFINED:
+	pop	af
+	pop	hl
+	ret
+
+
+;=========================================
+;===  UNAPI FUNCTIONS ADDRESSES TABLE  ===
+;=========================================
+
+;TODO: Adjust for the routines of your implementation
+
+;--- Standard routines addresses table
+
+FN_TABLE:
+FN_0:	dw	FN_INFO
+FN_1:	dw	FN_ENUM
+
+
+;==============================
+;===  UNAPI FUNCTIONS CODE  ===
+;==============================
+
+;--- Mandatory routine 0: return API information
+;    Input:  A  = 0
+;    Output: HL = Descriptive string for this implementation, on this slot, zero terminated
+;            DE = API version supported, D.E
+;            BC = This implementation version, B.C.
+;            A  = 0 and Cy = 0
+;
+; REMEMBER: The API identifier string must be visible at APIINFO address in bank 0
+
+FN_INFO:
+	ld	bc, 256 * ROM_V_P + ROM_V_S
+	ld	de, 256 * API_V_P + API_V_S
+	ld	hl, APIINFO
+	xor	a
+	ret
+
+;TODO: Replace the FN_* routines below with the appropriate routines for your implementation
+
+;--- Sample routine 1: adds two 8-bit numbers
+;    Input: E, L = Numbers to add
+;    Output: HL = Result
+
+FN_ENUM:
+	CALL	_fn_enum
 	RET
 
-;-----------------------------------------------------------------------------
+;----------------------------------------------------------
 ;
 ; Direct calls entry points.
 ; Calls to addresses 7850h, 7853h, 7856h, 7859h and 785Ch
@@ -1046,40 +1231,40 @@ _PRINT_DONE:
 ;       Inputs          A - number to be printed - 0ABh
 ;       Outputs         ________________________
 PRINT_HEX:
-    push af
-    push bc
-    push de
-    call __NUMTOHEX
-    ld a, d
-    call CHPUT
-    ld a, e
-    call CHPUT
-    pop de
-    pop bc
-    pop af
-    ret
+	push	af
+	push	bc
+	push	de
+	call	__NUMTOHEX
+	ld	a, d
+	call	CHPUT
+	ld	a, e
+	call	CHPUT
+	pop	de
+	pop	bc
+	pop	af
+	ret
 ;       Subroutine      Convert 8-bit hexidecimal number to ASCII reprentation
 ;       Inputs          A - number to be printed - 0ABh
 ;       Outputs         DE - two byte ASCII values - D=65 / 'A' and E=66 / 'B'
 __NUMTOHEX:
-    ld c, a   ; a = number to convert
-    call _NTH1
-    ld d, a
-    ld a, c
-    call _NTH2
-    ld e, a
-    ret  ; return with hex number in de
+	ld	c, a   ; a = number to convert
+	call	_NTH1
+	ld	d, a
+	ld	a, c
+	call	_NTH2
+	ld	e, a
+	ret  ; return with hex number in de
 _NTH1:
-    rra
-    rra
-    rra
-    rra
+	rra
+	rra
+	rra
+	rra
 _NTH2:
-    or 0F0h
-    daa
-    add a, 0A0h
-    adc a, 040h ; Ascii hex at this point (0 to F)
-    ret
+	or	0F0h
+	daa
+	add	a, 0A0h
+	adc	a, 040h ; Ascii hex at this point (0 to F)
+	ret
 ;-----------------------------------------------------------------------------
 ;
 ; Obtain the work area address for the *USB* driver portion
@@ -1168,8 +1353,8 @@ no_rest:
 ; Output: IX=Pointer to the selected work area
 
 WRKAREAPTR:
-	call MY_GWORK		; GET USB WRK AREA
-	add ix, bc
+	call	MY_GWORK		; GET USB WRK AREA
+	add	ix, bc
 	ret
 ;-----------------------------------------------------------------------------
 ;

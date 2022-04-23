@@ -19,6 +19,10 @@ $(BINDIR)spike.bin: $(BINDIR)crt.o \
  	$(BINDIR)main.c.o \
  	$(BINDIR)print.c.o \
  	$(BINDIR)print.o \
+ 	$(BINDIR)usb-enumerate.c.o \
+ 	$(BINDIR)usb-enumerate-hub.c.o \
+ 	$(BINDIR)debuggin.c.o \
+ 	$(BINDIR)hw.c.o \
 	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
 
 $(BINDIR)%.bin:

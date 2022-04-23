@@ -43,6 +43,7 @@ $(BINDIR)spike.bin: $(BINDIR)crt.o \
  	$(BINDIR)usb-lun-info-ufi.c.o \
  	$(BINDIR)usb-lun-info.c.o \
  	$(BINDIR)work-area.c.o \
+ 	$(BINDIR)extended-bios.c.o \
  	$(BINDIR)work-area.o \
 	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
 
