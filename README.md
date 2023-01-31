@@ -137,6 +137,12 @@ The design of the boards has borrowed a lot from pre-existing solutions out ther
 
 *Standing on the shoulders of giants.  Many thanks to all who share their knowledge and passions*
 
+## Disclaimer
+
+My little kits described here are not authorised or associated in anyway with the rightful owners of the MSX trademark/platform.  These kits are designed to be MSX compatible.  There is nothing 'official' here.
+
+And my thanks to all the pioneers and developers of this platform - An inspiring platform that continues to enable also sorts of creativity and joy for myself and many others.
+
 ## License
 Copyright 2021 Dean Netherton
 
