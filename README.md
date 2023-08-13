@@ -5,12 +5,6 @@
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
 
-Now proudly sponsored by PCB Way [PCBWay](https://www.pcbway.com/)
-
-<a href="https://www.pcbway.com/"><img src="pcbway.png" width="10%"/></a>
-
-My thanks to PCBWay for helping out - https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014/log/205923-sponsorship-from-pcbway
-
 </br>
 
 The repo describes a series of boards designed for RC2014, to give MSX+ compatiblity.

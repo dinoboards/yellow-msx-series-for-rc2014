@@ -3,12 +3,6 @@
 
 [![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev)
 
-Now proudly sponsored by PCB Way [PCBWay](https://www.pcbway.com/)
-
-<a href="https://www.pcbway.com/"><img src="../pcbway.png" width="10%"/></a>
-
-My thanks to PCBWay for helping out - https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014/log/205923-sponsorship-from-pcbway
-
 </br>
 
 ### MSX BIOS AND MSX-DOS
