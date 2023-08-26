@@ -79,8 +79,8 @@ typedef enum _ch376_pid {
   CH_PID_OUT   = DEF_USB_PID_OUT
 } ch376_pid;
 
-__sfr __at 0x84 CH376_DATA_PORT;
-__sfr __at 0x85 CH376_COMMAND_PORT;
+__sfr __at 0x88 CH376_DATA_PORT;
+__sfr __at 0x89 CH376_COMMAND_PORT;
 
 extern void delay_short();
 extern void delay_medium();
