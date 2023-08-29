@@ -9,7 +9,6 @@
 struct __working;
 
 typedef struct {
-  uint8_t next_storage_device_index;
   uint8_t next_device_address;
 } enumeration_state;
 

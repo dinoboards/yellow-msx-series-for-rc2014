@@ -628,7 +628,11 @@ DRV_CFG_NO_CF:
 DRV_CFG_NO_MS:
 	BIT	BIT_PRES_USB, A
 	JR	Z, DRV_CFG_NO_USB
-	INC	B
+
+	CALL	_get_number_of_usb_drives
+	LD	A, L
+	ADD	B
+	LD	B, A
 
 DRV_CFG_NO_USB:
 	XOR	A

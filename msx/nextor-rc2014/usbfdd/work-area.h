@@ -10,6 +10,7 @@ typedef struct __usb_state {
   storage_device_config storage_device[MAX_NUMBER_OF_STORAGE_DEVICES];
   device_config         hub_config;
   endpoint_param        hub_endpoint;
+  uint8_t               store_device_count;
 } _usb_state;
 
 typedef struct _work_area {

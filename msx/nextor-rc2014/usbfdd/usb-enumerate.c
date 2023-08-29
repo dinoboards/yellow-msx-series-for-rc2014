@@ -77,7 +77,7 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
 
   // printf("EndP: ");
   // logEndPointDescription(endpoint);
-  storage_device_config *const storage_dev = &work_area->storage_device[working->state->next_storage_device_index];
+  storage_device_config *const storage_dev = &work_area->storage_device[work_area->store_device_count];
 
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
@@ -106,8 +106,8 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE: {
-    working->state->next_storage_device_index++;
-    storage_device_config *const storage_dev = &work_area->storage_device[working->state->next_storage_device_index];
+    work_area->store_device_count++;
+    storage_device_config *const storage_dev = &work_area->storage_device[work_area->store_device_count];
     device_config *const         dev_cfg     = &storage_dev->config;
 
     dev_cfg->max_packet_size  = working->desc.bMaxPacketSize0;
@@ -181,8 +181,9 @@ usb_error read_all_configs(enumeration_state *const state) {
 }
 
 usb_error enumerate_all_devices() {
+  _usb_state *const work_area = get_usb_work_area();
+  work_area->store_device_count = (uint8_t)-1;
   enumeration_state state;
-  state.next_storage_device_index = (uint8_t)-1;
   state.next_device_address       = 20;
 
   return read_all_configs(&state);
