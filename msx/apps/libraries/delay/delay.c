@@ -12,6 +12,6 @@ void delay(const uint8_t period) __z88dk_fastcall {
 void long_delay(const int16_t seconds) __z88dk_fastcall {
   __asm__("EI");
   const int16_t ft = get_future_time(from_seconds(seconds));
-  while(!is_time_past(ft))
+  while (!is_time_past(ft))
     ;
 }

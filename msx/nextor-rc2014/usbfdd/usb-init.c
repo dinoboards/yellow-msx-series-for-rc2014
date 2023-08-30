@@ -4,6 +4,7 @@
 #include "scsi.h"
 #include "usb-enumerate-hub.h"
 #include "usb-enumerate.h"
+#include "usb-lun-info.h"
 #include "usb.h"
 #include "work-area.h"
 #include <delay.h>
@@ -29,47 +30,78 @@ usb_error usb_host_bus_reset() {
   return USB_ERR_OK;
 }
 
+void convert_and_print_disk_size(uint32_t number_of_sectors) {
+  if (number_of_sectors == 1474560 / 512) {
+    printf("1440KB");
+    return;
+  }
+
+  const char *suffix = "KB";
+
+  if (number_of_sectors >= 2048) {
+    number_of_sectors /= 256;
+    suffix = "MB";
+  }
+
+  if (number_of_sectors >= 2048) {
+    number_of_sectors /= 1024;
+    suffix = "GB";
+  }
+
+  const uint16_t a = (uint16_t)(number_of_sectors / 8);
+  const uint16_t b = (uint16_t)(number_of_sectors % 8 * 100) / 8;
+
+  if (b == 0)
+    printf("%d%s", a, suffix);
+  else
+    printf("%d.%02d%s", a, b, suffix);
+}
+
+void print_disk_size(const uint8_t device_index) {
+  nextor_lun_info info;
+
+  usb_lun_info(device_index, 1, &info);
+  convert_and_print_disk_size(info.number_of_sectors);
+  printf(")\r\n");
+}
+
 bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
-  const bool hasUsb = work_area->hub_config.address != 0;
+  const bool hasUsbHub = work_area->hub_config.address != 0;
 
   uint8_t                      floppy_count       = 0;
   uint8_t                      mass_storage_count = 0;
   uint8_t                      index              = MAX_NUMBER_OF_STORAGE_DEVICES;
   const storage_device_config *storage_device     = &work_area->storage_device[0];
+  uint8_t                      device_index       = 1;
+
+  if (hasUsbHub)
+    print_string("USB HUB:\r\n");
+  else
+    print_string("USB:         ");
 
   do {
     const usb_device_type t = storage_device->type;
-    if (t == USB_IS_FLOPPY)
+    if (t == USB_IS_FLOPPY) {
+      print_string("    FLOPPY  (");
+
+      print_disk_size(device_index);
       floppy_count++;
-    else if (t == USB_IS_MASS_STORAGE)
+    }
+
+    else if (t == USB_IS_MASS_STORAGE) {
+      print_string("    STORAGE (");
+      print_disk_size(device_index);
       mass_storage_count++;
+    }
 
     storage_device++;
+    device_index++;
   } while (--index != 0);
 
-  if (!hasUsb && floppy_count == 0 && mass_storage_count == 0)
+  if (!hasUsbHub && floppy_count == 0 && mass_storage_count == 0) {
+    print_string("\r\n");
     return false;
-
-  print_string("USB:             ");
-
-  if (hasUsb) {
-    print_string("HUB");
-
-    if (floppy_count != 0 || mass_storage_count != 0)
-      print_string(", ");
   }
-
-  if (floppy_count != 0) {
-    print_string("FLOPPY");
-
-    if (mass_storage_count != 0)
-      print_string(", ");
-  }
-
-  if (mass_storage_count != 0)
-    print_string("STORAGE");
-
-  print_string("\r\n");
 
   return floppy_count != 0 || mass_storage_count != 0;
 }

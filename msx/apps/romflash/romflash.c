@@ -13,7 +13,6 @@ void main() {
   printf("Spike erasing last sector\r\n");
   flashLoader();
 
-
   // printf("SPIKE loading file into mapped memory ....\r\n");
 
   // extbio_get_dev_info_table(4, &info_table);
@@ -59,7 +58,6 @@ void main() {
   // extbio_get_dev_info_table(4, &info_table);
 
   // printf("Free Slot %d, Total Slots: %d\r\n", info_table.number_of_free_segments, info_table.number_of_segments);
-
 }
 
 // void main() {

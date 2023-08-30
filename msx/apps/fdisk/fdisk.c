@@ -755,14 +755,16 @@ bool writeSector(uint32_t targetSector) {
   return TRUE;
 }
 
-#define FOR_BUFFER(f, s)       \
+#define FOR_BUFFER(f, s)  \
   for (i = 0; i < s; i++) \
   f
 #define CHECK_BUFFER(c, f, s) \
-  FOR_BUFFER(if (c) {      \
-    f;                     \
-    break;                 \
-  }, s)
+  FOR_BUFFER(                 \
+      if (c) {                \
+        f;                    \
+        break;                \
+      },                      \
+      s)
 
 void testDeviceWriteAccess() {
   uint16_t error;
@@ -829,7 +831,7 @@ abortTest:
 
 // const char fullWriteTestMessage[] = "Full Write Test";
 
-bool readWriteError(const char *errorMessageHeader, const uint16_t error, const uint16_t sectorNumber, const char* message) {
+bool readWriteError(const char *errorMessageHeader, const uint16_t error, const uint16_t sectorNumber, const char *message) {
   strcpy(buffer, errorMessageHeader);
   sprintf(buffer + strlen(errorMessageHeader), "%u", sectorNumber);
   strcpy(buffer + strlen(buffer), ":");
@@ -843,9 +845,7 @@ bool readWriteError(const char *errorMessageHeader, const uint16_t error, const 
   return true;
 }
 
-void increment32Bit(uint32_t* p) __z88dk_fastcall {
-  (*p)++;
-}
+void increment32Bit(uint32_t *p) __z88dk_fastcall { (*p)++; }
 
 void testDeviceFullWriteAccess() {
   const char *message = "Now testing sector ";
@@ -894,7 +894,7 @@ void testDeviceFullWriteAccess() {
         return;
       goto nextSector;
     }
-    
+
     FOR_BUFFER(buffer[i] = i, 1024);
     error = msxdosDevWrite(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, sectorNumber, 2, buffer);
     if (error) {
@@ -919,7 +919,7 @@ void testDeviceFullWriteAccess() {
       goto nextSector;
     }
 
-nextSector:
+  nextSector:
     sectorNumber++;
     if (sectorNumber >= selectedLun->sectorCount) {
       sectorNumber = 0;
@@ -931,7 +931,6 @@ nextSector:
 abortTest:
   waitKey();
 }
-
 
 bool confirmDataDestroy(char *action) {
   printStateMessage("");
