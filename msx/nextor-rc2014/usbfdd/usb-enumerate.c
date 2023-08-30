@@ -181,10 +181,10 @@ usb_error read_all_configs(enumeration_state *const state) {
 }
 
 usb_error enumerate_all_devices() {
-  _usb_state *const work_area = get_usb_work_area();
+  _usb_state *const work_area   = get_usb_work_area();
   work_area->store_device_count = (uint8_t)-1;
   enumeration_state state;
-  state.next_device_address       = 20;
+  state.next_device_address = 20;
 
   return read_all_configs(&state);
 }
