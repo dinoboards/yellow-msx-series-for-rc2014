@@ -607,9 +607,6 @@ DRV_DIRECT4:
 DRV_CONFIG:
 	CP	1
 	JR	Z, DRV_CONFIG_COUNT
-	CP	2
-	JR	Z, DRV_CONFIG_GET
-
 	LD	A, 1
 	RET
 
@@ -637,28 +634,6 @@ DRV_CFG_NO_MS:
 DRV_CFG_NO_USB:
 	XOR	A
 	RET
-
-DRV_CONFIG_GET:
-	LD	A, C
-	CP	0
-	JR	Z, DRV_CFG_A
-	CP	1
-	JR	Z, DRV_CFG_B
-
-	LD	A, 1
-	RET
-
-DRV_CFG_A:
-	LD	B, 1
-DRV_CFG:
-	LD	C, 1
-	XOR	A
-	RET
-
-DRV_CFG_B:
-	LD	B, 2
-	JR	DRV_CFG
-
 
 ;=====
 ;=====  BEGIN of DEVICE-BASED specific routines
