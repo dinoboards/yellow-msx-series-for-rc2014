@@ -120,13 +120,16 @@ typedef unsigned char volatile *PUINT8V;
 
 /* Set USB working mode
  * input: mode code
- * 00H=Device mode not enabled, 01H=Device mode enabled and using external firmware mode (serial port not supported),
+ * 00H=Device mode not enabled
+ * 01H=Device mode enabled and using external firmware mode (serial port not supported)
  * 02H=Device mode enabled and using built-in firmware mode
  * 03H=SD card host mode/inactive host mode, used to manage and access files in SD card
- * 04H=Host mode not enabled, 05H=Host mode enabled, 06H=Host mode enabled and SOF packet generated automatically, 07H=Host
- * mode enabled and USB bus reset
- * output: operation status (CMD_RET_SUCCESS or CMD_RET_ABORT, other values ​​indicate that the operation is not
- * completed) */
+ * 04H=Host mode not enabled
+ * 05H=Host mode enabled
+ * 06H=Host mode enabled and SOF packet generated automatically
+ * 07H=Host mode enabled and USB bus reset
+ * output: operation status (CMD_RET_SUCCESS or CMD_RET_ABORT, other values ​​indicate that the operation is
+ * not completed) */
 #define CMD11_SET_USB_MODE 0x15
 
 #define CMD01_GET_STATUS 0x22 /* Get interrupt status and cancel interrupt request */
@@ -286,8 +289,10 @@ typedef unsigned char volatile *PUINT8V;
 
 #define CMD20_SET_RETRY 0x0B /* Host mode: set the number of retries for USB transaction operations */
 /* Input: data 25H, number of retries */
-/* Bit 7 is 0, no retry when receiving NAK, bit 7 is 1, bit 6 is 0, infinite retry when receiving NAK, bit 7 is 1, bit 6 is
- * 1, retry for up to 3 seconds when receiving NAK , bit 5~bit 0 is the number of retries after timeout */
+/* Bit 7 is 0, no retry when receiving NAK,
+   bit 7 is 1, bit 6 is 0, infinite retry when receiving NAK,
+   bit 7 is 1, bit 6 is 1, retry for up to 3 seconds when receiving NAK,
+   bit 5~bit 0 is the number of retries after timeout */
 
 #define CMD20_WRITE_VAR8 0x0B /* Set the specified 8-bit file system variable */
 /* input: variable address, data */
@@ -1052,7 +1057,7 @@ typedef union CH376_CMD_DATA {
 #define DEF_USB_REQ_READ    0x80 /* Control read operation */
 #define DEF_USB_REQ_WRITE   0x00 /* Control write operation */
 #define DEF_USB_REQ_TYPE    0x60 /* Control request type */
-#define DEF_USB_REQ_STAND   0x00 /*Standard Request */
+#define DEF_USB_REQ_STAND   0x00 /* Standard Request */
 #define DEF_USB_REQ_CLASS   0x20 /* Device class request */
 #define DEF_USB_REQ_VENDOR  0x40 /* Vendor  Request */
 #define DEF_USB_REQ_RESERVE 0x60 /* Reservation  Request */
@@ -1071,6 +1076,14 @@ typedef union CH376_CMD_DATA {
 #define DEF_USB_GET_INTERF  0x0A
 #define DEF_USB_SET_INTERF  0x0B
 #define DEF_USB_SYNC_FRAME  0x0C
+#endif
+
+// desscriptor types for CMD1H_GET_DESCR
+#ifndef CH375_USB_DEVICE_DESCRIPTOR
+#define CH375_USB_DEVICE_DESCRIPTOR        0x01
+#define CH375_USB_CONFIGURATION_DESCRIPTOR 0x02
+#define CH375_USB_INTERFACE_DESCRIPTOR     0x04
+#define CH375_USB_ENDPOINT_DESCRIPTOR      0x05
 #endif
 
 /* ************************************************ **************************************************** ***************** */

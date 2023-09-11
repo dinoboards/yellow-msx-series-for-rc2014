@@ -1274,7 +1274,7 @@ MY_STWORK:
 
 
 ;-----------------------------------------------------------------------------
-; SET NZ IF CF IS PRESENT
+; SET NZ IF CF IS PRESENT???????
 
 DRV_GET_PRESENT:
 	PUSH	BC

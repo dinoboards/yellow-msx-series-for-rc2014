@@ -22,4 +22,8 @@ extern void logSetupPacket(const setup_packet *const cmd_packet);
 
 extern void logNextorLunInfo(const nextor_lun_info *const info);
 
+extern void logHubDescription(const hub_descriptor *const hub_descriptor);
+
+extern void logHubPortStatus(const hub_port_status *const port_status);
+
 #endif

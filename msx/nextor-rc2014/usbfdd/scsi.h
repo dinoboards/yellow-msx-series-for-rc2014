@@ -30,6 +30,31 @@ typedef struct {
 
 typedef struct {
   uint8_t operation_code;
+
+  uint8_t IMMED : 1;
+  uint8_t reserved : 7;
+
+  uint8_t reserved2;
+
+  uint8_t power_condition_modifier : 4;
+  uint8_t reserved3 : 3;
+
+  uint8_t start : 1;
+  uint8_t loej : 1;
+  uint8_t no_flish : 1;
+  uint8_t reserved4 : 1;
+  uint8_t power_condition : 4;
+
+  uint8_t control;
+} _scsi_packet_eject;
+
+typedef struct {
+  _scsi_command_block_wrapper cbw;
+  _scsi_packet_eject          eject;
+} cbw_scsi_eject;
+
+typedef struct {
+  uint8_t operation_code;
   uint8_t lun;
   uint8_t reserved1;
   uint8_t reserved2;
@@ -163,9 +188,7 @@ extern usb_error scsi_inquiry(storage_device_config *const dev, scsi_inquiry_res
 extern usb_error scsi_sense_init(storage_device_config *const dev);
 extern usb_error scsi_test(storage_device_config *const dev);
 extern usb_error scsi_request_sense(storage_device_config *const dev, scsi_sense_result *const sens_result);
-// extern usb_error scsi_read(storage_device_config *const dev, uint32_t sector_number, uint8_t *const buffer);
-// extern usb_error scsi_write(storage_device_config *const dev, uint32_t sector_number, const uint8_t *const buffer);
-
+extern usb_error scsi_eject(storage_device_config *const dev);
 extern usb_error scsi_read_write(storage_device_config *const dev,
                                  const bool                   send,
                                  uint32_t                     sector_number,

@@ -32,7 +32,7 @@ usb_error usb_host_bus_reset() {
 
 void convert_and_print_disk_size(uint32_t number_of_sectors) {
   if (number_of_sectors == 1474560 / 512) {
-    printf("1440KB");
+    print_string("1440KB");
     return;
   }
 
@@ -51,10 +51,13 @@ void convert_and_print_disk_size(uint32_t number_of_sectors) {
   const uint16_t a = (uint16_t)(number_of_sectors / 8);
   const uint16_t b = (uint16_t)(number_of_sectors % 8 * 100) / 8;
 
-  if (b == 0)
-    printf("%d%s", a, suffix);
-  else
-    printf("%d.%02d%s", a, b, suffix);
+  print_uint16(a);
+
+  if (b != 0) {
+    print_string(".");
+    print_uint16(b);
+  }
+  print_string(suffix);
 }
 
 void print_disk_size(const uint8_t device_index) {
@@ -62,17 +65,18 @@ void print_disk_size(const uint8_t device_index) {
 
   usb_lun_info(device_index, 1, &info);
   convert_and_print_disk_size(info.number_of_sectors);
-  printf(")\r\n");
+  print_string(")\r\n");
 }
 
 bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   const bool hasUsbHub = work_area->hub_config.address != 0;
 
-  uint8_t                      floppy_count       = 0;
-  uint8_t                      mass_storage_count = 0;
-  uint8_t                      index              = MAX_NUMBER_OF_STORAGE_DEVICES;
-  const storage_device_config *storage_device     = &work_area->storage_device[0];
-  uint8_t                      device_index       = 1;
+  uint8_t floppy_count       = 0;
+  uint8_t mass_storage_count = 0;
+  // uint8_t                      ethernet_adapter   = 0;
+  uint8_t                      device_index   = 1;
+  uint8_t                      index          = MAX_NUMBER_OF_STORAGE_DEVICES;
+  const storage_device_config *storage_device = &work_area->storage_device[0];
 
   if (hasUsbHub)
     print_string("USB HUB:\r\n");
@@ -83,22 +87,24 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
     const usb_device_type t = storage_device->type;
     if (t == USB_IS_FLOPPY) {
       print_string("    FLOPPY  (");
-
       print_disk_size(device_index);
       floppy_count++;
-    }
-
-    else if (t == USB_IS_MASS_STORAGE) {
+    } else if (t == USB_IS_MASS_STORAGE) {
       print_string("    STORAGE (");
       print_disk_size(device_index);
       mass_storage_count++;
     }
 
+    // else if (t == USB_IS_MASS_STORAGE_OF_ETHERNET_ADAPTER) {
+    //   print_string("    ETHER\r\n");
+    //   ethernet_adapter++;
+    // }
+
     storage_device++;
     device_index++;
   } while (--index != 0);
 
-  if (!hasUsbHub && floppy_count == 0 && mass_storage_count == 0) {
+  if (!hasUsbHub && floppy_count == 0 && mass_storage_count == 0 /*&& ethernet_adapter == 0*/) {
     print_string("\r\n");
     return false;
   }
@@ -141,11 +147,23 @@ uint8_t usb_host_init() {
 
   usb_host_bus_reset();
 
-  enumerate_all_devices();
+  for (int i = 0; i < 4; i++) {
+    const uint8_t r = ch_very_short_wait_int_and_get_status();
 
-  initialise_mass_storage_devices(work_area);
+    if (r == USB_INT_CONNECT) {
+      enumerate_all_devices();
+
+      initialise_mass_storage_devices(work_area);
+
+      print_string(ERASE_LINE);
+
+      return state_devices(work_area);
+    }
+  }
 
   print_string(ERASE_LINE);
 
-  return state_devices(work_area);
+  print_string("USB:             DISCONNECTED\r\n");
+
+  return false;
 }

@@ -74,7 +74,8 @@ usb_error usb_execute_cbi_core_no_clear(storage_device_config *const storage_dev
   if (result != USB_ERR_OK) {
     *asc = 0;
     // Token error here, asc = 0
-    x_printf(" a2(%d) ", result);
+    CHECK(result);
+
     return result;
   }
 

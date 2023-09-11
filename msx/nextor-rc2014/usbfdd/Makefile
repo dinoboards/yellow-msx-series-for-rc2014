@@ -14,11 +14,10 @@ SRC := ./usbfdd/
 
 ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
-$(BINDIR)spike.bin: $(BINDIR)crt.o \
+$(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
  	$(BINDIR)ch376.c.o \
  	$(BINDIR)debuggin.c.o \
  	$(BINDIR)hw.c.o \
- 	$(BINDIR)print.c.o \
  	$(BINDIR)print.o \
  	$(BINDIR)scsi.c.o \
  	$(BINDIR)ufi.c.o \

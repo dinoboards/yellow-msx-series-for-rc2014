@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst))
 
 include	Makefile.rules.mk
 
@@ -35,6 +35,10 @@ V9958_DEPS := v9958.c v9958.asm
 helloworld_files = $(call app_files,helloworld,$(MSXDOS) $(SYSTEM_VARS))
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files))
 helloworld.com.crt_enable_commandline:=1
+
+usbtst_files = $(call app_files,usbtst,$(MSXDOS) $(SYSTEM_VARS) $(DELAY))
+$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files))
+usbtst.com.crt_enable_commandline:=1
 
 dots_files = $(call app_files,dots,$(V9958_DEPS) $(MSXDOS) $(CONFIG_REQUEST))
 $(BIN)dots.com: $(addprefix $(BIN),$(dots_files))
@@ -96,9 +100,9 @@ $(BIN)romflashwriter/romflashwriter.inc: $(BIN)romflashwriter/romflashwriter.bin
 	echo "exported romflashwriter.bin to romflashwriter.inc"
 
 ./bin/romflash/flashloader.o: romflash/flashloader.asm $(BIN)romflashwriter/romflashwriter.inc
- 
-romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.asm)    
-$(BIN)romflash.com: $(BIN)romflashwriter/romflashwriter.inc $(addprefix $(BIN),$(romflash_files)) 
+
+romflash_files = $(call app_files,romflash,libraries/extbio/extbio.asm getslt.asm)
+$(BIN)romflash.com: $(BIN)romflashwriter/romflashwriter.inc $(addprefix $(BIN),$(romflash_files))
 romflash.com.crt_enable_commandline:=1
 
 muflash_files = $(call app_files,muflash,$(SYSTEM_VARS))

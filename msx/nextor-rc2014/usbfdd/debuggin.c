@@ -14,17 +14,14 @@
 //          p->bNumEndpoints);
 
 //   if (p->bLength > 5)
-//     printf("clas=%d,sub=%d,prot=%d,int=%d",
-//          p->bInterfaceClass,
-//          p->bInterfaceSubClass,
-//          p->bInterfaceProtocol,
-//          p->iInterface);
+//     printf("clas=%d,sub=%d,prot=%d,int=%d", p->bInterfaceClass, p->bInterfaceSubClass, p->bInterfaceProtocol,
+//     p->iInterface);
 
 //   printf("\r\n");
 // }
 
 // void logConfig(const config_descriptor *const p) {
-//   printf("cfg len=%d,typ=%d,tlen=%d,numI=%d,bcfgv=%d,icfg=%d,bmA=%d,max=%d\r\n",
+//   printf("cfg len=%d,typ=%d,tlen=%d,numI=%d,bcfgv=%d,icfg=%d,bmA=%02x,max=%d\r\n",
 //          p->bLength,
 //          p->bDescriptorType,
 //          p->wTotalLength,
@@ -36,20 +33,20 @@
 // }
 
 // void logDevice(const device_descriptor *const p) {
-//   // printf("dev len=%d,", p->bLength);
-//   // printf("typ=%d,", p->bDescriptorType);
-//   // printf("USB=%02X,", p->bcdUSB);
+//   printf("dev len=%d,", p->bLength);
+//   printf("typ=%d,", p->bDescriptorType);
+//   printf("USB=%02X,", p->bcdUSB);
 //   printf("cls=%02x,", p->bDeviceClass);
 //   printf("sub=%02x,", p->bDeviceSubClass);
 //   printf("pro=%02x,", p->bDeviceProtocol);
-//   // printf("siz=%d,", p->bMaxPacketSize0);
-//   // printf("ven=%04X,", p->idVendor);
-//   // printf("prd=%04X,", p->idProduct);
-//   // printf("dev=%d,", p->bcdDevice);
-//   // printf("man=%d,", p->iManufacturer);
-//   // printf("ipd=%d,", p->iProduct);
-//   // printf("ser=%d,", p->iSerialNumber);
-//   // printf("num=%d\r\n", p->bNumConfigurations);
+//   printf("siz=%d,", p->bMaxPacketSize0);
+//   printf("ven=%04X,", p->idVendor);
+//   printf("prd=%04X,", p->idProduct);
+//   printf("dev=%04X,", p->bcdDevice);
+//   printf("man=%d,", p->iManufacturer);
+//   printf("ipd=%d,", p->iProduct);
+//   printf("ser=%d,", p->iSerialNumber);
+//   printf("num=%d\r\n", p->bNumConfigurations);
 // }
 
 // void logEndPointDescription(const endpoint_descriptor *const p) {
@@ -126,3 +123,17 @@
 //   printf("number_of_heads = %d,", info->number_of_heads);
 //   printf("number_of_sectors_per_track = %d,", info->number_of_sectors_per_track);
 // }
+
+// void logHubDescription(const hub_descriptor *const hub_descriptor) {
+//   printf("hub: len=%d,t=%d,ports=%d,char=%d,pwr=%d,ccur=%d,rem=%d\r\n",
+//          hub_descriptor->bDescLength,
+//          hub_descriptor->bDescriptorType,
+//          hub_descriptor->bNbrPorts,
+//          hub_descriptor->wHubCharacteristics,
+//          hub_descriptor->bPwrOn2PwrGood,
+//          hub_descriptor->bHubContrCurrent,
+//          hub_descriptor->DeviceRemovable[0]);
+// }
+
+// void logHubPortStatus(const hub_port_status *const port_status) { printf("hub: wPortStatus=%04x,wPortChange=%04x\r\n",
+// port_status->wPortStatus.val, port_status->wPortChange.val); }

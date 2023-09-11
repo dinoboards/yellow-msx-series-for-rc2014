@@ -13,7 +13,6 @@ typedef struct {
 
 // __z88dk_fastcall
 uint8_t fn_enum() {
-  printf("fn_enum\r\n");
-  // yprintf(3, "a = %02x, bc=%04x, de=%04x, hl=%04x", r->a, r->bc, r->de, r->hl);
+  print_string("fn_enum\r\n");
   return 1;
 }

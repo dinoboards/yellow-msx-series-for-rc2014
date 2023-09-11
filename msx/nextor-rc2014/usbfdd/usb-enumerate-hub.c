@@ -4,6 +4,7 @@
 #include <delay.h>
 #include <string.h>
 
+#include "debuggin.h"
 #include "print.h"
 
 void parse_endpoint_hub(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall {
@@ -74,20 +75,36 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
 
   uint8_t i = hub_description.bNbrPorts;
   do {
+    CHECK(hub_clear_feature(FEAT_PORT_POWER, i));
+    delay_short();
+
     CHECK(hub_set_feature(FEAT_PORT_POWER, i));
     delay_short();
 
-    CHECK(hub_set_feature(FEAT_PORT_RESET, i), x_printf("hub4 err:%d\r\n", result));
+    hub_clear_feature(FEAT_PORT_RESET, i);
     delay_short();
 
-    CHECK(hub_get_status_port(i, &port_status), x_printf("hub[%d] err: %d \r\n", 0, result));
+    CHECK(hub_set_feature(FEAT_PORT_RESET, i));
+    delay_short();
+
+    CHECK(hub_get_status_port(i, &port_status));
 
     if (port_status.wPortStatus.port_connection) {
+      CHECK(hub_clear_feature(HUB_FEATURE_PORT_CONNECTION_CHANGE, i));
       delay_short();
-      CHECK(read_all_configs(working->state), x_printf("err5: %d\r\n", result));
+
+      CHECK(hub_clear_feature(FEAT_PORT_ENABLE_CHANGE, i));
+      delay_short();
+
+      CHECK(hub_clear_feature(FEAT_PORT_RESET_CHANGE, i));
+      delay_short();
+
+      CHECK(hub_get_status_port(i, &port_status));
+
+      CHECK(read_all_configs(working->state));
 
     } else {
-      CHECK(hub_clear_feature(FEAT_PORT_POWER, i), x_printf("hub5 err:%d\r\n", result));
+      CHECK(hub_clear_feature(FEAT_PORT_POWER, i));
     }
   } while (--i != 0);
 
