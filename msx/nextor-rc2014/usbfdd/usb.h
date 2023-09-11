@@ -3,12 +3,38 @@
 
 #include <stdlib.h>
 
-#define GET_STATUS    0
-#define CLEAR_FEATURE 1
-#define SET_FEATURE   3
+#define GET_STATUS      0
+#define CLEAR_FEATURE   1
+#define SET_FEATURE     3
+#define GET_DESCRIPTOR  6
+#define SET_DESCRIPTOR  7
+#define CLEAR_TT_BUFFER 8
+#define RESET_TT        9
+#define GET_TT_STATE    10
+#define CSTOP_TT        11
 
-#define FEAT_PORT_POWER 8
-#define FEAT_PORT_RESET 4
+#define FEAT_PORT_POWER                    8
+#define FEAT_PORT_RESET                    4
+#define HUB_FEATURE_PORT_CONNECTION_CHANGE 16
+#define FEAT_PORT_ENABLE_CHANGE            17
+#define FEAT_PORT_RESET_CHANGE             20
+
+// HUB_FEATURE_PORT_CONNECTION          = 0,
+// HUB_FEATURE_PORT_ENABLE              = 1,
+// HUB_FEATURE_PORT_SUSPEND             = 2,
+// HUB_FEATURE_PORT_OVER_CURRENT        = 3,
+// HUB_FEATURE_PORT_RESET               = 4,
+
+// HUB_FEATURE_PORT_POWER               = 8,
+// HUB_FEATURE_PORT_LOW_SPEED           = 9,
+
+// HUB_FEATURE_PORT_CONNECTION_CHANGE   = 16,
+// HUB_FEATURE_PORT_ENABLE_CHANGE       = 17,
+// HUB_FEATURE_PORT_SUSPEND_CHANGE      = 18,
+// HUB_FEATURE_PORT_OVER_CURRENT_CHANGE = 19,
+// HUB_FEATURE_PORT_RESET_CHANGE        = 20,
+// HUB_FEATURE_PORT_TEST                = 21,
+// HUB_FEATURE_PORT_INDICATOR           = 22
 
 #define RT_HOST_TO_DEVICE 0b00000000
 #define RT_DEVICE_TO_HOST 0b10000000
@@ -77,14 +103,35 @@ typedef struct _endpoint_descriptor {
   uint8_t  bInterval;
 } endpoint_descriptor;
 
+/*
+wHubCharacteristics:
+  D1...D0: Logical Power Switching Mode
+    00: Ganged power switching (all ports power at once)
+    01: Individual port power switching
+    1X: Reserved. Used only on 1.0 compliant hubs that implement no power switching
+
+  D2: Identifies a Compound Device
+    0: Hub is not part of a compound device.
+    1: Hub is part of a compound device.
+
+  D4...D3: Logical Power Switching Mode
+    00: Global Over-current Protection. The hub reports over-current as a summation
+        of all ports’ current draw, without a breakdown of individual port
+        over-current status.
+    01: Individual Port Over-current Protection. The hub reports over-current on a
+        per-port basis. Each port has an over-current status.
+    1X: No Over-current Protection. This option is  allowed only for bus-powered
+
+*/
+
 typedef struct {
   uint8_t  bDescLength;
-  uint8_t  bDescriptorType;
-  uint8_t  bNbrPorts;
-  uint16_t wHubCharacteristics;
-  uint8_t  bPwrOn2PwrGood;
-  uint8_t  bHubContrCurrent;
-  uint8_t  DeviceRemovable[1];
+  uint8_t  bDescriptorType;     /* HUB Descriptor Type 0x29 */
+  uint8_t  bNbrPorts;           /* Number of ports */
+  uint16_t wHubCharacteristics; /* Bitmap	Hub Characteristics (see above) */
+  uint8_t  bPwrOn2PwrGood;      /* Time (*2 ms) from port power on to power good */
+  uint8_t  bHubContrCurrent;    /* Maximum current used by hub controller (mA).*/
+  uint8_t  DeviceRemovable[1];  /* bits indicating deviceRemovable and portPwrCtrlMask */
 } hub_descriptor;
 
 typedef struct {

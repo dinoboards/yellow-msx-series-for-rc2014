@@ -28,23 +28,47 @@ typedef enum {
   USB_FILERR_MIN                      = 0x41,
   USB_ERR_OPEN_DIR                    = 0x41,
   USB_ERR_MISS_FILE                   = 0x42,
-  USB_FILERR_MAX                      = 0xB4
+  USB_FILERR_MAX                      = 0xB4,
+  USB_INT_CONNECT                     = 0x81
 } usb_error;
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
 
-typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2, USB_IS_HUB = 128 } usb_device_type;
+typedef enum {
+  USB_IS_FLOPPY       = 1,
+  USB_IS_MASS_STORAGE = 2,
+  // USB_IS_MASS_STORAGE_OF_ETHERNET_ADAPTER = 3,
+  USB_IS_HUB = 128
+} usb_device_type;
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
 
-#define CHECK(fn, ...)                                                                                                      \
+#if 0
+#define CHECK(fn)                                                                                                           \
   {                                                                                                                         \
     result = fn;                                                                                                            \
     if (result != USB_ERR_OK) {                                                                                             \
-      __VA_ARGS__;                                                                                                          \
+      print_string("Error: ");                                                                                              \
+      print_string(__FILE__);                                                                                               \
+      print_string(":");                                                                                                    \
+      print_uint16(__LINE__);                                                                                               \
+      print_string(" ");                                                                                                    \
+      print_uint16(result);                                                                                                 \
+      print_string("\r\n");                                                                                                 \
       return result;                                                                                                        \
     }                                                                                                                       \
   }
+
+#else
+
+#define CHECK(fn)                                                                                                           \
+  {                                                                                                                         \
+    result = fn;                                                                                                            \
+    if (result != USB_ERR_OK && result != USB_ERR_STALL)                                                                    \
+      return result;                                                                                                        \
+  }
+
+#endif
 
 typedef struct {
   uint8_t toggle : 1;
@@ -67,8 +91,8 @@ typedef struct {
 } storage_device_config;
 
 #define CH_SPEED_FULL     0 /* 12Mbps full speed FullSpeed ​​(default value) */
-#define CH_SPEED_LOW_FREQ 1 /*1.5Mbps (modify frequency only) */
-#define CH_SPEED_LOW      2 /*=1.5Mbps low speed LowSpeed*/
+#define CH_SPEED_LOW_FREQ 1 /* 1.5Mbps (modify frequency only) */
+#define CH_SPEED_LOW      2 /* 1.5Mbps low speed LowSpeed */
 
 #define CH_MODE_HOST_RESET 7
 #define CH_MODE_HOST       6
@@ -89,6 +113,7 @@ extern void           ch_command(const uint8_t command) __z88dk_fastcall;
 extern usb_error      ch_get_status();
 extern usb_error      ch_long_wait_int_and_get_status();
 extern usb_error      ch_short_wait_int_and_get_status();
+extern usb_error      ch_very_short_wait_int_and_get_status();
 extern uint8_t        ch_read_data(uint8_t *buffer, uint16_t buffer_size);
 extern void           ch_cmd_reset_all();
 extern uint8_t        ch_probe();

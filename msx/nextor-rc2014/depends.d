@@ -43,7 +43,7 @@
  usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h usbfdd/usb.h \
  usbfdd/work-area.h usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h \
  ../apps/libraries/delay/delay.h ../apps/libraries/msxbios/system_vars.h \
- usbfdd/print.h
+ usbfdd/debuggin.h usbfdd/nextor.h usbfdd/ufi.h usbfdd/print.h
 ./bin/usb-dev.c.asm: usbfdd/usb-dev.c usbfdd/usb-dev.h usbfdd/work-area.h \
  usbfdd/ch376.h usbfdd/ch376inc.h
 ./bin/usb-dev-info-scsi.c.asm: usbfdd/usb-dev-info-scsi.c \
@@ -79,11 +79,12 @@
  usbfdd/ufi.h usbfdd/usb.h
 ./bin/hw.c.asm: usbfdd/hw.c usbfdd/hw.h usbfdd/ch376.h usbfdd/ch376inc.h \
  usbfdd/usb.h usbfdd/work-area.h ../apps/libraries/delay/delay.h \
- ../apps/libraries/msxbios/system_vars.h usbfdd/print.h
+ ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h \
+ usbfdd/nextor.h usbfdd/ufi.h usbfdd/print.h
 ./bin/usb-init.c.asm: usbfdd/usb-init.c usbfdd/ch376.h usbfdd/ch376inc.h \
  usbfdd/hw.h usbfdd/usb.h usbfdd/nextor.h usbfdd/scsi.h \
- usbfdd/usb-lun-info.h usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h \
- usbfdd/work-area.h ../apps/libraries/delay/delay.h \
+ usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h usbfdd/work-area.h \
+ usbfdd/usb-lun-info.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h usbfdd/ufi.h \
  usbfdd/print.h
 ./bin/crt.o: ./usbfdd/crt.asm

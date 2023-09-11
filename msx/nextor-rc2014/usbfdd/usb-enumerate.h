@@ -3,6 +3,7 @@
 
 #include "usb.h"
 #include "work-area.h"
+#include <stdbool.h>
 
 #define MAX_CONFIG_SIZE 140
 
@@ -20,6 +21,7 @@ typedef struct __working {
   uint8_t           config_index;
   uint8_t           interface_count;
   uint8_t           endpoint_count;
+  bool              is_etherner_adapter;
 
   const uint8_t *ptr;
 

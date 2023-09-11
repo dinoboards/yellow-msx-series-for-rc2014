@@ -14,10 +14,17 @@ extern usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 
 extern usb_error hw_get_description(device_descriptor *const buffer);
 
+extern usb_error __hw_get_config_descriptor(config_descriptor *const buffer,
+                                            const uint8_t            config_index,
+                                            const uint8_t            buffer_size,
+                                            const uint8_t            device_address,
+                                            const uint8_t            max_packet_size);
+
 extern usb_error hw_get_config_descriptor(config_descriptor *const buffer,
                                           const uint8_t            config_index,
                                           const uint8_t            buffer_size,
-                                          const uint8_t            device_address);
+                                          const uint8_t            device_address,
+                                          const uint8_t            max_packet_size);
 
 extern usb_error hw_data_in_transfer(uint8_t *             buffer,
                                      const uint16_t        buffer_size,
@@ -29,12 +36,8 @@ extern usb_error hw_data_out_transfer(const uint8_t *       buffer,
                                       const uint8_t         device_address,
                                       endpoint_param *const endpoint);
 
-extern usb_error hw_get_desc_spike(device_descriptor *const buffer);
+extern usb_error hw_set_address(const uint8_t device_address) __z88dk_fastcall;
 
-inline usb_error hw_set_address(const uint8_t device_address) { return ch_control_transfer_set_address(device_address); }
-
-inline usb_error hw_set_configuration(const device_config *const config) {
-  return ch_control_transfer_set_config(config->value);
-}
+extern usb_error hw_set_configuration(const device_config *const config) __z88dk_fastcall;
 
 #endif

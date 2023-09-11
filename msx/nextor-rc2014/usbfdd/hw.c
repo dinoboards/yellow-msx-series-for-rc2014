@@ -4,6 +4,7 @@
 #include <delay.h>
 #include <stdlib.h>
 
+#include "debuggin.h"
 #include "print.h"
 
 // ; The size and direction of the transfer are taken from the contents
@@ -25,81 +26,91 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
 
   const uint8_t transferIn = (cmd_packet->bmRequestType & 0x80);
 
-  if (transferIn && buffer == 0) {
-    x_printf(" !!Err1 ");
+  if (transferIn && buffer == 0)
     return USB_ERR_OTHER;
-  }
 
   ch_set_usb_address(device_address);
 
   ch_write_data((const uint8_t *)cmd_packet, sizeof(setup_packet));
   ch_issue_token_setup();
-  CHECK(ch_short_wait_int_and_get_status(), x_printf("Tok1 %02x\r\n", result));
+  CHECK(ch_short_wait_int_and_get_status());
 
   result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint)
                       : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
 
-  if (result != USB_ERR_OK) {
-    x_printf(" Err2 (%d, %d, %d, %d) ", transferIn, cmd_packet->wLength, result, max_packet_size);
-    return result;
-  }
+  CHECK(result)
 
   if (transferIn) {
+    ch_command(CH_CMD_WR_HOST_DATA);
+    CH376_DATA_PORT = 0;
     ch_issue_token_out_ep0();
     result = ch_long_wait_int_and_get_status(); /* sometimes we get STALL here - seems to be ok to ignore */
+
     // printf(" E4(%d, %d) ", result, cmd_packet->wLength);
     if (result == USB_ERR_OK || result == USB_ERR_STALL)
       return USB_ERR_OK;
+
+    CHECK(result);
+
+    return result;
   }
 
   ch_issue_token_in_ep0();
-  return ch_long_wait_int_and_get_status();
+  CHECK(ch_long_wait_int_and_get_status());
+
+  return result;
 }
+
+const setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 8};
 
 usb_error hw_get_description(device_descriptor *const buffer) {
-  ch_set_usb_address(0);
+  usb_error    result;
+  setup_packet cmd;
+  cmd         = cmd_get_device_descriptor;
+  cmd.wLength = 8;
 
-  usb_error result;
+  CHECK(hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8));
 
-  CHECK(ch_control_transfer_request_descriptor(1));
+  cmd         = cmd_get_device_descriptor;
+  cmd.wLength = 18;
+  CHECK(hw_control_transfer(&cmd, (uint8_t *)buffer, 0, buffer->bMaxPacketSize0));
 
-  ch_read_data((uint8_t *)buffer, 18);
-
-  return USB_ERR_OK;
+  return result;
 }
 
-setup_packet cmd_get_config_descriptor = {0x80, 6, {0, 2}, {0, 0}, 0};
+const setup_packet cmd_set_device_address = {0x00, 5, {0, 0}, {0, 0}, 0};
 
-usb_error __hw_get_config_descriptor(config_descriptor *const buffer,
-                                     const uint8_t            config_index,
-                                     const uint8_t            buffer_size,
-                                     const uint8_t            device_address) {
+usb_error hw_set_address(const uint8_t device_address) __z88dk_fastcall {
+  setup_packet cmd;
+  cmd           = cmd_set_device_address;
+  cmd.bValue[0] = device_address;
 
+  return hw_control_transfer(&cmd, 0, 0, 0);
+}
+
+const setup_packet cmd_set_configuration = {0x00, 9, {0, 0}, {0, 0}, 0};
+
+usb_error hw_set_configuration(const device_config *const config) __z88dk_fastcall {
+  setup_packet cmd;
+  cmd           = cmd_set_configuration;
+  cmd.bValue[0] = config->value;
+
+  return hw_control_transfer(&cmd, 0, config->address, config->max_packet_size);
+}
+
+const setup_packet cmd_get_config_descriptor = {0x80, 6, {0, 2}, {0, 0}, 0};
+
+usb_error hw_get_config_descriptor(config_descriptor *const buffer,
+                                   const uint8_t            config_index,
+                                   const uint8_t            buffer_size,
+                                   const uint8_t            device_address,
+                                   const uint8_t            max_packet_size) {
   setup_packet cmd;
   cmd           = cmd_get_config_descriptor;
   cmd.bValue[0] = config_index;
   cmd.wLength   = (uint16_t)buffer_size;
 
-  return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, 64);
-}
-
-usb_error hw_get_config_descriptor(config_descriptor *const buffer,
-                                   const uint8_t            config_index,
-                                   const uint8_t            buffer_size,
-                                   const uint8_t            device_address) {
-
-  usb_error result;
-
-  ch_set_usb_address(device_address);
-
-  if (config_index != 0)
-    return __hw_get_config_descriptor(buffer, config_index, buffer_size, device_address);
-
-  CHECK(ch_control_transfer_request_descriptor(2));
-
-  ch_read_data((uint8_t *)buffer, buffer_size);
-
-  return USB_ERR_OK;
+  return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size);
 }
 
 // ; -----------------------------------------------------------------------------
