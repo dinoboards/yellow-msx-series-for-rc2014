@@ -70,10 +70,9 @@ void print_disk_size(const uint8_t device_index) {
 
 bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   const bool hasUsbHub = work_area->hub_config.address != 0;
+  const bool hasCdc    = work_area->cdc_config.address != 0;
 
-  uint8_t floppy_count       = 0;
-  uint8_t mass_storage_count = 0;
-  // uint8_t                      ethernet_adapter   = 0;
+  uint8_t                      storage_count  = 0;
   uint8_t                      device_index   = 1;
   uint8_t                      index          = MAX_NUMBER_OF_STORAGE_DEVICES;
   const storage_device_config *storage_device = &work_area->storage_device[0];
@@ -83,33 +82,32 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   else
     print_string("USB:         ");
 
+  if (hasCdc)
+    print_string("    CDC\r\n");
+
   do {
     const usb_device_type t = storage_device->type;
     if (t == USB_IS_FLOPPY) {
       print_string("    FLOPPY  (");
       print_disk_size(device_index);
-      floppy_count++;
+      storage_count++;
+
     } else if (t == USB_IS_MASS_STORAGE) {
       print_string("    STORAGE (");
       print_disk_size(device_index);
-      mass_storage_count++;
+      storage_count++;
     }
-
-    // else if (t == USB_IS_MASS_STORAGE_OF_ETHERNET_ADAPTER) {
-    //   print_string("    ETHER\r\n");
-    //   ethernet_adapter++;
-    // }
 
     storage_device++;
     device_index++;
   } while (--index != 0);
 
-  if (!hasUsbHub && floppy_count == 0 && mass_storage_count == 0 /*&& ethernet_adapter == 0*/) {
+  if (!hasUsbHub && !hasCdc && storage_count == 0) {
     print_string("\r\n");
     return false;
   }
 
-  return floppy_count != 0 || mass_storage_count != 0;
+  return storage_count != 0;
 }
 
 inline void initialise_mass_storage_devices(_usb_state *const work_area) {
@@ -147,7 +145,7 @@ uint8_t usb_host_init() {
 
   usb_host_bus_reset();
 
-  for (int i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < 4; i++) {
     const uint8_t r = ch_very_short_wait_int_and_get_status();
 
     if (r == USB_INT_CONNECT) {

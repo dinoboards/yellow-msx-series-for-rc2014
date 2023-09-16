@@ -20,19 +20,19 @@ usb_error do_scsi_cmd(storage_device_config *const dev, _scsi_command_block_wrap
   if (!send)
     cbw->bmCBWFlags = 0x80;
 
-  CHECK(hw_data_out_transfer((uint8_t *)cbw, sizeof(_scsi_command_block_wrapper) + 16, dev->config.address, &dev->endpoints[ENDPOINT_BULK_OUT]), x_printf("Err6 %d ", result));
+  CHECK(hw_data_out_transfer((uint8_t *)cbw, sizeof(_scsi_command_block_wrapper) + 16, dev->config.address, &dev->endpoints[ENDPOINT_BULK_OUT]));
 
   if (cbw->dCBWDataTransferLength != 0) {
     if (!send) {
-      CHECK(hw_data_in_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->config.address, &dev->endpoints[ENDPOINT_BULK_IN]), x_printf("Err7 %d ", result));
+      CHECK(hw_data_in_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->config.address, &dev->endpoints[ENDPOINT_BULK_IN]));
 
     } else {
-      CHECK(hw_data_out_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->config.address, &dev->endpoints[ENDPOINT_BULK_OUT]), x_printf("Err8 %d ", result));
+      CHECK(hw_data_out_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->config.address, &dev->endpoints[ENDPOINT_BULK_OUT]));
     }
   }
 
   _scsi_command_status_wrapper csw;
-  CHECK(hw_data_in_transfer((uint8_t *)&csw, sizeof(_scsi_command_status_wrapper), dev->config.address, &dev->endpoints[ENDPOINT_BULK_IN]), x_printf("Err9 %d ", result));
+  CHECK(hw_data_in_transfer((uint8_t *)&csw, sizeof(_scsi_command_status_wrapper), dev->config.address, &dev->endpoints[ENDPOINT_BULK_IN]));
 
   if (csw.cbwstatus != 0)
     return USB_ERR_FAIL;
@@ -141,12 +141,33 @@ usb_error scsi_read_write(storage_device_config *const dev, const bool send, uin
 usb_error scsi_eject(storage_device_config *const dev) {
   cbw_scsi_eject cbw_scsi;
   cbw_scsi.cbw = scsi_command_block_wrapper;
+
   memset(&cbw_scsi.eject, 0, sizeof(_scsi_packet_eject));
+
+  cbw_scsi.eject.operation_code = 0x1B;
+  cbw_scsi.eject.loej = 1;
 
   cbw_scsi.cbw.bCBWLUN = 0;
   cbw_scsi.cbw.bCBWCBLength = sizeof(_scsi_packet_eject);
   cbw_scsi.cbw.dCBWDataTransferLength = 0;
   cbw_scsi.cbw.dCBWTag[0] = ++dev->config.tag;
 
-  return do_scsi_cmd(dev, &cbw_scsi.cbw, 0, true);
+  return do_scsi_cmd(dev, &cbw_scsi.cbw, 0, false);
+}
+
+usb_error scsi_spike(storage_device_config *const dev) {
+  cbw_scsi_eject cbw_scsi;
+  cbw_scsi.cbw = scsi_command_block_wrapper;
+
+  memset(&cbw_scsi.eject, 0, sizeof(_scsi_packet_eject));
+
+  cbw_scsi.eject.operation_code = 0x1E;
+  cbw_scsi.eject.loej = 0;
+
+  cbw_scsi.cbw.bCBWLUN = 0;
+  cbw_scsi.cbw.bCBWCBLength = sizeof(_scsi_packet_eject);
+  cbw_scsi.cbw.dCBWDataTransferLength = 0;
+  cbw_scsi.cbw.dCBWTag[0] = ++dev->config.tag;
+
+  return do_scsi_cmd(dev, &cbw_scsi.cbw, 0, false);
 }

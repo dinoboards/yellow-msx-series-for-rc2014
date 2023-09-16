@@ -37,7 +37,7 @@ typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_
 typedef enum {
   USB_IS_FLOPPY       = 1,
   USB_IS_MASS_STORAGE = 2,
-  // USB_IS_MASS_STORAGE_OF_ETHERNET_ADAPTER = 3,
+  USB_IS_CDC          = 3,
   USB_IS_HUB = 128
 } usb_device_type;
 

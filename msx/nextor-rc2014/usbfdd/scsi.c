@@ -158,10 +158,13 @@ usb_error scsi_eject(storage_device_config *const dev) {
   cbw_scsi.cbw = scsi_command_block_wrapper;
   memset(&cbw_scsi.eject, 0, sizeof(_scsi_packet_eject));
 
+  cbw_scsi.eject.operation_code = 0x1B;
+  cbw_scsi.eject.loej           = 1;
+
   cbw_scsi.cbw.bCBWLUN                = 0;
   cbw_scsi.cbw.bCBWCBLength           = sizeof(_scsi_packet_eject);
   cbw_scsi.cbw.dCBWDataTransferLength = 0;
   cbw_scsi.cbw.dCBWTag[0]             = ++dev->config.tag;
 
-  return do_scsi_cmd(dev, &cbw_scsi.cbw, 0, true);
+  return do_scsi_cmd(dev, &cbw_scsi.cbw, 0, false);
 }

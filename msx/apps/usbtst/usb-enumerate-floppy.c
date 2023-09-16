@@ -3,7 +3,7 @@
 #include "usb-enumerate.h"
 #include <string.h>
 
-void parse_endpoint_floppy(storage_device_config *const storage_dev, const endpoint_descriptor const *pEndpoint) {
+void parse_endpoint_storage(storage_device_config *const storage_dev, const endpoint_descriptor const *pEndpoint) {
 
   if (!(pEndpoint->bmAttributes & 0x02))
     return;

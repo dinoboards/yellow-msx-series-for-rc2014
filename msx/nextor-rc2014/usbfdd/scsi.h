@@ -37,11 +37,11 @@ typedef struct {
   uint8_t reserved2;
 
   uint8_t power_condition_modifier : 4;
-  uint8_t reserved3 : 3;
+  uint8_t reserved3 : 4;
 
   uint8_t start : 1;
   uint8_t loej : 1;
-  uint8_t no_flish : 1;
+  uint8_t no_flush : 1;
   uint8_t reserved4 : 1;
   uint8_t power_condition : 4;
 

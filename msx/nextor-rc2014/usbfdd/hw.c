@@ -131,9 +131,13 @@ usb_error hw_data_in_transfer(uint8_t *             buffer,
                               const uint8_t         device_address,
                               endpoint_param *const endpoint) {
 
+  usb_error result;
+
   ch_set_usb_address(device_address);
 
-  return ch_data_in_transfer(buffer, buffer_size, endpoint);
+  CHECK(ch_data_in_transfer(buffer, buffer_size, endpoint))
+
+  return result;
 }
 
 // ; -----------------------------------------------------------------------------
