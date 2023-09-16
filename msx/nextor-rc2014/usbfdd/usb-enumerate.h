@@ -1,6 +1,7 @@
 #ifndef __USB_ENUMERATE
 #define __USB_ENUMERATE
 
+#include "ch376.h"
 #include "usb.h"
 #include "work-area.h"
 #include <stdbool.h>
@@ -21,7 +22,6 @@ typedef struct __working {
   uint8_t           config_index;
   uint8_t           interface_count;
   uint8_t           endpoint_count;
-  bool              is_etherner_adapter;
 
   const uint8_t *ptr;
 

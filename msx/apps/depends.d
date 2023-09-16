@@ -38,15 +38,15 @@
 ./bin/usbtst/scsi.c.asm: usbtst/scsi.c usbtst/scsi.h usbtst/hw.h usbtst/ch376.h \
  usbtst/ch376inc.h usbtst/usb.h usbtst/work-area.h usbtst/print.h
 ./bin/usbtst/usb-enumerate.c.asm: usbtst/usb-enumerate.c usbtst/usb-enumerate.h \
- usbtst/usb.h usbtst/work-area.h usbtst/ch376.h usbtst/ch376inc.h \
+ usbtst/ch376.h usbtst/ch376inc.h usbtst/usb.h usbtst/work-area.h \
  usbtst/hw.h usbtst/usb-enumerate-floppy.h usbtst/usb-enumerate-hub.h \
  usbtst/debuggin.h usbtst/nextor.h usbtst/ufi.h usbtst/print.h
 ./bin/usbtst/usb-enumerate-floppy.c.asm: usbtst/usb-enumerate-floppy.c \
  usbtst/usb-enumerate-floppy.h usbtst/usb.h usbtst/work-area.h \
  usbtst/ch376.h usbtst/ch376inc.h usbtst/hw.h usbtst/usb-enumerate.h
 ./bin/usbtst/usb-enumerate-hub.c.asm: usbtst/usb-enumerate-hub.c \
- usbtst/usb-enumerate-hub.h usbtst/usb-enumerate.h usbtst/usb.h \
- usbtst/work-area.h usbtst/ch376.h usbtst/ch376inc.h usbtst/hw.h \
+ usbtst/usb-enumerate-hub.h usbtst/usb-enumerate.h usbtst/ch376.h \
+ usbtst/ch376inc.h usbtst/usb.h usbtst/work-area.h usbtst/hw.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h \
  usbtst/debuggin.h usbtst/nextor.h usbtst/ufi.h usbtst/print.h
 ./bin/usbtst/ch376.c.asm: usbtst/ch376.c usbtst/ch376.h usbtst/ch376inc.h \

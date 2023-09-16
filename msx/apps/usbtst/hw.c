@@ -30,7 +30,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet, void *const 
 
   ch_write_data((const uint8_t *)cmd_packet, sizeof(setup_packet));
   ch_issue_token_setup();
-  CHECK(ch_short_wait_int_and_get_status());
+  CHECK(ch_short_wait_int_and_get_status())
 
   result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint) : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
 
@@ -70,7 +70,14 @@ usb_error hw_get_description(device_descriptor *const buffer) {
   cmd = cmd_get_device_descriptor;
   cmd.wLength = 8;
 
-  CHECK(hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8));
+  result = hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8);
+
+  CHECK(result);
+
+  // if (result == USB_ERR_TIMEOUT) {
+  //   delay_medium();
+  //   CHECK(hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8))
+  // }
 
   cmd = cmd_get_device_descriptor;
   cmd.wLength = 18;
@@ -124,10 +131,12 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer, const uint8_
 // ;         *toggle Cy = New state of the toggle bit (even on error)
 
 usb_error hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
-
+  usb_error result;
   ch_set_usb_address(device_address);
 
-  return ch_data_in_transfer(buffer, buffer_size, endpoint);
+  CHECK(ch_data_in_transfer(buffer, buffer_size, endpoint));
+
+  return result;
 }
 
 // ; -----------------------------------------------------------------------------

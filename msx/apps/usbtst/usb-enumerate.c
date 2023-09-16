@@ -10,9 +10,14 @@
 usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall;
 usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall;
 
-usb_device_type identify_class_driver(const interface_descriptor *const p /*, const bool is_etherner_adapter*/) {
+usb_device_type identify_class_driver(_working *const working) {
+  const interface_descriptor *const p = (const interface_descriptor *)working->ptr;
+  if (p->bInterfaceClass == 2) {
+    return USB_IS_CDC;
+  }
+
   if (p->bInterfaceClass == 8 && (p->bInterfaceSubClass == 6 || p->bInterfaceSubClass == 5) && p->bInterfaceProtocol == 80) {
-    return /*is_etherner_adapter ? USB_IS_MASS_STORAGE_OF_ETHERNET_ADAPTER :*/ USB_IS_MASS_STORAGE;
+    return USB_IS_MASS_STORAGE;
   }
 
   if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0) {
@@ -28,6 +33,8 @@ usb_device_type identify_class_driver(const interface_descriptor *const p /*, co
 
 usb_error get_config_descriptor(const uint8_t config_index, const uint8_t device_address, const uint8_t max_packet_size, uint8_t *const buffer) {
   usb_error result;
+
+  printf("GET CONFIG %d, %d, %d\r\n", config_index, device_address, max_packet_size);
 
   CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address, max_packet_size));
 
@@ -67,8 +74,7 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE:
-    // case USB_IS_MASS_STORAGE_OF_ETHERNET_ADAPTER:
-    parse_endpoint_floppy(storage_dev, endpoint);
+    parse_endpoint_storage(storage_dev, endpoint);
     break;
 
   case USB_IS_HUB:
@@ -91,7 +97,6 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
-  // case USB_IS_MASS_STORAGE_OF_ETHERNET_ADAPTER:
   case USB_IS_MASS_STORAGE: {
     work_area->next_storage_device_index++;
     storage_device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
@@ -99,23 +104,35 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 
     dev_cfg->max_packet_size = working->desc.bMaxPacketSize0;
     dev_cfg->value = working->config.desc.bConfigurationvalue;
-    dev_cfg->address = working->state->next_device_address++;
+    dev_cfg->address = working->state->next_device_address;
     dev_cfg->interface_number = interface->bInterfaceNumber;
     storage_dev->type = working->usb_device;
     CHECK(hw_set_configuration(dev_cfg));
     break;
   }
 
-  case USB_IS_HUB:
+  case USB_IS_CDC: {
+    printf("config ethernet adapter\r\n");
+
+    work_area->cdc_config.interface_number = interface->bInterfaceNumber;
+    work_area->cdc_config.max_packet_size = working->desc.bMaxPacketSize0;
+    work_area->cdc_config.value = working->config.desc.bConfigurationvalue;
+    work_area->cdc_config.address = working->state->next_device_address;
+    CHECK(hw_set_configuration(&work_area->cdc_config));
+    break;
+  }
+
+  case USB_IS_HUB: {
     work_area->hub_config.interface_number = interface->bInterfaceNumber;
     work_area->hub_config.max_packet_size = working->desc.bMaxPacketSize0;
     work_area->hub_config.value = working->config.desc.bConfigurationvalue;
-    work_area->hub_config.address = working->state->next_device_address++;
+    work_area->hub_config.address = working->state->next_device_address;
     CHECK(configure_usb_hub(working));
     break;
+  }
 
   default:
-    working->state->next_device_address++;
+    working->state->next_device_address;
   }
 
   CHECK(op_parse_endpoint(working));
@@ -127,8 +144,7 @@ usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall {
   usb_error                         result;
   const interface_descriptor *const ptr = (const interface_descriptor *)working->ptr;
 
-  if (ptr->bLength > 5)
-    working->usb_device = identify_class_driver(ptr /*, working->is_etherner_adapter*/);
+  working->usb_device = ptr->bLength > 5 ? identify_class_driver(working) : 0;
 
   CHECK(op_capture_driver_interface(working));
 
@@ -161,20 +177,14 @@ usb_error read_all_configs(enumeration_state *const state) {
   working.state = state;
 
   result = hw_get_description(&working.desc);
-  // if (result == USB_ERR_TIMEOUT)
-  //   return result;
 
   CHECK(result);
 
   logDevice(&working.desc);
 
+  state->next_device_address++;
   const uint8_t dev_address = state->next_device_address;
-
   CHECK(hw_set_address(dev_address));
-
-  // if (working.desc.idVendor == 0x0BDA) { // Ethernet adapter
-  //   working.is_etherner_adapter = true;
-  // }
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;
@@ -182,6 +192,7 @@ usb_error read_all_configs(enumeration_state *const state) {
     CHECK(op_get_config_descriptor(&working));
   }
 
+  printf("read-all-ok\r\n");
   return USB_ERR_OK;
 }
 
@@ -189,9 +200,13 @@ usb_error enumerate_all_devices() {
   _usb_state *const work_area = get_usb_work_area();
   work_area->next_storage_device_index = (uint8_t)-1;
   enumeration_state state;
+  memset(&state, 0, sizeof(enumeration_state));
   state.next_device_address = 1;
 
-  return read_all_configs(&state);
+  usb_error result = read_all_configs(&state);
+
+  CHECK(result);
+  return result;
 }
 
 /*
@@ -202,7 +217,7 @@ usb_error enumerate_all_devices() {
           -> op_identify_class_driver
             -> op_capture_driver_interface (increment index)
               -> op_parse_endpoint
-                -> parse_endpoint_floppy
+                -> parse_endpoint_storage
                 -> parse_endpoint_hub
                 -> op_endpoint_next
                   -> op_parse_endpoint -^ (install driver endpoint)
