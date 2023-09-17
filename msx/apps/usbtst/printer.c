@@ -50,12 +50,12 @@ usb_error prt_soft_reset(const device_config *const dev) {
   return result;
 }
 
-usb_error prt_send_text(printer_device_config *const dev, const char *text) {
+usb_error prt_send_text(device_config *dev, const char *text) {
   usb_error result;
 
-  dev->endpoint.toggle = 0;
+  dev->endpoints[0].toggle = 0;
 
-  CHECK(hw_data_out_transfer((const uint8_t *)text, strlen(text), dev->config.address, &dev->endpoint));
+  CHECK(hw_data_out_transfer((const uint8_t *)text, strlen(text), dev->address, &dev->endpoints[0]));
 
   return result;
 }

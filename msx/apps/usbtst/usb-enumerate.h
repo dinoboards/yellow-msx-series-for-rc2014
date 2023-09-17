@@ -2,7 +2,7 @@
 #define __USB_ENUMERATE
 
 #include "ch376.h"
-#include "usb.h"
+#include "hw.h"
 #include "work-area.h"
 #include <stdbool.h>
 

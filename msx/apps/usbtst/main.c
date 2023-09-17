@@ -1,9 +1,9 @@
 #include "main.h"
 #include "ch376.h"
+#include "class-scsi.h"
 #include "debuggin.h"
 #include "print.h"
 #include "printer.h"
-#include "scsi.h"
 #include "usb-dev-info-ufi.h"
 #include "usb-enumerate.h"
 #include "usb-lun-info-ufi.h"
@@ -25,13 +25,13 @@ usb_error usb_host_bus_reset() {
   return USB_ERR_OK;
 }
 
-void state_devices(const _usb_state *const work_area) __z88dk_fastcall {
+void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   const bool hasUsb     = work_area->hub_config.address != 0;
   const bool hasCdc     = work_area->cdc_config.address != 0;
-  const bool hasPrinter = work_area->printer.config.address != 0;
+  const bool hasPrinter = work_area->printer.address != 0;
 
-  uint8_t                      index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  const storage_device_config *storage_device = &work_area->storage_device[0];
+  uint8_t              index          = MAX_NUMBER_OF_STORAGE_DEVICES;
+  const device_config *storage_device = &work_area->storage_device[0];
 
   uint8_t buffer[130];
   memset(buffer, 0, sizeof(buffer));
@@ -77,11 +77,11 @@ void state_devices(const _usb_state *const work_area) __z88dk_fastcall {
     if (t == USB_IS_FLOPPY) {
       print_string("FLOPPY\r\nMANUFACTURER_NAME: ");
 
-      usb_dev_info_ufi((storage_device_config *const)storage_device, MANUFACTURER_NAME, (uint8_t *const)buffer);
+      usb_dev_info_ufi((device_config *const)storage_device, MANUFACTURER_NAME, (uint8_t *const)buffer);
       print_string(buffer);
       print_string("SECTOR_SIZE: ");
 
-      usb_lun_info_ufi((storage_device_config *const)storage_device, 1, &info);
+      usb_lun_info_ufi((device_config *const)storage_device, 1, &info);
 
       printf("%d\r\nNUMBER_OF_SECTORS: %ld\r\n", info.sector_size, info.number_of_sectors);
     } else if (t == USB_IS_MASS_STORAGE) {
@@ -96,8 +96,8 @@ void state_devices(const _usb_state *const work_area) __z88dk_fastcall {
 }
 
 inline void initialise_mass_storage_devices(_usb_state *const work_area) {
-  uint8_t                index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  storage_device_config *storage_device = &work_area->storage_device[0];
+  uint8_t        index          = MAX_NUMBER_OF_STORAGE_DEVICES;
+  device_config *storage_device = &work_area->storage_device[0];
 
   do {
     if (storage_device->type == USB_IS_MASS_STORAGE) {
