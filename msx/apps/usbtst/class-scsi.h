@@ -1,5 +1,5 @@
-#ifndef __USB_SCSI
-#define __USB_SCSI
+#ifndef __CLASS_SCSI
+#define __CLASS_SCSI
 
 #include "hw.h"
 #include <stdbool.h>
@@ -183,13 +183,13 @@ typedef struct {
   _scsi_packet_read_write     scsi_cmd;
 } cbw_scsi_read_write;
 
-extern usb_error get_scsi_read_capacity(storage_device_config *const dev, scsi_read_capacity_result *result);
-extern usb_error scsi_inquiry(storage_device_config *const dev, scsi_inquiry_result *inq_result);
-extern usb_error scsi_sense_init(storage_device_config *const dev);
-extern usb_error scsi_test(storage_device_config *const dev);
-extern usb_error scsi_request_sense(storage_device_config *const dev, scsi_sense_result *const sens_result);
-extern usb_error scsi_eject(storage_device_config *const dev);
-extern usb_error scsi_spike(storage_device_config *const dev);
+extern usb_error get_scsi_read_capacity(device_config *const dev, scsi_read_capacity_result *result);
+extern usb_error scsi_inquiry(device_config *const dev, scsi_inquiry_result *inq_result);
+extern usb_error scsi_sense_init(device_config *const dev);
+extern usb_error scsi_test(device_config *const dev);
+extern usb_error scsi_request_sense(device_config *const dev, scsi_sense_result *const sens_result);
+extern usb_error scsi_eject(device_config *const dev);
+extern usb_error scsi_spike(device_config *const dev);
 extern usb_error scsi_read_write(
-    storage_device_config *const dev, const bool send, uint32_t sector_number, const uint8_t sector_count, uint8_t *const buffer);
+    device_config *const dev, const bool send, uint32_t sector_number, const uint8_t sector_count, uint8_t *const buffer);
 #endif

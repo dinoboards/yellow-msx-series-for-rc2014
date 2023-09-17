@@ -1,18 +1,17 @@
 #include "usb-enumerate.h"
-#include "hw.h"
-#include "usb-enumerate-floppy.h"
-#include "usb-enumerate-hub.h"
-#include <string.h>
-
 #include "debuggin.h"
+#include "hw.h"
 #include "print.h"
+#include "usb-enumerate-hub.h"
+#include "usb-enumerate-storage.h"
+#include <string.h>
 
 void parse_endpoint_printer(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
 
-  work_area->printer.endpoint.number          = pEndpoint->bEndpointAddress;
-  work_area->printer.endpoint.toggle          = 0;
-  work_area->printer.endpoint.max_packet_size = pEndpoint->wMaxPacketSize;
+  work_area->printer.endpoints[0].number          = pEndpoint->bEndpointAddress;
+  work_area->printer.endpoints[0].toggle          = 0;
+  work_area->printer.endpoints[0].max_packet_size = pEndpoint->wMaxPacketSize;
 }
 
 usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall;
@@ -81,7 +80,7 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
   printf("EndP: ");
   logEndPointDescription(endpoint);
 
-  storage_device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
+  device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
 
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
@@ -115,24 +114,25 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE: {
     work_area->next_storage_device_index++;
-    storage_device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
-    device_config *const         dev_cfg     = &storage_dev->config;
+    device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
+    device_config *const dev_cfg     = storage_dev;
 
     dev_cfg->max_packet_size  = working->desc.bMaxPacketSize0;
     dev_cfg->value            = working->config.desc.bConfigurationvalue;
     dev_cfg->address          = working->state->next_device_address;
     dev_cfg->interface_number = interface->bInterfaceNumber;
-    storage_dev->type         = working->usb_device;
+    dev_cfg->type             = working->usb_device;
     CHECK(hw_set_configuration(dev_cfg));
     break;
   }
 
   case USB_IS_PRINTER: {
-    work_area->printer.config.interface_number = interface->bInterfaceNumber;
-    work_area->printer.config.max_packet_size  = working->desc.bMaxPacketSize0;
-    work_area->printer.config.value            = working->config.desc.bConfigurationvalue;
-    work_area->printer.config.address          = working->state->next_device_address;
-    CHECK(hw_set_configuration(&work_area->printer.config));
+    work_area->printer.interface_number = interface->bInterfaceNumber;
+    work_area->printer.max_packet_size  = working->desc.bMaxPacketSize0;
+    work_area->printer.value            = working->config.desc.bConfigurationvalue;
+    work_area->printer.address          = working->state->next_device_address;
+    work_area->printer.type             = USB_IS_PRINTER;
+    CHECK(hw_set_configuration(&work_area->printer));
     break;
   }
 
@@ -141,6 +141,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     work_area->cdc_config.max_packet_size  = working->desc.bMaxPacketSize0;
     work_area->cdc_config.value            = working->config.desc.bConfigurationvalue;
     work_area->cdc_config.address          = working->state->next_device_address;
+    work_area->cdc_config.type             = USB_IS_CDC;
     CHECK(hw_set_configuration(&work_area->cdc_config));
     break;
   }
@@ -150,6 +151,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     work_area->hub_config.max_packet_size  = working->desc.bMaxPacketSize0;
     work_area->hub_config.value            = working->config.desc.bConfigurationvalue;
     work_area->hub_config.address          = working->state->next_device_address;
+    work_area->hub_config.type             = USB_IS_HUB;
     CHECK(configure_usb_hub(working));
     break;
   }

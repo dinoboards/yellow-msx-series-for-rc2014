@@ -1,9 +1,9 @@
 #ifndef __DEBUGGIN
 #define __DEBUGGIN
 
+#include "class-hub.h"
+#include "class-ufi.h"
 #include "nextor.h"
-#include "ufi.h"
-#include "usb.h"
 #include "work-area.h"
 
 extern bool logEnabled;

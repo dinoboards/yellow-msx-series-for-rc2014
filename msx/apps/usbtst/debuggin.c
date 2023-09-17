@@ -1,7 +1,6 @@
 #include "debuggin.h"
 #include "nextor.h"
 #include "print.h"
-#include "usb.h"
 #include "work-area.h"
 #include <string.h>
 
