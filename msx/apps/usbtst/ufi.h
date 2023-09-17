@@ -114,13 +114,18 @@ extern usb_error usb_clear_endpoint_halt(storage_device_config *const storage_de
 
 extern usb_error usb_process_error(const usb_error result);
 
-extern usb_error usb_control_transfer(storage_device_config *const storage_device, const setup_packet *const cmd, const uint8_t *const buffer);
+extern usb_error
+usb_control_transfer(storage_device_config *const storage_device, const setup_packet *const cmd, const uint8_t *const buffer);
 
 extern usb_error ufi_inquiry(storage_device_config *const storage_device, ufi_inquiry_response const *response);
 
 extern usb_error ufi_capacity(storage_device_config *const storage_device, ufi_format_capacities_response const *response);
 
-extern usb_error ufi_read_write_sector(storage_device_config *const storage_device, const bool send, const uint16_t sector_number, const uint8_t sector_count, const uint8_t *const buffer);
+extern usb_error ufi_read_write_sector(storage_device_config *const storage_device,
+                                       const bool                   send,
+                                       const uint16_t               sector_number,
+                                       const uint8_t                sector_count,
+                                       const uint8_t *const         buffer);
 
 extern uint8_t ufi_test_disk(storage_device_config *const storage_device);
 

@@ -19,7 +19,8 @@ to see the file use external application ( graphic viewer)
 #include "v9958.h"
 
 RGB palette[16] = {
-    {0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}, {4, 0, 0}, {5, 0, 0}, {6, 0, 0}, {7, 0, 0}, {8, 0, 0}, {9, 0, 0}, {10, 0, 0}, {11, 0, 0}, {12, 0, 0}, {13, 0, 0}, {14, 0, 0}, {15, 0, 0},
+    {0, 0, 0}, {1, 0, 0}, {2, 0, 0},  {3, 0, 0},  {4, 0, 0},  {5, 0, 0},  {6, 0, 0},  {7, 0, 0},
+    {8, 0, 0}, {9, 0, 0}, {10, 0, 0}, {11, 0, 0}, {12, 0, 0}, {13, 0, 0}, {14, 0, 0}, {15, 0, 0},
 };
 
 #define ITERATION_MAX 16
@@ -52,7 +53,7 @@ void exit_cleanup() {
 }
 
 void main() {
-  const uint8_t mode = getVideoMode();
+  const uint8_t mode  = getVideoMode();
   const uint8_t lines = getLineCount();
 
   atexit(exit_cleanup);
@@ -72,14 +73,14 @@ void main() {
     for (iX = 0; iX < IX_MAX; iX++) {
       Cx = CX_MIN + iX * PIXEL_WIDTH;
 
-      Zx = 0.0;
-      Zy = 0.0;
+      Zx  = 0.0;
+      Zy  = 0.0;
       Zx2 = Zx * Zx;
       Zy2 = Zy * Zy;
 
       for (iteration = 0; iteration < ITERATION_MAX && ((Zx2 + Zy2) < ER2); iteration++) {
-        Zy = 2 * Zx * Zy + Cy;
-        Zx = Zx2 - Zy2 + Cx;
+        Zy  = 2 * Zx * Zy + Cy;
+        Zx  = Zx2 - Zy2 + Cx;
         Zx2 = Zx * Zx;
         Zy2 = Zy * Zy;
       };

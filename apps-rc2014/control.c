@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-uint8_t oldd[2] = {0, 0};
+uint8_t oldd[2]  = {0, 0};
 uint8_t oldb1[2] = {0, 0};
 uint8_t oldb2[2] = {0, 0};
 
@@ -43,7 +43,7 @@ const char *direction(const uint8_t dir) {
 const char *button(const uint8_t b) { return b == 1 ? "PRESSED" : "RELEASED"; }
 
 void logController(const uint8_t i) {
-  const uint8_t d = getControllerDirection(i == 0 ? 1 : 2);
+  const uint8_t d  = getControllerDirection(i == 0 ? 1 : 2);
   const uint8_t b1 = getControllerButton(i == 0 ? 1 : 2);
   const uint8_t b2 = getControllerButton(i == 0 ? 3 : 4);
 
@@ -56,7 +56,7 @@ void logController(const uint8_t i) {
   if (oldb2[i] != b2)
     printf("Controller %d: Button 2: %s\r\n", i + 1, button(b2));
 
-  oldd[i] = d;
+  oldd[i]  = d;
   oldb1[i] = b1;
   oldb2[i] = b2;
 }

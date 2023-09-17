@@ -5,8 +5,12 @@
 #include <system_vars.h>
 
 extern void msx_music_erase_4K_page(const uint8_t page) __z88dk_fastcall;
-extern void msx_music_write_4K_page(const uint8_t page, const uint8_t buffer[4096]);  // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
-extern bool msx_music_verify_4K_page(const uint8_t page, const uint8_t buffer[4096]); // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
+extern void
+msx_music_write_4K_page(const uint8_t page,
+                        const uint8_t buffer[4096]); // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
+extern bool
+msx_music_verify_4K_page(const uint8_t page,
+                         const uint8_t buffer[4096]); // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
 
 void wait_at_least_25ms() {
   int16_t start_time = JIFFY;
@@ -38,7 +42,7 @@ void main(const int argc, const unsigned char **argv) {
   atexit(exit_cleanup);
 
   fseek(file, 0L, SEEK_END);
-  const unsigned long sz = ftell(file);
+  const unsigned long sz              = ftell(file);
   const uint8_t       number_of_pages = (sz / 4096) + 1;
 
   printf("Flashing %lu bytes (%d 4K blocks) to MSX-MUSIC onboard ROM.  Proceed (Y/n)\r\n", sz, number_of_pages);

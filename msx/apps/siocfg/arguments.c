@@ -72,13 +72,13 @@ uint8_t arg_clock_rate(const uint8_t i, const char **argv) {
 process_clock_speed:
   if (strcmp(arg_value, "307200") == 0) {
     clock_speed_code = 1;
-    clock_speed = "307.2Khz\r\nBAUD:            4800,9600,19200";
+    clock_speed      = "307.2Khz\r\nBAUD:            4800,9600,19200";
     return i + 1;
   }
 
   if (strcmp(arg_value, "614400") == 0) {
     clock_speed_code = 2;
-    clock_speed = "614.4Khz\r\nBAUD:            9600,19200,38400";
+    clock_speed      = "614.4Khz\r\nBAUD:            9600,19200,38400";
     return i + 1;
   }
 

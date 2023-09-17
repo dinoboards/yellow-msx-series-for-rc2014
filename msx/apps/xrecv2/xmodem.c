@@ -30,7 +30,7 @@ static int16_t       delay_point;
 static XMODEM_SIGNAL delay_resume;
 
 inline XMODEM_SIGNAL delay_start(uint16_t period, XMODEM_SIGNAL next_signal) {
-  delay_point = ((int16_t)JIFFY) + (period);
+  delay_point  = ((int16_t)JIFFY) + (period);
   delay_resume = (next_signal);
   return DELAY_WAIT;
 }
@@ -39,7 +39,7 @@ XMODEM_SIGNAL delay_reached() { return ((delay_point - ((int16_t)JIFFY) >= 0)) ?
 
 static bool check_crc() {
   const unsigned char *buf = &xmodemState.packetBuffer[3];
-  const uint16_t       sz = xmodemState.currentPacketSize;
+  const uint16_t       sz  = xmodemState.currentPacketSize;
   uint16_t             counter;
   uint16_t             crc = 0;
   for (counter = 0; counter < sz; counter++)
@@ -51,7 +51,7 @@ static bool check_crc() {
 
 static bool check_sum() {
   const unsigned char *buf = &xmodemState.packetBuffer[3];
-  const uint16_t       sz = xmodemState.currentPacketSize;
+  const uint16_t       sz  = xmodemState.currentPacketSize;
 
   uint8_t cks = 0;
   for (uint16_t i = 0; i < sz; ++i) {
@@ -168,7 +168,8 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 
   serial_diagnostic_message("\r\nPacket Received via CRC\r\n");
 
-  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_crc())
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) &&
+      check_crc())
     return signal | SAVE_PACKET;
 
   serial_diagnostic_message("\r\nCRC failure\r\n");
@@ -190,7 +191,8 @@ XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcal
 
   serial_diagnostic_message("\r\nPacket Received via CHKSUM\r\n");
 
-  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) && check_sum())
+  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) &&
+      check_sum())
     return signal | SAVE_PACKET;
 
   serial_diagnostic_message("\r\nCHKSUM failure\r\n");
@@ -222,7 +224,7 @@ XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   serial_out(ACK);
   ++packetno;
   retrans = MAXRETRANS + 1;
-  retry = 0;
+  retry   = 0;
   return signal | READ_HEADER;
 }
 
@@ -249,7 +251,9 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     }
   }
 
-  FOR_SIGNAL(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN) { return xmodem_tryagain(signal & ~(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN)); }
+  FOR_SIGNAL(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN) {
+    return xmodem_tryagain(signal & ~(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN));
+  }
 
   FOR_SIGNAL(INFO_PACKET) {
     FOR_SIGNAL(SAVE_PACKET) {
@@ -320,8 +324,8 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 				// memcpy (&xmodemState.packetBuffer[3], &src[len], c);
 // 				if (c < xmodemState.currentPacketSize) xmodemState.packetBuffer[3+c] = CTRLZ;
 // 				if (crc) {
-// 					unsigned short ccrc = crc16_ccitt(&xmodemState.packetBuffer[3], xmodemState.currentPacketSize);
-// 					xmodemState.packetBuffer[xmodemState.currentPacketSize+3] = (ccrc>>8) & 0xFF;
+// 					unsigned short ccrc = crc16_ccitt(&xmodemState.packetBuffer[3],
+// xmodemState.currentPacketSize); 					xmodemState.packetBuffer[xmodemState.currentPacketSize+3] = (ccrc>>8) & 0xFF;
 // 					xmodemState.packetBuffer[xmodemState.currentPacketSize+4] = ccrc & 0xFF;
 // 				}
 // 				else {

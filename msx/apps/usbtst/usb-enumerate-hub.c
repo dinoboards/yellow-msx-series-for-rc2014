@@ -10,14 +10,15 @@
 void parse_endpoint_hub(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
 
-  work_area->hub_endpoint.number = pEndpoint->bEndpointAddress;
-  work_area->hub_endpoint.toggle = 0;
+  work_area->hub_endpoint.number          = pEndpoint->bEndpointAddress;
+  work_area->hub_endpoint.toggle          = 0;
   work_area->hub_endpoint.max_packet_size = pEndpoint->wMaxPacketSize;
 }
 
-const setup_packet cmd_set_feature = {RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, SET_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
-const setup_packet cmd_clear_feature = {RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, CLEAR_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
-const setup_packet cmd_get_status_port = {RT_DEVICE_TO_HOST | RT_CLASS | RT_OTHER, GET_STATUS, {0, 0}, {1, 0}, sizeof(hub_port_status)};
+const setup_packet cmd_set_feature     = {RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, SET_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
+const setup_packet cmd_clear_feature   = {RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, CLEAR_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
+const setup_packet cmd_get_status_port = {
+    RT_DEVICE_TO_HOST | RT_CLASS | RT_OTHER, GET_STATUS, {0, 0}, {1, 0}, sizeof(hub_port_status)};
 const setup_packet cmd_get_hub_descriptor = {RT_DEVICE_TO_HOST | RT_CLASS | RT_DEVICE, 6, {0, 0x29}, {0, 0}, 8};
 
 usb_error hub_set_feature(const uint8_t feature, const uint8_t index) {
@@ -55,7 +56,8 @@ usb_error hub_get_status_port(const uint8_t index, hub_port_status *const port_s
 usb_error hub_get_descriptor(hub_descriptor *const hub_description) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
 
-  return hw_control_transfer(&cmd_get_hub_descriptor, hub_description, work_area->hub_config.address, work_area->hub_config.max_packet_size);
+  return hw_control_transfer(&cmd_get_hub_descriptor, hub_description, work_area->hub_config.address,
+                             work_area->hub_config.max_packet_size);
 }
 
 usb_error reset_device(const _device_control *const args) __z88dk_fastcall {

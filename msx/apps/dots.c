@@ -19,7 +19,8 @@ uint8_t getRandomSeed() __naked __z88dk_fastcall {
 }
 
 RGB palette[16] = {
-    {0, 0, 0}, {1, 0, 0}, {4, 0, 0}, {4, 1, 1}, {15, 0, 0}, {0, 1, 0}, {0, 4, 0}, {1, 4, 1}, {1, 8, 1}, {0, 0, 1}, {0, 0, 4}, {1, 1, 4}, {1, 1, 8}, {10, 0, 10}, {0, 15, 15}, {15, 15, 15},
+    {0, 0, 0}, {1, 0, 0}, {4, 0, 0}, {4, 1, 1}, {15, 0, 0}, {0, 1, 0},   {0, 4, 0},   {1, 4, 1},
+    {1, 8, 1}, {0, 0, 1}, {0, 0, 4}, {1, 1, 4}, {1, 1, 8},  {10, 0, 10}, {0, 15, 15}, {15, 15, 15},
 };
 
 void exit_cleanup() {
@@ -28,7 +29,7 @@ void exit_cleanup() {
 }
 
 void main() {
-  const uint8_t mode = getVideoMode();
+  const uint8_t mode  = getVideoMode();
   const uint8_t lines = getLineCount();
 
   atexit(exit_cleanup);

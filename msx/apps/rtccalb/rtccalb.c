@@ -9,7 +9,7 @@
 uint32_t measurement = 0;
 void     measure_timing();
 
-static uint32_t clock = 3686400;
+static uint32_t clock    = 3686400;
 static bool     m1_state = false;
 
 #define T_STATES_WITHOUT_M1 77
@@ -90,7 +90,7 @@ void process_cli_arguments(const int argc, const char **argv) {
   // abort_with_help();
   for (uint8_t i = 1; i < argc;) {
     const uint8_t current_i = i;
-    i = arg_cpu_clock(i, argv);
+    i                       = arg_cpu_clock(i, argv);
     if (current_i != i)
       continue;
 
@@ -131,7 +131,7 @@ void main(const int argc, const unsigned char **argv) {
     measure_timing();
 
     const uint32_t expect = (clock / WAIT_T_STATES);
-    const int8_t   diff = expect - measurement + T_STATES_OVERHEAD;
+    const int8_t   diff   = expect - measurement + T_STATES_OVERHEAD;
 
     if (diff == 0)
       printf(ERASE_LINE "Approx. in sync with CPU clock");

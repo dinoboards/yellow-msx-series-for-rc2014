@@ -6,30 +6,30 @@
 #include <stdlib.h>
 
 typedef enum {
-  USB_ERR_OK = 0,
-  USB_ERR_NAK = 1,
-  USB_ERR_STALL = 2,
-  USB_ERR_TIMEOUT = 3,
-  USB_ERR_DATA_ERROR = 4,
-  USB_ERR_NO_DEVICE = 5,
-  USB_ERR_PANIC_BUTTON_PRESSED = 6,
-  USB_TOKEN_OUT_OF_SYNC = 7,
+  USB_ERR_OK                          = 0,
+  USB_ERR_NAK                         = 1,
+  USB_ERR_STALL                       = 2,
+  USB_ERR_TIMEOUT                     = 3,
+  USB_ERR_DATA_ERROR                  = 4,
+  USB_ERR_NO_DEVICE                   = 5,
+  USB_ERR_PANIC_BUTTON_PRESSED        = 6,
+  USB_TOKEN_OUT_OF_SYNC               = 7,
   USB_ERR_UNEXPECTED_STATUS_FROM_HOST = 8,
-  USB_ERR_CODE_EXCEPTION = 9,
-  USB_ERR_MEDIA_CHANGED = 10,
-  USB_ERR_MEDIA_NOT_PRESENT = 11,
-  USB_ERR_CH376_BLOCKED = 12,
-  USB_ERR_CH376_TIMEOUT = 13,
-  USB_ERR_FAIL = 14,
-  USB_ERR_MAX = 14,
-  USB_ERR_OTHER = 15,
-  USB_ERR_DISK_READ = 0x1D,
-  USB_ERR_DISK_WRITE = 0x1E,
-  USB_FILERR_MIN = 0x41,
-  USB_ERR_OPEN_DIR = 0x41,
-  USB_ERR_MISS_FILE = 0x42,
-  USB_FILERR_MAX = 0xB4,
-  USB_INT_CONNECT = 0x81
+  USB_ERR_CODE_EXCEPTION              = 9,
+  USB_ERR_MEDIA_CHANGED               = 10,
+  USB_ERR_MEDIA_NOT_PRESENT           = 11,
+  USB_ERR_CH376_BLOCKED               = 12,
+  USB_ERR_CH376_TIMEOUT               = 13,
+  USB_ERR_FAIL                        = 14,
+  USB_ERR_MAX                         = 14,
+  USB_ERR_OTHER                       = 15,
+  USB_ERR_DISK_READ                   = 0x1D,
+  USB_ERR_DISK_WRITE                  = 0x1E,
+  USB_FILERR_MIN                      = 0x41,
+  USB_ERR_OPEN_DIR                    = 0x41,
+  USB_ERR_MISS_FILE                   = 0x42,
+  USB_FILERR_MAX                      = 0xB4,
+  USB_INT_CONNECT                     = 0x81
 } usb_error;
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
@@ -38,13 +38,13 @@ typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2, USB_IS_CDC = 3, USB_I
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
 
-#define CHECK(fn, ...)                                           \
-  {                                                              \
-    result = fn;                                                 \
-    if (result != USB_ERR_OK && result != USB_ERR_STALL) {       \
-      printf("Error: %s:%d %d\r\n", __FILE__, __LINE__, result); \
-      return result;                                             \
-    }                                                            \
+#define CHECK(fn, ...)                                                                                                             \
+  {                                                                                                                                \
+    result = fn;                                                                                                                   \
+    if (result != USB_ERR_OK && result != USB_ERR_STALL) {                                                                         \
+      printf("Error: %s:%d %d\r\n", __FILE__, __LINE__, result);                                                                   \
+      return result;                                                                                                               \
+    }                                                                                                                              \
   }
 
 typedef struct {

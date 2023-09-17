@@ -34,38 +34,33 @@ typedef enum {
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
 
-typedef enum {
-  USB_IS_FLOPPY       = 1,
-  USB_IS_MASS_STORAGE = 2,
-  USB_IS_CDC          = 3,
-  USB_IS_HUB = 128
-} usb_device_type;
+typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2, USB_IS_CDC = 3, USB_IS_HUB = 128 } usb_device_type;
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
 
 #if 0
-#define CHECK(fn)                                                                                                           \
-  {                                                                                                                         \
-    result = fn;                                                                                                            \
-    if (result != USB_ERR_OK) {                                                                                             \
-      print_string("Error: ");                                                                                              \
-      print_string(__FILE__);                                                                                               \
-      print_string(":");                                                                                                    \
-      print_uint16(__LINE__);                                                                                               \
-      print_string(" ");                                                                                                    \
-      print_uint16(result);                                                                                                 \
-      print_string("\r\n");                                                                                                 \
-      return result;                                                                                                        \
-    }                                                                                                                       \
+#define CHECK(fn)                                                                                                                  \
+  {                                                                                                                                \
+    result = fn;                                                                                                                   \
+    if (result != USB_ERR_OK) {                                                                                                    \
+      print_string("Error: ");                                                                                                     \
+      print_string(__FILE__);                                                                                                      \
+      print_string(":");                                                                                                           \
+      print_uint16(__LINE__);                                                                                                      \
+      print_string(" ");                                                                                                           \
+      print_uint16(result);                                                                                                        \
+      print_string("\r\n");                                                                                                        \
+      return result;                                                                                                               \
+    }                                                                                                                              \
   }
 
 #else
 
-#define CHECK(fn)                                                                                                           \
-  {                                                                                                                         \
-    result = fn;                                                                                                            \
-    if (result != USB_ERR_OK && result != USB_ERR_STALL)                                                                    \
-      return result;                                                                                                        \
+#define CHECK(fn)                                                                                                                  \
+  {                                                                                                                                \
+    result = fn;                                                                                                                   \
+    if (result != USB_ERR_OK && result != USB_ERR_STALL)                                                                           \
+      return result;                                                                                                               \
   }
 
 #endif
@@ -97,11 +92,7 @@ typedef struct {
 #define CH_MODE_HOST_RESET 7
 #define CH_MODE_HOST       6
 
-typedef enum _ch376_pid {
-  CH_PID_SETUP = DEF_USB_PID_SETUP,
-  CH_PID_IN    = DEF_USB_PID_IN,
-  CH_PID_OUT   = DEF_USB_PID_OUT
-} ch376_pid;
+typedef enum _ch376_pid { CH_PID_SETUP = DEF_USB_PID_SETUP, CH_PID_IN = DEF_USB_PID_IN, CH_PID_OUT = DEF_USB_PID_OUT } ch376_pid;
 
 __sfr __at 0x88 CH376_DATA_PORT;
 __sfr __at 0x89 CH376_COMMAND_PORT;

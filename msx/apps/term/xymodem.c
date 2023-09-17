@@ -62,7 +62,7 @@ char          chProtocolString[128];
 // Helper function for file transfers
 char *ultostr(unsigned long value, char *ptr, int base) {
   unsigned long t = 0, res = 0;
-  unsigned long tmp = value;
+  unsigned long tmp   = value;
   int           count = 0;
 
   if (NULL == ptr) {
@@ -108,19 +108,19 @@ char *ultostr(unsigned long value, char *ptr, int base) {
 // MUST HAVE at least the double of a whole packet size, which means 2108
 // bytes. This speeds up quite a bit the decoding of double FF's.
 int GetPacket(unsigned char **ucPacket, unsigned char *ucIs1K) {
-  int            ret = 0;
-  unsigned char  is1K = *ucIs1K;
+  int            ret          = 0;
+  unsigned char  is1K         = *ucIs1K;
   unsigned int   uiReadHelper = 0;
-  unsigned int   PktStatus = 0;
+  unsigned int   PktStatus    = 0;
   unsigned int   TimeOut, Time1;
   unsigned char  TimeLeap;
   unsigned char  ucFoundStart = 0;
-  unsigned char  ucSkipFF = 0;
+  unsigned char  ucSkipFF     = 0;
   unsigned int   uiI, uiJ;
   unsigned char *ucTmpPointer;
 
   // Timeout for a packet
-  Time1 = uiTickCount;
+  Time1   = uiTickCount;
   TimeOut = XYMODEM_PACKET_TIMEOUT + Time1;
   if (TimeOut < Time1)
     TimeLeap = 1;
@@ -146,7 +146,7 @@ int GetPacket(unsigned char **ucPacket, unsigned char *ucIs1K) {
           {
             is1K = 1;
             ucTmpPointer += uiI;
-            *ucPacket = ucTmpPointer;
+            *ucPacket    = ucTmpPointer;
             ucFoundStart = 1;
             uiReadHelper -= uiI;
             break;
@@ -154,11 +154,12 @@ int GetPacket(unsigned char **ucPacket, unsigned char *ucIs1K) {
           {
             is1K = 0;
             ucTmpPointer += uiI;
-            *ucPacket = ucTmpPointer;
+            *ucPacket    = ucTmpPointer;
             ucFoundStart = 1;
             uiReadHelper -= uiI;
             break;
-          } else if ((ucTmpPointer[uiI] == EOT) || (ucTmpPointer[uiI] == ETB) || (ucTmpPointer[uiI] == CAN)) // transmission cancelled
+          } else if ((ucTmpPointer[uiI] == EOT) || (ucTmpPointer[uiI] == ETB) ||
+                     (ucTmpPointer[uiI] == CAN)) // transmission cancelled
             return (ucTmpPointer[uiI] * -1);
         }
       }
@@ -220,10 +221,10 @@ int GetPacket(unsigned char **ucPacket, unsigned char *ucIs1K) {
 
   if (TimeOut == 0) // Packet received
   {
-    ret = 1; // Success
+    ret     = 1; // Success
     *ucIs1K = is1K;
   } else {
-    ret = 0; // Failure
+    ret     = 0; // Failure
     *ucIs1K = 0;
   }
 
@@ -246,9 +247,9 @@ int GetPacket(unsigned char **ucPacket, unsigned char *ucIs1K) {
 //		254 - YMODEM no more files
 //      Other values - The control character (EOT/ETB/CAN) received
 unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned char PktNumber, unsigned char isYmodem) {
-  unsigned char  ret = 0;
-  unsigned char  is1K = 0;
-  unsigned int   chrLen = 0;
+  unsigned char  ret     = 0;
+  unsigned char  is1K    = 0;
+  unsigned int   chrLen  = 0;
   unsigned int   chrTerm = 0;
   unsigned int   i;
   unsigned int   TimeOut, Time1;
@@ -281,7 +282,7 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
   // Ok, so let's do the packet game while we can retry
   for (i = 0; i < Retries; i++) {
     // Timeout for a packet
-    Time1 = uiTickCount;
+    Time1   = uiTickCount;
     TimeOut = 360 + Time1;
     if (TimeOut < Time1)
       TimeLeap = 1;
@@ -295,7 +296,7 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
     // This is the packet receiving loop, it will exit upon timeout
     // or receiving the packet
     do {
-      ucReadBuffer = RcvPkt;
+      ucReadBuffer     = RcvPkt;
       iGetPacketResult = GetPacket(&ucReadBuffer, &is1K);
       if (iGetPacketResult == 1) // success
       {
@@ -450,12 +451,12 @@ void CancelTransfer(void) {
 // This function will deal with file reception
 void XYModemGet(unsigned char chTelnetTransfer) {
   unsigned char ret;
-  int           iFile = 0;
+  int           iFile   = 0;
   int           iNoFile = -1;
   unsigned char PktNumber;
-  unsigned char key = 0;
+  unsigned char key        = 0;
   unsigned char advance[4] = {'-', '\\', '|', '/'};
-  unsigned int  FilesRcvd = 0;
+  unsigned int  FilesRcvd  = 0;
 
   chDoubleFF = chTelnetTransfer;
 
@@ -574,7 +575,8 @@ void XYModemGet(unsigned char chTelnetTransfer) {
     } while ((key != 0x1b) && (ret != 254)); // Do this until any process break or no more files
   } else                                     // X-Modem
   {
-    TestTransfer = 0; // in XMODEM we are not able to test packet 00 (STX or SOH, 00 and FF, if fourth byte is FF then it is doubling, otherwise not)
+    TestTransfer = 0; // in XMODEM we are not able to test packet 00 (STX or SOH, 00 and FF, if fourth byte is FF then it is
+                      // doubling, otherwise not)
     // in XMODEM filename is up to the user, we've already asked it, so create the file
     iFile = Open(filename, IO_CREAT);
 

@@ -6,7 +6,8 @@
 #include <string.h>
 
 void logInterface(const interface_descriptor *const p) {
-  printf("int len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,", p->bLength, p->bDescriptorType, p->bInterfaceNumber, p->bAlternateSetting, p->bNumEndpoints);
+  printf("int len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,", p->bLength, p->bDescriptorType, p->bInterfaceNumber, p->bAlternateSetting,
+         p->bNumEndpoints);
 
   if (p->bLength > 5)
     printf("clas=%d,sub=%d,prot=%d,int=%d", p->bInterfaceClass, p->bInterfaceSubClass, p->bInterfaceProtocol, p->iInterface);
@@ -15,7 +16,8 @@ void logInterface(const interface_descriptor *const p) {
 }
 
 void logConfig(const config_descriptor *const p) {
-  printf("cfg len=%d,typ=%d,tlen=%d,numI=%d,bcfgv=%d,icfg=%d,bmA=%02x,max=%d\r\n", p->bLength, p->bDescriptorType, p->wTotalLength, p->bNumInterfaces, p->bConfigurationvalue, p->iConfiguration, p->bmAttributes, p->bMaxPower);
+  printf("cfg len=%d,typ=%d,tlen=%d,numI=%d,bcfgv=%d,icfg=%d,bmA=%02x,max=%d\r\n", p->bLength, p->bDescriptorType, p->wTotalLength,
+         p->bNumInterfaces, p->bConfigurationvalue, p->iConfiguration, p->bmAttributes, p->bMaxPower);
 }
 
 void logDevice(const device_descriptor *const p) {
@@ -35,7 +37,10 @@ void logDevice(const device_descriptor *const p) {
   printf("num=%d\r\n", p->bNumConfigurations);
 }
 
-void logEndPointDescription(const endpoint_descriptor *const p) { printf("ep: len=%d,t=%d,e=%d,a=%d,size=%d,intv=%d\r\n", p->bLength, p->bDescriptorType, p->bEndpointAddress, p->bmAttributes, p->wMaxPacketSize, p->bInterval); }
+void logEndPointDescription(const endpoint_descriptor *const p) {
+  printf("ep: len=%d,t=%d,e=%d,a=%d,size=%d,intv=%d\r\n", p->bLength, p->bDescriptorType, p->bEndpointAddress, p->bmAttributes,
+         p->wMaxPacketSize, p->bInterval);
+}
 
 // void logEndPointParam(const endpoint_param *const p) {
 //   printf("enp (num=%d,tog=%d,max=%d)", p->number, p->toggle, p->max_packet_size);
@@ -103,8 +108,9 @@ void logEndPointDescription(const endpoint_descriptor *const p) { printf("ep: le
 // }
 
 void logHubDescription(const hub_descriptor *const hub_descriptor) {
-  printf("hub: len=%d,t=%d,ports=%d,char=%d,pwr=%d,ccur=%d,rem=%d\r\n", hub_descriptor->bDescLength, hub_descriptor->bDescriptorType, hub_descriptor->bNbrPorts, hub_descriptor->wHubCharacteristics, hub_descriptor->bPwrOn2PwrGood,
-         hub_descriptor->bHubContrCurrent, hub_descriptor->DeviceRemovable[0]);
+  printf("hub: len=%d,t=%d,ports=%d,char=%d,pwr=%d,ccur=%d,rem=%d\r\n", hub_descriptor->bDescLength,
+         hub_descriptor->bDescriptorType, hub_descriptor->bNbrPorts, hub_descriptor->wHubCharacteristics,
+         hub_descriptor->bPwrOn2PwrGood, hub_descriptor->bHubContrCurrent, hub_descriptor->DeviceRemovable[0]);
 }
 
 // void logHubPortStatus(const hub_port_status *const port_status) { printf("hub: wPortStatus=%04x,wPortChange=%04x\r\n",

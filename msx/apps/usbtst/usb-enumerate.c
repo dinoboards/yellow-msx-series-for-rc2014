@@ -31,15 +31,20 @@ usb_device_type identify_class_driver(_working *const working) {
   return 0;
 }
 
-usb_error get_config_descriptor(const uint8_t config_index, const uint8_t device_address, const uint8_t max_packet_size, uint8_t *const buffer) {
+usb_error get_config_descriptor(const uint8_t  config_index,
+                                const uint8_t  device_address,
+                                const uint8_t  max_packet_size,
+                                uint8_t *const buffer) {
   usb_error result;
 
   printf("GET CONFIG %d, %d, %d\r\n", config_index, device_address, max_packet_size);
 
-  CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address, max_packet_size));
+  CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address,
+                                 max_packet_size));
 
   // if wTotalLength > MAX_CONFIG_SIZE bad things might happen
-  CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, ((config_descriptor *)buffer)->wTotalLength, device_address, max_packet_size));
+  CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, ((config_descriptor *)buffer)->wTotalLength,
+                                 device_address, max_packet_size));
   logConfig((config_descriptor *)buffer);
 
   return USB_ERR_OK;
@@ -100,13 +105,13 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   case USB_IS_MASS_STORAGE: {
     work_area->next_storage_device_index++;
     storage_device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
-    device_config *const         dev_cfg = &storage_dev->config;
+    device_config *const         dev_cfg     = &storage_dev->config;
 
-    dev_cfg->max_packet_size = working->desc.bMaxPacketSize0;
-    dev_cfg->value = working->config.desc.bConfigurationvalue;
-    dev_cfg->address = working->state->next_device_address;
+    dev_cfg->max_packet_size  = working->desc.bMaxPacketSize0;
+    dev_cfg->value            = working->config.desc.bConfigurationvalue;
+    dev_cfg->address          = working->state->next_device_address;
     dev_cfg->interface_number = interface->bInterfaceNumber;
-    storage_dev->type = working->usb_device;
+    storage_dev->type         = working->usb_device;
     CHECK(hw_set_configuration(dev_cfg));
     break;
   }
@@ -115,18 +120,18 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     printf("config ethernet adapter\r\n");
 
     work_area->cdc_config.interface_number = interface->bInterfaceNumber;
-    work_area->cdc_config.max_packet_size = working->desc.bMaxPacketSize0;
-    work_area->cdc_config.value = working->config.desc.bConfigurationvalue;
-    work_area->cdc_config.address = working->state->next_device_address;
+    work_area->cdc_config.max_packet_size  = working->desc.bMaxPacketSize0;
+    work_area->cdc_config.value            = working->config.desc.bConfigurationvalue;
+    work_area->cdc_config.address          = working->state->next_device_address;
     CHECK(hw_set_configuration(&work_area->cdc_config));
     break;
   }
 
   case USB_IS_HUB: {
     work_area->hub_config.interface_number = interface->bInterfaceNumber;
-    work_area->hub_config.max_packet_size = working->desc.bMaxPacketSize0;
-    work_area->hub_config.value = working->config.desc.bConfigurationvalue;
-    work_area->hub_config.address = working->state->next_device_address;
+    work_area->hub_config.max_packet_size  = working->desc.bMaxPacketSize0;
+    work_area->hub_config.value            = working->config.desc.bConfigurationvalue;
+    work_area->hub_config.address          = working->state->next_device_address;
     CHECK(configure_usb_hub(working));
     break;
   }
@@ -160,7 +165,7 @@ usb_error op_get_config_descriptor(_working *const working) __z88dk_fastcall {
 
   CHECK(get_config_descriptor(working->config_index, working->state->next_device_address, max_packet_size, working->config.buffer));
 
-  working->ptr = (working->config.buffer + sizeof(config_descriptor));
+  working->ptr             = (working->config.buffer + sizeof(config_descriptor));
   working->interface_count = working->config.desc.bNumInterfaces;
 
   CHECK(op_identify_class_driver(working));
@@ -197,7 +202,7 @@ usb_error read_all_configs(enumeration_state *const state) {
 }
 
 usb_error enumerate_all_devices() {
-  _usb_state *const work_area = get_usb_work_area();
+  _usb_state *const work_area          = get_usb_work_area();
   work_area->next_storage_device_index = (uint8_t)-1;
   enumeration_state state;
   memset(&state, 0, sizeof(enumeration_state));

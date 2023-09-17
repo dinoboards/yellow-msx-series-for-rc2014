@@ -98,8 +98,8 @@ usb_error ch_get_status() {
 uint8_t ch_read_data(uint8_t *buffer, uint16_t buffer_size) {
   ch_command(CH_CMD_RD_USB_DATA0);
   const uint8_t amount_received = CH376_DATA_PORT;
-  uint8_t       count = amount_received;
-  uint8_t       extra = 0;
+  uint8_t       count           = amount_received;
+  uint8_t       extra           = 0;
 
   if (count > buffer_size) {
     extra = count - buffer_size;
@@ -149,7 +149,7 @@ uint8_t ch_cmd_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
   uint8_t result = 0;
 
   CH376_COMMAND_PORT = CH_CMD_SET_USB_MODE;
-  CH376_DATA_PORT = mode;
+  CH376_DATA_PORT    = mode;
 
   uint8_t count = 127;
 
@@ -180,9 +180,13 @@ void ch_issue_token(const uint8_t toggle_bit, const uint8_t endpoint, const ch37
   CH376_DATA_PORT = endpoint << 4 | pid;
 }
 
-void ch_issue_token_in(const endpoint_param *const endpoint) __z88dk_fastcall { ch_issue_token(endpoint->toggle ? 0x80 : 0x00, endpoint->number, CH_PID_IN); }
+void ch_issue_token_in(const endpoint_param *const endpoint) __z88dk_fastcall {
+  ch_issue_token(endpoint->toggle ? 0x80 : 0x00, endpoint->number, CH_PID_IN);
+}
 
-void ch_issue_token_out(const endpoint_param *const endpoint) __z88dk_fastcall { ch_issue_token(endpoint->toggle ? 0x40 : 0x00, endpoint->number, CH_PID_OUT); }
+void ch_issue_token_out(const endpoint_param *const endpoint) __z88dk_fastcall {
+  ch_issue_token(endpoint->toggle ? 0x40 : 0x00, endpoint->number, CH_PID_OUT);
+}
 
 void ch_issue_token_out_ep0() { ch_issue_token(0x40, 0, CH_PID_OUT); }
 
@@ -214,12 +218,12 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
 
 usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint) {
   usb_error     result;
-  const uint8_t number = endpoint->number;
+  const uint8_t number          = endpoint->number;
   const uint8_t max_packet_size = endpoint->max_packet_size;
 
   while (buffer_length > 0) {
     const uint8_t size = max_packet_size < buffer_length ? max_packet_size : buffer_length;
-    buffer = ch_write_data(buffer, size);
+    buffer             = ch_write_data(buffer, size);
     buffer_length -= size;
     ch_issue_token_out(endpoint);
 

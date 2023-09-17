@@ -18,10 +18,10 @@ const unsigned char pTempFileName[] = "xmdwn.tmp";
 bool                started;
 uint32_t            totalFileSize;
 const unsigned char rotatingChar[4][5] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
-uint8_t             rotatingIndex = 0;
+uint8_t             rotatingIndex      = 0;
 FILE *              fptrDiagnostics;
 const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
-char *              waitForMessage = NULL;
+char *              waitForMessage          = NULL;
 char                backupPacket[1025];
 int32_t             backupPacketSize;
 bool                firstPacket;
@@ -56,8 +56,8 @@ void subCommandWGet() {
 
 void wget() {
   xmodem_enable_extended_info_packet_support();
-  firstPacket = true;
-  started = false;
+  firstPacket   = true;
+  started       = false;
   totalFileSize = 0;
   print_str(ERASE_LINE "Connecting ...");
 
@@ -125,7 +125,7 @@ void wget() {
       if (!firstPacket && pFileName)
         fwrite(backupPacket, backupPacketSize, 1, fptr);
 
-      firstPacket = false;
+      firstPacket      = false;
       backupPacketSize = xmodemState.currentPacketSize;
       memcpy(backupPacket, xmodemState.packetBuffer + 3, backupPacketSize);
       totalFileSize += backupPacketSize;
@@ -165,7 +165,7 @@ void wget() {
       const int32_t length = atol(lengthPtr + 4);
 
       backupPacketSize = length - (totalFileSize - backupPacketSize);
-      totalFileSize = length;
+      totalFileSize    = length;
     }
   }
 
@@ -179,9 +179,9 @@ void wget() {
 #endif
 
   if (pFileName) {
-    const int16_t  ticks = JIFFY - startTime;
+    const int16_t  ticks     = JIFFY - startTime;
     const float    totalTime = ((float)ticks / (float)GET_VDP_FREQUENCY());
-    const uint32_t rate = (float)totalFileSize / totalTime;
+    const uint32_t rate      = (float)totalFileSize / totalTime;
 
     fclose(fptr);
     remove(pFileName);

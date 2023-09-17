@@ -90,7 +90,7 @@ uint8_t getRemainingBy1024String(uint32_t value, char *destination) {
     *destination = '\0';
     return 1;
   }
-  remaining2 = remaining % 100;
+  remaining2     = remaining % 100;
   remainingDigit = (remaining / 100) + '0';
   if (remaining2 >= 50) {
     remainingDigit++;
@@ -108,16 +108,16 @@ uint8_t getRemainingBy1024String(uint32_t value, char *destination) {
 }
 
 void saveOriginalScreenConfiguration() {
-  originalScreenConfig.screenMode = *(uint8_t *)SCRMOD;
-  originalScreenConfig.screenWidth = LINLEN;
+  originalScreenConfig.screenMode          = *(uint8_t *)SCRMOD;
+  originalScreenConfig.screenWidth         = LINLEN;
   originalScreenConfig.functionKeysVisible = (*(uint8_t *)CNSDFG != 0);
 }
 
 void composeWorkScreenConfiguration() {
-  currentScreenConfig.screenMode = 0;
-  currentScreenConfig.screenWidth = 80;
+  currentScreenConfig.screenMode          = 0;
+  currentScreenConfig.screenWidth         = 80;
   currentScreenConfig.functionKeysVisible = false;
-  screenLinesCount = *(uint8_t *)CRTCNT;
+  screenLinesCount                        = *(uint8_t *)CRTCNT;
 }
 
 void setScreenConfiguration() {
@@ -182,8 +182,8 @@ void clearInformationArea() {
 }
 
 void getDriversInformation() {
-  uint8_t           error = 0;
-  uint8_t           driverIndex = 1;
+  uint8_t           error         = 0;
+  uint8_t           driverIndex   = 1;
   msxdosDriverInfo *currentDriver = &drivers[0];
 
   installedDriversCount = 0;
@@ -191,7 +191,8 @@ void getDriversInformation() {
   while (error == 0 && driverIndex <= MAX_INSTALLED_DRIVERS) {
     error = msxdosGdrvr(driverIndex, currentDriver);
 
-    if (error == 0 && (currentDriver->flags & (DRIVER_IS_DOS250 | DRIVER_IS_DEVICE_BASED) == (DRIVER_IS_DOS250 | DRIVER_IS_DEVICE_BASED))) {
+    if (error == 0 &&
+        (currentDriver->flags & (DRIVER_IS_DOS250 | DRIVER_IS_DEVICE_BASED) == (DRIVER_IS_DOS250 | DRIVER_IS_DEVICE_BASED))) {
       installedDriversCount++;
       terminateRightPaddedStringWithZero(currentDriver->driverName, DRIVER_NAME_LENGTH);
       currentDriver++;
@@ -246,7 +247,8 @@ void showDriverSelectionScreen() {
 
     driverName = currentDriver->driverName;
 
-    printf("\x1BK%d. %s%sv%d.%d%s on slot %s", i + 1, driverName, " ", currentDriver->versionMain, currentDriver->versionSec, rev, slot);
+    printf("\x1BK%d. %s%sv%d.%d%s on slot %s", i + 1, driverName, " ", currentDriver->versionMain, currentDriver->versionSec, rev,
+           slot);
 
     newLine();
     newLine();
@@ -261,8 +263,8 @@ void showDriverSelectionScreen() {
 }
 
 void getDevicesInformation() {
-  uint16_t    error = 0;
-  uint8_t     deviceIndex = 1;
+  uint16_t    error         = 0;
+  uint8_t     deviceIndex   = 1;
   deviceInfo *currentDevice = &devices[0];
   char *      currentDeviceName;
 
@@ -271,7 +273,7 @@ void getDevicesInformation() {
   while (deviceIndex <= MAX_DEVICES_PER_DRIVER) {
 
     currentDeviceName = currentDevice->deviceName;
-    error = msxdosDrvDevLogicalUnitCount(selectedDriver->slot, deviceIndex, (msxdosDeviceBasicInfo *)currentDevice);
+    error             = msxdosDrvDevLogicalUnitCount(selectedDriver->slot, deviceIndex, (msxdosDeviceBasicInfo *)currentDevice);
     if (error == 0) {
       availableDevicesCount++;
       error = msxdosDrvDevGetName(selectedDriver->slot, deviceIndex, currentDeviceName);
@@ -330,15 +332,16 @@ void showDeviceSelectionScreen() {
 }
 
 void getLunsInformation() {
-  uint16_t       error = 0;
-  uint8_t        lunIndex = 1;
+  uint16_t       error      = 0;
+  uint8_t        lunIndex   = 1;
   msxdosLunInfo *currentLun = &luns[0];
 
   while (lunIndex <= MAX_LUNS_PER_DEVICE) {
     error = msxdosDrvLunInfo(selectedDriver->slot, selectedDeviceIndex, lunIndex, currentLun);
 
     currentLun->suitableForPartitioning =
-        (error == 0) && (currentLun->mediumType == BLOCK_DEVICE) && (currentLun->sectorSize == 512) && (currentLun->sectorCount >= MIN_DEVICE_SIZE_IN_K * 2) && ((currentLun->flags & (READ_ONLY_LUN | FLOPPY_DISK_LUN)) == 0);
+        (error == 0) && (currentLun->mediumType == BLOCK_DEVICE) && (currentLun->sectorSize == 512) &&
+        (currentLun->sectorCount >= MIN_DEVICE_SIZE_IN_K * 2) && ((currentLun->flags & (READ_ONLY_LUN | FLOPPY_DISK_LUN)) == 0);
 
     if (currentLun->suitableForPartitioning) {
       availableLunsCount++;
@@ -422,12 +425,12 @@ void recalculateAutoPartitionSize(bool setToAllSpaceAvailable) {
 }
 
 void initializePartitioningVariables(uint8_t lunIndex) {
-  selectedLunIndex = lunIndex - 1;
-  selectedLun = &luns[selectedLunIndex];
-  partitionsCount = 0;
-  partitionsExistInDisk = true;
-  canCreatePartitions = (selectedLun->sectorCount >= (MIN_DEVICE_SIZE_FOR_PARTITIONS_IN_K * 2));
-  canDoDirectFormat = (selectedLun->sectorCount <= MAX_DEVICE_SIZE_FOR_DIRECT_FORMAT_IN_K * 2);
+  selectedLunIndex             = lunIndex - 1;
+  selectedLun                  = &luns[selectedLunIndex];
+  partitionsCount              = 0;
+  partitionsExistInDisk        = true;
+  canCreatePartitions          = (selectedLun->sectorCount >= (MIN_DEVICE_SIZE_FOR_PARTITIONS_IN_K * 2));
+  canDoDirectFormat            = (selectedLun->sectorCount <= MAX_DEVICE_SIZE_FOR_DIRECT_FORMAT_IN_K * 2);
   unpartitionnedSpaceInSectors = selectedLun->sectorCount;
   recalculateAutoPartitionSize(true);
 }
@@ -444,7 +447,7 @@ void printTargetInfo() {
 }
 
 uint8_t getDiskPartitionsInfo() {
-  uint8_t        primaryIndex = 1;
+  uint8_t        primaryIndex  = 1;
   uint8_t        extendedIndex = 0;
   uint8_t        error;
   partitionInfo *currentPartition = &partitions[0];
@@ -454,17 +457,18 @@ uint8_t getDiskPartitionsInfo() {
 
   do {
     result.sectorCount = 0;
-    error = msxdosGpart(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, primaryIndex, extendedIndex, false, &result);
+    error =
+        msxdosGpart(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, primaryIndex, extendedIndex, false, &result);
 
     if (error == 0) {
       if (result.typeCode == PARTYPE_EXTENDED)
         extendedIndex = 1;
       else {
-        currentPartition->primaryIndex = primaryIndex;
+        currentPartition->primaryIndex  = primaryIndex;
         currentPartition->extendedIndex = extendedIndex;
         currentPartition->partitionType = result.typeCode;
-        currentPartition->status = result.status;
-        currentPartition->sizeInK = result.sectorCount / 2;
+        currentPartition->status        = result.status;
+        currentPartition->sizeInK       = result.sectorCount / 2;
         partitionsCount++;
         currentPartition++;
         extendedIndex++;
@@ -509,7 +513,8 @@ void printOnePartitionInfo(partitionInfo *info) {
 
   if (info->partitionType == PARTYPE_FAT12) {
     printf("FAT12");
-  } else if (info->partitionType == PARTYPE_FAT16 || info->partitionType == PARTYPE_FAT16_SMALL || info->partitionType == PARTYPE_FAT16_LBA) {
+  } else if (info->partitionType == PARTYPE_FAT16 || info->partitionType == PARTYPE_FAT16_SMALL ||
+             info->partitionType == PARTYPE_FAT16_LBA) {
     printf("FAT16");
   } else if (info->partitionType == 0xB || info->partitionType == 0xC) {
     printf("FAT32");
@@ -526,14 +531,14 @@ void printOnePartitionInfo(partitionInfo *info) {
 void addAutoPartition() {
   partitionInfo *partition = &partitions[partitionsCount];
 
-  partition->status = partitionsCount == 0 ? 0x80 : 0;
-  partition->sizeInK = autoPartitionSizeInK;
+  partition->status        = partitionsCount == 0 ? 0x80 : 0;
+  partition->sizeInK       = autoPartitionSizeInK;
   partition->partitionType = partition->sizeInK > MAX_FAT12_PARTITION_SIZE_IN_K ? PARTYPE_FAT16_LBA : PARTYPE_FAT12;
   if (partitionsCount == 0) {
-    partition->primaryIndex = 1;
+    partition->primaryIndex  = 1;
     partition->extendedIndex = 0;
   } else {
-    partition->primaryIndex = 2;
+    partition->primaryIndex  = 2;
     partition->extendedIndex = partitionsCount;
   }
 
@@ -557,8 +562,8 @@ void togglePartitionActive(uint8_t partitionIndex) {
     return;
   }
 
-  status = partition->status;
-  primaryIndex = partition->primaryIndex;
+  status        = partition->status;
+  primaryIndex  = partition->primaryIndex;
   extendedIndex = partition->extendedIndex;
 
   sprintf(buffer, "%set active bit of partition %d? (y/n) ", status & 0x80 ? "Res" : "S", partitionIndex + 1);
@@ -567,13 +572,15 @@ void togglePartitionActive(uint8_t partitionIndex) {
     return;
   }
 
-  error = msxdosGpart(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, partition->primaryIndex, partition->extendedIndex, true, &result);
+  error = msxdosGpart(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, partition->primaryIndex,
+                      partition->extendedIndex, true, &result);
   if (error != 0)
     return;
 
   partitionTableEntrySector = result.partitionSector;
 
-  preparePartitioningProcess(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, partitionsCount, partitions, luns[selectedLunIndex].sectorsPerTrack);
+  preparePartitioningProcess(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, partitionsCount, partitions,
+                             luns[selectedLunIndex].sectorsPerTrack);
 
   error = toggleStatusBit(extendedIndex == 0 ? primaryIndex - 1 : 0, partitionTableEntrySector);
   if (error == 0) {
@@ -612,8 +619,8 @@ void showPartitions() {
   }
 
   while (true) {
-    isFirstPage = (firstShownPartitionIndex == 1);
-    isLastPage = (firstShownPartitionIndex + PARTITIONS_PER_PAGE) > partitionsCount;
+    isFirstPage              = (firstShownPartitionIndex == 1);
+    isLastPage               = (firstShownPartitionIndex + PARTITIONS_PER_PAGE) > partitionsCount;
     lastPartitionIndexToShow = isLastPage ? partitionsCount : firstShownPartitionIndex + PARTITIONS_PER_PAGE - 1;
 
     locate(0, screenLinesCount - 1);
@@ -644,7 +651,8 @@ void showPartitions() {
       printCentered(partitionsExistInDisk ? "One partition found on device" : "One new partition defined");
     } else {
       if (allPartitionsArePrimary) {
-        sprintf(buffer, partitionsExistInDisk ? "%d primary partitions found on device" : "%d new primary partitions defined", partitionsCount);
+        sprintf(buffer, partitionsExistInDisk ? "%d primary partitions found on device" : "%d new primary partitions defined",
+                partitionsCount);
       } else {
         sprintf(buffer, partitionsExistInDisk ? "%d partitions found on device" : "%d new partitions defined", partitionsCount);
       }
@@ -693,8 +701,8 @@ void initializeScreenForTestDeviceAccess(const char *message) {
 
 void testDeviceAccess() {
   uint32_t    sectorNumber = 0;
-  const char *message = "Now reading device sector ";
-  uint8_t     messageLen = strlen(message);
+  const char *message      = "Now reading device sector ";
+  uint8_t     messageLen   = strlen(message);
   uint16_t    error;
   const char *errorMessageHeader = "Error when reading sector ";
 
@@ -755,15 +763,15 @@ bool writeSector(uint32_t targetSector) {
   return TRUE;
 }
 
-#define FOR_BUFFER(f, s)  \
-  for (i = 0; i < s; i++) \
+#define FOR_BUFFER(f, s)                                                                                                           \
+  for (i = 0; i < s; i++)                                                                                                          \
   f
-#define CHECK_BUFFER(c, f, s) \
-  FOR_BUFFER(                 \
-      if (c) {                \
-        f;                    \
-        break;                \
-      },                      \
+#define CHECK_BUFFER(c, f, s)                                                                                                      \
+  FOR_BUFFER(                                                                                                                      \
+      if (c) {                                                                                                                     \
+        f;                                                                                                                         \
+        break;                                                                                                                     \
+      },                                                                                                                           \
       s)
 
 void testDeviceWriteAccess() {
@@ -848,10 +856,10 @@ bool readWriteError(const char *errorMessageHeader, const uint16_t error, const 
 void increment32Bit(uint32_t *p) __z88dk_fastcall { (*p)++; }
 
 void testDeviceFullWriteAccess() {
-  const char *message = "Now testing sector ";
+  const char *message      = "Now testing sector ";
   uint32_t    sectorNumber = 0;
-  uint8_t     messageLen = strlen(message);
-  uint16_t    error = 23;
+  uint8_t     messageLen   = strlen(message);
+  uint16_t    error        = 23;
   uint16_t    i;
 
   initializeScreenForTestDeviceWriteAccess("Checking write access on *ALL* sector\r\n");
@@ -973,7 +981,8 @@ bool writePartitionTable() {
   locate(0, MESSAGE_ROW);
   printCentered("Preparing partitioning process...");
 
-  preparePartitioningProcess(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, partitionsCount, partitions, luns[selectedLunIndex].sectorsPerTrack);
+  preparePartitioningProcess(selectedDriver->slot, selectedDeviceIndex, selectedLunIndex + 1, partitionsCount, partitions,
+                             luns[selectedLunIndex].sectorsPerTrack);
 
   for (i = 0; i < partitionsCount; i++) {
     locate(0, MESSAGE_ROW);
@@ -1004,8 +1013,8 @@ void deleteAllPartitions() {
     return;
   }
 
-  partitionsCount = 0;
-  partitionsExistInDisk = false;
+  partitionsCount              = 0;
+  partitionsExistInDisk        = false;
   unpartitionnedSpaceInSectors = selectedLun->sectorCount;
   recalculateAutoPartitionSize(true);
 }
@@ -1017,13 +1026,14 @@ void addPartition() {
   char *   pointer;
   char     ch;
   bool     validNumberEntered = false;
-  uint32_t enteredSizeInK = 0;
+  uint32_t enteredSizeInK     = 0;
   bool     lessThan1MAvailable;
   bool     sizeInKSpecified;
   uint32_t unpartitionnedSpaceExceptAlignmentInK = (unpartitionnedSpaceInSectors - EXTRA_PARTITION_SECTORS) / 2;
 
   maxPartitionSizeInM = (uint16_t)((unpartitionnedSpaceInSectors / 2) >> 10);
-  maxPartitionSizeInK = unpartitionnedSpaceExceptAlignmentInK > (uint32_t)32767 ? (uint16_t)32767 : unpartitionnedSpaceExceptAlignmentInK;
+  maxPartitionSizeInK =
+      unpartitionnedSpaceExceptAlignmentInK > (uint32_t)32767 ? (uint16_t)32767 : unpartitionnedSpaceExceptAlignmentInK;
 
   lessThan1MAvailable = (maxPartitionSizeInM == 0);
 
@@ -1053,9 +1063,9 @@ void addPartition() {
       return;
     }
 
-    pointer = buffer;
+    pointer             = buffer;
     pointer[lineLength] = '\0';
-    enteredSizeInK = 0;
+    enteredSizeInK      = 0;
 
     while (true) {
       ch = (*pointer++) | 32;
@@ -1081,15 +1091,19 @@ void addPartition() {
       }
     }
 
-    if (validNumberEntered && (sizeInKSpecified && (enteredSizeInK > maxPartitionSizeInK) || (enteredSizeInK < MIN_PARTITION_SIZE_IN_K)) || (!sizeInKSpecified && (enteredSizeInK > ((uint32_t)maxPartitionSizeInM * 1024)))) {
+    if (validNumberEntered &&
+            (sizeInKSpecified && (enteredSizeInK > maxPartitionSizeInK) || (enteredSizeInK < MIN_PARTITION_SIZE_IN_K)) ||
+        (!sizeInKSpecified && (enteredSizeInK > ((uint32_t)maxPartitionSizeInM * 1024)))) {
       validNumberEntered = false;
     }
   }
 
-  autoPartitionSizeInK = enteredSizeInK > unpartitionnedSpaceExceptAlignmentInK ? unpartitionnedSpaceExceptAlignmentInK : enteredSizeInK;
+  autoPartitionSizeInK =
+      enteredSizeInK > unpartitionnedSpaceExceptAlignmentInK ? unpartitionnedSpaceExceptAlignmentInK : enteredSizeInK;
   addAutoPartition();
   unpartitionnedSpaceExceptAlignmentInK = (unpartitionnedSpaceInSectors - EXTRA_PARTITION_SECTORS) / 2;
-  autoPartitionSizeInK = enteredSizeInK > unpartitionnedSpaceExceptAlignmentInK ? unpartitionnedSpaceExceptAlignmentInK : enteredSizeInK;
+  autoPartitionSizeInK =
+      enteredSizeInK > unpartitionnedSpaceExceptAlignmentInK ? unpartitionnedSpaceExceptAlignmentInK : enteredSizeInK;
   recalculateAutoPartitionSize(false);
 }
 
@@ -1138,7 +1152,10 @@ void goPartitioningMainMenuScreen() {
     } else if (canCreatePartitions) {
       printf("(No partitions found or defined)\r\n");
     }
-    canAddPartitionsNow = !partitionsExistInDisk && canCreatePartitions && unpartitionnedSpaceInSectors >= (MIN_REMAINING_SIZE_FOR_NEW_PARTITIONS_IN_K * 2) + (EXTRA_PARTITION_SECTORS) && partitionsCount < MAX_PARTITIONS_TO_HANDLE;
+    canAddPartitionsNow =
+        !partitionsExistInDisk && canCreatePartitions &&
+        unpartitionnedSpaceInSectors >= (MIN_REMAINING_SIZE_FOR_NEW_PARTITIONS_IN_K * 2) + (EXTRA_PARTITION_SECTORS) &&
+        partitionsCount < MAX_PARTITIONS_TO_HANDLE;
     if (canAddPartitionsNow) {
       printf("A. Add one ");
       printSize(autoPartitionSizeInK);
@@ -1226,7 +1243,7 @@ void goPartitioningMainMenuScreen() {
 void goLunSelectionScreen(uint8_t deviceIndex) {
   uint8_t key;
 
-  currentDevice = &devices[deviceIndex - 1];
+  currentDevice       = &devices[deviceIndex - 1];
   selectedDeviceIndex = deviceIndex;
 
   availableLunsCount = 0;
@@ -1308,9 +1325,9 @@ void goDriverSelectionScreen() {
 
 void main() {
   installedDriversCount = 0;
-  selectedDeviceIndex = 0;
-  selectedLunIndex = 0;
-  availableLunsCount = 0;
+  selectedDeviceIndex   = 0;
+  selectedLunIndex      = 0;
+  availableLunsCount    = 0;
 
   saveOriginalScreenConfiguration();
 

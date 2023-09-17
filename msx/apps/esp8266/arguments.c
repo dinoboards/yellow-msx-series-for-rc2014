@@ -12,7 +12,8 @@ uint16_t    baud_rate = 7 * 256 + 7; // 19200
 const char *pMsxHubPackageName;
 uint8_t     requestLargePacket;
 
-const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
+const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",    "4800",
+                                    "9600", "19200", "38400", "57600", "unknown", "115200"};
 
 uint8_t abort_with_help() {
   print_str("Usage:  esp8266 <options> <subcommand>\r\n\r\n"
@@ -63,7 +64,7 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
     if (strncasecmp(argv[i], "set-timezone", 6) == 0) {
       if (i + 1 >= argc)
         return abort_with_invalid_options();
-      subCommand = SUB_COMMAND_SET_TIMEZONE;
+      subCommand   = SUB_COMMAND_SET_TIMEZONE;
       pNewTimeZone = argv[i + 1];
       return i + 2;
     }
@@ -71,8 +72,8 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
     if (strncasecmp(argv[i], "set-wifi", 6) == 0) {
       if (i + 2 >= argc)
         return abort_with_invalid_options();
-      subCommand = SUB_COMMAND_SET_WIFI;
-      pNewSSID = argv[i + 1];
+      subCommand   = SUB_COMMAND_SET_WIFI;
+      pNewSSID     = argv[i + 1];
       pNewPassword = argv[i + 2];
       return i + 3;
     }
@@ -82,13 +83,13 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
         return abort_with_invalid_options();
       subCommand = SUB_COMMAND_WGET;
       if (strncasecmp(argv[i + 1], "1k", 2) == 0) {
-        pWgetUrl = argv[i + 2];
-        pFileName = argv[i + 3];
+        pWgetUrl           = argv[i + 2];
+        pFileName          = argv[i + 3];
         requestLargePacket = true;
         return i + 4;
       }
-      pWgetUrl = argv[i + 1];
-      pFileName = argv[i + 2];
+      pWgetUrl           = argv[i + 1];
+      pFileName          = argv[i + 2];
       requestLargePacket = false;
       return i + 3;
     }
@@ -96,7 +97,7 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
     if (strncasecmp(argv[i], "msxhub", 6) == 0) {
       if (i + 1 >= argc)
         return abort_with_invalid_options();
-      subCommand = SUB_COMMAND_MSXHUB;
+      subCommand         = SUB_COMMAND_MSXHUB;
       pMsxHubPackageName = argv[i + 1];
       if (strlen(pMsxHubPackageName) > 8)
         return abort_with_invalid_package_name();

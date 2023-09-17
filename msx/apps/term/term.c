@@ -46,22 +46,25 @@
 #include <system_vars.h>
 
 // Those won't change, so we won't waste memory and use global constants
-const unsigned char ucWindowSize[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 24, IAC, SE};  // our terminal is 80x24
-const unsigned char ucWindowSize0[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 40, 0, 24, IAC, SE}; // our terminal is 40x24
-const unsigned char ucWindowSize1[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 25, IAC, SE}; // our terminal is 80x25
-const unsigned char ucTTYPE2[] = {IAC, SB, CMD_TTYPE, IS, 'A', 'N', 'S', 'I', IAC, SE};                              // Terminal ANSI
-const unsigned char ucTTYPE3[] = {IAC, SB, CMD_TTYPE, IS, 'V', 'T', '5', '2', IAC, SE};                              // Terminal UNKNOWN
+const unsigned char ucWindowSize[]  = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 24,
+                                      IAC, SE}; // our terminal is 80x24
+const unsigned char ucWindowSize0[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 40, 0, 24,
+                                       IAC, SE}; // our terminal is 40x24
+const unsigned char ucWindowSize1[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 25,
+                                       IAC, SE};                                             // our terminal is 80x25
+const unsigned char ucTTYPE2[]      = {IAC, SB, CMD_TTYPE, IS, 'A', 'N', 'S', 'I', IAC, SE}; // Terminal ANSI
+const unsigned char ucTTYPE3[]      = {IAC, SB, CMD_TTYPE, IS, 'V', 'T', '5', '2', IAC, SE}; // Terminal UNKNOWN
 
 char           ucTxData = 0; // where our key inputs go
 unsigned char  ucRet;        // return of functions
 char           chTextLine[128];
 unsigned char  ucCursorSave;
 unsigned char  ucFnkBackup[160];
-unsigned char *ucFnkStr = (unsigned char *)0xF87F;
-unsigned char  ucF5Exit = 0;
+unsigned char *ucFnkStr  = (unsigned char *)0xF87F;
+unsigned char  ucF5Exit  = 0;
 unsigned char  ucUseCrLf = 0;
-unsigned char  ucLockF2 = 0;
-unsigned char  ucLockF3 = 0;
+unsigned char  ucLockF2  = 0;
+unsigned char  ucLockF3  = 0;
 
 // This will handle CMD negotiation...
 // Basically, the first time host send any command our client will send it
@@ -114,7 +117,7 @@ void negotiate(unsigned char *ucBuf) {
     switch (ucBuf[2]) {
     case CMD_ECHO:
       // Host is going to echo
-      ucEcho = 0;
+      ucEcho   = 0;
       ucBuf[1] = DO;
       TxUnsafeData(ucBuf, 3); // Ok host, you can echo, I'm not going to echo
       break;
@@ -173,7 +176,7 @@ void negotiate(unsigned char *ucBuf) {
 // Also clear double FF's (this is how telnet indicate FF) and replace by a
 // single FF.
 void ParseTelnetData() {
-  unsigned char *chTmp = ucRcvDataMemory;
+  unsigned char *chTmp   = ucRcvDataMemory;
   unsigned char *chLimit = chTmp + uiGetSize;
 
   do {
@@ -181,8 +184,8 @@ void ParseTelnetData() {
     case TELNET_IDLE:
       // No command is being built, so is the character IAC?
       if (*chTmp == IAC) {
-        ucRcvData[0] = *chTmp;           // copy to command buffer
-        ucState = TELNET_CMD_INPROGRESS; // flag a command or sub is in progress
+        ucRcvData[0] = *chTmp;                // copy to command buffer
+        ucState      = TELNET_CMD_INPROGRESS; // flag a command or sub is in progress
         ucCmdCounter = 1;
         ++chTmp;
       } else {
@@ -269,7 +272,7 @@ void SendCursorPosition(unsigned int uiCursorPosition) __z88dk_fastcall {
   unsigned char uchRow, uchColumn;
 
   uchColumn = uiCursorPosition & 0xff;
-  uchRow = (uiCursorPosition >> 8) & 0xff;
+  uchRow    = (uiCursorPosition >> 8) & 0xff;
   // return cursor position
   sprintf(uchPositionResponse, "\x1b[%u;%uR", uchRow, uchColumn);
   TxUnsafeData(uchPositionResponse, strlen((char *)uchPositionResponse));
@@ -282,7 +285,8 @@ int main(const int argc, const unsigned char **argv) {
 
   extbio_fossil_install();
 
-  // we detect if enter was hit to avoid popping up protocol selection if transmit binary command is received in initial negotiations
+  // we detect if enter was hit to avoid popping up protocol selection if transmit binary command is received in initial
+  // negotiations
   ucEnterHit = 0;
   // no bytes received yet
   uiGetSize = 0;
@@ -342,7 +346,7 @@ int main(const int argc, const unsigned char **argv) {
       ucLockF2 = 1;                            // key pressed, wait until it is released
     else if ((ucLockF2) && (NEWKEY[6] & 0x40)) // key released, let's do it
     {
-      ucEcho = !ucEcho;
+      ucEcho   = !ucEcho;
       ucLockF2 = 0;
     }
 
@@ -351,7 +355,7 @@ int main(const int argc, const unsigned char **argv) {
     else if ((ucLockF3) && (NEWKEY[6] & 0x80)) // key released, let's do it
     {
       ucUseCrLf = !ucUseCrLf;
-      ucLockF3 = 0;
+      ucLockF3  = 0;
     }
 
     if ((!(NEWKEY[7] & 0x2)) && ((NEWKEY[6] & 0x1))) // F5 and not shift: Exit

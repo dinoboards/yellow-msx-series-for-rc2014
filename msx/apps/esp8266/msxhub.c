@@ -55,8 +55,8 @@ char *currentLine() {
 }
 
 char *eachLine(char *p) __z88dk_fastcall {
-  pStart = p;
-  curLine = p;
+  pStart      = p;
+  curLine     = p;
   nextLinePtr = NULL;
 
   return currentLine();
@@ -66,14 +66,14 @@ void nextLine() { curLine = nextLinePtr ? (nextLinePtr + 2) : NULL; }
 
 int8_t getNumberOfPages() {
   msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
-  p = str_append_upper(p, pMsxHubPackageName);
-  p = str_append(p, "/latest/pages");
+  char *p      = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
+  p            = str_append_upper(p, pMsxHubPackageName);
+  p            = str_append(p, "/latest/pages");
 
-  pWgetUrl = msxHubUrl;
-  pFileName = NULL;
+  pWgetUrl           = msxHubUrl;
+  pFileName          = NULL;
   requestLargePacket = false;
-  waitForMessage = (char *)(ERASE_LINE "Retreiving file list");
+  waitForMessage     = (char *)(ERASE_LINE "Retreiving file list");
 
   wget();
 
@@ -82,34 +82,34 @@ int8_t getNumberOfPages() {
 
 void getFileListForPage(int8_t i) __z88dk_fastcall {
   msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
-  p = str_append_upper(p, pMsxHubPackageName);
-  p = str_append(p, "/latest/files/");
+  char *p      = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
+  p            = str_append_upper(p, pMsxHubPackageName);
+  p            = str_append(p, "/latest/files/");
   sprintf(p, "%d", i);
 
-  pWgetUrl = msxHubUrl;
-  pFileName = NULL;
+  pWgetUrl           = msxHubUrl;
+  pFileName          = NULL;
   requestLargePacket = true;
-  waitForMessage = (char *)(ERASE_LINE "Retreiving file list page");
+  waitForMessage     = (char *)(ERASE_LINE "Retreiving file list page");
 
   wget();
 }
 
 const char *getInstallDirectory() {
   msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
-  p = str_append_upper(p, pMsxHubPackageName);
+  char *p      = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
+  p            = str_append_upper(p, pMsxHubPackageName);
   str_append(p, "/latest/installdir");
 
-  pWgetUrl = msxHubUrl;
-  pFileName = NULL;
+  pWgetUrl           = msxHubUrl;
+  pFileName          = NULL;
   requestLargePacket = false;
-  waitForMessage = (char *)(ERASE_LINE "Retrieving installdir name");
+  waitForMessage     = (char *)(ERASE_LINE "Retrieving installdir name");
 
   wget();
 
   char *stringEndPtr = (char *)memchr(lastCapturedPacket, CTRLZ, 1024);
-  *stringEndPtr = 0;
+  *stringEndPtr      = 0;
 
   return lastCapturedPacket + 1; // skip leading slash
 }
@@ -125,17 +125,17 @@ void createInstallDirectory(const char *installDir) __z88dk_fastcall {
 
 void downloadFile(const char *fileName) __z88dk_fastcall {
   msxHubUrl[0] = 0;
-  char *p = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
-  p = str_append_upper(p, pMsxHubPackageName);
-  p = str_append(p, "/latest/get/");
-  p = str_append_upper(p, pMsxHubPackageName);
-  p = str_append(p, "/");
+  char *p      = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
+  p            = str_append_upper(p, pMsxHubPackageName);
+  p            = str_append(p, "/latest/get/");
+  p            = str_append_upper(p, pMsxHubPackageName);
+  p            = str_append(p, "/");
   str_append(p, fileName);
 
-  pWgetUrl = msxHubUrl;
-  pFileName = fileName;
+  pWgetUrl           = msxHubUrl;
+  pFileName          = fileName;
   requestLargePacket = false;
-  waitForMessage = (char *)(ERASE_LINE "Retrieving 12345678.123  ");
+  waitForMessage     = (char *)(ERASE_LINE "Retrieving 12345678.123  ");
   sprintf(waitForMessage + 3 + 11, fileName);
   wget();
 }

@@ -40,7 +40,8 @@
 #ifndef __MSX_FUSION__
 #define __MSX_FUSION__
 
-// Alias for deleted or renamed functions from V1.0 to 1.2, Trying to keep compatibility between versions 1.0 and 1.1 's source codes
+// Alias for deleted or renamed functions from V1.0 to 1.2, Trying to keep compatibility between versions 1.0 and 1.1 's source
+// codes
 #define WaitForKey      WaitKey
 #define KeyboardHit     Inkey
 #define Getcon          Getche
@@ -130,41 +131,49 @@ typedef struct {
 /* console	functions										 */
 void bchput(char value);
 void num2Dec16(unsigned int aNumber, char *address, char emptyChar);
-void Print(char *text);                                             // Print a string to Text screen mode
-void PrintFNumber(unsigned int value, char emptyChar, char length); // Print a  Number on Screen with formating parameters to Text screen mode
-void PrintNumber(unsigned int num);                                 // Print a number on Screen to Text screen mode
-char InputChar(void);                                               // read char from console
-int  InputString(char *dest, int len); // String input from console. dest - pointer of buffer where to store entered string. len - [0..255] is length of buffer dest, user can enter (len-2) chars, max.length=253. Returns length of string
-char Getche(void);                     // read and display char from console
-void PrintChar(char c);                // display char
-void Locate(char x, char y);           // set cursor to x,y
-void PrintDec(int num);                // displays signed integer value  -32768 to 32767  (larges code)
-void PrintHex(unsigned int num);       // Print Hexadecimal representation of the Int variable passed
-void PrintString(char *str);           // Same as Print
-void PutCharHex(char c);               // Print Hexadecimal representation of the char variable passed
-int  CheckBreak(void);                 // Check CTRL-STOP. returns 0 if CTRL-STOP was not pressed, -1 otherwise
+void Print(char *text); // Print a string to Text screen mode
+void PrintFNumber(unsigned int value,
+                  char         emptyChar,
+                  char         length);     // Print a  Number on Screen with formating parameters to Text screen mode
+void PrintNumber(unsigned int num); // Print a number on Screen to Text screen mode
+char InputChar(void);               // read char from console
+int  InputString(char *dest,
+                 int   len);   // String input from console. dest - pointer of buffer where to store entered string. len - [0..255] is
+                             // length of buffer dest, user can enter (len-2) chars, max.length=253. Returns length of string
+char Getche(void);           // read and display char from console
+void PrintChar(char c);      // display char
+void Locate(char x, char y); // set cursor to x,y
+void PrintDec(int num);      // displays signed integer value  -32768 to 32767  (larges code)
+void PrintHex(unsigned int num); // Print Hexadecimal representation of the Int variable passed
+void PrintString(char *str);     // Same as Print
+void PutCharHex(char c);         // Print Hexadecimal representation of the char variable passed
+int  CheckBreak(void);           // Check CTRL-STOP. returns 0 if CTRL-STOP was not pressed, -1 otherwise
 
 /* --------------------------------------------------------- */
 /* miscellaneous functions									 */
-void         KeySound(char n);                                                                 // Disable/Enable KeySound (0|1)
-void         FunctionKeys(char n);                                                             // Hide or Show Function Keys (0|1)
-void         Beep(void);                                                                       // Emit a Beep
-char         ReadMSXtype(void);                                                                // Read and return the MSX type (0,1,2,3)
-void         ChangeCap(char n);                                                                // Change Cap led State (0|1)
-void         Cls(void);                                                                        // Clear Screen
-void         Screen(unsigned char mode);                                                       // Define activ screen mode
-void         SetRealTimer(unsigned int value);                                                 // Set The Real Timer to a specific value
-unsigned int RealTimer(void);                                                                  // Return the Timer value (Timer is incemented 50 or 60 times / Seconds)
-void         CovoxPlay(char page, unsigned int start_adress, unsigned int length, char speed); // Play Wav Sample stored in Vram, to Covox Module
-void         RleWBToVram(unsigned int *RamAddress, unsigned int VramAddress);                  // RLE Decompression data to VRAM
-void         RleWBToRam(unsigned int *RamSource, unsigned int *RamDest);                       // RLE Decompression data to RAM
+void         KeySound(char n);                 // Disable/Enable KeySound (0|1)
+void         FunctionKeys(char n);             // Hide or Show Function Keys (0|1)
+void         Beep(void);                       // Emit a Beep
+char         ReadMSXtype(void);                // Read and return the MSX type (0,1,2,3)
+void         ChangeCap(char n);                // Change Cap led State (0|1)
+void         Cls(void);                        // Clear Screen
+void         Screen(unsigned char mode);       // Define activ screen mode
+void         SetRealTimer(unsigned int value); // Set The Real Timer to a specific value
+unsigned int RealTimer(void);                  // Return the Timer value (Timer is incemented 50 or 60 times / Seconds)
+void         CovoxPlay(char         page,
+                       unsigned int start_adress,
+                       unsigned int length,
+                       char         speed);                                           // Play Wav Sample stored in Vram, to Covox Module
+void         RleWBToVram(unsigned int *RamAddress, unsigned int VramAddress); // RLE Decompression data to VRAM
+void         RleWBToRam(unsigned int *RamSource, unsigned int *RamDest);      // RLE Decompression data to RAM
 
 /* --------------------------------------------------------- */
 /* Joystick functions										 */
-unsigned char JoystickRead(char joyNumber);                         // Read Joystick Port (joynumber)
-unsigned char TriggerRead(char TriggerNumber);                      // Read Button state (Joynnmber)
-unsigned int  MouseRead(int MousePort);                             // Read Mouse Offset x and y
-void          MouseReadTo(unsigned char MousePort, MOUSE_DATA *md); // Read Mouse Offset x and y, mouse button and return to the MOUSE_DATA Structure
+unsigned char JoystickRead(char joyNumber);    // Read Joystick Port (joynumber)
+unsigned char TriggerRead(char TriggerNumber); // Read Button state (Joynnmber)
+unsigned int  MouseRead(int MousePort);        // Read Mouse Offset x and y
+void          MouseReadTo(unsigned char MousePort,
+                          MOUSE_DATA *  md); // Read Mouse Offset x and y, mouse button and return to the MOUSE_DATA Structure
 
 /* --------------------------------------------------------- */
 /* I/O port functions										 */
@@ -185,7 +194,7 @@ void          VDPwrite(unsigned char vdpreg, unsigned char data);               
 unsigned char VDPstatus(unsigned char vdpreg);                                                     // Read VDP Status Register
 void          VDPwriteNi(unsigned char vdpreg, unsigned char data);                                // write to VDP Register
 unsigned char VDPstatusNi(unsigned char vdpreg);                                                   // Read VDP Status Register
-void          VpokeFirst(unsigned int address);                                                    // First adress for a vpoke. Use VpokeNext after
+void          VpokeFirst(unsigned int address); // First adress for a vpoke. Use VpokeNext after
 void          Vpoke(unsigned int address, unsigned char data);
 void          VpeekFirst(unsigned int address); // First adress for a vpeek. Use VpeekNext after
 unsigned char Vpeek(unsigned int address);
@@ -215,18 +224,22 @@ unsigned char KeyboardRead(void);      // verifies MSX keyboard status by ports 
 
 /* --------------------------------------------------------- */
 /*	String functions										 */
-char  CharToLower(char c);                        // convert to lowercase
-char  CharToUpper(char c);                        // convert to uppercase
-void  StrCopy(char *dst, char *src);              // copy string from src to dst
-void  NStrCopy(char *dst, char *src, int n);      // copy string from src to dst with no more than n characters
-void  StrConcat(char *dst, char *src);            // concatenate string from src to dst
-void  NStrConcat(char *dst, char *src, int n);    // concatenate string from src to dst with no more than n characters
-int   StrLen(char *adr);                          // returns length of string
-int   StrCompare(char *s1, char *s2);             // compares two strings s1 and s2,  returns -1 (s1<s2), 0 (s1=s2), 1 (s1>s2)
-int   NStrCompare(char *s1, char *s2, int n);     // compares two strings s1 and s2, no more than n characters,  returns -1 (s1<s2), 0 (s1=s2), 1 (s1>s2)
-int   StrChr(char *adr, char c);                  // returns i, for which adr[i] = c, or -1 if not found
-int   StrPosStr(char *s1, char *s2);              // finds substring s2 in string s1 and returns position s1[i], returns -1 if not found
-int   StrSearch(char *s1, char *s2);              // returns the the first occurrence in the string s1 of any character from the string s2, or -1 if not found
+char CharToLower(char c);                     // convert to lowercase
+char CharToUpper(char c);                     // convert to uppercase
+void StrCopy(char *dst, char *src);           // copy string from src to dst
+void NStrCopy(char *dst, char *src, int n);   // copy string from src to dst with no more than n characters
+void StrConcat(char *dst, char *src);         // concatenate string from src to dst
+void NStrConcat(char *dst, char *src, int n); // concatenate string from src to dst with no more than n characters
+int  StrLen(char *adr);                       // returns length of string
+int  StrCompare(char *s1, char *s2);          // compares two strings s1 and s2,  returns -1 (s1<s2), 0 (s1=s2), 1 (s1>s2)
+int  NStrCompare(char *s1,
+                 char *s2,
+                 int   n); // compares two strings s1 and s2, no more than n characters,  returns -1 (s1<s2), 0 (s1=s2), 1 (s1>s2)
+int  StrChr(char *adr, char c);     // returns i, for which adr[i] = c, or -1 if not found
+int  StrPosStr(char *s1, char *s2); // finds substring s2 in string s1 and returns position s1[i], returns -1 if not found
+int  StrSearch(
+     char *s1,
+     char *s2); // returns the the first occurrence in the string s1 of any character from the string s2, or -1 if not found
 int   StrPosChr(char *adr, char c);               // returns the last i, for which adr[i] = c, or -1 if not found
 void  StrLeftTrim(char *adr);                     // removes left spaces
 void  StrRightTrim(char *adr);                    // removes right spaces
@@ -270,20 +283,20 @@ unsigned int ReadSP(void);                                // Read SP register. R
 
 /* --------------------------------------------------------- */
 /* Interrupt	functions										 */
-#define EnableInterrupt() \
-  {                       \
-    __asm ei;             \
-    __endasm;             \
+#define EnableInterrupt()                                                                                                          \
+  {                                                                                                                                \
+    __asm ei;                                                                                                                      \
+    __endasm;                                                                                                                      \
   } // Enable and Disable Interupt
-#define DisableInterrupt() \
-  {                        \
-    __asm di;              \
-    __endasm;              \
+#define DisableInterrupt()                                                                                                         \
+  {                                                                                                                                \
+    __asm di;                                                                                                                      \
+    __endasm;                                                                                                                      \
   }
-#define Halt()  \
-  {             \
-    __asm halt; \
-    __endasm;   \
+#define Halt()                                                                                                                     \
+  {                                                                                                                                \
+    __asm halt;                                                                                                                    \
+    __endasm;                                                                                                                      \
   }
 void Suspend(void);
 void InitInterruptHandler(void);
@@ -378,9 +391,10 @@ void  Exit(char n);  // Proper Exit program, and come back to MSX DOS, sending  
 
 /* --------------------------------------------------------- */
 /* Turbo-R functions										 */
-unsigned char GetCPU(void);                   // Returns the CPU mode of the MSX TURBO-R   :  0=Z80 mode    1=R800 Rom Mode    2=R800 DRAM Mode
-void          ChangeCPU(char n);              // Set the CPU mode of the MSX TURBO-R
-void          PCMPlay(int start, int lenght); // Play a PCM sound stored in the VRAM of the MSX TURBO-R  start VRAM Adress of the begining of the PCM sound , lenght  of the PCM sample
+unsigned char GetCPU(void);      // Returns the CPU mode of the MSX TURBO-R   :  0=Z80 mode    1=R800 Rom Mode    2=R800 DRAM Mode
+void          ChangeCPU(char n); // Set the CPU mode of the MSX TURBO-R
+void PCMPlay(int start, int lenght); // Play a PCM sound stored in the VRAM of the MSX TURBO-R  start VRAM Adress of the begining of
+                                     // the PCM sound , lenght  of the PCM sample
 
 /* =============================================================================
    GetKeyMatrix
