@@ -1,7 +1,8 @@
 #include "arguments.h"
 #include "system-state.h"
 
-const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
+const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",    "4800",
+                                    "9600", "19200", "38400", "57600", "unknown", "115200"};
 
 const unsigned char *usage = "Usage:  term [options]\r\n\n"
                              "Connect to a remote BBS system using\r\n"
@@ -168,9 +169,9 @@ process_baud_rate:
 }
 
 void process_cli_arguments(const int argc, const char **argv) {
-  ucAutoDownload = 1;
+  ucAutoDownload         = 1;
   ucStandardDataTransfer = 1;
-  ucAnsi = 1;
+  ucAnsi                 = 1;
 
   for (uint8_t i = 1; i < argc;) {
     const uint8_t current_i = i;

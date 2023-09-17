@@ -190,5 +190,6 @@ extern usb_error scsi_test(storage_device_config *const dev);
 extern usb_error scsi_request_sense(storage_device_config *const dev, scsi_sense_result *const sens_result);
 extern usb_error scsi_eject(storage_device_config *const dev);
 extern usb_error scsi_spike(storage_device_config *const dev);
-extern usb_error scsi_read_write(storage_device_config *const dev, const bool send, uint32_t sector_number, const uint8_t sector_count, uint8_t *const buffer);
+extern usb_error scsi_read_write(
+    storage_device_config *const dev, const bool send, uint32_t sector_number, const uint8_t sector_count, uint8_t *const buffer);
 #endif

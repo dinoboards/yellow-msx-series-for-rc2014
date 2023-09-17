@@ -36,6 +36,11 @@ typedef struct _nextor_lun_info {
   uint8_t  number_of_sectors_per_track;
 } nextor_lun_info;
 
-typedef enum _dev_info_request { BASIC_INFORMATION = 0, MANUFACTURER_NAME = 1, DEVICE_NAME = 2, SERIAL_NUMBER = 3 } dev_info_request;
+typedef enum _dev_info_request {
+  BASIC_INFORMATION = 0,
+  MANUFACTURER_NAME = 1,
+  DEVICE_NAME       = 2,
+  SERIAL_NUMBER     = 3
+} dev_info_request;
 
 #endif

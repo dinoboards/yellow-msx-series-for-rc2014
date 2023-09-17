@@ -126,10 +126,8 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
 // ;         amount_received => BC = Amount of data actually received (only if no error)
 // ;         *toggle Cy = New state of the toggle bit (even on error)
 
-usb_error hw_data_in_transfer(uint8_t *             buffer,
-                              const uint16_t        buffer_size,
-                              const uint8_t         device_address,
-                              endpoint_param *const endpoint) {
+usb_error
+hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
 
   usb_error result;
 
@@ -151,10 +149,8 @@ usb_error hw_data_in_transfer(uint8_t *             buffer,
 // ;         Cy = Current state of the toggle bit
 // ; Output: A  = USB error code
 // ;         Cy = New state of the toggle bit (even on error)
-usb_error hw_data_out_transfer(const uint8_t *       buffer,
-                               uint16_t              buffer_size,
-                               const uint8_t         device_address,
-                               endpoint_param *const endpoint) {
+usb_error
+hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
 
   ch_set_usb_address(device_address);
 

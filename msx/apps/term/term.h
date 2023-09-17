@@ -75,7 +75,13 @@
 #define CMD_ENV_VARIABLES       36 // 0x24
 #define CMD_ENCRYPTION          38 // 0x26
 
-enum TelnetDataParserStates { TELNET_IDLE = 0, TELNET_CMD_INPROGRESS = 1, TELNET_SUB_INPROGRESS = 2, TELNET_SUB_WAITEND = 3, TELNET_ESC_INPROGRESS = 4 };
+enum TelnetDataParserStates {
+  TELNET_IDLE           = 0,
+  TELNET_CMD_INPROGRESS = 1,
+  TELNET_SUB_INPROGRESS = 2,
+  TELNET_SUB_WAITEND    = 3,
+  TELNET_ESC_INPROGRESS = 4
+};
 
 extern const unsigned char ucWindowSize[];
 extern const unsigned char ucWindowSize0[];

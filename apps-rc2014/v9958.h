@@ -47,22 +47,22 @@ extern uint8_t  _operation;
 extern uint16_t _toX;
 extern uint16_t _toY;
 
-#define drawLine(fromX, fromY, toX, toY, color, operation) \
-  _fromX = (fromX);                                        \
-  _fromY = (fromY);                                        \
-  _color = (color);                                        \
-  _operation = CMD_LINE((operation));                      \
-  _toX = (toX);                                            \
-  _toY = (toY);                                            \
+#define drawLine(fromX, fromY, toX, toY, color, operation)                                                                         \
+  _fromX     = (fromX);                                                                                                            \
+  _fromY     = (fromY);                                                                                                            \
+  _color     = (color);                                                                                                            \
+  _operation = CMD_LINE((operation));                                                                                              \
+  _toX       = (toX);                                                                                                              \
+  _toY       = (toY);                                                                                                              \
   _drawLine()
 
 extern void _drawLine();
 
-#define pointSet(x, y, color, operation) \
-  _fromX = (x);                          \
-  _fromY = (y);                          \
-  _color = (color);                      \
-  _operation = CMD_PSET((operation));    \
+#define pointSet(x, y, color, operation)                                                                                           \
+  _fromX     = (x);                                                                                                                \
+  _fromY     = (y);                                                                                                                \
+  _color     = (color);                                                                                                            \
+  _operation = CMD_PSET((operation));                                                                                              \
   commandDrawLine()
 
 #endif

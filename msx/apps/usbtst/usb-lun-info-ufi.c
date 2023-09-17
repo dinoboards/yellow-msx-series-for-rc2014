@@ -16,16 +16,16 @@ uint8_t usb_lun_info_ufi(storage_device_config *const dev, const uint8_t lun, ne
   info->sector_size = response.block_size[1] << 8 + response.block_size[0];
 
   uint8_t *      no_sectors = ((uint8_t *)&info->number_of_sectors);
-  const uint8_t *no_blocks = response.number_of_blocks + 3;
+  const uint8_t *no_blocks  = response.number_of_blocks + 3;
 
   *no_sectors++ = *no_blocks--;
   *no_sectors++ = *no_blocks--;
   *no_sectors++ = *no_blocks--;
-  *no_sectors = *no_blocks--;
+  *no_sectors   = *no_blocks--;
 
-  info->flags = INFO_FLAG_REMOVABLE | INFO_FLAG_FLOPPY;
-  info->number_of_cylinders = 0;
-  info->number_of_heads = 0;
+  info->flags                       = INFO_FLAG_REMOVABLE | INFO_FLAG_FLOPPY;
+  info->number_of_cylinders         = 0;
+  info->number_of_heads             = 0;
   info->number_of_sectors_per_track = 0;
 
   return 0;

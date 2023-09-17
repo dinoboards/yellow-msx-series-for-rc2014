@@ -83,7 +83,7 @@ void CloseConnection() {
 // Receives up to uiSize bytes
 // Number of bytes retrieved from serial port are returned into uiSize
 unsigned char RXData(unsigned char *ucBuffer, unsigned int *uiSize, unsigned char ucWaitAllDataReceived) {
-  unsigned char ucRet = 0;
+  unsigned char ucRet  = 0;
   unsigned int  nbytes = 0;
   unsigned int  tbytes = *uiSize;
 
@@ -98,7 +98,7 @@ unsigned char RXData(unsigned char *ucBuffer, unsigned int *uiSize, unsigned cha
     *uiSize = nbytes;
   } else {
     if (fossil_rs_in_stat() != 0) {
-      ucRet = 1;
+      ucRet   = 1;
       *uiSize = fossil_chars_in_buf();
       for (int i = 0; i < *uiSize; i++) {
         fossil_rs_in_stat();

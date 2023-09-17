@@ -212,24 +212,24 @@ uint16_t        _toY;
 
 void _drawLine() {
   if (_fromY > _toY) {
-    t = _fromY;
+    t      = _fromY;
     _fromY = _toY;
-    _toY = t;
+    _toY   = t;
   };
   if (_fromX > _toX) {
-    t = _fromX;
+    t      = _fromX;
     _fromX = _toX;
-    _toX = t;
+    _toX   = t;
   };
-  y = _toY - _fromY;
-  x = _toX - _fromX;
+  y   = _toY - _fromY;
+  x   = _toX - _fromX;
   dir = (y > x);
 
   if (y > x) {
-    longSide = y;
+    longSide  = y;
     shortSide = x;
   } else {
-    longSide = x;
+    longSide  = x;
     shortSide = y;
   }
 

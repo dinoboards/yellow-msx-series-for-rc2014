@@ -35,13 +35,13 @@ void fossil_rs_flush_with_log() {
 }
 
 bool fossil_rs_read_line(const bool withLogging) __z88dk_fastcall {
-  uint8_t        length = 0;
+  uint8_t        length  = 0;
   int16_t        timeout = get_future_time(from_ms(5000));
   unsigned char *pBuffer = responseStr;
 
   while (length < MAX_RESPONSE_STRING_LEN && !is_time_past(timeout)) {
     if (fossil_rs_in_stat() != 0) {
-      timeout = get_future_time(from_ms(5000));
+      timeout               = get_future_time(from_ms(5000));
       const unsigned char t = fossil_rs_in();
       if (withLogging)
         fputc_cons(t);
@@ -62,7 +62,7 @@ bool fossil_rs_read_line(const bool withLogging) __z88dk_fastcall {
 }
 
 bool read_until_ok_or_error() {
-  int16_t timeout = get_future_time(from_ms(2000));
+  int16_t timeout      = get_future_time(from_ms(2000));
   bool    lineReceived = true;
 
   responseStr[0] = 0;
@@ -97,12 +97,12 @@ void subCommandTimeSync() {
     return;
   }
 
-  const int year = atoi(responseStr);
+  const int year  = atoi(responseStr);
   const int month = atoi(responseStr + 5);
-  const int day = atoi(responseStr + 8);
-  const int hour = atoi(responseStr + 11);
-  const int min = atoi(responseStr + 14);
-  const int sec = atoi(responseStr + 17);
+  const int day   = atoi(responseStr + 8);
+  const int hour  = atoi(responseStr + 11);
+  const int min   = atoi(responseStr + 14);
+  const int sec   = atoi(responseStr + 17);
 
   uint8_t currentHour;
   uint8_t currentMinute;

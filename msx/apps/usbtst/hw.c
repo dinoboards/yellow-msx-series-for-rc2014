@@ -17,7 +17,10 @@
 // ; Output: A  = USB error code
 // ;         BC = Amount of data actually transferred (if IN transfer and no error)
 
-usb_error hw_control_transfer(const setup_packet *const cmd_packet, void *const buffer, const uint8_t device_address, const uint8_t max_packet_size) {
+usb_error hw_control_transfer(const setup_packet *const cmd_packet,
+                              void *const               buffer,
+                              const uint8_t             device_address,
+                              const uint8_t             max_packet_size) {
   usb_error      result;
   endpoint_param endpoint = {1, 0, max_packet_size};
 
@@ -32,7 +35,8 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet, void *const 
   ch_issue_token_setup();
   CHECK(ch_short_wait_int_and_get_status())
 
-  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint) : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
+  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint)
+                      : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
 
   CHECK(result)
 
@@ -67,7 +71,7 @@ const setup_packet cmd_get_device_descriptor = {0x80, 6, {0, 1}, {0, 0}, 8};
 usb_error hw_get_description(device_descriptor *const buffer) {
   usb_error    result;
   setup_packet cmd;
-  cmd = cmd_get_device_descriptor;
+  cmd         = cmd_get_device_descriptor;
   cmd.wLength = 8;
 
   result = hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8);
@@ -79,7 +83,7 @@ usb_error hw_get_description(device_descriptor *const buffer) {
   //   CHECK(hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8))
   // }
 
-  cmd = cmd_get_device_descriptor;
+  cmd         = cmd_get_device_descriptor;
   cmd.wLength = 18;
   CHECK(hw_control_transfer(&cmd, (uint8_t *)buffer, 0, buffer->bMaxPacketSize0));
 
@@ -90,7 +94,7 @@ const setup_packet cmd_set_device_address = {0x00, 5, {0, 0}, {0, 0}, 0};
 
 usb_error hw_set_address(const uint8_t device_address) __z88dk_fastcall {
   setup_packet cmd;
-  cmd = cmd_set_device_address;
+  cmd           = cmd_set_device_address;
   cmd.bValue[0] = device_address;
 
   return hw_control_transfer(&cmd, 0, 0, 0);
@@ -100,7 +104,7 @@ const setup_packet cmd_set_configuration = {0x00, 9, {0, 0}, {0, 0}, 0};
 
 usb_error hw_set_configuration(const device_config *const config) __z88dk_fastcall {
   setup_packet cmd;
-  cmd = cmd_set_configuration;
+  cmd           = cmd_set_configuration;
   cmd.bValue[0] = config->value;
 
   return hw_control_transfer(&cmd, 0, config->address, config->max_packet_size);
@@ -108,11 +112,15 @@ usb_error hw_set_configuration(const device_config *const config) __z88dk_fastca
 
 const setup_packet cmd_get_config_descriptor = {0x80, 6, {0, 2}, {0, 0}, 0};
 
-usb_error hw_get_config_descriptor(config_descriptor *const buffer, const uint8_t config_index, const uint8_t buffer_size, const uint8_t device_address, const uint8_t max_packet_size) {
+usb_error hw_get_config_descriptor(config_descriptor *const buffer,
+                                   const uint8_t            config_index,
+                                   const uint8_t            buffer_size,
+                                   const uint8_t            device_address,
+                                   const uint8_t            max_packet_size) {
   setup_packet cmd;
-  cmd = cmd_get_config_descriptor;
+  cmd           = cmd_get_config_descriptor;
   cmd.bValue[0] = config_index;
-  cmd.wLength = (uint16_t)buffer_size;
+  cmd.wLength   = (uint16_t)buffer_size;
 
   return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size);
 }
@@ -130,7 +138,8 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer, const uint8_
 // ;         amount_received => BC = Amount of data actually received (only if no error)
 // ;         *toggle Cy = New state of the toggle bit (even on error)
 
-usb_error hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
+usb_error
+hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
   usb_error result;
   ch_set_usb_address(device_address);
 
@@ -150,7 +159,8 @@ usb_error hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const
 // ;         Cy = Current state of the toggle bit
 // ; Output: A  = USB error code
 // ;         Cy = New state of the toggle bit (even on error)
-usb_error hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
+usb_error
+hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
 
   ch_set_usb_address(device_address);
 

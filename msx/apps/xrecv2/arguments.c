@@ -1,13 +1,14 @@
 #include "arguments.h"
 #include "print.h"
 
-const char *pFileName = NULL;
-uint16_t    baud_rate = 7 * 256 + 7; // 19200
+const char *pFileName    = NULL;
+uint16_t    baud_rate    = 7 * 256 + 7; // 19200
 const char *pDialAddress = NULL;
 
 #define FOSSIL_BAUD_RATE_75 1 * 256 + 1
 
-const char *pFossilBaudRates[12] = {"75", "300", "600", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "unknown", "115200"};
+const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",    "4800",
+                                    "9600", "19200", "38400", "57600", "unknown", "115200"};
 
 uint8_t abort_with_help() {
   print_str("Usage:  xrecv <filename> [options]\r\n\r\n"
@@ -165,7 +166,7 @@ uint8_t abort_with_missing_file_name_msg() {
 void process_cli_arguments(const char **argv, const int argc) {
   for (uint8_t i = 1; i < argc;) {
     const uint8_t current_i = i;
-    i = arg_baud_rate(i, argv);
+    i                       = arg_baud_rate(i, argv);
     if (current_i != i)
       continue;
 

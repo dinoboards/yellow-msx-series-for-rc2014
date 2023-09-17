@@ -114,9 +114,8 @@ extern usb_error usb_clear_endpoint_halt(storage_device_config *const storage_de
 
 extern usb_error usb_process_error(const usb_error result);
 
-extern usb_error usb_control_transfer(storage_device_config *const storage_device,
-                                      const setup_packet *const    cmd,
-                                      const uint8_t *const         buffer);
+extern usb_error
+usb_control_transfer(storage_device_config *const storage_device, const setup_packet *const cmd, const uint8_t *const buffer);
 
 extern usb_error ufi_inquiry(storage_device_config *const storage_device, ufi_inquiry_response const *response);
 

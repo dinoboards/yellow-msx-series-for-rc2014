@@ -16,7 +16,8 @@ void printBinary(uint8_t n) {
 
 void main() {
   printf("Testing MSX keyboard interface\r\n");
-  printf("As you press down each key, you should see the corresponding row and column bit go to 0.  Upon releasing key, the bit should return to 1\r\n");
+  printf("As you press down each key, you should see the corresponding row and column bit go to 0.  Upon releasing key, the bit "
+         "should return to 1\r\n");
   printf("Scanning key matrix rows/columns....\r\n");
   printf("Press any key thru serial to cancel\r\n");
 

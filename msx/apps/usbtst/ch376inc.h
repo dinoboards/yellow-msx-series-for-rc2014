@@ -140,8 +140,8 @@ typedef unsigned char volatile *PUINT8V;
 #define CMD01_RD_USB_DATA0 0x27 /* Read data block from current USB interrupt endpoint buffer or host endpoint receive buffer */
 /* output: length, data stream */
 
-#define CMD01_RD_USB_DATA                                                                                                 \
-  0x28 /* Device mode: read the data block from the endpoint buffer of the current USB interrupt, and release the buffer, \
+#define CMD01_RD_USB_DATA                                                                                                          \
+  0x28 /* Device mode: read the data block from the endpoint buffer of the current USB interrupt, and release the buffer,          \
           equivalent to CMD01_RD_USB_DATA0 + CMD00_UNLOCK_USB */
 /* output: length, data stream */
 
@@ -181,8 +181,8 @@ typedef unsigned char volatile *PUINT8V;
 #define CMD0H_FILE_CREATE 0x34 /* Host file mode: create a new file, if the file already exists, delete it first */
 /* output interrupt */
 
-#define CMD0H_FILE_ERASE                                                                                                  \
-  0x35 /* Host file mode: delete the file, if it is already opened, delete it directly, otherwise the file will be opened \
+#define CMD0H_FILE_ERASE                                                                                                           \
+  0x35 /* Host file mode: delete the file, if it is already opened, delete it directly, otherwise the file will be opened          \
           first and then deleted, and the subdirectory must be opened first */
 /* output interrupt */
 
@@ -222,8 +222,8 @@ typedef unsigned char volatile *PUINT8V;
 #define CMD0H_DISK_QUERY 0x3F /* Host file mode: query disk space information */
 /* output interrupt */
 
-#define CMD0H_DIR_CREATE                                                                                                  \
-  0x40 /* Host file mode: create a  new directory (folder) and open it, if the directory already exists, open it directly \
+#define CMD0H_DIR_CREATE                                                                                                           \
+  0x40 /* Host file mode: create a  new directory (folder) and open it, if the directory already exists, open it directly          \
         */
 /* output interrupt */
 
@@ -239,28 +239,31 @@ typedef unsigned char volatile *PUINT8V;
 /* input: the number of sectors requested to be written */
 /* output interrupt */
 
-#define CMD0H_DISK_BOC_CMD 0x50 /* host mode/SD card not supported: command to execute BulkOnly transfer protocol for USB storage */
+#define CMD0H_DISK_BOC_CMD 0x50 /* host mode/SD card not supported: command to execute BulkOnly transfer protocol for USB storage  \
+                                 */
 /* output interrupt */
 
 #define CMD5H_DISK_READ 0x54 /* host mode/SD card not supported: read physical sectors from USB storage */
 /* Input: LBA physical sector address (total length 32 bits, low byte first), sector number (01H~FFH) */
 /* output interrupt */
 
-#define CMD0H_DISK_RD_GO 0x55 /* Host mode/SD card not supported: continue to perform physical sector read operation of USB storage */
+#define CMD0H_DISK_RD_GO                                                                                                           \
+  0x55 /* Host mode/SD card not supported: continue to perform physical sector read operation of USB storage */
 /* output interrupt */
 
 #define CMD5H_DISK_WRITE 0x56 /* Host mode/SD card not supported: write physical sector to USB storage */
 /* Input: LBA physical sector address (total length 32 bits, low byte first), sector number (01H~FFH) */
 /* output interrupt */
 
-#define CMD0H_DISK_WR_GO 0x57 /* Host mode/SD card not supported: continue to perform physical sector write operation of USB storage */
+#define CMD0H_DISK_WR_GO                                                                                                           \
+  0x57 /* Host mode/SD card not supported: continue to perform physical sector write operation of USB storage */
 /* output interrupt */
 
 /* ************************************************ **************************************************** ***************** */
 /* Auxiliary command (manual 2), not commonly used or for compatibility with CH375 and CH372 */
 
-#define CMD10_SET_USB_SPEED                                                                                               \
-  0x04 /* Set the USB bus speed, it will automatically return to 12Mbps full speed every time CMD11_SET_USB_MODE sets the \
+#define CMD10_SET_USB_SPEED                                                                                                        \
+  0x04 /* Set the USB bus speed, it will automatically return to 12Mbps full speed every time CMD11_SET_USB_MODE sets the          \
           USB working mode */
 /* input: bus speed code */
 /* 00H=12Mbps full speed FullSpeed ​​(default value), 01H=1.5Mbps (modify frequency only), 02H=1.5Mbps low speed LowSpeed
@@ -328,7 +331,8 @@ typedef unsigned char volatile *PUINT8V;
 /* If bit 7 is 1, bit 6 is the synchronization trigger bit, otherwise the synchronization trigger bit remains unchanged */
 /* Bit 3~Bit 0 is the transaction response mode: 0000~1000-Ready ACK, 1110-Busy NAK, 1111-Error STALL */
 
-#define CMD10_SET_ENDP4 0x1A /*Device mode(serial port not supported) : set the receiver of USB endpoint 1 */ /* input: how it works */
+#define CMD10_SET_ENDP4                                                                                                            \
+  0x1A /*Device mode(serial port not supported) : set the receiver of USB endpoint 1 */ /* input: how it works */
 /* If bit 7 is 1, bit 6 is the synchronization trigger bit, otherwise the synchronization trigger bit remains unchanged */
 /* Bit 3~Bit 0 is the transaction response mode: 0000-ready ACK, 1110-busy NAK, 1111-error STALL */
 
@@ -351,10 +355,12 @@ typedef unsigned char volatile *PUINT8V;
 
 #define CMD00_DIRTY_BUFFER 0x25 /* Host file mode: clear internal disk and file buffers */
 
-#define CMD10_WR_USB_DATA3 0x29 /* Device mode (serial port not supported): write data block to the send buffer of USB endpoint 0 */
+#define CMD10_WR_USB_DATA3 0x29 /* Device mode (serial port not supported): write data block to the send buffer of USB endpoint 0  \
+                                 */
 /* input: length, data stream */
 
-#define CMD10_WR_USB_DATA5 0x2A /* Device mode (serial port not supported): write data block to the send buffer of USB endpoint 1 */
+#define CMD10_WR_USB_DATA5 0x2A /* Device mode (serial port not supported): write data block to the send buffer of USB endpoint 1  \
+                                 */
 /* input: length, data stream */
 
 /* ************************************************ **************************************************** ***************** */
@@ -380,8 +386,8 @@ typedef unsigned char volatile *PUINT8V;
 #define CMD0H_AUTO_SETUP 0x4D /* host mode/SD card not supported: auto configure USB device */
 /* output interrupt */
 
-#define CMD2H_ISSUE_TKN_X                                                                                              \
-  0x4E /* Host mode: issue sync token, execute transaction, this command can replace CMD10_SET_ENDP6/CMD10_SET_ENDP7 + \
+#define CMD2H_ISSUE_TKN_X                                                                                                          \
+  0x4E /* Host mode: issue sync token, execute transaction, this command can replace CMD10_SET_ENDP6/CMD10_SET_ENDP7 +             \
           CMD1H_ISSUE_TOKEN */
 /* input: sync flag, transaction attributes */
 /* Bit 7 of the synchronization flag is the synchronization trigger bit of the host endpoint IN, bit 6 is the synchronization
@@ -389,7 +395,8 @@ typedef unsigned char volatile *PUINT8V;
 /* The lower 4 bits of the transaction attribute are the token, and the upper 4 bits are the endpoint number */
 /* output interrupt */
 
-#define CMD1H_ISSUE_TOKEN 0x4F /* Host mode: issue token, execute transaction, it is recommended to use CMD2H_ISSUE_TKN_X command */
+#define CMD1H_ISSUE_TOKEN 0x4F /* Host mode: issue token, execute transaction, it is recommended to use CMD2H_ISSUE_TKN_X command  \
+                                */
 /* input: transaction properties */
 /* The lower 4 bits are the token, the upper 4 bits are the endpoint number */
 /* output interrupt */
@@ -519,9 +526,9 @@ typedef unsigned char volatile *PUINT8V;
 /* ************************************************ **************************************************** ***************** */
 /* Serial mode, boot synchronization code before the operation command */
 #ifndef SER_CMD_TIMEOUT
-#define SER_CMD_TIMEOUT                                                                                                                            \
-  32                        /* Serial command timeout time, the unit is mS, the interval between synchronization codes and between synchronization \
-                               codes and command codes should be as short as possible, and the processing method after timeout is to discard */
+#define SER_CMD_TIMEOUT                                                                                                            \
+  32 /* Serial command timeout time, the unit is mS, the interval between synchronization codes and between synchronization        \
+        codes and command codes should be as short as possible, and the processing method after timeout is to discard */
 #define SER_SYNC_CODE1 0x57 /* The first serial port synchronization code to start the operation */
 #define SER_SYNC_CODE2 0xAB /* The second serial port synchronization code to start the operation */
 #endif
@@ -619,48 +626,50 @@ typedef unsigned char volatile *PUINT8V;
 /* The following status codes are used for file system error codes in host file mode */
 #ifndef ERR_DISK_DISCON
 #define ERR_DISK_DISCON 0x82 /* The  disk has not been connected, maybe the disk has been disconnected */
-#define ERR_LARGE_SECTOR                                                                                                    \
-  0x84                            /*The sector of the disk is too large, only 512 bytes per sector are supported */         \
-      #define ERR_TYPE_ERROR 0x92 /* The  disk partition type is not supported, only FAT12/FAT16/BigDOS/FAT32 is supported, \
+#define ERR_LARGE_SECTOR                                                                                                           \
+  0x84                            /*The sector of the disk is too large, only 512 bytes per sector are supported */                \
+      #define ERR_TYPE_ERROR 0x92 /* The  disk partition type is not supported, only FAT12/FAT16/BigDOS/FAT32 is supported,        \
                              it needs to be re-partitioned by the disk management tool */
-#define ERR_BPB_ERROR                                                                                                         \
-  0xA1                            /*The disk has not been formatted,                                                          \
-                                 or the parameters are wrong and need to be reformatted by WINDOWS with default parameters */ \
-      #define ERR_DISK_FULL 0xB1  /*The disk file is too full, the remaining space is too little or there is no more,         \
-                                 and disk defragmentation is required */                                                      \
-      #define ERR_FDT_OVER 0xB2   /*There are too many files in the directory(folder), there is no free directory entry,      \
-                                 the number of files in the FAT12 / FAT16 root directory should be less than 512,             \
-                                 and disk defragmentation is required */                                                      \
-      #define ERR_FILE_CLOSE 0xB4 /*The file has been closed, it should be reopened if needed */                              \
+#define ERR_BPB_ERROR                                                                                                              \
+  0xA1                            /*The disk has not been formatted,                                                               \
+                                 or the parameters are wrong and need to be reformatted by WINDOWS with default parameters */      \
+      #define ERR_DISK_FULL 0xB1  /*The disk file is too full, the remaining space is too little or there is no more,              \
+                                 and disk defragmentation is required */                                                           \
+      #define ERR_FDT_OVER 0xB2   /*There are too many files in the directory(folder), there is no free directory entry,           \
+                                 the number of files in the FAT12 / FAT16 root directory should be less than 512,                  \
+                                 and disk defragmentation is required */                                                           \
+      #define ERR_FILE_CLOSE 0xB4 /*The file has been closed, it should be reopened if needed */                                   \
       #define ERR_OPEN_DIR   0x41 /* The directory (folder) of the specified path is opened */
-#define ERR_MISS_FILE                                                                                                    \
-  0x42                            /*The file in the specified path is not found, maybe the file name is wrong */         \
-      #define ERR_FOUND_NAME 0x43 /* Search for a matching file name, or ask to open a directory (folder) but the actual \
+#define ERR_MISS_FILE                                                                                                              \
+  0x42                            /*The file in the specified path is not found, maybe the file name is wrong */                   \
+      #define ERR_FOUND_NAME 0x43 /* Search for a matching file name, or ask to open a directory (folder) but the actual           \
       result opens the file */
 /* The following file system error codes are used for file system subroutines */
-#define ERR_MISS_DIR                                                                                                                   \
-  0xB3                               /*A subdirectory(folder) of the specified path is not found, maybe the directory name is wrong */ \
+#define ERR_MISS_DIR                                                                                                               \
+  0xB3 /*A subdirectory(folder) of the specified path is not found, maybe the directory name is wrong */                           \
       #define ERR_LONG_BUF_OVER 0x48 /* long file buffer overflow */
-#define ERR_LONG_NAME_ERR       0x49 /* The short file name does not have a corresponding long file name or the long file name is wrong */
-#define ERR_NAME_EXIST          0x4A /* A short file with the same name already exists, it is recommended to regenerate another short file name */
+#define ERR_LONG_NAME_ERR       0x49 /* The short file name does not have a corresponding long file name or the long file name is wrong \
+                                      */
+#define ERR_NAME_EXIST                                                                                                             \
+  0x4A /* A short file with the same name already exists, it is recommended to regenerate another short file name */
 #endif
 
 /* ************************************************ **************************************************** ***************** */
 /* The following status codes are used for disk and file status in host file mode, VAR_DISK_STATUS */
 #ifndef DEF_DISK_UNKNOWN
-#define DEF_DISK_UNKNOWN                                                \
-  0x00                              /*Not initialized, unknown state */ \
+#define DEF_DISK_UNKNOWN                                                                                                           \
+  0x00                              /*Not initialized, unknown state */                                                            \
       #define DEF_DISK_DISCONN 0x01 /* The disk is not connected or has been disconnected */
-#define DEF_DISK_CONNECT                                                                           \
-  0x02 /* The  disk is connected, but it has not been initialized or the disk cannot be recognized \
+#define DEF_DISK_CONNECT                                                                                                           \
+  0x02 /* The  disk is connected, but it has not been initialized or the disk cannot be recognized                                 \
         */
-#define DEF_DISK_MOUNTED                                                                                                                         \
-  0x03                      /* The disk has been initialized successfully, but the file system has not been analyzed or the file system does not \
-                               support */
+#define DEF_DISK_MOUNTED                                                                                                           \
+  0x03 /* The disk has been initialized successfully, but the file system has not been analyzed or the file system does not        \
+          support */
 #define DEF_DISK_READY 0x10 /* The file system of the disk has been analyzed and can support */
-#define DEF_DISK_OPEN_ROOT                                                                                                                         \
-  0x12                          /* The  root directory has been opened and must be closed after use. Note that the FAT12/FAT16 root directory is a \
-                                   fixed length */
+#define DEF_DISK_OPEN_ROOT                                                                                                         \
+  0x12 /* The  root directory has been opened and must be closed after use. Note that the FAT12/FAT16 root directory is a          \
+          fixed length */
 #define DEF_DISK_OPEN_DIR  0x13 /* A subdirectory (folder) has been opened */
 #define DEF_DISK_OPEN_FILE 0x14 /* The file has been opened */
 #endif
@@ -714,13 +723,16 @@ typedef struct FAT_DIR_INFO {
 /* Read the Tibetan standard record file */
 /* file time UINT16 */
 /* Time = (Hour<<11) + (Minute<<5) + (Second>>1) */
-#define MAKE_FILE_TIME (h, m, s)((h << 11) + (m << 5) + (s >> 1)) /* Generate file time data of specified hours, minutes and seconds */
+#define MAKE_FILE_TIME                                                                                                             \
+  (h, m, s)((h << 11) + (m << 5) + (s >> 1)) /* Generate file time data of specified hours, minutes and seconds */
 /* file date UINT16 */
 /* Date = ((Year-1980)<<9) + (Month<<5) + Day */
-#define MAKE_FILE_DATE (y, m, d)(((y - 1980) << 9) + (m << 5) + d) /* Generate the file date data of the specified year, month and day */
+#define MAKE_FILE_DATE                                                                                                             \
+  (y, m, d)(((y - 1980) << 9) + (m << 5) + d) /* Generate the file date data of the specified year, month and day */
 
 #define LONE_NAME_MAX_CHAR (255 * 2) /* The maximum number of characters/bytes of the long file name */
-#define LONG_NAME_PER_DIR  (13 * 2)  /* The number of characters/bytes of the long file name in the directory information structure of each file */
+#define LONG_NAME_PER_DIR                                                                                                          \
+  (13 * 2) /* The number of characters/bytes of the long file name in the directory information structure of each file */
 
 #endif
 
@@ -794,8 +806,8 @@ typedef struct SENSE_DATA {
 
 #ifndef MAX_FILE_NAME_LEN
 
-#define MAX_FILE_NAME_LEN                                                                                                   \
-  (13 + 1) /* The maximum length of the file name, the maximum length is 1 root directory character + 8 main file names + 1 \
+#define MAX_FILE_NAME_LEN                                                                                                          \
+  (13 + 1) /* The maximum length of the file name, the maximum length is 1 root directory character + 8 main file names + 1        \
               decimal point + 3 type names + terminator = 14 */
 
 /* Command input data and output data */

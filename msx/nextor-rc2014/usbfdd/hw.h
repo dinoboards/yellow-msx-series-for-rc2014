@@ -26,15 +26,11 @@ extern usb_error hw_get_config_descriptor(config_descriptor *const buffer,
                                           const uint8_t            device_address,
                                           const uint8_t            max_packet_size);
 
-extern usb_error hw_data_in_transfer(uint8_t *             buffer,
-                                     const uint16_t        buffer_size,
-                                     const uint8_t         device_address,
-                                     endpoint_param *const endpoint);
+extern usb_error
+hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint);
 
-extern usb_error hw_data_out_transfer(const uint8_t *       buffer,
-                                      uint16_t              buffer_size,
-                                      const uint8_t         device_address,
-                                      endpoint_param *const endpoint);
+extern usb_error
+hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint);
 
 extern usb_error hw_set_address(const uint8_t device_address) __z88dk_fastcall;
 

@@ -72,15 +72,23 @@ typedef struct {
 } GPartInfo;
 
 extern uint8_t msxdosGdrvr(int8_t driverIndex, msxdosDriverInfo *data);
-extern uint8_t msxdosGpart(uint8_t slotNumber, uint8_t deviceNumber, uint8_t logicalUnitNumber, uint8_t primaryPartitionNumber, uint8_t extendedPartitionNumber, bool getSectorNumber, GPartInfo *result);
+extern uint8_t msxdosGpart(uint8_t    slotNumber,
+                           uint8_t    deviceNumber,
+                           uint8_t    logicalUnitNumber,
+                           uint8_t    primaryPartitionNumber,
+                           uint8_t    extendedPartitionNumber,
+                           bool       getSectorNumber,
+                           GPartInfo *result);
 extern uint8_t msxdosExplain(uint8_t code, char *buffer);
 extern uint8_t msxdosDirio(uint8_t code) __z88dk_fastcall;
 
 extern uint16_t msxdosDrvDevLogicalUnitCount(uint8_t slotNumber, uint8_t deviceNumber, msxdosDeviceBasicInfo *pCount);
 extern uint16_t msxdosDrvDevGetName(uint8_t slotNumber, uint8_t deviceNumber, char *pDeviceName);
 extern uint16_t msxdosDrvLunInfo(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, msxdosLunInfo *pLunInfo);
-extern uint16_t msxdosDevRead(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer);
-extern uint16_t msxdosDevWrite(uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer);
+extern uint16_t msxdosDevRead(
+    uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer);
+extern uint16_t msxdosDevWrite(
+    uint8_t slotNumber, uint8_t deviceNumber, uint8_t lunIndex, uint32_t firstDeviceSector, uint8_t sectorCount, uint8_t *buffer);
 
 extern uint8_t msxdosSetDate(uint16_t year, uint8_t month, uint8_t date);
 extern uint8_t msxdosSetTime(uint8_t hour, uint8_t minutes, uint8_t seconds, uint8_t centiseconds);

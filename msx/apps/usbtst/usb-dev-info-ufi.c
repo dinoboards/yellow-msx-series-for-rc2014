@@ -25,17 +25,17 @@ uint8_t usb_dev_info_ufi(storage_device_config *const dev, const dev_info_reques
 
   switch (request_info) {
   case MANUFACTURER_NAME:
-    src = response.vendor_information;
+    src  = response.vendor_information;
     size = 8;
     break;
 
   case DEVICE_NAME:
-    src = response.product_id;
+    src  = response.product_id;
     size = 16;
     break;
 
   case SERIAL_NUMBER:
-    src = response.product_revision;
+    src  = response.product_revision;
     size = 4;
     break;
 

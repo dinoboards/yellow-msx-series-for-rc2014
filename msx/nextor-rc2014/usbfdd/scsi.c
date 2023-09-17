@@ -23,27 +23,23 @@ usb_error do_scsi_cmd(storage_device_config *const       dev,
   if (!send)
     cbw->bmCBWFlags = 0x80;
 
-  CHECK(hw_data_out_transfer(
-      (uint8_t *)cbw, sizeof(_scsi_command_block_wrapper) + 16, dev->config.address, &dev->endpoints[ENDPOINT_BULK_OUT]));
+  CHECK(hw_data_out_transfer((uint8_t *)cbw, sizeof(_scsi_command_block_wrapper) + 16, dev->config.address,
+                             &dev->endpoints[ENDPOINT_BULK_OUT]));
 
   if (cbw->dCBWDataTransferLength != 0) {
     if (!send) {
-      CHECK(hw_data_in_transfer(send_receive_buffer,
-                                (uint16_t)cbw->dCBWDataTransferLength,
-                                dev->config.address,
+      CHECK(hw_data_in_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->config.address,
                                 &dev->endpoints[ENDPOINT_BULK_IN]));
 
     } else {
-      CHECK(hw_data_out_transfer(send_receive_buffer,
-                                 (uint16_t)cbw->dCBWDataTransferLength,
-                                 dev->config.address,
+      CHECK(hw_data_out_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->config.address,
                                  &dev->endpoints[ENDPOINT_BULK_OUT]));
     }
   }
 
   _scsi_command_status_wrapper csw;
-  CHECK(hw_data_in_transfer(
-      (uint8_t *)&csw, sizeof(_scsi_command_status_wrapper), dev->config.address, &dev->endpoints[ENDPOINT_BULK_IN]));
+  CHECK(hw_data_in_transfer((uint8_t *)&csw, sizeof(_scsi_command_status_wrapper), dev->config.address,
+                            &dev->endpoints[ENDPOINT_BULK_IN]));
 
   if (csw.cbwstatus != 0)
     return USB_ERR_FAIL;
@@ -129,11 +125,8 @@ usb_error scsi_sense_init(storage_device_config *const dev) {
   return result;
 }
 
-usb_error scsi_read_write(storage_device_config *const dev,
-                          const bool                   send,
-                          uint32_t                     sector_number,
-                          const uint8_t                sector_count,
-                          uint8_t *const               buffer) {
+usb_error scsi_read_write(
+    storage_device_config *const dev, const bool send, uint32_t sector_number, const uint8_t sector_count, uint8_t *const buffer) {
   cbw_scsi_read_write cbw;
   memset(&cbw, 0, sizeof(cbw_scsi_read_write));
   cbw.cbw = scsi_command_block_wrapper;

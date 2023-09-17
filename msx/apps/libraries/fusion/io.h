@@ -121,22 +121,27 @@ extern int _io_errno; /* to see error code in register A after CALL 5 */
 
 /* FILE READ,WRITE OPERATIONS */
 
-extern int  Open(char *name, int mode);                    /* opens file, returns number fH= 3...15 as file handler, or -1 on error */
-extern int  OpenAttrib(char *name, int mode, int attr);    /* opens file providing attributes for MSXDOS2, (attributes = mode, default) */
-extern int  Create(char *name);                            /* creates file, opens, see open */
-extern int  CreateAttrib(char *name, int attr);            /* creates file providing attributes for MSXDOS2, (attributes = mode, default) */
-extern int  Close(int fH);                                 /* closes file by file handler, returns 0, or -1 on error in _io_error */
+extern int Open(char *name, int mode); /* opens file, returns number fH= 3...15 as file handler, or -1 on error */
+extern int
+            OpenAttrib(char *name, int mode, int attr); /* opens file providing attributes for MSXDOS2, (attributes = mode, default) */
+extern int  Create(char *name);                         /* creates file, opens, see open */
+extern int  CreateAttrib(char *name, int attr); /* creates file providing attributes for MSXDOS2, (attributes = mode, default) */
+extern int  Close(int fH);                      /* closes file by file handler, returns 0, or -1 on error in _io_error */
 extern int  Read(int fH, void *buf, unsigned int nbytes);  /* reads from file to buffer */
 extern int  Write(int fH, void *buf, unsigned int nbytes); /* writes buffer to file */
 extern int  GetCWD(char *buf, int bufsize);                /* gets the A: into buffer, returns 0 on success */
 extern int  GetDisk(void);                                 /* gets current drive number */
 extern void SetDisk(int diskno);                           /* sets drive number */
 
-extern unsigned char SectorRead(unsigned int SectorStart, unsigned char drive, unsigned char NbSectors);  /* read Nbsectors from drive. Start reading at sector */
-extern unsigned char SectorWrite(unsigned int SectorStart, unsigned char drive, unsigned char NbSectors); /* Write Nbsectors to drive. Start writing at sector */
-extern void          SetDiskTrAddress(unsigned int *address);                                             /* Set the transfert adress for Read/wrtie Sector */
-extern unsigned int  GetDiskTrAddress(void);                                                              /* Get the current disk Transfer adress */
-extern unsigned char GetDiskParam(DSKPARAMS *info, unsigned char Drive);                                  /*Get Disk current Parameters . Only for MSX-DOS2 */
+extern unsigned char SectorRead(unsigned int  SectorStart,
+                                unsigned char drive,
+                                unsigned char NbSectors); /* read Nbsectors from drive. Start reading at sector */
+extern unsigned char SectorWrite(unsigned int  SectorStart,
+                                 unsigned char drive,
+                                 unsigned char NbSectors);               /* Write Nbsectors to drive. Start writing at sector */
+extern void          SetDiskTrAddress(unsigned int *address);            /* Set the transfert adress for Read/wrtie Sector */
+extern unsigned int  GetDiskTrAddress(void);                             /* Get the current disk Transfer adress */
+extern unsigned char GetDiskParam(DSKPARAMS *info, unsigned char Drive); /*Get Disk current Parameters . Only for MSX-DOS2 */
 
 // extern	FCBlist _buf8_fcbs;	// internal
 

@@ -113,8 +113,7 @@ usb_error usb_process_error(const usb_error result) {
   return result;
 }
 
-usb_error
-usb_control_transfer(storage_device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer) {
+usb_error usb_control_transfer(storage_device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer) {
   usb_error result;
 
   const uint8_t max_packet_size = storage_device->config.max_packet_size;
@@ -185,12 +184,8 @@ usb_error usb_execute_cbi(storage_device_config *const storage_device,
   if (result != USB_ERR_STALL)
     return result;
 
-  return usb_execute_cbi_core(storage_device,
-                              &setup_cmd_packet,
-                              (uint8_t *)&ufi_cmd_request_sense,
-                              false,
-                              sizeof(ufi_response_inquiry),
-                              (uint8_t *)response_inquiry);
+  return usb_execute_cbi_core(storage_device, &setup_cmd_packet, (uint8_t *)&ufi_cmd_request_sense, false,
+                              sizeof(ufi_response_inquiry), (uint8_t *)response_inquiry);
 }
 
 usb_error usb_execute_cbi_with_retry(storage_device_config *const storage_device,
@@ -244,8 +239,8 @@ ufi_request_inquiry packet_inquiry = {0x12, 0, 0, 0, 0x24, 0, {0, 0, 0, 0, 0, 0}
 
 usb_error ufi_inquiry(storage_device_config *const storage_device, ufi_inquiry_response const *response) {
 
-  return usb_execute_cbi_with_retry(
-      storage_device, (uint8_t *)&packet_inquiry, false, true, sizeof(ufi_inquiry_response), (uint8_t *)response);
+  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&packet_inquiry, false, true, sizeof(ufi_inquiry_response),
+                                    (uint8_t *)response);
 }
 
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
@@ -253,12 +248,8 @@ ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0
 usb_error ufi_capacity(storage_device_config *const storage_device, ufi_format_capacities_response const *response) {
   ufi_test_disk(storage_device);
 
-  return usb_execute_cbi_with_retry(storage_device,
-                                    (uint8_t *)&packet_read_format_capacities,
-                                    false,
-                                    true,
-                                    sizeof(ufi_format_capacities_response),
-                                    (uint8_t *)response);
+  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&packet_read_format_capacities, false, true,
+                                    sizeof(ufi_format_capacities_response), (uint8_t *)response);
 }
 
 usb_error run_test_unit_ready(storage_device_config *const storage_device) {

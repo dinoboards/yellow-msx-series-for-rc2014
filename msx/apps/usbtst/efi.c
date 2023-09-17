@@ -8,7 +8,10 @@
 #include "print.h"
 #include <string.h>
 
-usb_error usb_data_in_transfer(storage_device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size, const usb_endpoint_type endpoint_type) {
+usb_error usb_data_in_transfer(storage_device_config *const storage_device,
+                               uint8_t *const               buffer,
+                               const uint16_t               buffer_size,
+                               const usb_endpoint_type      endpoint_type) {
 
   usb_error result;
 
@@ -27,7 +30,8 @@ usb_error usb_data_in_transfer(storage_device_config *const storage_device, uint
   return usb_process_error(result);
 }
 
-inline usb_error usb_data_out_transfer(storage_device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size) {
+inline usb_error
+usb_data_out_transfer(storage_device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size) {
 
   usb_error result;
 
@@ -43,7 +47,13 @@ inline usb_error usb_data_out_transfer(storage_device_config *const storage_devi
   return result;
 }
 
-usb_error usb_execute_cbi_core_no_clear(storage_device_config *const storage_device, const setup_packet *const adsc, const uint8_t *const cmd, const bool send, const uint16_t buffer_size, uint8_t *const buffer, uint8_t *const asc) {
+usb_error usb_execute_cbi_core_no_clear(storage_device_config *const storage_device,
+                                        const setup_packet *const    adsc,
+                                        const uint8_t *const         cmd,
+                                        const bool                   send,
+                                        const uint16_t               buffer_size,
+                                        uint8_t *const               buffer,
+                                        uint8_t *const               asc) {
 
   usb_error result;
 
@@ -120,7 +130,7 @@ setup_packet usb_cmd_clear_endpoint_halt = {2, 1, {0, 0}, {255, 0}, 0}; //    ;b
 
 usb_error usb_clear_endpoint_halt(storage_device_config *const storage_device, const usb_endpoint_type endpoint_type) {
   setup_packet cmd;
-  cmd = usb_cmd_clear_endpoint_halt;
+  cmd           = usb_cmd_clear_endpoint_halt;
   cmd.bIndex[0] = storage_device->endpoints[endpoint_type].number;
 
   const uint8_t result = usb_control_transfer(storage_device, &cmd, (uint8_t *)0);
@@ -130,7 +140,12 @@ usb_error usb_clear_endpoint_halt(storage_device_config *const storage_device, c
   return result;
 }
 
-usb_error usb_execute_cbi_core(storage_device_config *const storage_device, const setup_packet *const adsc, const uint8_t *const cmd, const bool send, const uint16_t buffer_size, uint8_t *const buffer) {
+usb_error usb_execute_cbi_core(storage_device_config *const storage_device,
+                               const setup_packet *const    adsc,
+                               const uint8_t *const         cmd,
+                               const bool                   send,
+                               const uint16_t               buffer_size,
+                               uint8_t *const               buffer) {
   uint8_t asc;
 
   const usb_error result = usb_execute_cbi_core_no_clear(storage_device, adsc, cmd, send, buffer_size, buffer, &asc);
@@ -148,15 +163,20 @@ usb_error usb_execute_cbi_core(storage_device_config *const storage_device, cons
   return USB_ERR_STALL;
 }
 
-setup_packet        cbi_adsc = {0x21, 0, {0, 0}, {255, 0}, 12}; // ;4th byte is interface number
+setup_packet        cbi_adsc              = {0x21, 0, {0, 0}, {255, 0}, 12}; // ;4th byte is interface number
 ufi_request_inquiry ufi_cmd_request_sense = {0x03, 0, 0, 0, 18, 0, {0, 0, 0, 0, 0, 0}};
 
-usb_error usb_execute_cbi(storage_device_config *const storage_device, const uint8_t *const cmd, const bool send, const uint16_t buffer_size, uint8_t *const buffer, ufi_response_inquiry *const response_inquiry) {
+usb_error usb_execute_cbi(storage_device_config *const storage_device,
+                          const uint8_t *const         cmd,
+                          const bool                   send,
+                          const uint16_t               buffer_size,
+                          uint8_t *const               buffer,
+                          ufi_response_inquiry *const  response_inquiry) {
   uint8_t       result;
   const uint8_t interface_number = storage_device->config.interface_number;
 
   setup_packet setup_cmd_packet;
-  setup_cmd_packet = cbi_adsc;
+  setup_cmd_packet           = cbi_adsc;
   setup_cmd_packet.bIndex[0] = interface_number;
 
   result = usb_execute_cbi_core(storage_device, &setup_cmd_packet, cmd, send, buffer_size, buffer);
@@ -164,22 +184,28 @@ usb_error usb_execute_cbi(storage_device_config *const storage_device, const uin
   if (result != USB_ERR_STALL)
     return result;
 
-  return usb_execute_cbi_core(storage_device, &setup_cmd_packet, (uint8_t *)&ufi_cmd_request_sense, false, sizeof(ufi_response_inquiry), (uint8_t *)response_inquiry);
+  return usb_execute_cbi_core(storage_device, &setup_cmd_packet, (uint8_t *)&ufi_cmd_request_sense, false,
+                              sizeof(ufi_response_inquiry), (uint8_t *)response_inquiry);
 }
 
-usb_error usb_execute_cbi_with_retry(storage_device_config *const storage_device, const uint8_t *const cmd, const bool send, const bool retry_on_media_change, const uint16_t buffer_size, uint8_t *const buffer) {
+usb_error usb_execute_cbi_with_retry(storage_device_config *const storage_device,
+                                     const uint8_t *const         cmd,
+                                     const bool                   send,
+                                     const bool                   retry_on_media_change,
+                                     const uint16_t               buffer_size,
+                                     uint8_t *const               buffer) {
 
   uint8_t              result;
   ufi_response_inquiry response_inquiry;
 
-  response_inquiry.asc = 0;
+  response_inquiry.asc  = 0;
   response_inquiry.ascq = 0;
 
 retry:
   result = usb_execute_cbi(storage_device, (uint8_t *)cmd, send, buffer_size, buffer, &response_inquiry);
 
-  const uint8_t asc = response_inquiry.asc;
-  const uint8_t ascq = response_inquiry.ascq;
+  const uint8_t asc       = response_inquiry.asc;
+  const uint8_t ascq      = response_inquiry.ascq;
   const uint8_t sense_key = response_inquiry.sense_key;
 
   if (result)
@@ -213,7 +239,8 @@ ufi_request_inquiry packet_inquiry = {0x12, 0, 0, 0, 0x24, 0, {0, 0, 0, 0, 0, 0}
 
 usb_error ufi_inquiry(storage_device_config *const storage_device, ufi_inquiry_response const *response) {
 
-  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&packet_inquiry, false, true, sizeof(ufi_inquiry_response), (uint8_t *)response);
+  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&packet_inquiry, false, true, sizeof(ufi_inquiry_response),
+                                    (uint8_t *)response);
 }
 
 ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
@@ -221,7 +248,8 @@ ufi_read_format_capacities packet_read_format_capacities = {0x23, 0, {0, 0, 0, 0
 usb_error ufi_capacity(storage_device_config *const storage_device, ufi_format_capacities_response const *response) {
   ufi_test_disk(storage_device);
 
-  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&packet_read_format_capacities, false, true, sizeof(ufi_format_capacities_response), (uint8_t *)response);
+  return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&packet_read_format_capacities, false, true,
+                                    sizeof(ufi_format_capacities_response), (uint8_t *)response);
 }
 
 usb_error run_test_unit_ready(storage_device_config *const storage_device) {
@@ -243,12 +271,16 @@ usb_error ufi_test_disk(storage_device_config *const storage_device) {
   return result;
 }
 
-usb_error ufi_read_write_sector(storage_device_config *const storage_device, const bool send, const uint16_t sector_number, const uint8_t sector_count, const uint8_t *const buffer) {
+usb_error ufi_read_write_sector(storage_device_config *const storage_device,
+                                const bool                   send,
+                                const uint16_t               sector_number,
+                                const uint8_t                sector_count,
+                                const uint8_t *const         buffer) {
   ufi_read_write cmd;
   memset(&cmd, 0, sizeof(ufi_read_write));
-  cmd.operation_code = send ? 0x2A : 0x28;
-  cmd.lba[2] = sector_number >> 8;
-  cmd.lba[3] = sector_number & 0xFF;
+  cmd.operation_code     = send ? 0x2A : 0x28;
+  cmd.lba[2]             = sector_number >> 8;
+  cmd.lba[3]             = sector_number & 0xFF;
   cmd.transfer_length[1] = sector_count;
 
   return usb_execute_cbi_with_retry(storage_device, (uint8_t *)&cmd, send, true, 512 * sector_count, (uint8_t *)buffer);

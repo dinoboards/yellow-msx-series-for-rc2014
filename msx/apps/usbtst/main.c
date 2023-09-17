@@ -27,7 +27,7 @@ void state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   const bool hasUsb = work_area->hub_config.address != 0;
   const bool hasCdc = work_area->cdc_config.address != 0;
 
-  uint8_t                      index = MAX_NUMBER_OF_STORAGE_DEVICES;
+  uint8_t                      index          = MAX_NUMBER_OF_STORAGE_DEVICES;
   const storage_device_config *storage_device = &work_area->storage_device[0];
 
   if (hasUsb)
@@ -68,7 +68,7 @@ void state_devices(const _usb_state *const work_area) __z88dk_fastcall {
 }
 
 inline void initialise_mass_storage_devices(_usb_state *const work_area) {
-  uint8_t                index = MAX_NUMBER_OF_STORAGE_DEVICES;
+  uint8_t                index          = MAX_NUMBER_OF_STORAGE_DEVICES;
   storage_device_config *storage_device = &work_area->storage_device[0];
 
   do {
@@ -86,7 +86,7 @@ void main(const int argc, const char *argv[]) {
   (void)argc;
   (void)argv;
 
-  work_area *const  p = get_work_area();
+  work_area *const  p         = get_work_area();
   _usb_state *const work_area = &p->ch376;
   memset(work_area, 0, sizeof(_usb_state));
 

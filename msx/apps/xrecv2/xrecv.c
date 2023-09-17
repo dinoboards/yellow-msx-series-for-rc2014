@@ -48,9 +48,9 @@
 const unsigned char *pTempFileName = "xmdwn.tmp";
 
 const unsigned char *rotatingChar[4] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
-uint8_t              rotatingIndex = 0;
-bool                 started = false;
-uint32_t             totalFileSize = 0;
+uint8_t              rotatingIndex   = 0;
+bool                 started         = false;
+uint32_t             totalFileSize   = 0;
 
 #define ERASE_LINE "\x1B\x6C\r"
 

@@ -5,38 +5,36 @@
 #include <stdlib.h>
 #include <string.h>
 
-inline uint8_t bcdToDecimal(uint8_t hex)  {
-  return ((hex & 0xF0) >> 4) * 10 + (hex & 0x0F);
-}
+inline uint8_t bcdToDecimal(uint8_t hex) { return ((hex & 0xF0) >> 4) * 10 + (hex & 0x0F); }
 
-static void convert(rtcDateTime* datetime) __z88dk_fastcall {
+static void convert(rtcDateTime *datetime) __z88dk_fastcall {
   datetime->second = bcdToDecimal(datetime->second);
   datetime->minute = bcdToDecimal(datetime->minute);
-  datetime->hour = bcdToDecimal(datetime->hour);
-  datetime->day = bcdToDecimal(datetime->day);
-  datetime->month = bcdToDecimal(datetime->month);
-  datetime->year = bcdToDecimal(datetime->year);
+  datetime->hour   = bcdToDecimal(datetime->hour);
+  datetime->day    = bcdToDecimal(datetime->day);
+  datetime->month  = bcdToDecimal(datetime->month);
+  datetime->year   = bcdToDecimal(datetime->year);
 }
 
 rtcDateTime datetime;
-char line[10];
+char        line[10];
 
 uint8_t stringToBcd() {
-  const uint8_t firstNibble = (line[0] - '0') & 0xF;
+  const uint8_t firstNibble  = (line[0] - '0') & 0xF;
   const uint8_t secondNibble = (line[1] - '0') & 0xF;
 
   return (firstNibble << 4) + secondNibble;
 }
 
-uint8_t readSetting()  {
-  line[0] = 0; /* Ensure empty line if no input delivered */
-  line[8] = 255;//~'\0';  /* Ensure no false-null at end of buffer */
-  line[9] = 0;//~'\0';
+uint8_t readSetting() {
+  line[0] = 0;   /* Ensure empty line if no input delivered */
+  line[8] = 255; //~'\0';  /* Ensure no false-null at end of buffer */
+  line[9] = 0;   //~'\0';
 
-  while(true) {
+  while (true) {
     fgets(line, 9, stdin);
 
-    if(strlen(line) != 3) { //includes line terminator
+    if (strlen(line) != 3) { // includes line terminator
       printf("\r\nBad value. Please enter 2 digits only.\r\n");
       continue;
     }
@@ -71,9 +69,9 @@ void main() {
   else
     printf("NVRAM success for index 1\r\n");
 
-  rp5c01TestMode(0); // Bit 0 to bit 3 can be set to place chip into test modes
-  rp5c01SetHourMode(HR_MD_24); //24 hour clock
-  rp5c01SetMode(MD_TIME);  //Enable timer
+  rp5c01TestMode(0);           // Bit 0 to bit 3 can be set to place chip into test modes
+  rp5c01SetHourMode(HR_MD_24); // 24 hour clock
+  rp5c01SetMode(MD_TIME);      // Enable timer
 
   printf("Showing current time. Type S to set time. Press any key to exit\r\n");
 
@@ -83,11 +81,12 @@ void main() {
   char t;
 
 loop:
-  while((t = cRawIo()) == 0) {
+  while ((t = cRawIo()) == 0) {
     rp5c01GetTime(&datetime);
     convert(&datetime);
 
-    printf("%02d-%02d-%02d %02d:%02d:%02d\x1b[0G", datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute, datetime.second);
+    printf("%02d-%02d-%02d %02d:%02d:%02d\x1b[0G", datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute,
+           datetime.second);
   }
 
   if (t == 'S' || t == 's') {
@@ -114,17 +113,17 @@ loop:
     printf("\r\nSeconds: ");
     datetime.second = readSetting();
 
-    // printf("\r\n%02x-%02x-%02x %02x:%02x:%02x\r\n\r\n", datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute, datetime.second);
+    // printf("\r\n%02x-%02x-%02x %02x:%02x:%02x\r\n\r\n", datetime.year, datetime.month, datetime.day, datetime.hour,
+    // datetime.minute, datetime.second);
 
-    rp5c01SetMode(0);  //Disable timer (and alarm)
+    rp5c01SetMode(0); // Disable timer (and alarm)
     rp5c01SetTime(&datetime);
-    rp5c01SetMode(MD_TIME);  //Enable timer
+    rp5c01SetMode(MD_TIME); // Enable timer
 
     printf("\x1b[?25l");
     goto loop;
   }
 
-
-  //show terminal cursor
+  // show terminal cursor
   printf("\x1b[?25h");
 }
