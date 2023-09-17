@@ -1,9 +1,9 @@
+#include "class-scsi.h"
 #include "nextor.h"
-#include "scsi.h"
 #include "work-area.h"
 #include <stdlib.h>
 
-uint8_t usb_dev_status_scsi(storage_device_config *const storage_device, const uint8_t lun) {
+uint8_t usb_dev_status_scsi(device_config *const storage_device, const uint8_t lun) {
   scsi_sense_result response;
 
   if (lun != 1)

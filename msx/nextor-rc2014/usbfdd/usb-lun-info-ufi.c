@@ -1,8 +1,8 @@
 #include "usb-lun-info-ufi.h"
-#include "ufi.h"
+#include "class-ufi.h"
 #include <stdlib.h>
 
-uint8_t usb_lun_info_ufi(storage_device_config *const dev, const uint8_t lun, nextor_lun_info *const info) {
+uint8_t usb_lun_info_ufi(device_config *const dev, const uint8_t lun, nextor_lun_info *const info) {
   ufi_format_capacities_response response;
 
   if (lun != 1)

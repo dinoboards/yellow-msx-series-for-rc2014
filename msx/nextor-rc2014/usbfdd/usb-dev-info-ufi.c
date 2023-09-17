@@ -1,12 +1,12 @@
 #include "usb-dev-info-ufi.h"
+#include "class-ufi.h"
 #include "nextor.h"
-#include "ufi.h"
 #include "usb-dev-info.h"
 #include "work-area.h"
 #include <stdlib.h>
 #include <string.h>
 
-uint8_t usb_dev_info_ufi(storage_device_config *const dev, const dev_info_request request_info, uint8_t *const buffer) {
+uint8_t usb_dev_info_ufi(device_config *const dev, const dev_info_request request_info, uint8_t *const buffer) {
   ufi_inquiry_response response;
 
   if (request_info == BASIC_INFORMATION)

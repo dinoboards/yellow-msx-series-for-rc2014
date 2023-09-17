@@ -5,19 +5,19 @@
 #include "work-area.h"
 #include <stdlib.h>
 
-typedef uint8_t (*usb_dev_write_driver)(storage_device_config *const dev,
-                                        const uint8_t                lun,
-                                        uint8_t                      number_sectors_to_write,
-                                        uint32_t                     sector_number,
-                                        uint8_t *                    buffer,
-                                        uint8_t *const               number_of_sectors_written);
+typedef uint8_t (*usb_dev_write_driver)(device_config *const dev,
+                                        const uint8_t        lun,
+                                        uint8_t              number_sectors_to_write,
+                                        uint32_t             sector_number,
+                                        uint8_t *            buffer,
+                                        uint8_t *const       number_of_sectors_written);
 
-static uint8_t no_driver(storage_device_config *const dev,
-                         const uint8_t                lun,
-                         uint8_t                      number_sectors_to_write,
-                         uint32_t                     sector_number,
-                         uint8_t *                    buffer,
-                         uint8_t *const               number_of_sectors_written) {
+static uint8_t no_driver(device_config *const dev,
+                         const uint8_t        lun,
+                         uint8_t              number_sectors_to_write,
+                         uint32_t             sector_number,
+                         uint8_t *            buffer,
+                         uint8_t *const       number_of_sectors_written) {
 
   (void)dev;
   (void)lun;
@@ -38,8 +38,8 @@ uint8_t usb_dev_write(const uint8_t  device_index,
                       uint8_t *      buffer,
                       uint8_t *const number_of_sectors_written) {
 
-  storage_device_config *const dev  = get_usb_driver(device_index);
-  const usb_device_type        type = dev->type;
+  device_config *const  dev  = get_usb_driver(device_index);
+  const usb_device_type type = dev->type;
 
   return drivers[type](dev, lun, number_sectors_to_write, sector_number, buffer, number_of_sectors_written);
 }

@@ -66,7 +66,7 @@ typedef struct {
 
 #define CH_SPEED_FULL     0 /* 12Mbps full speed FullSpeed ​​(default value) */
 #define CH_SPEED_LOW_FREQ 1 /* 1.5Mbps (modify frequency only) */
-#define CH_SPEED_LOW      2 /* 1.5Mbps low speed LowSpeed*/
+#define CH_SPEED_LOW      2 /* 1.5Mbps low speed LowSpeed */
 
 #define CH_MODE_HOST_RESET 7
 #define CH_MODE_HOST       6

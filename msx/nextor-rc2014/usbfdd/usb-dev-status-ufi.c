@@ -1,9 +1,9 @@
+#include "class-ufi.h"
 #include "nextor.h"
-#include "ufi.h"
 #include "work-area.h"
 #include <stdlib.h>
 
-uint8_t usb_dev_status_ufi(storage_device_config *const storage_device, const uint8_t lun) {
+uint8_t usb_dev_status_ufi(device_config *const storage_device, const uint8_t lun) {
 
   if (lun != 1)
     return DEV_STATUS_NOT_AVAILABLE_OR_INVALID;
