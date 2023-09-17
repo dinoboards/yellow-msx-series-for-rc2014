@@ -1,7 +1,7 @@
 #ifndef __USB_DEV_INFO_UFI
 #define __USB_DEV_INFO_UFI
 
-#include "ch376.h"
+#include "hw.h"
 #include "nextor.h"
 #include <stdlib.h>
 

@@ -19,7 +19,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
  	$(BINDIR)debuggin.c.o \
  	$(BINDIR)hw.c.o \
  	$(BINDIR)print.o \
- 	$(BINDIR)printer.c.o \
+ 	$(BINDIR)class-printer.c.o \
  	$(BINDIR)class-scsi.c.o \
  	$(BINDIR)class-ufi.c.o \
  	$(BINDIR)usb-dev-info-scsi.c.o \

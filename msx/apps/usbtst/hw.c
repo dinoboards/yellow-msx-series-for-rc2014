@@ -120,18 +120,15 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
   return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size);
 }
 
-// ; -----------------------------------------------------------------------------
-// ; HW_DATA_IN_TRANSFER: Perform a USB data IN transfer
-// ; -----------------------------------------------------------------------------
-// ; Input:  buffer => HL = Address of a buffer for the received data
-// ;         buffer_size => BC = Data length
-// ;         device_address => A  = Device address
-// ;         max_packet_size => D  = Maximum packet size for the endpoint
-// ;         endpoint => E  = Endpoint number
-// ;         *toggle => Cy = Current state of the toggle bit
-// ; Output: A  = USB error code
-// ;         amount_received => BC = Amount of data actually received (only if no error)
-// ;         *toggle Cy = New state of the toggle bit (even on error)
+//  -----------------------------------------------------------------------------
+//  Perform a USB data IN transfer
+//  -----------------------------------------------------------------------------
+//  Input:  buffer => Address of a buffer for the received data
+//          buffer_size => Data length
+//          device_address =>  Device address
+//          endpoint => Endpoint number description (including toggle)
+//  Output: result USB error code
+//           endpoint's toggle
 
 usb_error
 hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
@@ -143,17 +140,15 @@ hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t d
   return result;
 }
 
-// ; -----------------------------------------------------------------------------
-// ; HW_DATA_OUT_TRANSFER: Perform a USB data OUT transfer
-// ; -----------------------------------------------------------------------------
-// ; Input:  HL = Address of a buffer for the data to be sent
-// ;         BC = Data length
-// ;         A  = Device address
-// ;         D  = Maximum packet size for the endpoint
-// ;         E  = Endpoint number
-// ;         Cy = Current state of the toggle bit
-// ; Output: A  = USB error code
-// ;         Cy = New state of the toggle bit (even on error)
+// -----------------------------------------------------------------------------
+// Perform a USB data OUT transfer
+// -----------------------------------------------------------------------------
+// Input:   buffer Address of a buffer for the data to be sent
+//          buffer_size = Data length
+//          device_address  = Device address
+//          endpoint => Endpoint number description (including toggle)
+//  Output: result USB error code
+//           endpoint's toggle
 usb_error
 hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
 

@@ -4,6 +4,16 @@
 #include "ch376.h"
 #include <stdlib.h>
 
+typedef struct {
+  usb_device_type type;
+  uint8_t         max_packet_size;
+  uint8_t         value;
+  uint8_t         interface_number;
+  uint8_t         tag;
+  uint8_t         address;
+  endpoint_param  endpoints[3]; // bulk in/out and interrupt
+} device_config;
+
 #define GET_STATUS      0
 #define CLEAR_FEATURE   1
 #define SET_FEATURE     3

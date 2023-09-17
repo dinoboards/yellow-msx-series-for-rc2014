@@ -65,10 +65,14 @@ typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_I
 
 #endif
 
+uint8_t calc_max_packet_sizex(const uint8_t packet_size) __z88dk_fastcall;
+
+#define calc_max_packet_size(packet_sizex) ((uint8_t)8 << packet_sizex)
+
 typedef struct {
   uint8_t toggle : 1;
-  uint8_t number;
-  uint8_t max_packet_size;
+  uint8_t number : 4;
+  uint8_t max_packet_sizex : 2;
 } endpoint_param;
 
 typedef struct {

@@ -2,7 +2,7 @@
 #define __WORK_AREA
 
 #include "ch376.h"
-#include "printer.h"
+#include "class-printer.h"
 #include <stdlib.h>
 
 #define MAX_NUMBER_OF_STORAGE_DEVICES 4
