@@ -8,6 +8,19 @@ void delay_short() { delay(3); }
 
 void delay_medium() { delay(30); }
 
+uint8_t calc_max_packet_sizex(const uint8_t packet_size) __z88dk_fastcall {
+  switch (packet_size) {
+  case 64:
+    return 3;
+  case 32:
+    return 2;
+  case 16:
+    return 1;
+  }
+
+  return 0;
+}
+
 void ch_command(const uint8_t command) __z88dk_fastcall {
   uint8_t counter = 255;
   while ((CH376_COMMAND_PORT & PARA_STATE_BUSY) && --counter != 0)
@@ -219,7 +232,7 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
 usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint) {
   usb_error     result;
   const uint8_t number          = endpoint->number;
-  const uint8_t max_packet_size = endpoint->max_packet_size;
+  const uint8_t max_packet_size = calc_max_packet_size(endpoint->max_packet_sizex);
 
   while (buffer_length > 0) {
     const uint8_t size = max_packet_size < buffer_length ? max_packet_size : buffer_length;

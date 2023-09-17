@@ -9,9 +9,9 @@
 void parse_endpoint_printer(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
 
-  work_area->printer.endpoints[0].number          = pEndpoint->bEndpointAddress;
-  work_area->printer.endpoints[0].toggle          = 0;
-  work_area->printer.endpoints[0].max_packet_size = pEndpoint->wMaxPacketSize;
+  work_area->printer.endpoints[0].number           = pEndpoint->bEndpointAddress;
+  work_area->printer.endpoints[0].toggle           = 0;
+  work_area->printer.endpoints[0].max_packet_sizex = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
 }
 
 usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall;

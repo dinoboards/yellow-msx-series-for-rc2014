@@ -25,7 +25,7 @@
 ./bin/usb-enumerate.c.asm: usbfdd/usb-enumerate.c usbfdd/usb-enumerate.h \
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h usbfdd/work-area.h \
  usbfdd/debuggin.h usbfdd/class-hub.h usbfdd/class-ufi.h usbfdd/nextor.h \
- usbfdd/print.h usbfdd/usb-enumerate-storage.h usbfdd/usb-enumerate-hub.h
+ usbfdd/print.h usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate-storage.h
 ./bin/usb-dev-status-scsi.c.asm: usbfdd/usb-dev-status-scsi.c usbfdd/class-scsi.h \
  usbfdd/hw.h usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/nextor.h \
  usbfdd/work-area.h
@@ -35,6 +35,8 @@
 ./bin/usb-dev-status-ufi.c.asm: usbfdd/usb-dev-status-ufi.c usbfdd/class-ufi.h \
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h usbfdd/work-area.h \
  usbfdd/nextor.h
+./bin/class-printer.c.asm: usbfdd/class-printer.c usbfdd/class-printer.h \
+ usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h
 ./bin/usb-enumerate-hub.c.asm: usbfdd/usb-enumerate-hub.c \
  usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h usbfdd/ch376.h \
  usbfdd/ch376inc.h usbfdd/hw.h usbfdd/work-area.h \
@@ -57,8 +59,6 @@
 ./bin/usb-lun-info-scsi.c.asm: usbfdd/usb-lun-info-scsi.c usbfdd/class-scsi.h \
  usbfdd/hw.h usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/usb-lun-info-ufi.h \
  usbfdd/nextor.h
-./bin/printer.c.asm: usbfdd/printer.c usbfdd/printer.h usbfdd/ch376.h \
- usbfdd/ch376inc.h usbfdd/hw.h
 ./bin/usb-dev-info-ufi.c.asm: usbfdd/usb-dev-info-ufi.c usbfdd/usb-dev-info-ufi.h \
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/nextor.h usbfdd/class-ufi.h \
  usbfdd/hw.h usbfdd/work-area.h usbfdd/usb-dev-info.h

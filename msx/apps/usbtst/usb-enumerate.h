@@ -14,10 +14,7 @@ typedef struct __device_control {
   usb_error (*reset_device)(const struct __device_control *const args) __z88dk_fastcall;
 } _device_control;
 
-struct __working;
-
 typedef struct {
-  // _device_control device_control;
   uint8_t next_device_address;
 } enumeration_state;
 
