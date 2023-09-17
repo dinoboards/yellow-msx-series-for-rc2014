@@ -7,26 +7,33 @@
 #include "debuggin.h"
 #include "print.h"
 
+void parse_endpoint_printer(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall {
+  _usb_state *const work_area = get_usb_work_area();
+
+  work_area->printer.endpoint.number          = pEndpoint->bEndpointAddress;
+  work_area->printer.endpoint.toggle          = 0;
+  work_area->printer.endpoint.max_packet_size = pEndpoint->wMaxPacketSize;
+}
+
 usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall;
 usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall;
 
 usb_device_type identify_class_driver(_working *const working) {
   const interface_descriptor *const p = (const interface_descriptor *)working->ptr;
-  if (p->bInterfaceClass == 2) {
+  if (p->bInterfaceClass == 2)
     return USB_IS_CDC;
-  }
 
-  if (p->bInterfaceClass == 8 && (p->bInterfaceSubClass == 6 || p->bInterfaceSubClass == 5) && p->bInterfaceProtocol == 80) {
+  if (p->bInterfaceClass == 7)
+    return USB_IS_PRINTER;
+
+  if (p->bInterfaceClass == 8 && (p->bInterfaceSubClass == 6 || p->bInterfaceSubClass == 5) && p->bInterfaceProtocol == 80)
     return USB_IS_MASS_STORAGE;
-  }
 
-  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0) {
+  if (p->bInterfaceClass == 8 && p->bInterfaceSubClass == 4 && p->bInterfaceProtocol == 0)
     return USB_IS_FLOPPY;
-  }
 
-  if (p->bInterfaceClass == 9 && p->bInterfaceSubClass == 0 && p->bInterfaceProtocol == 0) {
+  if (p->bInterfaceClass == 9 && p->bInterfaceSubClass == 0 && p->bInterfaceProtocol == 0)
     return USB_IS_HUB;
-  }
 
   return 0;
 }
@@ -82,6 +89,10 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
     parse_endpoint_storage(storage_dev, endpoint);
     break;
 
+  case USB_IS_PRINTER:
+    parse_endpoint_printer(endpoint);
+    break;
+
   case USB_IS_HUB:
     parse_endpoint_hub(endpoint);
   }
@@ -116,9 +127,16 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     break;
   }
 
-  case USB_IS_CDC: {
-    printf("config ethernet adapter\r\n");
+  case USB_IS_PRINTER: {
+    work_area->printer.config.interface_number = interface->bInterfaceNumber;
+    work_area->printer.config.max_packet_size  = working->desc.bMaxPacketSize0;
+    work_area->printer.config.value            = working->config.desc.bConfigurationvalue;
+    work_area->printer.config.address          = working->state->next_device_address;
+    CHECK(hw_set_configuration(&work_area->printer.config));
+    break;
+  }
 
+  case USB_IS_CDC: {
     work_area->cdc_config.interface_number = interface->bInterfaceNumber;
     work_area->cdc_config.max_packet_size  = working->desc.bMaxPacketSize0;
     work_area->cdc_config.value            = working->config.desc.bConfigurationvalue;

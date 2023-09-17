@@ -10,13 +10,11 @@
 // ; The size and direction of the transfer are taken from the contents
 // ; of the setup packet.
 // ; -----------------------------------------------------------------------------
-// ; Input:  cmd_packet => HL = Address of a 8 byte buffer with the setup packet
-// ;         buffer => DE = Address of the input or output data buffer
-// ;         device_address => A  = Device address
-// ;         max_packet_size => B  = Maximum packet size for endpoint 0
-// ; Output: A  = USB error code
-// ;         BC = Amount of data actually transferred (if IN transfer and no error)
-
+// ; Input:  cmd_packet => Address of a 8 byte buffer with the setup packet
+// ;         buffer => Address of the input or output data buffer
+// ;         device_address => Device address
+// ;         max_packet_size => Maximum packet size for endpoint 0
+// ; Output: result USB error code
 usb_error hw_control_transfer(const setup_packet *const cmd_packet,
                               void *const               buffer,
                               const uint8_t             device_address,
@@ -35,8 +33,11 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   ch_issue_token_setup();
   CHECK(ch_short_wait_int_and_get_status())
 
-  result = transferIn ? ch_data_in_transfer(buffer, cmd_packet->wLength, &endpoint)
-                      : ch_data_out_transfer(buffer, cmd_packet->wLength, &endpoint);
+  const uint16_t length = cmd_packet->wLength;
+
+  result = length != 0
+               ? (transferIn ? ch_data_in_transfer(buffer, length, &endpoint) : ch_data_out_transfer(buffer, length, &endpoint))
+               : USB_ERR_OK;
 
   CHECK(result)
 
@@ -46,7 +47,6 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
     ch_issue_token_out_ep0();
     result = ch_long_wait_int_and_get_status(); /* sometimes we get STALL here - seems to be ok to ignore */
 
-    // printf(" E4(%d, %d) ", result, cmd_packet->wLength);
     if (result == USB_ERR_OK || result == USB_ERR_STALL)
       return USB_ERR_OK;
 
@@ -77,11 +77,6 @@ usb_error hw_get_description(device_descriptor *const buffer) {
   result = hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8);
 
   CHECK(result);
-
-  // if (result == USB_ERR_TIMEOUT) {
-  //   delay_medium();
-  //   CHECK(hw_control_transfer(&cmd, (uint8_t *)buffer, 0, 8))
-  // }
 
   cmd         = cmd_get_device_descriptor;
   cmd.wLength = 18;

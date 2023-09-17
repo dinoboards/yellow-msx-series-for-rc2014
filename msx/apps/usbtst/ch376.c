@@ -209,6 +209,9 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
     endpoint->toggle = !endpoint->toggle;
 
     count = ch_read_data(buffer, buffer_size);
+    if (count == 0)
+      return USB_ERR_DATA_ERROR;
+
     buffer += count;
     buffer_size -= count;
   } while (buffer_size > 0);

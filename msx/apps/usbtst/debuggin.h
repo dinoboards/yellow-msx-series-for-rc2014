@@ -6,6 +6,13 @@
 #include "usb.h"
 #include "work-area.h"
 
+extern bool logEnabled;
+
+#define x_printf(...)                                                                                                              \
+  if (logEnabled) {                                                                                                                \
+    printf(__VA_ARGS__);                                                                                                           \
+  }
+
 extern void logInterface(const interface_descriptor *const p);
 
 extern void logConfig(const config_descriptor *const p);

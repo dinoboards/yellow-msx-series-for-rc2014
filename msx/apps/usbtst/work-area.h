@@ -2,6 +2,7 @@
 #define __WORK_AREA
 
 #include "ch376.h"
+#include "printer.h"
 #include <stdlib.h>
 
 #define MAX_NUMBER_OF_STORAGE_DEVICES 4
@@ -11,6 +12,7 @@ typedef struct __usb_state {
   device_config         hub_config;
   device_config         cdc_config;
   endpoint_param        hub_endpoint;
+  printer_device_config printer;
   uint8_t               next_storage_device_index;
 } _usb_state;
 

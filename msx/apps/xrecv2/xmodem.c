@@ -325,8 +325,8 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 				if (c < xmodemState.currentPacketSize) xmodemState.packetBuffer[3+c] = CTRLZ;
 // 				if (crc) {
 // 					unsigned short ccrc = crc16_ccitt(&xmodemState.packetBuffer[3],
-// xmodemState.currentPacketSize); 					xmodemState.packetBuffer[xmodemState.currentPacketSize+3] = (ccrc>>8) & 0xFF;
-// 					xmodemState.packetBuffer[xmodemState.currentPacketSize+4] = ccrc & 0xFF;
+// xmodemState.currentPacketSize); 					xmodemState.packetBuffer[xmodemState.currentPacketSize+3] =
+// (ccrc>>8) & 0xFF; 					xmodemState.packetBuffer[xmodemState.currentPacketSize+4] = ccrc & 0xFF;
 // 				}
 // 				else {
 // 					unsigned char ccks = 0;

@@ -3,6 +3,7 @@
 #define __CH376
 
 #include "ch376inc.h"
+#include "print.h"
 #include <stdlib.h>
 
 typedef enum {
@@ -34,7 +35,7 @@ typedef enum {
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
 
-typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2, USB_IS_CDC = 3, USB_IS_HUB = 128 } usb_device_type;
+typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2, USB_IS_CDC = 3, USB_IS_PRINTER = 4, USB_IS_HUB = 128 } usb_device_type;
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
 
@@ -68,8 +69,8 @@ typedef struct {
 } storage_device_config;
 
 #define CH_SPEED_FULL     0 /* 12Mbps full speed FullSpeed ​​(default value) */
-#define CH_SPEED_LOW_FREQ 1 /*1.5Mbps (modify frequency only) */
-#define CH_SPEED_LOW      2 /*=1.5Mbps low speed LowSpeed*/
+#define CH_SPEED_LOW_FREQ 1 /* 1.5Mbps (modify frequency only) */
+#define CH_SPEED_LOW      2 /* 1.5Mbps low speed LowSpeed*/
 
 #define CH_MODE_HOST_RESET 7
 #define CH_MODE_HOST       6

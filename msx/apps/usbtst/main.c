@@ -1,6 +1,8 @@
 #include "main.h"
 #include "ch376.h"
+#include "debuggin.h"
 #include "print.h"
+#include "printer.h"
 #include "scsi.h"
 #include "usb-dev-info-ufi.h"
 #include "usb-enumerate.h"
@@ -24,11 +26,15 @@ usb_error usb_host_bus_reset() {
 }
 
 void state_devices(const _usb_state *const work_area) __z88dk_fastcall {
-  const bool hasUsb = work_area->hub_config.address != 0;
-  const bool hasCdc = work_area->cdc_config.address != 0;
+  const bool hasUsb     = work_area->hub_config.address != 0;
+  const bool hasCdc     = work_area->cdc_config.address != 0;
+  const bool hasPrinter = work_area->printer.config.address != 0;
 
   uint8_t                      index          = MAX_NUMBER_OF_STORAGE_DEVICES;
   const storage_device_config *storage_device = &work_area->storage_device[0];
+
+  uint8_t buffer[130];
+  memset(buffer, 0, sizeof(buffer));
 
   if (hasUsb)
     print_string("USB HUB:\r\n");
@@ -38,8 +44,30 @@ void state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   if (hasCdc)
     print_string("CDC\r\n");
 
-  uint8_t buffer[130];
-  memset(buffer, 0, sizeof(buffer));
+  if (hasPrinter) {
+    print_string("PRINTER: ");
+
+    logEnabled = true;
+
+    // uint8_t status;
+    usb_error result;
+
+    result = prt_send_text(&work_area->printer, "Hello World\r\n");
+
+    printf(" send: %d\r\n", result);
+
+    // usb_error result = prt_soft_reset(&work_area->printer_config);
+
+    // printf(" reset: %d\r\n", result);
+
+    // result = prt_get_device_id(&work_area->printer_config, buffer);
+
+    // printf(" id: %d, %02X %02X %c\r\n", result, buffer[0], buffer[1], buffer[2]);
+
+    // result = prt_get_port_status(&work_area->printer_config, &status);
+
+    // printf(" result: %02X, status: %02X\r\n", result, status);
+  }
 
   nextor_lun_info info;
   memset(&info, 0, sizeof(info));

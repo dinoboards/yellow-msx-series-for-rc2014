@@ -239,8 +239,9 @@ typedef unsigned char volatile *PUINT8V;
 /* input: the number of sectors requested to be written */
 /* output interrupt */
 
-#define CMD0H_DISK_BOC_CMD 0x50 /* host mode/SD card not supported: command to execute BulkOnly transfer protocol for USB storage  \
-                                 */
+#define CMD0H_DISK_BOC_CMD                                                                                                         \
+  0x50 /* host mode/SD card not supported: command to execute BulkOnly transfer protocol for USB storage                           \
+        */
 /* output interrupt */
 
 #define CMD5H_DISK_READ 0x54 /* host mode/SD card not supported: read physical sectors from USB storage */
@@ -355,12 +356,14 @@ typedef unsigned char volatile *PUINT8V;
 
 #define CMD00_DIRTY_BUFFER 0x25 /* Host file mode: clear internal disk and file buffers */
 
-#define CMD10_WR_USB_DATA3 0x29 /* Device mode (serial port not supported): write data block to the send buffer of USB endpoint 0  \
-                                 */
+#define CMD10_WR_USB_DATA3                                                                                                         \
+  0x29 /* Device mode (serial port not supported): write data block to the send buffer of USB endpoint 0                           \
+        */
 /* input: length, data stream */
 
-#define CMD10_WR_USB_DATA5 0x2A /* Device mode (serial port not supported): write data block to the send buffer of USB endpoint 1  \
-                                 */
+#define CMD10_WR_USB_DATA5                                                                                                         \
+  0x2A /* Device mode (serial port not supported): write data block to the send buffer of USB endpoint 1                           \
+        */
 /* input: length, data stream */
 
 /* ************************************************ **************************************************** ***************** */
@@ -395,8 +398,9 @@ typedef unsigned char volatile *PUINT8V;
 /* The lower 4 bits of the transaction attribute are the token, and the upper 4 bits are the endpoint number */
 /* output interrupt */
 
-#define CMD1H_ISSUE_TOKEN 0x4F /* Host mode: issue token, execute transaction, it is recommended to use CMD2H_ISSUE_TKN_X command  \
-                                */
+#define CMD1H_ISSUE_TOKEN                                                                                                          \
+  0x4F /* Host mode: issue token, execute transaction, it is recommended to use CMD2H_ISSUE_TKN_X command                          \
+        */
 /* input: transaction properties */
 /* The lower 4 bits are the token, the upper 4 bits are the endpoint number */
 /* output interrupt */
@@ -648,8 +652,9 @@ typedef unsigned char volatile *PUINT8V;
 #define ERR_MISS_DIR                                                                                                               \
   0xB3 /*A subdirectory(folder) of the specified path is not found, maybe the directory name is wrong */                           \
       #define ERR_LONG_BUF_OVER 0x48 /* long file buffer overflow */
-#define ERR_LONG_NAME_ERR       0x49 /* The short file name does not have a corresponding long file name or the long file name is wrong \
-                                      */
+#define ERR_LONG_NAME_ERR                                                                                                          \
+  0x49 /* The short file name does not have a corresponding long file name or the long file name is wrong                          \
+        */
 #define ERR_NAME_EXIST                                                                                                             \
   0x4A /* A short file with the same name already exists, it is recommended to regenerate another short file name */
 #endif
