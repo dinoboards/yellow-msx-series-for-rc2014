@@ -1,6 +1,5 @@
 
 #include <stdio.h>
-#define x_printf     printf
 #define print_string printf
 #define print_hex(x) printf("%02x", x)
 

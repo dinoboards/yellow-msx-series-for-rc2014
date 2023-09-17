@@ -80,7 +80,7 @@ usb_error scsi_inquiry(storage_device_config *const dev, scsi_inquiry_result *in
   cbw_scsi.cbw.dCBWDataTransferLength = 0x24;
   cbw_scsi.cbw.dCBWTag[0]             = ++dev->config.tag;
 
-  CHECK(do_scsi_cmd(dev, &cbw_scsi.cbw, inq_result, false), x_printf("ErrI %d", result));
+  CHECK(do_scsi_cmd(dev, &cbw_scsi.cbw, inq_result, false));
 
   return USB_ERR_OK;
 }

@@ -5,6 +5,8 @@
 #include "work-area.h"
 #include <string.h>
 
+bool logEnabled = false;
+
 void logInterface(const interface_descriptor *const p) {
   printf("int len=%d,t=%d,inum=%d,alt=%d,numEnd=%d,", p->bLength, p->bDescriptorType, p->bInterfaceNumber, p->bAlternateSetting,
          p->bNumEndpoints);
