@@ -34,7 +34,7 @@ typedef enum {
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
 
-typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2, USB_IS_CDC = 3, USB_IS_HUB = 128 } usb_device_type;
+typedef enum { USB_IS_FLOPPY = 1, USB_IS_MASS_STORAGE = 2, USB_IS_CDC = 3, USB_IS_PRINTER = 4, USB_IS_HUB = 128 } usb_device_type;
 
 typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_IN = 2 } usb_endpoint_type;
 
@@ -67,23 +67,19 @@ typedef enum { ENDPOINT_BULK_OUT = 0, ENDPOINT_BULK_IN = 1, ENDPOINT_INTERRUPT_I
 
 typedef struct {
   uint8_t toggle : 1;
-  uint8_t number : 4;
+  uint8_t number;
   uint8_t max_packet_size;
 } endpoint_param;
 
 typedef struct {
-  uint8_t max_packet_size;
-  uint8_t value;
-  uint8_t interface_number;
-  uint8_t tag;
-  uint8_t address;
-} device_config;
-
-typedef struct {
-  usb_device_type type; // floppy or mass storage
-  device_config   config;
+  usb_device_type type;
+  uint8_t         max_packet_size;
+  uint8_t         value;
+  uint8_t         interface_number;
+  uint8_t         tag;
+  uint8_t         address;
   endpoint_param  endpoints[3]; // bulk in/out and interrupt
-} storage_device_config;
+} device_config;
 
 #define CH_SPEED_FULL     0 /* 12Mbps full speed FullSpeed ​​(default value) */
 #define CH_SPEED_LOW_FREQ 1 /* 1.5Mbps (modify frequency only) */

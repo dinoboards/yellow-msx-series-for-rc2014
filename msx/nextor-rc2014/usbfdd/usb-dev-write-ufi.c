@@ -1,15 +1,15 @@
 #include "usb-dev-write-ufi.h"
+#include "class-ufi.h"
 #include "nextor.h"
-#include "ufi.h"
 #include "work-area.h"
 #include <stdlib.h>
 
-uint8_t usb_dev_write_ufi(storage_device_config *const dev,
-                          const uint8_t                lun,
-                          uint8_t                      number_sectors_to_write,
-                          uint32_t                     sector_number,
-                          uint8_t *                    buffer,
-                          uint8_t *const               number_of_sectors_written) {
+uint8_t usb_dev_write_ufi(device_config *const dev,
+                          const uint8_t        lun,
+                          uint8_t              number_sectors_to_write,
+                          uint32_t             sector_number,
+                          uint8_t *            buffer,
+                          uint8_t *const       number_of_sectors_written) {
   if (lun != 1)
     return NEXTOR_ERR_IDEVL;
 

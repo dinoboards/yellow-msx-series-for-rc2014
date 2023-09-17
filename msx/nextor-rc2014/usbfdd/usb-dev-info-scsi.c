@@ -1,12 +1,12 @@
 #include "usb-dev-info-scsi.h"
+#include "class-scsi.h"
 #include "nextor.h"
-#include "scsi.h"
 #include "usb-dev-info.h"
 #include "work-area.h"
 #include <stdlib.h>
 #include <string.h>
 
-uint8_t usb_dev_info_scsi(storage_device_config *const dev, const dev_info_request request_info, uint8_t *const buffer) {
+uint8_t usb_dev_info_scsi(device_config *const dev, const dev_info_request request_info, uint8_t *const buffer) {
   scsi_inquiry_result response;
 
   if (request_info == BASIC_INFORMATION)

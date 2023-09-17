@@ -19,8 +19,9 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
  	$(BINDIR)debuggin.c.o \
  	$(BINDIR)hw.c.o \
  	$(BINDIR)print.o \
- 	$(BINDIR)scsi.c.o \
- 	$(BINDIR)ufi.c.o \
+ 	$(BINDIR)printer.c.o \
+ 	$(BINDIR)class-scsi.c.o \
+ 	$(BINDIR)class-ufi.c.o \
  	$(BINDIR)usb-dev-info-scsi.c.o \
  	$(BINDIR)usb-dev-info-ufi.c.o \
  	$(BINDIR)usb-dev-info.c.o \
@@ -34,7 +35,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
  	$(BINDIR)usb-dev-write-ufi.c.o \
  	$(BINDIR)usb-dev-write.c.o \
  	$(BINDIR)usb-dev.c.o \
- 	$(BINDIR)usb-enumerate-floppy.c.o \
+ 	$(BINDIR)usb-enumerate-storage.c.o \
  	$(BINDIR)usb-enumerate-hub.c.o \
  	$(BINDIR)usb-enumerate.c.o \
  	$(BINDIR)usb-init.c.o \

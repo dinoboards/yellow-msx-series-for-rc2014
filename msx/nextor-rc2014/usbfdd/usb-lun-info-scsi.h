@@ -5,6 +5,6 @@
 #include "nextor.h"
 #include <stdlib.h>
 
-extern uint8_t usb_lun_info_scsi(storage_device_config *const dev, const uint8_t lun, nextor_lun_info *const info);
+extern uint8_t usb_lun_info_scsi(device_config *const dev, const uint8_t lun, nextor_lun_info *const info);
 
 #endif

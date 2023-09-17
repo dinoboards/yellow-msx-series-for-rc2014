@@ -1,11 +1,10 @@
 #include "ch376.h"
+#include "class-scsi.h"
 #include "hw.h"
 #include "nextor.h"
-#include "scsi.h"
 #include "usb-enumerate-hub.h"
 #include "usb-enumerate.h"
 #include "usb-lun-info.h"
-#include "usb.h"
 #include "work-area.h"
 #include <delay.h>
 #include <stdbool.h>
@@ -69,13 +68,14 @@ void print_disk_size(const uint8_t device_index) {
 }
 
 bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
-  const bool hasUsbHub = work_area->hub_config.address != 0;
-  const bool hasCdc    = work_area->cdc_config.address != 0;
+  const bool hasUsbHub  = work_area->hub_config.address != 0;
+  const bool hasCdc     = work_area->cdc_config.address != 0;
+  const bool hasPrinter = work_area->printer.address != 0;
 
-  uint8_t                      storage_count  = 0;
-  uint8_t                      device_index   = 1;
-  uint8_t                      index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  const storage_device_config *storage_device = &work_area->storage_device[0];
+  uint8_t              storage_count  = 0;
+  uint8_t              device_index   = 1;
+  uint8_t              index          = MAX_NUMBER_OF_STORAGE_DEVICES;
+  const device_config *storage_device = &work_area->storage_device[0];
 
   if (hasUsbHub)
     print_string("USB HUB:\r\n");
@@ -84,6 +84,9 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
 
   if (hasCdc)
     print_string("    CDC\r\n");
+
+  if (hasPrinter)
+    print_string("    PRINTER\r\n");
 
   do {
     const usb_device_type t = storage_device->type;
@@ -102,7 +105,7 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
     device_index++;
   } while (--index != 0);
 
-  if (!hasUsbHub && !hasCdc && storage_count == 0) {
+  if (!hasUsbHub && !hasCdc && !hasPrinter && storage_count == 0) {
     print_string("\r\n");
     return false;
   }
@@ -111,8 +114,8 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
 }
 
 inline void initialise_mass_storage_devices(_usb_state *const work_area) {
-  uint8_t                index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  storage_device_config *storage_device = &work_area->storage_device[0];
+  uint8_t        index          = MAX_NUMBER_OF_STORAGE_DEVICES;
+  device_config *storage_device = &work_area->storage_device[0];
 
   do {
     if (storage_device->type == USB_IS_MASS_STORAGE)
