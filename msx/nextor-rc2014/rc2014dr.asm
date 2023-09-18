@@ -570,10 +570,11 @@ DRV_DIRECT0:
 DRV_DIRECT1:
 DRV_DIRECT2:
 DRV_DIRECT3:
-DRV_DIRECT4:
 	ret
 
 
+DRV_DIRECT4:
+	JP	_drv_direct4
 ;-----------------------------------------------------------------------------
 ;
 ; Get driver configuration

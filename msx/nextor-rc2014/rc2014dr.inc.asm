@@ -45,6 +45,8 @@ DEST_HI		DB	4	; (HIGH)
 RD_CND_RQ	DB	5	; NUMBER OF SECTORS REQUESTED
 PRESENT		DB	6	; BIT FIELD FOR DETECTED DEVICES (BIT 0 -> COMPACTFLASH/IDE, BIT 1-> MSX-MUSIC NOR FLASH)
 USB		usb_work_area
+		DS	16	; reserve
+
 	ENDS
 
 	DISPLAY "WRKAREA bytes: ",/D,ST_WRKAREA
@@ -58,4 +60,5 @@ _usb_dev_read:			EQU		DRIVER_ASM_END+12
 _usb_dev_write:			EQU		DRIVER_ASM_END+15
 _fn_enum:			EQU		DRIVER_ASM_END+18
 _get_number_of_usb_drives:	EQU		DRIVER_ASM_END+21
+_drv_direct4:			EQU		DRIVER_ASM_END+24
 

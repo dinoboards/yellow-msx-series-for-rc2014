@@ -7,6 +7,7 @@
 	EXTERN	_usb_dev_write
 	EXTERN  _fn_enum
 	EXTERN	_get_number_of_usb_drives
+	EXTERN	_drv_direct4
 
 	ORG	$5000
 usb_host_init:
@@ -25,4 +26,5 @@ fn_enum:
 	JP	_fn_enum
 get_number_of_usb_drives:
 	JP	_get_number_of_usb_drives
-
+drv_direct4:
+	JP	_drv_direct4

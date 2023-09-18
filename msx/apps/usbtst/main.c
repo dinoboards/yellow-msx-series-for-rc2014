@@ -49,24 +49,11 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
     logEnabled = true;
 
-    // uint8_t status;
     usb_error result;
 
     result = prt_send_text(&work_area->printer, "Hello World\r\n");
 
-    printf(" send: %d\r\n", result);
-
-    // usb_error result = prt_soft_reset(&work_area->printer_config);
-
-    // printf(" reset: %d\r\n", result);
-
-    // result = prt_get_device_id(&work_area->printer_config, buffer);
-
-    // printf(" id: %d, %02X %02X %c\r\n", result, buffer[0], buffer[1], buffer[2]);
-
-    // result = prt_get_port_status(&work_area->printer_config, &status);
-
-    // printf(" result: %02X, status: %02X\r\n", result, status);
+    printf(" prt_send_text: %d\r\n", result);
   }
 
   nextor_lun_info info;
