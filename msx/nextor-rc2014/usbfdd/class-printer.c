@@ -1,6 +1,7 @@
 #include "class-printer.h"
 #include "hw.h"
 #include <string.h>
+#include "print.h"
 
 const setup_packet cmd_get_port_status = {0xA1, 1, {0, 0}, {0, 0}, 1};
 

@@ -1,5 +1,6 @@
 #include "ch376.h"
 #include "class-scsi.h"
+#include "printer_drv.h"
 #include "hw.h"
 #include "nextor.h"
 #include "usb-enumerate-hub.h"
@@ -155,6 +156,8 @@ uint8_t usb_host_init() {
       enumerate_all_devices();
 
       initialise_mass_storage_devices(work_area);
+
+      install_printer(work_area);
 
       print_string(ERASE_LINE);
 

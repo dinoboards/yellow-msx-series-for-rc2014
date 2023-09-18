@@ -20,6 +20,8 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
  	$(BINDIR)hw.c.o \
  	$(BINDIR)print.o \
  	$(BINDIR)class-printer.c.o \
+ 	$(BINDIR)printer_drv.o \
+ 	$(BINDIR)printer_drv.c.o \
  	$(BINDIR)class-scsi.c.o \
  	$(BINDIR)class-ufi.c.o \
  	$(BINDIR)usb-dev-info-scsi.c.o \
