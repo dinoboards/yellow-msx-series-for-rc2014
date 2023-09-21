@@ -39,6 +39,10 @@
  usbtst/usb-enumerate-storage.h usbtst/hw.h usbtst/ch376.h \
  usbtst/ch376inc.h usbtst/print.h usbtst/work-area.h \
  usbtst/class-printer.h usbtst/usb-enumerate.h
+./bin/usbtst/printer_drv.c.asm: usbtst/printer_drv.c usbtst/class-printer.h \
+ usbtst/ch376.h usbtst/ch376inc.h usbtst/print.h usbtst/hw.h \
+ usbtst/work-area.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h
 ./bin/usbtst/usb-enumerate.c.asm: usbtst/usb-enumerate.c usbtst/usb-enumerate.h \
  usbtst/ch376.h usbtst/ch376inc.h usbtst/print.h usbtst/hw.h \
  usbtst/work-area.h usbtst/class-printer.h usbtst/debuggin.h \
@@ -84,8 +88,9 @@
 ./bin/usbtst/main.c.asm: usbtst/main.c usbtst/main.h usbtst/ch376.h usbtst/ch376inc.h \
  usbtst/print.h usbtst/class-printer.h usbtst/hw.h usbtst/class-scsi.h \
  usbtst/debuggin.h usbtst/class-hub.h usbtst/class-ufi.h \
- usbtst/work-area.h usbtst/nextor.h usbtst/usb-dev-info-ufi.h \
- usbtst/usb-enumerate.h usbtst/usb-lun-info-ufi.h
+ usbtst/work-area.h usbtst/nextor.h usbtst/printer_drv.h \
+ usbtst/usb-dev-info-ufi.h usbtst/usb-enumerate.h \
+ usbtst/usb-lun-info-ufi.h
 ./bin/fdisk/fdisk.c.asm: fdisk/fdisk.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
  fdisk/fdisk2.h datatypes.h fdisk/partition.h \
  libraries/msxbios/system_vars.h
