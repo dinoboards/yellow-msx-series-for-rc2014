@@ -4,6 +4,7 @@
 #include "class-scsi.h"
 #include "debuggin.h"
 #include "print.h"
+#include "printer_drv.h"
 #include "usb-dev-info-ufi.h"
 #include "usb-enumerate.h"
 #include "usb-lun-info-ufi.h"
@@ -47,13 +48,19 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   if (hasPrinter) {
     print_string("PRINTER: ");
 
-    logEnabled = true;
-
     usb_error result;
 
-    result = prt_send_text(&work_area->printer, "Hello World\r\n");
+    result = prt_get_port_status(&work_area->printer, buffer);
+    printf(" prt_get_port_status: %d, %02X\r\n", result, buffer[0]);
 
-    printf(" prt_send_text: %d\r\n", result);
+    const char *str = "Verifying printer output works!\n";
+
+    for (uint8_t p = 0; p < strlen(str); p++) {
+      result = USBPRT(str[p]);
+
+      if (result != USB_ERR_OK)
+        printf(" USBPRT: %d, %d\r\n", p, result);
+    }
   }
 
   nextor_lun_info info;

@@ -12,7 +12,9 @@ typedef struct __usb_state {
   device_config hub_config;
   device_config cdc_config;
   device_config printer;
+  uint16_t      printer_throughput_limit;
   uint8_t       next_storage_device_index;
+  uint8_t       printer_time_throttle_flag;
 } _usb_state;
 
 typedef struct _work_area {

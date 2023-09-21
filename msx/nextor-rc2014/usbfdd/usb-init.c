@@ -1,8 +1,8 @@
 #include "ch376.h"
 #include "class-scsi.h"
-#include "printer_drv.h"
 #include "hw.h"
 #include "nextor.h"
+#include "printer_drv.h"
 #include "usb-enumerate-hub.h"
 #include "usb-enumerate.h"
 #include "usb-lun-info.h"
@@ -137,6 +137,8 @@ uint8_t usb_host_init() {
 
   if (!ch_probe()) {
     print_string("CH376:           NOT PRESENT\r\n");
+    install_printer(work_area);
+
     return false;
   }
 

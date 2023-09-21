@@ -19,6 +19,6 @@ _drv_direct4:
 	POP	BC
 	POP	DE
 	POP	AF
+	RL	L
 	POP	HL
-	OR	A
 	RET

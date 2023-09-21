@@ -9,6 +9,10 @@
 ./bin/usb-dev-read.c.asm: usbfdd/usb-dev-read.c usbfdd/nextor.h \
  usbfdd/usb-dev-read-scsi.h usbfdd/ch376.h usbfdd/ch376inc.h \
  usbfdd/work-area.h usbfdd/usb-dev-read-ufi.h usbfdd/usb-dev.h
+./bin/printer_drv.c.asm: usbfdd/printer_drv.c usbfdd/class-printer.h \
+ usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h usbfdd/print.h \
+ usbfdd/work-area.h ../apps/libraries/delay/delay.h \
+ ../apps/libraries/msxbios/system_vars.h
 ./bin/usb-lun-info.c.asm: usbfdd/usb-lun-info.c usbfdd/nextor.h usbfdd/usb-dev.h \
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/work-area.h \
  usbfdd/usb-lun-info-scsi.h usbfdd/usb-lun-info-ufi.h
@@ -36,7 +40,7 @@
  usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h usbfdd/work-area.h \
  usbfdd/nextor.h
 ./bin/class-printer.c.asm: usbfdd/class-printer.c usbfdd/class-printer.h \
- usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h
+ usbfdd/ch376.h usbfdd/ch376inc.h usbfdd/hw.h usbfdd/print.h
 ./bin/usb-enumerate-hub.c.asm: usbfdd/usb-enumerate-hub.c \
  usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h usbfdd/ch376.h \
  usbfdd/ch376inc.h usbfdd/hw.h usbfdd/work-area.h \
@@ -85,14 +89,15 @@
  ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h \
  usbfdd/class-hub.h usbfdd/class-ufi.h usbfdd/nextor.h usbfdd/print.h
 ./bin/usb-init.c.asm: usbfdd/usb-init.c usbfdd/ch376.h usbfdd/ch376inc.h \
- usbfdd/class-scsi.h usbfdd/hw.h usbfdd/nextor.h \
- usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h usbfdd/work-area.h \
+ usbfdd/class-scsi.h usbfdd/hw.h usbfdd/nextor.h usbfdd/printer_drv.h \
+ usbfdd/work-area.h usbfdd/usb-enumerate-hub.h usbfdd/usb-enumerate.h \
  usbfdd/usb-lun-info.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h usbfdd/debuggin.h \
  usbfdd/class-hub.h usbfdd/class-ufi.h usbfdd/print.h
 ./bin/crt.o: ./usbfdd/crt.asm
 ./bin/work-area.o: ./usbfdd/work-area.asm ./usbfdd/msx.inc
 ./bin/print.o: ./usbfdd/print.asm ./usbfdd/msx.inc
+./bin/printer_drv.o: ./usbfdd/printer_drv.asm
 ./bin/rc2014dr.inc.o: ./rc2014dr.inc.asm
 ./bin/rc2014dr.o: ./rc2014dr.asm
 ./bin/embinc.o: ./embinc.asm
