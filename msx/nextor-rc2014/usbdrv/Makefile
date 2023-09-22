@@ -10,7 +10,7 @@ ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 --allow-unsafe-read
 endif
 
 LIBS := -I./../apps/libraries/msxbios/ -I./../apps/libraries/delay/ -I./../apps/libraries/usb
-SRC := ./usbfdd/
+SRC := ./usbdrv/
 
 ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
@@ -54,8 +54,8 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)work-area.o \
 	../apps/libraries/msxbios/system_vars.c
 
-$(BINDIR)exports.asm: $(BINDIR)exports.c.asm
-	printf "_size_of_usb_state:	EQU" > $(BINDIR)exports.asm
+$(BINDIR)exports.asm: $(BINDIR)exports.c.o
+	@printf "_size_of_usb_state:	EQU" > $(BINDIR)exports.asm
 	cat $(BINDIR)exports.c.asm | grep "defc _size_of_usb_state" | cut -d '=' -f 2 >> $(BINDIR)exports.asm
 
 $(BINDIR)%.bin:
