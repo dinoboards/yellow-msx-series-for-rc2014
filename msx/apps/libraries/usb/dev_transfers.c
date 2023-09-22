@@ -31,7 +31,7 @@ usb_error usbdev_control_transfer(device_config *const device, const setup_packe
   RETURN_CHECK(usb_control_transfer(cmd_packet, buffer, device->address, device->max_packet_size));
 }
 
-usb_error usbdev_bulk_out_transfer(device_config *const dev, uint8_t *const buffer, const uint16_t buffer_size) {
+usb_error usbdev_bulk_out_transfer(device_config *const dev, const uint8_t *const buffer, const uint16_t buffer_size) {
 
   usb_error result;
 
@@ -41,6 +41,28 @@ usb_error usbdev_bulk_out_transfer(device_config *const dev, uint8_t *const buff
 
   if (result == USB_ERR_STALL) {
     usb_clear_endpoint_halt(dev, ENDPOINT_BULK_OUT);
+    return USB_ERR_STALL;
+  }
+
+  RETURN_CHECK(result);
+}
+
+usb_error usbdev_data_in_transfer(device_config *const    device,
+                                  uint8_t *const          buffer,
+                                  const uint16_t          buffer_size,
+                                  const usb_endpoint_type endpoint_type) {
+
+  usb_error result;
+
+  if (buffer_size == 0)
+    return USB_ERR_OK;
+
+  endpoint_param *const endpoint = &device->endpoints[endpoint_type];
+
+  result = usb_data_in_transfer(buffer, buffer_size, device->address, endpoint);
+
+  if (result == USB_ERR_STALL) {
+    usb_clear_endpoint_halt(device, endpoint_type);
     return USB_ERR_STALL;
   }
 

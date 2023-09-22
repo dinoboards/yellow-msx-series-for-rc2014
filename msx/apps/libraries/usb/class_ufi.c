@@ -7,28 +7,6 @@
 
 #include "enumerate_trace.h"
 
-usb_error usbdev_data_in_transfer(device_config *const    storage_device,
-                                  uint8_t *const          buffer,
-                                  const uint16_t          buffer_size,
-                                  const usb_endpoint_type endpoint_type) {
-
-  usb_error result;
-
-  if (buffer_size == 0)
-    return USB_ERR_OK;
-
-  endpoint_param *const endpoint = &storage_device->endpoints[endpoint_type];
-
-  result = usb_data_in_transfer(buffer, buffer_size, storage_device->address, endpoint);
-
-  if (result == USB_ERR_STALL) {
-    usb_clear_endpoint_halt(storage_device, endpoint_type);
-    return USB_ERR_STALL;
-  }
-
-  RETURN_CHECK(result);
-}
-
 usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device,
                                         const setup_packet *const adsc,
                                         const uint8_t *const      cmd,
