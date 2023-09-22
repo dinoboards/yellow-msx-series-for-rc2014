@@ -15,43 +15,48 @@ SRC := ./usbfdd/
 ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
+	$(BINDIR)exports.asm \
 	$(BINDIR)libraries/delay/delay.c.o \
 	$(BINDIR)libraries/usb/ch376.c.o \
 	$(BINDIR)libraries/usb/class_hub.c.o \
+	$(BINDIR)libraries/usb/dev_transfers.c.o \
 	$(BINDIR)libraries/usb/enumerate_storage.c.o \
 	$(BINDIR)libraries/usb/protocol.c.o \
-	$(BINDIR)libraries/usb/dev_transfers.c.o \
 	$(BINDIR)libraries/usb/transfers.c.o \
- 	$(BINDIR)extended-bios.c.o \
- 	$(BINDIR)libraries/usb/class_printer.c.o \
- 	$(BINDIR)libraries/usb/class_scsi.c.o \
- 	$(BINDIR)libraries/usb/class_ufi.c.o \
- 	$(BINDIR)libraries/usb/enumerate_hub.c.o \
- 	$(BINDIR)libraries/usb/enumerate.c.o \
- 	$(BINDIR)print.o \
- 	$(BINDIR)printer_drv.c.o \
- 	$(BINDIR)printer_drv.o \
- 	$(BINDIR)usb-dev-info-scsi.c.o \
- 	$(BINDIR)usb-dev-info-ufi.c.o \
- 	$(BINDIR)usb-dev-info.c.o \
- 	$(BINDIR)usb-dev-read-scsi.c.o \
- 	$(BINDIR)usb-dev-read-ufi.c.o \
- 	$(BINDIR)usb-dev-read.c.o \
- 	$(BINDIR)usb-dev-status-scsi.c.o \
- 	$(BINDIR)usb-dev-status-ufi.c.o \
- 	$(BINDIR)usb-dev-status.c.o \
- 	$(BINDIR)usb-dev-write-scsi.c.o \
- 	$(BINDIR)usb-dev-write-ufi.c.o \
- 	$(BINDIR)usb-dev-write.c.o \
- 	$(BINDIR)usb-dev.c.o \
- 	$(BINDIR)usb-init.c.o \
- 	$(BINDIR)usb-lun-info-scsi.c.o \
- 	$(BINDIR)usb-lun-info-ufi.c.o \
- 	$(BINDIR)usb-lun-info.c.o \
- 	$(BINDIR)work-area.c.o \
- 	$(BINDIR)work-area.o \
+	$(BINDIR)exports.c.o \
+	$(BINDIR)extended-bios.c.o \
+	$(BINDIR)libraries/usb/class_printer.c.o \
+	$(BINDIR)libraries/usb/class_scsi.c.o \
+	$(BINDIR)libraries/usb/class_ufi.c.o \
+	$(BINDIR)libraries/usb/enumerate_hub.c.o \
+	$(BINDIR)libraries/usb/enumerate.c.o \
+	$(BINDIR)print.o \
+	$(BINDIR)printer_drv.c.o \
+	$(BINDIR)printer_drv.o \
+	$(BINDIR)usb-dev-info-scsi.c.o \
+	$(BINDIR)usb-dev-info-ufi.c.o \
+	$(BINDIR)usb-dev-info.c.o \
+	$(BINDIR)usb-dev-read-scsi.c.o \
+	$(BINDIR)usb-dev-read-ufi.c.o \
+	$(BINDIR)usb-dev-read.c.o \
+	$(BINDIR)usb-dev-status-scsi.c.o \
+	$(BINDIR)usb-dev-status-ufi.c.o \
+	$(BINDIR)usb-dev-status.c.o \
+	$(BINDIR)usb-dev-write-scsi.c.o \
+	$(BINDIR)usb-dev-write-ufi.c.o \
+	$(BINDIR)usb-dev-write.c.o \
+	$(BINDIR)usb-dev.c.o \
+	$(BINDIR)usb-init.c.o \
+	$(BINDIR)usb-lun-info-scsi.c.o \
+	$(BINDIR)usb-lun-info-ufi.c.o \
+	$(BINDIR)usb-lun-info.c.o \
+	$(BINDIR)work-area.c.o \
+	$(BINDIR)work-area.o \
 	../apps/libraries/msxbios/system_vars.c
 
+$(BINDIR)exports.asm: $(BINDIR)exports.c.asm
+	printf "_size_of_usb_state:	EQU" > $(BINDIR)exports.asm
+	cat $(BINDIR)exports.c.asm | grep "defc _size_of_usb_state" | cut -d '=' -f 2 >> $(BINDIR)exports.asm
 
 $(BINDIR)%.bin:
 	@mkdir -p $(dir $@)
