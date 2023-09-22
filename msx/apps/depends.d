@@ -122,8 +122,8 @@
 ./bin/libraries/usb/class_scsi.c.asm: libraries/usb/class_scsi.c libraries/usb/class_scsi.h \
  libraries/usb/hw.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/usb_state.h
-./bin/libraries/usb/hw.c.asm: libraries/usb/hw.c libraries/usb/hw.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h libraries/delay/delay.h \
+./bin/libraries/usb/hw.c.asm: libraries/usb/hw.c libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/hw.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
 ./bin/libraries/msxbios/system_vars.c.asm: libraries/msxbios/system_vars.c \
  libraries/msxbios/system_vars.h

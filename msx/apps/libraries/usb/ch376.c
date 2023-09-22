@@ -6,19 +6,6 @@ void delay_short() { delay(3); }
 
 void delay_medium() { delay(30); }
 
-uint8_t calc_max_packet_sizex(const uint8_t packet_size) __z88dk_fastcall {
-  switch (packet_size) {
-  case 64:
-    return 3;
-  case 32:
-    return 2;
-  case 16:
-    return 1;
-  }
-
-  return 0;
-}
-
 void ch_command(const uint8_t command) __z88dk_fastcall {
   uint8_t counter = 255;
   while ((CH376_COMMAND_PORT & PARA_STATE_BUSY) && --counter != 0)
