@@ -1,5 +1,5 @@
 /**
- * @file protocol.c
+ * @file transfers.c
  * @author Dean Netherton
  * @brief A simplest implementation of common usb transfer functions, based on the CH376S chip
  * @details For a basic walkthrough of the usb protocol see https://www.beyondlogic.org/usbnutshell/usb1.shtml
@@ -76,16 +76,15 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   return result;
 }
 
-//  -----------------------------------------------------------------------------
-//  Perform a USB data IN transfer
-//  -----------------------------------------------------------------------------
-//  Input:  buffer => Address of a buffer for the received data
-//          buffer_size => Data length
-//          device_address =>  Device address
-//          endpoint => Endpoint number description (including toggle)
-//  Output: result USB error code
-//           endpoint's toggle
-
+/**
+ * @brief Perform a USB data in on the specififed endpoint
+ *
+ * @param buffer the buffer to receive the data
+ * @param buffer_size the maximum size of data to be received
+ * @param device_address the usb address of the device
+ * @param endpoint the usb endpoint to receive from (toggle of endpoint is updated)
+ * @return usb_error USB_ERR_OK if all good, otherwise specific error code
+ */
 usb_error
 hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
   usb_error result;
@@ -96,15 +95,15 @@ hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t d
   return result;
 }
 
-// -----------------------------------------------------------------------------
-// Perform a USB data OUT transfer
-// -----------------------------------------------------------------------------
-// Input:   buffer Address of a buffer for the data to be sent
-//          buffer_size = Data length
-//          device_address  = Device address
-//          endpoint => Endpoint number description (including toggle)
-//  Output: result USB error code
-//           endpoint's toggle
+/**
+ * @brief Perform a USB data out on the specififed endpoint
+ *
+ * @param buffer the buffer to send the data from
+ * @param buffer_size the maximum size of data to be sent
+ * @param device_address the usb address of the device
+ * @param endpoint the usb endpoint to send to (toggle of endpoint is updated)
+ * @return usb_error USB_ERR_OK if all good, otherwise specific error code
+ */
 usb_error
 hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
 
@@ -113,10 +112,17 @@ hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t 
   return ch_data_out_transfer(buffer, buffer_size, endpoint);
 }
 
-usb_error usb_control_transfer(device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer) {
+/**
+ * @brief Perform a USB control transfer (in or out)
+ * See https://www.beyondlogic.org/usbnutshell/usb4.shtml for a description of the USB control transfer
+ *
+ * @param device the usb device
+ * @param cmd_packet Pointer to the setup packet - top bit of bmRequestType indicate data direction
+ * @param buffer Pointer of data to send or receive into
+ * @return usb_error USB_ERR_OK if all good, otherwise specific error code
+ */
+usb_error usb_control_transfer(device_config *const device, const setup_packet *const cmd_packet, uint8_t *const buffer) {
   usb_error result;
 
-  const uint8_t max_packet_size = storage_device->max_packet_size;
-
-  RETURN_CHECK(hw_control_transfer(cmd, buffer, storage_device->address, max_packet_size));
+  RETURN_CHECK(hw_control_transfer(cmd_packet, buffer, device->address, device->max_packet_size));
 }
