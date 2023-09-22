@@ -136,8 +136,6 @@ uint8_t usb_host_init() {
 
   if (!ch_probe()) {
     print_string("CH376:           NOT PRESENT\r\n");
-    install_printer(work_area);
-
     return false;
   }
 
