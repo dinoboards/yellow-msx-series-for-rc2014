@@ -3,8 +3,8 @@
 
 #include <ch376.h>
 #include <hw.h>
-#include <usb_state.h>
 #include <stdlib.h>
+#include <usb_state.h>
 
 typedef struct _work_area {
   uint8_t    read_count;           // COUNT OF SECTORS TO BE READ
@@ -15,6 +15,6 @@ typedef struct _work_area {
   _usb_state ch376;
 } work_area;
 
-extern work_area * get_work_area();
+extern work_area *get_work_area();
 
 #endif

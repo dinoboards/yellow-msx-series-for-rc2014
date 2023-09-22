@@ -1,9 +1,9 @@
-#include <class_ufi.h>
 #include "nextor.h"
 #include "usb-dev-info-scsi.h"
 #include "usb-dev-info-ufi.h"
 #include "usb-dev.h"
 #include "work-area.h"
+#include <class_ufi.h>
 #include <stdlib.h>
 #include <string.h>
 

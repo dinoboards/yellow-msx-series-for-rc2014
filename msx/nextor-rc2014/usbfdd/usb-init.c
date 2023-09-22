@@ -6,9 +6,9 @@
 #include <ch376.h>
 #include <class_scsi.h>
 #include <delay.h>
+#include <enumerate.h>
 #include <enumerate_hub.h>
 #include <enumerate_trace.h>
-#include <enumerate.h>
 #include <hw.h>
 #include <stdbool.h>
 #include <stdlib.h>

@@ -1,6 +1,6 @@
-#include <class_ufi.h>
 #include "nextor.h"
 #include "work-area.h"
+#include <class_ufi.h>
 #include <stdlib.h>
 
 uint8_t usb_dev_status_ufi(device_config *const storage_device, const uint8_t lun) {

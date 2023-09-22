@@ -10,8 +10,8 @@
  *
  */
 
-#include "ch376.h"
 #include "hw.h"
+#include "ch376.h"
 #include <delay.h>
 #include <stdlib.h>
 
