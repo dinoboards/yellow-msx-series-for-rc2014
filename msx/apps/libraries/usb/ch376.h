@@ -46,9 +46,21 @@ extern int printf(const char *msg, ...);
   {                                                                                                                                \
     result = fn;                                                                                                                   \
     if (result != USB_ERR_OK && result != USB_ERR_STALL) {                                                                         \
-      printf("Error: %s:%d %d\r\n", __FILE__, __LINE__, result);                                                                   \
+      if (result != USB_TOKEN_OUT_OF_SYNC)                                                                                         \
+        printf("Error: %s:%d %d\r\n", __FILE__, __LINE__, result);                                                                 \
       return result;                                                                                                               \
     }                                                                                                                              \
+  }
+
+#define RETURN_CHECK(fn, ...)                                                                                                      \
+  {                                                                                                                                \
+    result = fn;                                                                                                                   \
+    if (result != USB_ERR_OK && result != USB_ERR_STALL) {                                                                         \
+      if (result != USB_TOKEN_OUT_OF_SYNC)                                                                                         \
+        printf("Error: %s:%d %d\r\n", __FILE__, __LINE__, result);                                                                 \
+      return result;                                                                                                               \
+    }                                                                                                                              \
+    return result;                                                                                                                 \
   }
 
 #else
@@ -56,8 +68,14 @@ extern int printf(const char *msg, ...);
 #define CHECK(fn)                                                                                                                  \
   {                                                                                                                                \
     result = fn;                                                                                                                   \
-    if (result != USB_ERR_OK && result != USB_ERR_STALL)                                                                           \
+    if (result != USB_ERR_OK)                                                                                                      \
       return result;                                                                                                               \
+  }
+
+#define RETURN_CHECK(fn)                                                                                                           \
+  {                                                                                                                                \
+    result = fn;                                                                                                                   \
+    return result;                                                                                                                 \
   }
 
 #endif

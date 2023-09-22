@@ -19,16 +19,16 @@ uint8_t prt_send_ch(const uint8_t ch) __z88dk_fastcall {
 uint8_t USBPRT(const uint8_t ch) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
 
-  if (work_area->printer_time_throttle_flag == 0) {
-    __asm ei __endasm;
+  // if (work_area->printer_time_throttle_flag == 0) {
+  __asm ei __endasm;
 
-    int16_t time = get_future_time(2);
-    while (!is_time_past(time))
-      ;
-  }
+  int16_t time = get_future_time(8);
+  while (!is_time_past(time))
+    ;
+  // }
 
-  work_area->printer_time_throttle_flag += 1;
-  work_area->printer_time_throttle_flag &= 1;
+  // work_area->printer_time_throttle_flag += 1;
+  // work_area->printer_time_throttle_flag &= 1;
 
   return prt_send_ch(ch);
 }

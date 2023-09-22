@@ -118,7 +118,5 @@ usb_error usb_control_transfer(device_config *const storage_device, const setup_
 
   const uint8_t max_packet_size = storage_device->max_packet_size;
 
-  CHECK(hw_control_transfer(cmd, buffer, storage_device->address, max_packet_size));
-
-  return result;
+  RETURN_CHECK(hw_control_transfer(cmd, buffer, storage_device->address, max_packet_size));
 }

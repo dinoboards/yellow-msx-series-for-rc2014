@@ -79,12 +79,13 @@ usb_error hw_get_config_descriptor(config_descriptor *const buffer,
                                    const uint8_t            buffer_size,
                                    const uint8_t            device_address,
                                    const uint8_t            max_packet_size) {
+  usb_error    result;
   setup_packet cmd;
   cmd           = cmd_get_config_descriptor;
   cmd.bValue[0] = config_index;
   cmd.wLength   = (uint16_t)buffer_size;
 
-  return hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size);
+  RETURN_CHECK(hw_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size));
 }
 
 setup_packet usb_cmd_clear_endpoint_halt = {2, 1, {0, 0}, {255, 0}, 0}; //    ;byte 4 is the endpoint to be cleared
@@ -94,11 +95,9 @@ usb_error usb_clear_endpoint_halt(device_config *const storage_device, const usb
   cmd           = usb_cmd_clear_endpoint_halt;
   cmd.bIndex[0] = storage_device->endpoints[endpoint_type].number;
 
-  uint8_t result = usb_control_transfer(storage_device, &cmd, (uint8_t *)0);
+  usb_error result = usb_control_transfer(storage_device, &cmd, (uint8_t *)0);
 
   storage_device->endpoints[endpoint_type].toggle = 0;
 
-  CHECK(result);
-
-  return result;
+  RETURN_CHECK(result);
 }
