@@ -15,7 +15,18 @@ SRC := ./usbfdd/
 ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
+	$(BINDIR)libraries/delay/delay.c.o \
+	$(BINDIR)libraries/usb/ch376.c.o \
+	$(BINDIR)libraries/usb/class_hub.c.o \
+	$(BINDIR)libraries/usb/enumerate_storage.c.o \
+	$(BINDIR)libraries/usb/protocol.c.o \
+	$(BINDIR)libraries/usb/transfers.c.o \
  	$(BINDIR)extended-bios.c.o \
+ 	$(BINDIR)libraries/usb/class_printer.c.o \
+ 	$(BINDIR)libraries/usb/class_scsi.c.o \
+ 	$(BINDIR)libraries/usb/class_ufi.c.o \
+ 	$(BINDIR)libraries/usb/enumerate_hub.c.o \
+ 	$(BINDIR)libraries/usb/enumerate.c.o \
  	$(BINDIR)print.o \
  	$(BINDIR)printer_drv.c.o \
  	$(BINDIR)printer_drv.o \
@@ -38,18 +49,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
  	$(BINDIR)usb-lun-info.c.o \
  	$(BINDIR)work-area.c.o \
  	$(BINDIR)work-area.o \
-	../apps/libraries/delay/delay.c \
-	../apps/libraries/msxbios/system_vars.c \
-	../apps/libraries/usb/ch376.c \
-	../apps/libraries/usb/class_hub.c \
-	../apps/libraries/usb/enumerate_storage.c \
-	../apps/libraries/usb/protocol.c \
-	../apps/libraries/usb/transfers.c \
- 	../apps/libraries/usb/class_printer.c \
- 	../apps/libraries/usb/class_scsi.c \
- 	../apps/libraries/usb/class_ufi.c \
- 	../apps/libraries/usb/enumerate_hub.c \
- 	../apps/libraries/usb/enumerate.c
+	../apps/libraries/msxbios/system_vars.c
 
 
 $(BINDIR)%.bin:
@@ -74,12 +74,20 @@ define objects
 endef
 
 
-
 .PRECIOUS: $(BINDIR)%.c.asm
 $(BINDIR)%.c.asm: $(SRC)%.c; $(compile)
 $(BINDIR)%.o: $(BINDIR)%.asm; $(assemble)
 $(BINDIR)%.o: $(SRC)%.asm; $(assemble)
 $(BINDIR)%.m4.o: %.asm.m4; $(assemble)
+
+.PRECIOUS: $(BINDIR)libraries/delay/%.c.asm
+$(BINDIR)libraries/delay/%.c.asm: ../apps/libraries/delay/%.c; $(compile)
+$(BINDIR)libraries/delay/%.o: $(BINDIR)libraries/delay/%.asm; $(assemble)
+
+.PRECIOUS: $(BINDIR)libraries/usb/%.c.asm
+$(BINDIR)libraries/usb/%.c.asm: ../apps/libraries/usb/%.c; $(compile)
+$(BINDIR)libraries/usb/%.o: $(BINDIR)libraries/usb/%.asm; $(assemble)
+
 
 .PHONY: format
 format: SHELL:=/bin/bash
