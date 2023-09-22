@@ -7,6 +7,10 @@
  ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/protocol.h \
  usbfdd/nextor.h ../apps/libraries/usb/class_scsi.h
 ./bin/extended-bios.c.asm: usbfdd/extended-bios.c usbfdd/print.h
+./bin/exports.c.asm: usbfdd/exports.c ../apps/libraries/usb/usb_state.h \
+ ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
+ ../apps/libraries/usb/protocol.h ../apps/libraries/usb/dev_transfers.h \
+ ../apps/libraries/usb/transfers.h
 ./bin/usb-dev-read.c.asm: usbfdd/usb-dev-read.c usbfdd/nextor.h \
  usbfdd/usb-dev-read-scsi.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h usbfdd/work-area.h \
@@ -139,7 +143,7 @@
 ./bin/work-area.o: ./usbfdd/work-area.asm ./usbfdd/msx.inc
 ./bin/print.o: ./usbfdd/print.asm ./usbfdd/msx.inc
 ./bin/printer_drv.o: ./usbfdd/printer_drv.asm
-./bin/rc2014dr.inc.o: ./rc2014dr.inc.asm
+./bin/rc2014dr.inc.o: ./rc2014dr.inc.asm 
 ./bin/rc2014dr.o: ./rc2014dr.asm
 ./bin/embinc.o: ./embinc.asm
 ./bin/rcembdrv.o: ./rcembdrv.asm

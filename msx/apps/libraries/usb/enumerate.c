@@ -118,8 +118,7 @@ configure_device(const _working *const working, const interface_descriptor *cons
   dev_cfg->address          = working->state->next_device_address;
   dev_cfg->type             = working->usb_device;
 
-  RETURN_CHECK(usbtrn_set_configuration(dev_cfg->address, dev_cfg->max_packet_size,
-                                        working->config.desc.bConfigurationvalue));
+  RETURN_CHECK(usbtrn_set_configuration(dev_cfg->address, dev_cfg->max_packet_size, working->config.desc.bConfigurationvalue));
 }
 
 usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall {
@@ -214,7 +213,6 @@ usb_error read_all_configs(enumeration_state *const state) {
   state->next_device_address++;
   const uint8_t dev_address = state->next_device_address;
   CHECK(usbtrn_set_address(dev_address));
-
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;
