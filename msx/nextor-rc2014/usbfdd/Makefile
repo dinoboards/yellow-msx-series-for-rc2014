@@ -44,6 +44,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	../apps/libraries/usb/class_hub.c \
 	../apps/libraries/usb/enumerate_storage.c \
 	../apps/libraries/usb/protocol.c \
+	../apps/libraries/usb/transfers.c \
  	../apps/libraries/usb/class_printer.c \
  	../apps/libraries/usb/class_scsi.c \
  	../apps/libraries/usb/class_ufi.c \
