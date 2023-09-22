@@ -100,7 +100,7 @@ endef
 $(eval $(call BUILD_versions,cbios))
 $(eval $(call BUILD_versions,rc2014))
 
-include ./usbfdd/Makefile
+include ./usbdrv/Makefile
 include ./depends.d
 
 ifndef VERSION
