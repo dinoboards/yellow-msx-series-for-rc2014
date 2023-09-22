@@ -24,6 +24,8 @@ usb_error usb_data_in_transfer(device_config *const    storage_device,
     return USB_ERR_STALL;
   }
 
+  CHECK(result);
+
   return usb_process_error(result);
 }
 
@@ -57,6 +59,8 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
 
   if (result != USB_ERR_OK) {
     *asc = 0;
+
+    CHECK(result);
 
     return result;
   }
@@ -200,12 +204,12 @@ usb_error usb_execute_cbi_with_retry(device_config *const storage_device,
 retry:
   result = usb_execute_cbi(storage_device, (uint8_t *)cmd, send, buffer_size, buffer, &response_inquiry);
 
+  if (result)
+    return result;
+
   const uint8_t asc       = response_inquiry.asc;
   const uint8_t ascq      = response_inquiry.ascq;
   const uint8_t sense_key = response_inquiry.sense_key;
-
-  if (result)
-    return result;
 
   if (asc == 0)
     return 0;

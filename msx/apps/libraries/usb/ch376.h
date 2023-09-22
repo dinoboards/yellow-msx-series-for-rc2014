@@ -62,14 +62,13 @@ extern int printf(const char *msg, ...);
 
 #endif
 
-uint8_t calc_max_packet_sizex(const uint8_t packet_size) __z88dk_fastcall;
-
-#define calc_max_packet_size(packet_sizex) ((uint8_t)8 << packet_sizex)
+#define calc_max_packet_sizex(packet_size) packet_size
+#define calc_max_packet_size(packet_sizex) packet_sizex
 
 typedef struct {
   uint8_t toggle : 1;
-  uint8_t number : 4;
-  uint8_t max_packet_sizex : 2;
+  uint8_t number : 3;
+  uint8_t max_packet_sizex : 7;
 } endpoint_param;
 
 #define CH_SPEED_FULL     0 /* 12Mbps full speed FullSpeed ​​(default value) */
