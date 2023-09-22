@@ -1,6 +1,6 @@
 #include "usb-dev-read-ufi.h"
-#include <class_ufi.h>
 #include "nextor.h"
+#include <class_ufi.h>
 
 uint8_t usb_dev_read_ufi(device_config *const dev,
                          const uint8_t        lun,

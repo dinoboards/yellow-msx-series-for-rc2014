@@ -5,8 +5,8 @@
 
 #include "class_hub.h"
 #include "class_ufi.h"
-#include <stdbool.h>
 #include "usb_state.h"
+#include <stdbool.h>
 
 extern bool logEnabled;
 
