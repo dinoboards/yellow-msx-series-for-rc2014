@@ -112,3 +112,13 @@ hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t 
 
   return ch_data_out_transfer(buffer, buffer_size, endpoint);
 }
+
+usb_error usb_control_transfer(device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer) {
+  usb_error result;
+
+  const uint8_t max_packet_size = storage_device->max_packet_size;
+
+  CHECK(hw_control_transfer(cmd, buffer, storage_device->address, max_packet_size));
+
+  return result;
+}

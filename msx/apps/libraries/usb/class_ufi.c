@@ -97,30 +97,6 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
   return USB_ERR_STALL;
 }
 
-usb_error usb_control_transfer(device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer) {
-  usb_error result;
-
-  const uint8_t max_packet_size = storage_device->max_packet_size;
-
-  CHECK(hw_control_transfer(cmd, buffer, storage_device->address, max_packet_size));
-
-  return result;
-}
-
-setup_packet usb_cmd_clear_endpoint_halt = {2, 1, {0, 0}, {255, 0}, 0}; //    ;byte 4 is the endpoint to be cleared
-
-usb_error usb_clear_endpoint_halt(device_config *const storage_device, const usb_endpoint_type endpoint_type) {
-  setup_packet cmd;
-  cmd           = usb_cmd_clear_endpoint_halt;
-  cmd.bIndex[0] = storage_device->endpoints[endpoint_type].number;
-
-  const uint8_t result = usb_control_transfer(storage_device, &cmd, (uint8_t *)0);
-
-  storage_device->endpoints[endpoint_type].toggle = false;
-
-  return result;
-}
-
 usb_error usb_execute_cbi_core(device_config *const      storage_device,
                                const setup_packet *const adsc,
                                const uint8_t *const      cmd,

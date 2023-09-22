@@ -66,4 +66,6 @@ extern usb_error hw_set_address(const uint8_t device_address) __z88dk_fastcall;
 
 extern usb_error hw_set_configuration(const device_config *const config) __z88dk_fastcall;
 
+extern usb_error usb_clear_endpoint_halt(device_config *const storage_device, const usb_endpoint_type endpoint_type);
+
 #endif

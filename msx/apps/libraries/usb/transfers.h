@@ -76,4 +76,7 @@ hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t d
 extern usb_error
 hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint);
 
+extern usb_error
+usb_control_transfer(device_config *const storage_device, const setup_packet *const cmd, const uint8_t *const buffer);
+
 #endif
