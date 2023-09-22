@@ -2,7 +2,7 @@
 #define __USB_STATE
 
 #include "ch376.h"
-#include "hw.h"
+#include "protocol.h"
 #include <stdlib.h>
 
 #define MAX_NUMBER_OF_STORAGE_DEVICES 4

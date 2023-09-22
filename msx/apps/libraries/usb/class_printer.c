@@ -1,6 +1,6 @@
 #include "class_printer.h"
 #include "enumerate_trace.h"
-#include "hw.h"
+#include "protocol.h"
 #include <string.h>
 
 const setup_packet cmd_get_port_status = {0xA1, 1, {0, 0}, {0, 0}, 1};

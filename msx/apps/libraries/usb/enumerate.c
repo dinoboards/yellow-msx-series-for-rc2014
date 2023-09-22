@@ -1,7 +1,7 @@
 #include "enumerate.h"
 #include "enumerate_hub.h"
 #include "enumerate_storage.h"
-#include "hw.h"
+#include "protocol.h"
 #include <enumerate_trace.h>
 #include <string.h>
 

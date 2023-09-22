@@ -2,7 +2,7 @@
 #define __USB_ENUMERATE_HUB
 
 #include "enumerate.h"
-#include "hw.h"
+#include "protocol.h"
 #include "usb_state.h"
 
 extern void      parse_endpoint_hub(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall;

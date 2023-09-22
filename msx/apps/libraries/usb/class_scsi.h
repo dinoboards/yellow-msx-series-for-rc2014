@@ -1,7 +1,7 @@
 #ifndef __CLASS_SCSI
 #define __CLASS_SCSI
 
-#include "hw.h"
+#include "protocol.h"
 #include <stdbool.h>
 
 typedef struct {

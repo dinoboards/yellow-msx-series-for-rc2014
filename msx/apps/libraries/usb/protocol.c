@@ -1,5 +1,5 @@
 /**
- * @file hw.c
+ * @file protocol.c
  * @author Dean Netherton
  * @brief A simplest implementation of common usb transfer functions, based on the CH376S chip
  * @details For a basic walkthrough of the usb protocol see https://www.beyondlogic.org/usbnutshell/usb1.shtml
@@ -10,7 +10,7 @@
  *
  */
 
-#include "hw.h"
+#include "protocol.h"
 #include "ch376.h"
 #include <delay.h>
 #include <stdlib.h>

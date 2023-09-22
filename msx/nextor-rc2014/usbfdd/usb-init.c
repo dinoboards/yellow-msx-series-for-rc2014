@@ -9,7 +9,7 @@
 #include <enumerate.h>
 #include <enumerate_hub.h>
 #include <enumerate_trace.h>
-#include <hw.h>
+#include <protocol.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>

@@ -2,7 +2,7 @@
 #define __WORK_AREA
 
 #include <ch376.h>
-#include <hw.h>
+#include <protocol.h>
 #include <stdlib.h>
 #include <usb_state.h>
 

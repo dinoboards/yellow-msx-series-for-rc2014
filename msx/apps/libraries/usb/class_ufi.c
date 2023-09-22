@@ -1,5 +1,5 @@
 #include "class_ufi.h"
-#include "hw.h"
+#include "protocol.h"
 #include <delay.h>
 #include <stdbool.h>
 #include <stdlib.h>

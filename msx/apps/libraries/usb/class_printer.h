@@ -2,7 +2,7 @@
 #define __CLASS_PRINTER
 
 #include "ch376.h"
-#include "hw.h"
+#include "protocol.h"
 
 usb_error prt_get_port_status(const device_config *const dev, uint8_t *buffer);
 

@@ -1,5 +1,5 @@
 #include "class_hub.h"
-#include "hw.h"
+#include "protocol.h"
 #include "usb_state.h"
 
 const setup_packet cmd_get_hub_descriptor = {RT_DEVICE_TO_HOST | RT_CLASS | RT_DEVICE, 6, {0, 0x29}, {0, 0}, 8};

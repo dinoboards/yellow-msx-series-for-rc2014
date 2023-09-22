@@ -1,6 +1,6 @@
 #include "enumerate_hub.h"
 #include "class_hub.h"
-#include "hw.h"
+#include "protocol.h"
 #include <delay.h>
 #include <enumerate_trace.h>
 #include <string.h>
