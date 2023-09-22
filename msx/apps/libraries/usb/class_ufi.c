@@ -7,10 +7,10 @@
 
 #include "enumerate_trace.h"
 
-usb_error usb_data_in_transfer(device_config *const    storage_device,
-                               uint8_t *const          buffer,
-                               const uint16_t          buffer_size,
-                               const usb_endpoint_type endpoint_type) {
+usb_error usbdev_data_in_transfer(device_config *const    storage_device,
+                                  uint8_t *const          buffer,
+                                  const uint16_t          buffer_size,
+                                  const usb_endpoint_type endpoint_type) {
 
   usb_error result;
 
@@ -19,7 +19,7 @@ usb_error usb_data_in_transfer(device_config *const    storage_device,
 
   endpoint_param *const endpoint = &storage_device->endpoints[endpoint_type];
 
-  result = hw_data_in_transfer(buffer, buffer_size, storage_device->address, endpoint);
+  result = usb_data_in_transfer(buffer, buffer_size, storage_device->address, endpoint);
 
   if (result == USB_ERR_STALL) {
     usb_clear_endpoint_halt(storage_device, endpoint_type);
@@ -27,22 +27,6 @@ usb_error usb_data_in_transfer(device_config *const    storage_device,
   }
 
   RETURN_CHECK(result);
-}
-
-usb_error usb_data_out_transfer(device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size) {
-
-  usb_error result;
-
-  endpoint_param *const endpoint = &storage_device->endpoints[ENDPOINT_BULK_OUT];
-
-  result = hw_data_out_transfer(buffer, buffer_size, storage_device->address, endpoint);
-
-  if (result == USB_ERR_STALL) {
-    usb_clear_endpoint_halt(storage_device, ENDPOINT_BULK_OUT);
-    return USB_ERR_STALL;
-  }
-
-  return result;
 }
 
 usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device,
@@ -55,7 +39,7 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
 
   usb_error result;
 
-  result = usb_control_transfer(storage_device, adsc, (uint8_t *const)cmd);
+  result = usbdev_control_transfer(storage_device, adsc, (uint8_t *const)cmd);
 
   if (result != USB_ERR_OK) {
     *asc = 0;
@@ -64,9 +48,9 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
   }
 
   if (send) {
-    result = usb_data_out_transfer(storage_device, buffer, buffer_size);
+    result = usbdev_bulk_out_transfer(storage_device, buffer, buffer_size);
   } else {
-    result = usb_data_in_transfer(storage_device, buffer, buffer_size, ENDPOINT_BULK_IN);
+    result = usbdev_data_in_transfer(storage_device, buffer, buffer_size, ENDPOINT_BULK_IN);
   }
 
   if (result != USB_ERR_OK) {
@@ -77,7 +61,7 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
 
   uint8_t sense_codes[2] = {255, 255};
 
-  result = usb_data_in_transfer(storage_device, sense_codes, 2, ENDPOINT_INTERRUPT_IN);
+  result = usbdev_data_in_transfer(storage_device, sense_codes, 2, ENDPOINT_INTERRUPT_IN);
 
   if (result != USB_ERR_OK)
     return result;

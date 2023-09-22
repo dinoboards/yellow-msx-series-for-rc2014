@@ -44,12 +44,12 @@ usb_error get_config_descriptor(const uint8_t  config_index,
 
   trace_printf("GET CONFIG %d, %d, %d\r\n", config_index, device_address, max_packet_size);
 
-  CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address,
-                                 max_packet_size));
+  CHECK(usbtrn_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address,
+                                     max_packet_size));
 
   // if wTotalLength > MAX_CONFIG_SIZE bad things might happen
-  CHECK(hw_get_config_descriptor((config_descriptor *)buffer, config_index, ((config_descriptor *)buffer)->wTotalLength,
-                                 device_address, max_packet_size));
+  CHECK(usbtrn_get_config_descriptor((config_descriptor *)buffer, config_index, ((config_descriptor *)buffer)->wTotalLength,
+                                     device_address, max_packet_size));
   logConfig((config_descriptor *)buffer);
 
   return USB_ERR_OK;
@@ -132,7 +132,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     dev_cfg->address          = working->state->next_device_address;
     dev_cfg->interface_number = interface->bInterfaceNumber;
     dev_cfg->type             = working->usb_device;
-    CHECK(hw_set_configuration(dev_cfg));
+    CHECK(usbtrn_set_configuration(dev_cfg));
     break;
   }
 
@@ -142,7 +142,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     work_area->printer.value            = working->config.desc.bConfigurationvalue;
     work_area->printer.address          = working->state->next_device_address;
     work_area->printer.type             = USB_IS_PRINTER;
-    CHECK(hw_set_configuration(&work_area->printer));
+    CHECK(usbtrn_set_configuration(&work_area->printer));
     break;
   }
 
@@ -152,7 +152,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     work_area->cdc_config.value            = working->config.desc.bConfigurationvalue;
     work_area->cdc_config.address          = working->state->next_device_address;
     work_area->cdc_config.type             = USB_IS_CDC;
-    CHECK(hw_set_configuration(&work_area->cdc_config));
+    CHECK(usbtrn_set_configuration(&work_area->cdc_config));
     break;
   }
 
@@ -211,13 +211,13 @@ usb_error read_all_configs(enumeration_state *const state) {
   memset(&working, 0, sizeof(_working));
   working.state = state;
 
-  CHECK(hw_get_description(&working.desc));
+  CHECK(usbtrn_get_descriptor(&working.desc));
 
   logDevice(&working.desc);
 
   state->next_device_address++;
   const uint8_t dev_address = state->next_device_address;
-  CHECK(hw_set_address(dev_address));
+  CHECK(usbtrn_set_address(dev_address));
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;

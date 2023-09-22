@@ -12,7 +12,7 @@ usb_error prt_get_port_status(const device_config *const dev, uint8_t *buffer) {
 
   trace_printf("prt_get_port_status %d, %d\r\n", dev->address, dev->max_packet_size);
 
-  result = hw_control_transfer(&cmd, (uint8_t *)buffer, dev->address, dev->max_packet_size);
+  result = usb_control_transfer(&cmd, (uint8_t *)buffer, dev->address, dev->max_packet_size);
 
   CHECK(result);
 
@@ -28,7 +28,7 @@ usb_error prt_get_device_id(const device_config *const dev, uint8_t *buffer) {
 
   trace_printf("prt_get_device_id %d, %d\r\n", dev->address, dev->max_packet_size);
 
-  result = hw_control_transfer(&cmd, (uint8_t *)buffer, dev->address, dev->max_packet_size);
+  result = usb_control_transfer(&cmd, (uint8_t *)buffer, dev->address, dev->max_packet_size);
 
   CHECK(result);
 
@@ -44,7 +44,7 @@ usb_error prt_soft_reset(const device_config *const dev) {
 
   trace_printf("cmd_soft_reset %d, %d\r\n", dev->address, dev->max_packet_size);
 
-  result = hw_control_transfer(&cmd, 0, dev->address, dev->max_packet_size);
+  result = usb_control_transfer(&cmd, 0, dev->address, dev->max_packet_size);
 
   CHECK(result);
 
@@ -56,7 +56,7 @@ usb_error prt_send_text(device_config *dev, const char *text) {
 
   dev->endpoints[0].toggle = 0;
 
-  CHECK(hw_data_out_transfer((const uint8_t *)text, strlen(text), dev->address, &dev->endpoints[0]));
+  CHECK(usb_data_out_transfer((const uint8_t *)text, strlen(text), dev->address, &dev->endpoints[0]));
 
   return result;
 }

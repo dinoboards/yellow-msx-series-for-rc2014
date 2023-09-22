@@ -19,23 +19,23 @@ do_scsi_cmd(device_config *const dev, _scsi_command_block_wrapper *const cbw, vo
   if (!send)
     cbw->bmCBWFlags = 0x80;
 
-  CHECK(hw_data_out_transfer((uint8_t *)cbw, sizeof(_scsi_command_block_wrapper) + 16, dev->address,
-                             &dev->endpoints[ENDPOINT_BULK_OUT]));
+  CHECK(usb_data_out_transfer((uint8_t *)cbw, sizeof(_scsi_command_block_wrapper) + 16, dev->address,
+                              &dev->endpoints[ENDPOINT_BULK_OUT]));
 
   if (cbw->dCBWDataTransferLength != 0) {
     if (!send) {
-      CHECK(hw_data_in_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->address,
-                                &dev->endpoints[ENDPOINT_BULK_IN]));
+      CHECK(usb_data_in_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->address,
+                                 &dev->endpoints[ENDPOINT_BULK_IN]));
 
     } else {
-      CHECK(hw_data_out_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->address,
-                                 &dev->endpoints[ENDPOINT_BULK_OUT]));
+      CHECK(usb_data_out_transfer(send_receive_buffer, (uint16_t)cbw->dCBWDataTransferLength, dev->address,
+                                  &dev->endpoints[ENDPOINT_BULK_OUT]));
     }
   }
 
   _scsi_command_status_wrapper csw;
   CHECK(
-      hw_data_in_transfer((uint8_t *)&csw, sizeof(_scsi_command_status_wrapper), dev->address, &dev->endpoints[ENDPOINT_BULK_IN]));
+      usb_data_in_transfer((uint8_t *)&csw, sizeof(_scsi_command_status_wrapper), dev->address, &dev->endpoints[ENDPOINT_BULK_IN]));
 
   if (csw.cbwstatus != 0)
     return USB_ERR_FAIL;
