@@ -20,6 +20,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/usb/class_hub.c.o \
 	$(BINDIR)libraries/usb/enumerate_storage.c.o \
 	$(BINDIR)libraries/usb/protocol.c.o \
+	$(BINDIR)libraries/usb/dev_transfers.c.o \
 	$(BINDIR)libraries/usb/transfers.c.o \
  	$(BINDIR)extended-bios.c.o \
  	$(BINDIR)libraries/usb/class_printer.c.o \

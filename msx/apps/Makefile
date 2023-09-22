@@ -26,7 +26,7 @@ SYSTEM_VARS := libraries/msxbios/system_vars.c
 MSXDOS := libraries/msxdos/msxdos.asm libraries/msxdos/msxdos_set_date.asm libraries/msxdos/msxdos_set_time.asm libraries/msxdos/msxdos_get_time.asm
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := libraries/delay/delay.c
-USBDRV := libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/class_scsi.c
+USBDRV := libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/class_scsi.c
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm $(MSXDOS) $(SYSTEM_VARS))
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))

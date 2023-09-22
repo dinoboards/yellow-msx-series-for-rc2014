@@ -16,16 +16,6 @@
 #include "ch376.h"
 #include <stdlib.h>
 
-typedef struct {
-  usb_device_type type;
-  uint8_t         max_packet_size;
-  uint8_t         value;
-  uint8_t         interface_number;
-  uint8_t         tag;
-  uint8_t         address;
-  endpoint_param  endpoints[3]; // bulk in/out and interrupt
-} device_config;
-
 #define GET_STATUS      0
 #define CLEAR_FEATURE   1
 #define SET_FEATURE     3
@@ -77,18 +67,15 @@ typedef struct _setup_packet {
   uint16_t wLength;
 } setup_packet;
 
-extern usb_error hw_control_transfer(const setup_packet *const cmd_packet,
-                                     void *const               buffer,
-                                     const uint8_t             device_address,
-                                     const uint8_t             max_packet_size);
+extern usb_error usb_control_transfer(const setup_packet *const cmd_packet,
+                                      void *const               buffer,
+                                      const uint8_t             device_address,
+                                      const uint8_t             max_packet_size);
 
 extern usb_error
-hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint);
+usb_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint);
 
 extern usb_error
-hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint);
-
-extern usb_error
-usb_control_transfer(device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer);
+usb_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint);
 
 #endif

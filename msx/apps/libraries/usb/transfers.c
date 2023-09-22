@@ -25,10 +25,10 @@
  * @param max_packet_size Maximum packet size for endpoint
  * @return usb_error USB_ERR_OK if all good, otherwise specific error code
  */
-usb_error hw_control_transfer(const setup_packet *const cmd_packet,
-                              void *const               buffer,
-                              const uint8_t             device_address,
-                              const uint8_t             max_packet_size) {
+usb_error usb_control_transfer(const setup_packet *const cmd_packet,
+                               void *const               buffer,
+                               const uint8_t             device_address,
+                               const uint8_t             max_packet_size) {
   usb_error      result;
   endpoint_param endpoint = {1, 0, max_packet_size};
 
@@ -71,9 +71,7 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
   if (result == USB_ERR_STALL)
     return USB_ERR_STALL;
 
-  CHECK(result);
-
-  return result;
+  RETURN_CHECK(result);
 }
 
 /**
@@ -86,13 +84,11 @@ usb_error hw_control_transfer(const setup_packet *const cmd_packet,
  * @return usb_error USB_ERR_OK if all good, otherwise specific error code
  */
 usb_error
-hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
+usb_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
   usb_error result;
   ch_set_usb_address(device_address);
 
-  CHECK(ch_data_in_transfer(buffer, buffer_size, endpoint));
-
-  return result;
+  RETURN_CHECK(ch_data_in_transfer(buffer, buffer_size, endpoint));
 }
 
 /**
@@ -105,24 +101,9 @@ hw_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t d
  * @return usb_error USB_ERR_OK if all good, otherwise specific error code
  */
 usb_error
-hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
-
+usb_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
   ch_set_usb_address(device_address);
-
-  return ch_data_out_transfer(buffer, buffer_size, endpoint);
-}
-
-/**
- * @brief Perform a USB control transfer (in or out)
- * See https://www.beyondlogic.org/usbnutshell/usb4.shtml for a description of the USB control transfer
- *
- * @param device the usb device
- * @param cmd_packet Pointer to the setup packet - top bit of bmRequestType indicate data direction
- * @param buffer Pointer of data to send or receive into
- * @return usb_error USB_ERR_OK if all good, otherwise specific error code
- */
-usb_error usb_control_transfer(device_config *const device, const setup_packet *const cmd_packet, uint8_t *const buffer) {
   usb_error result;
 
-  RETURN_CHECK(hw_control_transfer(cmd_packet, buffer, device->address, device->max_packet_size));
+  RETURN_CHECK(ch_data_out_transfer(buffer, buffer_size, endpoint));
 }
