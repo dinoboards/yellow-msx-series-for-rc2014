@@ -3,23 +3,18 @@
 
 	STRUCT endpoint_param
 BASE:					; Offset to the base of the data structure
-number_toggle	db
-max_packet_size	db
+number_toggle			db
+max_packet_size			db
 	ENDS
 
 	STRUCT device_config
 BASE:
-max_packet_size		db
-value			db
-interface_number	db
-scsi_tag		db
-address			db
-	ENDS
-
-	STRUCT storage_device_config
-BASE:
-type  				db; //floppy or mass storage
-config  			device_config   ;
+type				db
+max_packet_size			db
+value				db
+interface_number		db
+tag				db
+address				db
 bulk_out_endpoint		endpoint_param
 bulk_in_endpoint		endpoint_param
 intr_in_endpoint		endpoint_param
@@ -27,13 +22,15 @@ intr_in_endpoint		endpoint_param
 
 	STRUCT usb_work_area
 BASE:					; Offset to the base of the data structure
-storage_device1			storage_device_config;
-storage_device2			storage_device_config;
-storage_device3			storage_device_config;
-storage_device4			storage_device_config;
-hub_endpoint			endpoint_param
-usb_device			db
-hub_config			device_config
+storage_device1			device_config;
+storage_device2			device_config;
+storage_device3			device_config;
+storage_device4			device_config;
+hub_config			device_config;
+cdc_config			device_config;
+printer_config			device_config;
+next_storage_device_index	db
+printer_time_throttle_flag	db
 	ENDS
 
 	STRUCT ST_WRKAREA
