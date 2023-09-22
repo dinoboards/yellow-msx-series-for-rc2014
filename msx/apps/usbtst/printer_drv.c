@@ -1,6 +1,6 @@
-#include "class-printer.h"
+#include "class_printer.h"
 #include "print.h"
-#include "work-area.h"
+#include "usb_state.h"
 #include <delay.h>
 #include <stdbool.h>
 #include <stdint.h>

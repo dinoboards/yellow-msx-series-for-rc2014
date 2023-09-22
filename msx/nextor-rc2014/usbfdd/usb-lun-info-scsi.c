@@ -1,5 +1,5 @@
-#include "class-scsi.h"
 #include "usb-lun-info-ufi.h"
+#include <class_scsi.h>
 #include <stdlib.h>
 
 uint8_t usb_lun_info_scsi(device_config *const dev, const uint8_t lun, nextor_lun_info *const info) {

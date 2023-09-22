@@ -1,6 +1,6 @@
-#include "class-scsi.h"
 #include "nextor.h"
 #include "work-area.h"
+#include <class_scsi.h>
 #include <stdlib.h>
 
 uint8_t usb_dev_status_scsi(device_config *const storage_device, const uint8_t lun) {

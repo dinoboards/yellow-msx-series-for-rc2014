@@ -1,4 +1,4 @@
-#include "class-printer.h"
+#include "class_printer.h"
 #include "print.h"
 #include "work-area.h"
 #include <delay.h>

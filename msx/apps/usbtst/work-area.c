@@ -1,10 +1,5 @@
-#include "work-area.h"
+#include "usb_state.h"
 
-work_area x;
+_usb_state x;
 
-_usb_state *get_usb_work_area() {
-  work_area *const p = &x;
-  return &p->ch376;
-}
-
-work_area *get_work_area() { return &x; }
+_usb_state *get_usb_work_area() { return &x; }

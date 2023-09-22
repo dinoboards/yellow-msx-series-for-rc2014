@@ -1,6 +1,6 @@
-#include "usb-dev-info-scsi.h"
-#include "class-scsi.h"
+#include "class_scsi.h"
 #include "nextor.h"
+#include "usb-dev-info-scsi.h"
 #include "usb-dev-info.h"
 #include "work-area.h"
 #include <stdlib.h>

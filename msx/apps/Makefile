@@ -9,9 +9,9 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 --allow-unsafe-read
 endif
 
-LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2
+LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb
 
-ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
+ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -DSTACK_TRACE_ENABLED -DENUMERATE_TRACE_ENABLED -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
 
 BIN := ./bin/
 SRC := ./
@@ -26,6 +26,7 @@ SYSTEM_VARS := libraries/msxbios/system_vars.c
 MSXDOS := libraries/msxdos/msxdos.asm libraries/msxdos/msxdos_set_date.asm libraries/msxdos/msxdos_set_time.asm libraries/msxdos/msxdos_get_time.asm
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := libraries/delay/delay.c
+USBDRV := libraries/usb/ch376.c libraries/usb/hw.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/class_scsi.c
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm $(MSXDOS) $(SYSTEM_VARS))
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
@@ -36,7 +37,7 @@ helloworld_files = $(call app_files,helloworld,$(MSXDOS) $(SYSTEM_VARS))
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files))
 helloworld.com.crt_enable_commandline:=1
 
-usbtst_files = $(call app_files,usbtst,$(MSXDOS) $(SYSTEM_VARS) $(DELAY))
+usbtst_files = $(call app_files,usbtst,$(MSXDOS) $(SYSTEM_VARS) $(DELAY) $(USBDRV))
 $(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files))
 usbtst.com.crt_enable_commandline:=1
 
