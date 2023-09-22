@@ -2,7 +2,7 @@
 #define __USB_ENUMERATE
 
 #include "ch376.h"
-#include "hw.h"
+#include "protocol.h"
 #include "usb_state.h"
 #include <stdbool.h>
 

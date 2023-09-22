@@ -2,7 +2,7 @@
 #define __CLASS_UFI
 
 #include "ch376.h"
-#include "hw.h"
+#include "protocol.h"
 #include "usb_state.h"
 #include <stdbool.h>
 #include <stdlib.h>

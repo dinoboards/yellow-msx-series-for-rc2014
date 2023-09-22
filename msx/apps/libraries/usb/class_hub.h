@@ -2,7 +2,7 @@
 #define __CLASS_HUB
 
 #include "ch376.h"
-#include "hw.h"
+#include "protocol.h"
 #include <stdlib.h>
 
 /*

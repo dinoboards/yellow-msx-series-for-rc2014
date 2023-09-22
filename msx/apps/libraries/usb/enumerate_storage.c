@@ -1,5 +1,5 @@
 #include "enumerate_storage.h"
-#include "hw.h"
+#include "protocol.h"
 #include <string.h>
 
 void parse_endpoint_storage(device_config *const storage_dev, const endpoint_descriptor const *pEndpoint) {
