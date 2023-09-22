@@ -9,21 +9,16 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 --allow-unsafe-read
 endif
 
-LIBS := -I./../apps/libraries/msxbios/ -I./../apps/libraries/delay/
+LIBS := -I./../apps/libraries/msxbios/ -I./../apps/libraries/delay/ -I./../apps/libraries/usb
 SRC := ./usbfdd/
 
 ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
- 	$(BINDIR)ch376.c.o \
- 	$(BINDIR)debuggin.c.o \
- 	$(BINDIR)hw.c.o \
+ 	$(BINDIR)extended-bios.c.o \
  	$(BINDIR)print.o \
- 	$(BINDIR)class-printer.c.o \
- 	$(BINDIR)printer_drv.o \
  	$(BINDIR)printer_drv.c.o \
- 	$(BINDIR)class-scsi.c.o \
- 	$(BINDIR)class-ufi.c.o \
+ 	$(BINDIR)printer_drv.o \
  	$(BINDIR)usb-dev-info-scsi.c.o \
  	$(BINDIR)usb-dev-info-ufi.c.o \
  	$(BINDIR)usb-dev-info.c.o \
@@ -37,17 +32,23 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
  	$(BINDIR)usb-dev-write-ufi.c.o \
  	$(BINDIR)usb-dev-write.c.o \
  	$(BINDIR)usb-dev.c.o \
- 	$(BINDIR)usb-enumerate-storage.c.o \
- 	$(BINDIR)usb-enumerate-hub.c.o \
- 	$(BINDIR)usb-enumerate.c.o \
  	$(BINDIR)usb-init.c.o \
  	$(BINDIR)usb-lun-info-scsi.c.o \
  	$(BINDIR)usb-lun-info-ufi.c.o \
  	$(BINDIR)usb-lun-info.c.o \
  	$(BINDIR)work-area.c.o \
- 	$(BINDIR)extended-bios.c.o \
  	$(BINDIR)work-area.o \
-	 ../apps/libraries/delay/delay.c ../apps/libraries/msxbios/system_vars.c
+	../apps/libraries/delay/delay.c \
+	../apps/libraries/msxbios/system_vars.c \
+	../apps/libraries/usb/ch376.c \
+	../apps/libraries/usb/class_hub.c \
+	../apps/libraries/usb/enumerate_storage.c \
+	../apps/libraries/usb/hw.c \
+ 	../apps/libraries/usb/class_printer.c \
+ 	../apps/libraries/usb/class_scsi.c \
+ 	../apps/libraries/usb/class_ufi.c \
+ 	../apps/libraries/usb/enumerate_hub.c \
+ 	../apps/libraries/usb/enumerate.c
 
 
 $(BINDIR)%.bin:

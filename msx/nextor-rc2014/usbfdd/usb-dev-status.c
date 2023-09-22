@@ -1,4 +1,4 @@
-#include "class-ufi.h"
+#include <class_ufi.h>
 #include "nextor.h"
 #include "usb-dev-status-scsi.h"
 #include "usb-dev-status-ufi.h"

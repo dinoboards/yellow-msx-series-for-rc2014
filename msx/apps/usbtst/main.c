@@ -1,13 +1,13 @@
 #include "main.h"
-#include "ch376.h"
-#include "class-printer.h"
-#include "class-scsi.h"
-#include "debuggin.h"
+#include "enumerate_trace.h"
 #include "print.h"
 #include "printer_drv.h"
 #include "usb-dev-info-ufi.h"
-#include "usb-enumerate.h"
 #include "usb-lun-info-ufi.h"
+#include <ch376.h>
+#include <class_printer.h>
+#include <class_scsi.h>
+#include <enumerate.h>
 
 void chput(const char c) __z88dk_fastcall { printf("%c", c); }
 
@@ -108,8 +108,8 @@ void main(const int argc, const char *argv[]) {
   (void)argc;
   (void)argv;
 
-  work_area *const  p         = get_work_area();
-  _usb_state *const work_area = &p->ch376;
+  _usb_state *const work_area = get_usb_work_area();
+
   memset(work_area, 0, sizeof(_usb_state));
 
   ch_cmd_reset_all();

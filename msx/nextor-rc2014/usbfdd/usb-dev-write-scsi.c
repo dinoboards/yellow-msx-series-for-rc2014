@@ -1,6 +1,6 @@
-#include "usb-dev-write-scsi.h"
-#include "class-scsi.h"
 #include "nextor.h"
+#include "usb-dev-write-scsi.h"
+#include <class_scsi.h>
 
 uint8_t usb_dev_write_scsi(device_config *const dev,
                            const uint8_t        lun,

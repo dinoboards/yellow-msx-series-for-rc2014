@@ -1,5 +1,5 @@
 #include "usb-dev-write-ufi.h"
-#include "class-ufi.h"
+#include <class_ufi.h>
 #include "nextor.h"
 #include "work-area.h"
 #include <stdlib.h>

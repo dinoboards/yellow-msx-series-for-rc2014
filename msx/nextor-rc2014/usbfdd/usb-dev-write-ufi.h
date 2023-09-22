@@ -2,7 +2,7 @@
 #define __USD_DEV_WRITE_UFI
 
 #include "ch376.h"
-#include "class-ufi.h"
+#include "class_ufi.h"
 #include "nextor.h"
 #include "work-area.h"
 #include <stdlib.h>

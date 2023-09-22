@@ -1,19 +1,18 @@
-#include "ch376.h"
-#include "class-scsi.h"
-#include "hw.h"
 #include "nextor.h"
+#include "print.h"
 #include "printer_drv.h"
-#include "usb-enumerate-hub.h"
-#include "usb-enumerate.h"
 #include "usb-lun-info.h"
 #include "work-area.h"
+#include <ch376.h>
+#include <class_scsi.h>
 #include <delay.h>
+#include <enumerate_hub.h>
+#include <enumerate_trace.h>
+#include <enumerate.h>
+#include <hw.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "debuggin.h"
-#include "print.h"
 
 usb_error usb_host_bus_reset() {
   ch_cmd_set_usb_mode(CH_MODE_HOST);
