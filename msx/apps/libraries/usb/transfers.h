@@ -1,3 +1,15 @@
+/**
+ * @file transfer.h
+ * @author Dean Netherton
+ * @brief A simplest implementation of common usb transfer functions, based on the CH376S chip
+ * @details For a basic walkthrough of the usb protocol see https://www.beyondlogic.org/usbnutshell/usb1.shtml
+ * @version 1.0
+ * @date 2023-09-22
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef __USB_TRANSFERS
 #define __USB_TRANSFERS
 
@@ -77,6 +89,6 @@ extern usb_error
 hw_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint);
 
 extern usb_error
-usb_control_transfer(device_config *const storage_device, const setup_packet *const cmd, const uint8_t *const buffer);
+usb_control_transfer(device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer);
 
 #endif

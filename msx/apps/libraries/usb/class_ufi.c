@@ -29,7 +29,7 @@ usb_error usb_data_in_transfer(device_config *const    storage_device,
   RETURN_CHECK(result);
 }
 
-inline usb_error usb_data_out_transfer(device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size) {
+usb_error usb_data_out_transfer(device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size) {
 
   usb_error result;
 
@@ -55,7 +55,7 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
 
   usb_error result;
 
-  result = usb_control_transfer(storage_device, adsc, cmd);
+  result = usb_control_transfer(storage_device, adsc, (uint8_t *const)cmd);
 
   if (result != USB_ERR_OK) {
     *asc = 0;
@@ -155,7 +155,7 @@ usb_error usb_execute_cbi_with_retry(device_config *const storage_device,
   response_inquiry.ascq = 0;
 
 retry:
-  result = usb_execute_cbi(storage_device, (uint8_t *)cmd, send, buffer_size, buffer, &response_inquiry);
+  result = usb_execute_cbi(storage_device, cmd, send, buffer_size, buffer, &response_inquiry);
 
   if (result)
     return result;
