@@ -20,7 +20,6 @@
 typedef struct {
   usb_device_type type;
   uint8_t         max_packet_size;
-  uint8_t         value;
   uint8_t         interface_number;
   uint8_t         tag;
   uint8_t         address;

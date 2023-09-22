@@ -1,34 +1,33 @@
 
 	include	embinc.asm
 
-	STRUCT endpoint_param
+	STRUCT endpoint_paramx
 BASE:					; Offset to the base of the data structure
 number_toggle			db
 max_packet_size			db
 	ENDS
 
-	STRUCT device_config
+	STRUCT device_configx
 BASE:
 type				db
 max_packet_size			db
-value				db
 interface_number		db
 tag				db
 address				db
-bulk_out_endpoint		endpoint_param
-bulk_in_endpoint		endpoint_param
-intr_in_endpoint		endpoint_param
+bulk_out_endpoint		endpoint_paramx
+bulk_in_endpoint		endpoint_paramx
+intr_in_endpoint		endpoint_paramx
 	ENDS
 
-	STRUCT usb_work_area
+	STRUCT usb_work_areax
 BASE:					; Offset to the base of the data structure
-storage_device1			device_config;
-storage_device2			device_config;
-storage_device3			device_config;
-storage_device4			device_config;
-hub_config			device_config;
-cdc_config			device_config;
-printer_config			device_config;
+storage_device1			device_configx
+storage_device2			device_configx
+storage_device3			device_configx
+storage_device4			device_configx
+hub_config			device_configx
+cdc_config			device_configx
+printer_config			device_configx
 next_storage_device_index	db
 printer_time_throttle_flag	db
 	ENDS
@@ -41,8 +40,8 @@ DEST_LW		DB	3	; SECTOR DESTINATION ADDRESS (LOW)
 DEST_HI		DB	4	; (HIGH)
 RD_CND_RQ	DB	5	; NUMBER OF SECTORS REQUESTED
 PRESENT		DB	6	; BIT FIELD FOR DETECTED DEVICES (BIT 0 -> COMPACTFLASH/IDE, BIT 1-> MSX-MUSIC NOR FLASH)
-USB		usb_work_area
-		DS	16	; reserve
+USB		usb_work_areax
+		; DS	16	; reserve
 
 	ENDS
 

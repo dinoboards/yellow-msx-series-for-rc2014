@@ -50,27 +50,27 @@ usb_error hub_get_status_port(const uint8_t index, hub_port_status *const port_s
   return usb_control_transfer(&get_status_port, port_status, work_area->hub_config.address, work_area->hub_config.max_packet_size);
 }
 
-usb_error reset_device(const _device_control *const args) __z88dk_fastcall {
-  usb_error result;
+// usb_error reset_device(const _device_control *const args) __z88dk_fastcall {
+//   usb_error result;
 
-  CHECK(hub_clear_feature(FEAT_PORT_POWER, args->index));
-  delay_short();
+//   CHECK(hub_clear_feature(FEAT_PORT_POWER, args->index));
+//   delay_short();
 
-  CHECK(hub_set_feature(FEAT_PORT_POWER, args->index));
-  delay_short();
+//   CHECK(hub_set_feature(FEAT_PORT_POWER, args->index));
+//   delay_short();
 
-  hub_clear_feature(FEAT_PORT_RESET, args->index);
-  delay_short();
+//   hub_clear_feature(FEAT_PORT_RESET, args->index);
+//   delay_short();
 
-  CHECK(hub_set_feature(FEAT_PORT_RESET, args->index));
-  delay_short();
+//   CHECK(hub_set_feature(FEAT_PORT_RESET, args->index));
+//   delay_short();
 
-  hub_port_status port_status;
+//   hub_port_status port_status;
 
-  CHECK(hub_get_status_port(args->index, &port_status));
+//   CHECK(hub_get_status_port(args->index, &port_status));
 
-  return result;
-}
+//   return result;
+// }
 
 usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
@@ -78,8 +78,6 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
   usb_error       result;
   hub_descriptor  hub_description;
   hub_port_status port_status;
-
-  CHECK(usbtrn_set_configuration(&work_area->hub_config));
 
   CHECK(hub_get_descriptor(&hub_description));
 
