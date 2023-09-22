@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "enumerate_trace.h"
+
 usb_error usb_data_in_transfer(device_config *const    storage_device,
                                uint8_t *const          buffer,
                                const uint16_t          buffer_size,
@@ -24,9 +26,7 @@ usb_error usb_data_in_transfer(device_config *const    storage_device,
     return USB_ERR_STALL;
   }
 
-  CHECK(result);
-
-  return result;
+  RETURN_CHECK(result);
 }
 
 inline usb_error usb_data_out_transfer(device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size) {
@@ -60,9 +60,7 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
   if (result != USB_ERR_OK) {
     *asc = 0;
 
-    CHECK(result);
-
-    return result;
+    RETURN_CHECK(result);
   }
 
   if (send) {
@@ -74,9 +72,7 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
   if (result != USB_ERR_OK) {
     *asc = 0;
     // Token error here, asc = 0
-    CHECK(result);
-
-    return result;
+    RETURN_CHECK(result);
   }
 
   uint8_t sense_codes[2] = {255, 255};

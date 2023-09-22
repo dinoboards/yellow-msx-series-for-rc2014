@@ -122,7 +122,8 @@
 ./bin/libraries/usb/class_ufi.c.asm: libraries/usb/class_ufi.c libraries/usb/class_ufi.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/transfers.h libraries/usb/usb_state.h \
- libraries/delay/delay.h libraries/msxbios/system_vars.h
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/usb/enumerate_trace.h
 ./bin/libraries/usb/ch376.c.asm: libraries/usb/ch376.c libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
