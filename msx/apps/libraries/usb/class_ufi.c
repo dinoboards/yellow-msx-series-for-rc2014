@@ -26,7 +26,7 @@ usb_error usb_data_in_transfer(device_config *const    storage_device,
 
   CHECK(result);
 
-  return usb_process_error(result);
+  return result;
 }
 
 inline usb_error usb_data_out_transfer(device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size) {
@@ -97,33 +97,14 @@ usb_error usb_execute_cbi_core_no_clear(device_config *const      storage_device
   return USB_ERR_STALL;
 }
 
-usb_error usb_process_error(const usb_error result) {
-  if (result == USB_ERR_OK)
-    return result;
-
-  if (result == USB_ERR_NO_DEVICE)
-    return result;
-
-  if (result == USB_ERR_TIMEOUT)
-    return result;
-
-  if (result == USB_ERR_CH376_BLOCKED)
-    return USB_ERR_TIMEOUT;
-
-  return result;
-}
-
 usb_error usb_control_transfer(device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer) {
   usb_error result;
 
   const uint8_t max_packet_size = storage_device->max_packet_size;
 
-  result = hw_control_transfer(cmd, buffer, storage_device->address, max_packet_size);
+  CHECK(hw_control_transfer(cmd, buffer, storage_device->address, max_packet_size));
 
-  if (result == USB_ERR_OK)
-    return result;
-
-  return usb_process_error(result);
+  return result;
 }
 
 setup_packet usb_cmd_clear_endpoint_halt = {2, 1, {0, 0}, {255, 0}, 0}; //    ;byte 4 is the endpoint to be cleared
