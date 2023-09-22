@@ -8,11 +8,11 @@
 
 #define MAX_CONFIG_SIZE 140
 
-typedef struct __device_control {
-  uint8_t index;
+// typedef struct __device_control {
+//   uint8_t index;
 
-  usb_error (*reset_device)(const struct __device_control *const args) __z88dk_fastcall;
-} _device_control;
+//   usb_error (*reset_device)(const struct __device_control *const args) __z88dk_fastcall;
+// } _device_control;
 
 typedef struct {
   uint8_t next_device_address;

@@ -109,6 +109,19 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
   return op_endpoint_next(working);
 }
 
+usb_error
+configure_device(const _working *const working, const interface_descriptor *const interface, device_config *const dev_cfg) {
+  usb_error result;
+
+  dev_cfg->interface_number = interface->bInterfaceNumber;
+  dev_cfg->max_packet_size  = working->desc.bMaxPacketSize0;
+  dev_cfg->address          = working->state->next_device_address;
+  dev_cfg->type             = working->usb_device;
+
+  RETURN_CHECK(usbtrn_set_configuration(dev_cfg->address, dev_cfg->max_packet_size,
+                                        working->config.desc.bConfigurationvalue));
+}
+
 usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall {
   usb_error                         result;
   _usb_state *const                 work_area = get_usb_work_area();
@@ -126,42 +139,25 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     work_area->next_storage_device_index++;
     device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
     device_config *const dev_cfg     = storage_dev;
-
-    dev_cfg->max_packet_size  = working->desc.bMaxPacketSize0;
-    dev_cfg->value            = working->config.desc.bConfigurationvalue;
-    dev_cfg->address          = working->state->next_device_address;
-    dev_cfg->interface_number = interface->bInterfaceNumber;
-    dev_cfg->type             = working->usb_device;
-    CHECK(usbtrn_set_configuration(dev_cfg));
+    CHECK(configure_device(working, interface, dev_cfg));
     break;
   }
 
   case USB_IS_PRINTER: {
-    work_area->printer.interface_number = interface->bInterfaceNumber;
-    work_area->printer.max_packet_size  = working->desc.bMaxPacketSize0;
-    work_area->printer.value            = working->config.desc.bConfigurationvalue;
-    work_area->printer.address          = working->state->next_device_address;
-    work_area->printer.type             = USB_IS_PRINTER;
-    CHECK(usbtrn_set_configuration(&work_area->printer));
+    work_area->printer.type = USB_IS_PRINTER;
+    CHECK(configure_device(working, interface, &work_area->printer));
     break;
   }
 
   case USB_IS_CDC: {
-    work_area->cdc_config.interface_number = interface->bInterfaceNumber;
-    work_area->cdc_config.max_packet_size  = working->desc.bMaxPacketSize0;
-    work_area->cdc_config.value            = working->config.desc.bConfigurationvalue;
-    work_area->cdc_config.address          = working->state->next_device_address;
-    work_area->cdc_config.type             = USB_IS_CDC;
-    CHECK(usbtrn_set_configuration(&work_area->cdc_config));
+    work_area->cdc_config.type = USB_IS_CDC;
+    CHECK(configure_device(working, interface, &work_area->cdc_config));
     break;
   }
 
   case USB_IS_HUB: {
-    work_area->hub_config.interface_number = interface->bInterfaceNumber;
-    work_area->hub_config.max_packet_size  = working->desc.bMaxPacketSize0;
-    work_area->hub_config.value            = working->config.desc.bConfigurationvalue;
-    work_area->hub_config.address          = working->state->next_device_address;
-    work_area->hub_config.type             = USB_IS_HUB;
+    work_area->hub_config.type = USB_IS_HUB;
+    CHECK(configure_device(working, interface, &work_area->hub_config));
     CHECK(configure_usb_hub(working));
     break;
   }
@@ -218,6 +214,7 @@ usb_error read_all_configs(enumeration_state *const state) {
   state->next_device_address++;
   const uint8_t dev_address = state->next_device_address;
   CHECK(usbtrn_set_address(dev_address));
+
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;
