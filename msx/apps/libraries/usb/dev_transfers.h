@@ -26,8 +26,12 @@ typedef struct {
   endpoint_param  endpoints[3]; // bulk in/out and interrupt
 } device_config;
 
-extern usb_error usbdev_control_transfer(device_config *const storage_device, const setup_packet *const cmd, uint8_t *const buffer);
+extern usb_error usbdev_control_transfer(device_config *const device, const setup_packet *const cmd, uint8_t *const buffer);
 
-extern usb_error usbdev_bulk_out_transfer(device_config *const storage_device, uint8_t *const buffer, const uint16_t buffer_size);
+extern usb_error usbdev_bulk_out_transfer(device_config *const device, const uint8_t *const buffer, const uint16_t buffer_size);
 
+extern usb_error usbdev_data_in_transfer(device_config *const    device,
+                                         uint8_t *const          buffer,
+                                         const uint16_t          buffer_size,
+                                         const usb_endpoint_type endpoint_type);
 #endif

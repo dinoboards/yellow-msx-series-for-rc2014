@@ -56,20 +56,6 @@ usb_error usbtrn_set_address(const uint8_t device_address) __z88dk_fastcall {
 
 const setup_packet cmd_set_configuration = {0x00, 9, {0, 0}, {0, 0}, 0};
 
-// /**
-//  * @brief configure device at address 0 to be assigned a new device address
-//  *
-//  * @param config the device to be configured
-//  * @return usb_error
-//  */
-// usb_error usbtrn_set_configuration(const device_config *const config) __z88dk_fastcall {
-//   setup_packet cmd;
-//   cmd           = cmd_set_configuration;
-//   cmd.bValue[0] = config->value;
-
-//   return usb_control_transfer(&cmd, 0, config->address, config->max_packet_size);
-// }
-
 /**
  * @brief configure device at address 0 to be assigned a new device address
  *
