@@ -70,7 +70,7 @@ void print_disk_size(const uint8_t device_index) {
 bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   const bool hasUsbHub  = work_area->hub_config.address != 0;
   const bool hasCdc     = work_area->cdc_config.address != 0;
-  const bool hasPrinter = work_area->printer.address != 0;
+  const bool hasPrinter = work_area->printer_config.address != 0;
 
   uint8_t              storage_count  = 0;
   uint8_t              device_index   = 1;
