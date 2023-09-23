@@ -5,14 +5,6 @@
 #include <enumerate_trace.h>
 #include <string.h>
 
-void parse_endpoint_hub(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall {
-  _usb_state *const work_area = get_usb_work_area();
-
-  work_area->hub_config.endpoints[0].number           = pEndpoint->bEndpointAddress;
-  work_area->hub_config.endpoints[0].toggle           = 0;
-  work_area->hub_config.endpoints[0].max_packet_sizex = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
-}
-
 const setup_packet cmd_set_feature     = {RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, SET_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
 const setup_packet cmd_clear_feature   = {RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, CLEAR_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
 const setup_packet cmd_get_status_port = {

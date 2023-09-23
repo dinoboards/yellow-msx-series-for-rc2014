@@ -79,31 +79,30 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
   trace_printf("EndP: ");
   logEndPointDescription(endpoint);
 
-  device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
-
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
-  case USB_IS_MASS_STORAGE:
+  case USB_IS_MASS_STORAGE: {
+    device_config *const storage_dev = &work_area->storage_device[working->state->next_storage_device_index];
     parse_endpoint_storage(storage_dev, endpoint);
     break;
+  }
 
   case USB_IS_PRINTER: {
     parse_endpoint_printer(endpoint);
     break;
   }
 
-  case USB_IS_HUB: {
-    parse_endpoint_hub(endpoint);
-    break;
-  }
+    // case USB_IS_HUB: {
+    //   break;
+    // }
 
-  case USB_IS_CDC: {
-    // print_string("TODO parse CDC\r\n");
-    // print_hex(((uint16_t)endpoint) >> 8);
-    // print_hex((uint16_t)endpoint);
-    // print_string(")\r\n");
-    break;
-  }
+    // case USB_IS_CDC: {
+    //   // print_string("TODO parse CDC\r\n");
+    //   // print_hex(((uint16_t)endpoint) >> 8);
+    //   // print_hex((uint16_t)endpoint);
+    //   // print_string(")\r\n");
+    //   break;
+    // }
   }
 
   return op_endpoint_next(working);
@@ -135,8 +134,8 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE: {
-    work_area->next_storage_device_index++;
-    device_config *const storage_dev = &work_area->storage_device[work_area->next_storage_device_index];
+    working->state->next_storage_device_index++;
+    device_config *const storage_dev = &work_area->storage_device[working->state->next_storage_device_index];
     device_config *const dev_cfg     = storage_dev;
     CHECK(configure_device(working, interface, dev_cfg));
     break;
@@ -144,7 +143,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 
   case USB_IS_PRINTER: {
     work_area->printer.type = USB_IS_PRINTER;
-    CHECK(configure_device(working, interface, &work_area->printer));
+    CHECK(configure_device(working, interface, (device_config *const) & work_area->printer));
     break;
   }
 
@@ -156,7 +155,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 
   case USB_IS_HUB: {
     work_area->hub_config.type = USB_IS_HUB;
-    CHECK(configure_device(working, interface, &work_area->hub_config));
+    CHECK(configure_device(working, interface, (device_config *const) & work_area->hub_config));
     CHECK(configure_usb_hub(working));
     break;
   }
@@ -225,11 +224,11 @@ usb_error read_all_configs(enumeration_state *const state) {
 }
 
 usb_error enumerate_all_devices() {
-  _usb_state *const work_area          = get_usb_work_area();
-  work_area->next_storage_device_index = (uint8_t)-1;
+  _usb_state *const work_area = get_usb_work_area();
   enumeration_state state;
   memset(&state, 0, sizeof(enumeration_state));
-  state.next_device_address = 1;
+  state.next_device_address       = 1;
+  state.next_storage_device_index = -1;
 
   usb_error result = read_all_configs(&state);
 

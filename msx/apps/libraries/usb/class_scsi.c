@@ -4,7 +4,7 @@
 #include <string.h>
 #include <system_vars.h>
 
-_scsi_command_block_wrapper scsi_command_block_wrapper = {{0x55, 0x53, 0x42, 0x43}, {0, 0,}, 0, 0, 0, 0};
+_scsi_command_block_wrapper scsi_command_block_wrapper = {{0x55, 0x53, 0x42, 0x43}, {0, 0}, 0, 0, 0, 0};
 
 // lun => B
 // cmd_buffer_length => C
@@ -17,7 +17,7 @@ do_scsi_cmd(device_config *const dev, _scsi_command_block_wrapper *const cbw, vo
 
   usb_error result;
 
-  cbw->dCBWTag[0]             = JIFFY;
+  cbw->dCBWTag[0] = JIFFY;
 
   if (!send)
     cbw->bmCBWFlags = 0x80;

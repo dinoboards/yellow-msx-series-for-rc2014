@@ -5,7 +5,7 @@
 
 const setup_packet cmd_get_port_status = {0xA1, 1, {0, 0}, {0, 0}, 1};
 
-usb_error prt_get_port_status(const device_config *const dev, uint8_t *buffer) {
+usb_error prt_get_port_status(const device_config_printer *const dev, uint8_t *buffer) {
   usb_error    result;
   setup_packet cmd;
   cmd = cmd_get_port_status;
@@ -21,7 +21,7 @@ usb_error prt_get_port_status(const device_config *const dev, uint8_t *buffer) {
 
 const setup_packet cmd_get_device_id = {0xA1, 0, {0, 0}, {0, 0}, 4};
 
-usb_error prt_get_device_id(const device_config *const dev, uint8_t *buffer) {
+usb_error prt_get_device_id(const device_config_printer *const dev, uint8_t *buffer) {
   usb_error    result;
   setup_packet cmd;
   cmd = cmd_get_device_id;
@@ -37,7 +37,7 @@ usb_error prt_get_device_id(const device_config *const dev, uint8_t *buffer) {
 
 const setup_packet cmd_soft_reset = {0x21, 2, {0, 0}, {0, 0}, 0};
 
-usb_error prt_soft_reset(const device_config *const dev) {
+usb_error prt_soft_reset(const device_config_printer *const dev) {
   usb_error    result;
   setup_packet cmd;
   cmd = cmd_soft_reset;
@@ -51,7 +51,7 @@ usb_error prt_soft_reset(const device_config *const dev) {
   return result;
 }
 
-usb_error prt_send_text(device_config *dev, const char *text) {
+usb_error prt_send_text(device_config_printer *dev, const char *text) {
   usb_error result;
 
   dev->endpoints[0].toggle = 0;
