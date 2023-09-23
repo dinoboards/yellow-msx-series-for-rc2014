@@ -6,7 +6,7 @@
 
 typedef struct {
   uint8_t  dCBWSignature[4];
-  uint8_t  dCBWTag[4];
+  uint16_t  dCBWTag[2];
   uint32_t dCBWDataTransferLength;
   uint8_t  bmCBWFlags;
   uint8_t  bCBWLUN;
@@ -139,10 +139,10 @@ typedef struct {
 } scsi_inquiry_result;
 
 typedef struct __scsi_command_status_wrapper {
-  uint8_t cbwsignature[4];
-  uint8_t cbwtag[4];
-  uint8_t cbwresidue[4];
-  uint8_t cbwstatus;
+  uint8_t dCSWSignature[4];
+  uint16_t dCSWTag[2];
+  uint8_t dCSWDataResidue[4];
+  uint8_t bCSWStatus;
 } _scsi_command_status_wrapper;
 
 typedef struct {
