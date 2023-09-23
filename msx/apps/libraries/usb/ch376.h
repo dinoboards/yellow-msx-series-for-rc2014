@@ -87,13 +87,13 @@ extern int printf(const char *msg, ...);
 
 #endif
 
-#define calc_max_packet_sizex(packet_size) packet_size
+#define calc_max_packet_sizex(packet_size) (packet_size & 0xFF)
 #define calc_max_packet_size(packet_sizex) packet_sizex
 
 typedef struct {
   uint8_t toggle : 1;
   uint8_t number : 3;
-  uint8_t max_packet_sizex : 7;
+  uint8_t max_packet_sizex;
 } endpoint_param;
 
 #define CH_SPEED_FULL     0 /* 12Mbps full speed FullSpeed ​​(default value) */

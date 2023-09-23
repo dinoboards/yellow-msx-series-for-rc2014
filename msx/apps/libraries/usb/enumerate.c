@@ -8,9 +8,10 @@
 void parse_endpoint_printer(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
 
-  work_area->printer.endpoints[0].number           = pEndpoint->bEndpointAddress;
-  work_area->printer.endpoints[0].toggle           = 0;
-  work_area->printer.endpoints[0].max_packet_sizex = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
+  endpoint_param *const ep = &work_area->printer_config.endpoints[0];
+  ep->number               = pEndpoint->bEndpointAddress;
+  ep->toggle               = 0;
+  ep->max_packet_sizex     = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
 }
 
 usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall;
@@ -142,8 +143,8 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   }
 
   case USB_IS_PRINTER: {
-    work_area->printer.type = USB_IS_PRINTER;
-    CHECK(configure_device(working, interface, (device_config *const) & work_area->printer));
+    work_area->printer_config.type = USB_IS_PRINTER;
+    CHECK(configure_device(working, interface, (device_config *const) & work_area->printer_config));
     break;
   }
 

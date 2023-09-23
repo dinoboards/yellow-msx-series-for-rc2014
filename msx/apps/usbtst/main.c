@@ -37,7 +37,7 @@ void right_trim(char *buffer) {
 void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   const bool hasUsb     = work_area->hub_config.address != 0;
   const bool hasCdc     = work_area->cdc_config.address != 0;
-  const bool hasPrinter = work_area->printer.address != 0;
+  const bool hasPrinter = work_area->printer_config.address != 0;
 
   uint8_t              index          = MAX_NUMBER_OF_STORAGE_DEVICES;
   const device_config *storage_device = &work_area->storage_device[0];
