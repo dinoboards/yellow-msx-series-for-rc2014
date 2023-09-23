@@ -2,6 +2,8 @@
 #include <delay.h>
 #include <stdbool.h>
 
+void delay_20ms() { delay(1); }
+
 void delay_short() { delay(3); }
 
 void delay_medium() { delay(30); }
@@ -113,26 +115,17 @@ uint8_t ch_read_data(uint8_t *buffer, uint16_t buffer_size) {
   return amount_received;
 }
 
-void ch_cmd_reset_all() {
-  ch_command(CH_CMD_RESET_ALL);
-  delay_medium();
-}
+void ch_cmd_reset_all() { ch_command(CH_CMD_RESET_ALL); }
 
 inline uint8_t ch_cmd_check_exist() {
   ch_command(CH_CMD_CHECK_EXIST);
-  CH376_DATA_PORT = (uint8_t)~0x34;
-  if (CH376_DATA_PORT != 0x34)
-    return false;
-
-  delay_short();
-
-  ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x89;
+  delay_short();
   return CH376_DATA_PORT == 0x89;
 }
 
 uint8_t ch_probe() {
-  uint8_t i = 20;
+  uint8_t i = 14;
   do {
     if (ch_cmd_check_exist())
       return true;
