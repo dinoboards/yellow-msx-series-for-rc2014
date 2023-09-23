@@ -17,13 +17,25 @@
 #include "transfers.h"
 #include <stdlib.h>
 
+#define COMMON_DEVICE_CONFIG                                                                                                       \
+  uint8_t         max_packet_size;                                                                                                 \
+  uint8_t         interface_number;                                                                                                \
+  usb_device_type type : 4;                                                                                                        \
+  uint8_t         address : 4;
+
 typedef struct {
-  usb_device_type type;
-  uint8_t         max_packet_size;
-  uint8_t         interface_number;
-  uint8_t         address;
-  endpoint_param  endpoints[3]; // bulk in/out and interrupt
+  COMMON_DEVICE_CONFIG
+  endpoint_param endpoints[3]; // bulk in/out and interrupt
 } device_config;
+
+typedef struct {
+  COMMON_DEVICE_CONFIG
+} device_config_hub;
+
+typedef struct {
+  COMMON_DEVICE_CONFIG
+  endpoint_param endpoints[1]; // bulk out
+} device_config_printer;
 
 extern usb_error usbdev_control_transfer(device_config *const device, const setup_packet *const cmd, uint8_t *const buffer);
 

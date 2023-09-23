@@ -128,7 +128,7 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   } while (--index != 0);
 }
 
-inline void initialise_mass_storage_devices(_usb_state *const work_area) {
+inline void initialise_scsi_devices(_usb_state *const work_area) {
   uint8_t        index          = MAX_NUMBER_OF_STORAGE_DEVICES;
   device_config *storage_device = &work_area->storage_device[0];
 
@@ -173,7 +173,7 @@ void main(const int argc, const char *argv[]) {
     if (r == USB_INT_CONNECT) {
       enumerate_all_devices();
 
-      initialise_mass_storage_devices(work_area);
+      initialise_scsi_devices(work_area);
 
       state_devices(work_area);
 
