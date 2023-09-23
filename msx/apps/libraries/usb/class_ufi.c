@@ -74,7 +74,10 @@ usb_error usb_execute_cbi_core(device_config *const      storage_device,
   if (asc != 0)
     return USB_ERR_STALL;
 
-  usb_clear_endpoint_halt(storage_device, ENDPOINT_BULK_IN);
+  endpoint_param *const ep = &storage_device->endpoints[ENDPOINT_BULK_IN];
+  ep->toggle               = 0;
+  usbtrn_clear_endpoint_halt(ep->number, storage_device->address, storage_device->max_packet_size);
+
   return USB_ERR_STALL;
 }
 
