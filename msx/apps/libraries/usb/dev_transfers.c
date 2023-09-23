@@ -40,7 +40,8 @@ usb_error usbdev_bulk_out_transfer(device_config *const dev, const uint8_t *cons
   result = usb_data_out_transfer(buffer, buffer_size, dev->address, endpoint);
 
   if (result == USB_ERR_STALL) {
-    usb_clear_endpoint_halt(dev, ENDPOINT_BULK_OUT);
+    usbtrn_clear_endpoint_halt(endpoint->number, dev->address, dev->max_packet_size);
+    endpoint->toggle = 0;
     return USB_ERR_STALL;
   }
 
@@ -62,7 +63,8 @@ usb_error usbdev_data_in_transfer(device_config *const    device,
   result = usb_data_in_transfer(buffer, buffer_size, device->address, endpoint);
 
   if (result == USB_ERR_STALL) {
-    usb_clear_endpoint_halt(device, endpoint_type);
+    usbtrn_clear_endpoint_halt(endpoint->number, device->address, device->max_packet_size);
+    endpoint->toggle = 0;
     return USB_ERR_STALL;
   }
 

@@ -60,7 +60,7 @@ const setup_packet cmd_set_configuration = {0x00, 9, {0, 0}, {0, 0}, 0};
  * @brief configure device at address 0 to be assigned a new device address
  *
  * @param config the device to be configured
- * @return usb_error
+ * @return usb_error USB_ERR_OK if all good, otherwise specific error code
  */
 usb_error usbtrn_set_configuration(const uint8_t device_address, const uint8_t max_packet_size, const uint8_t configuration) {
   setup_packet cmd;
@@ -73,14 +73,14 @@ usb_error usbtrn_set_configuration(const uint8_t device_address, const uint8_t m
 const setup_packet cmd_get_config_descriptor = {0x80, 6, {0, 2}, {0, 0}, 0};
 
 /**
- * @brief
+ * @brief request the config descriptor for the specific config index of the specified device
  *
- * @param buffer
- * @param config_index
- * @param buffer_size
- * @param device_address
- * @param max_packet_size
- * @return usb_error
+ * @param buffer the buffer to store the config descriptor in
+ * @param config_index the index of the config descriptor to retrieve
+ * @param buffer_size the size of the buffer
+ * @param device_address the usb address of the device
+ * @param max_packet_size the max packet size for control transfers (endpoint 0)
+ * @return usb_error USB_ERR_OK if all good, otherwise specific error code
  */
 usb_error usbtrn_get_config_descriptor(config_descriptor *const buffer,
                                        const uint8_t            config_index,
@@ -96,16 +96,14 @@ usb_error usbtrn_get_config_descriptor(config_descriptor *const buffer,
   RETURN_CHECK(usb_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size));
 }
 
-setup_packet usb_cmd_clear_endpoint_halt = {2, 1, {0, 0}, {255, 0}, 0}; //    ;byte 4 is the endpoint to be cleared
+const setup_packet usb_cmd_clear_endpoint_halt = {2, 1, {0, 0}, {255, 0}, 0}; //    ;byte 4 is the endpoint to be cleared
 
-usb_error usb_clear_endpoint_halt(device_config *const device, const usb_endpoint_type endpoint_type) {
+usb_error usbtrn_clear_endpoint_halt(const uint8_t endpoint_number, const uint8_t device_address, const uint8_t max_packet_size) {
   setup_packet cmd;
   cmd           = usb_cmd_clear_endpoint_halt;
-  cmd.bIndex[0] = device->endpoints[endpoint_type].number;
+  cmd.bIndex[0] = endpoint_number;
 
-  usb_error result = usbdev_control_transfer(device, &cmd, (uint8_t *)0);
-
-  device->endpoints[endpoint_type].toggle = 0;
+  usb_error result = usb_control_transfer(&cmd, (uint8_t *)0, device_address, max_packet_size);
 
   RETURN_CHECK(result);
 }
