@@ -2,8 +2,9 @@
 #include "usb_state.h"
 #include <stdbool.h>
 #include <string.h>
+#include <system_vars.h>
 
-_scsi_command_block_wrapper scsi_command_block_wrapper = {{0x55, 0x53, 0x42, 0x43}, {0, 0, 0, 0}, 0, 0, 0, 0};
+_scsi_command_block_wrapper scsi_command_block_wrapper = {{0x55, 0x53, 0x42, 0x43}, {0, 0,}, 0, 0, 0, 0};
 
 // lun => B
 // cmd_buffer_length => C
@@ -15,6 +16,8 @@ usb_error
 do_scsi_cmd(device_config *const dev, _scsi_command_block_wrapper *const cbw, void *const send_receive_buffer, const bool send) {
 
   usb_error result;
+
+  cbw->dCBWTag[0]             = JIFFY;
 
   if (!send)
     cbw->bmCBWFlags = 0x80;
@@ -37,7 +40,7 @@ do_scsi_cmd(device_config *const dev, _scsi_command_block_wrapper *const cbw, vo
   CHECK(
       usb_data_in_transfer((uint8_t *)&csw, sizeof(_scsi_command_status_wrapper), dev->address, &dev->endpoints[ENDPOINT_BULK_IN]));
 
-  if (csw.cbwstatus != 0)
+  if (csw.bCSWStatus != 0 && csw.dCSWTag[0] != cbw->dCBWTag[0])
     return USB_ERR_FAIL;
 
   return USB_ERR_OK;
@@ -55,7 +58,6 @@ usb_error get_scsi_read_capacity(device_config *const dev, scsi_read_capacity_re
   cbw_scsi.cbw.bCBWLUN                = 0;
   cbw_scsi.cbw.bCBWCBLength           = sizeof(_scsi_read_capacity);
   cbw_scsi.cbw.dCBWDataTransferLength = sizeof(scsi_read_capacity_result);
-  cbw_scsi.cbw.dCBWTag[0]             = ++dev->tag;
 
   CHECK(do_scsi_cmd(dev, &cbw_scsi.cbw, cap_result, false));
 
@@ -74,7 +76,6 @@ usb_error scsi_inquiry(device_config *const dev, scsi_inquiry_result *inq_result
   cbw_scsi.cbw.bCBWLUN                = 0;
   cbw_scsi.cbw.bCBWCBLength           = sizeof(_scsi_packet_inquiry);
   cbw_scsi.cbw.dCBWDataTransferLength = 0x24;
-  cbw_scsi.cbw.dCBWTag[0]             = ++dev->tag;
 
   CHECK(do_scsi_cmd(dev, &cbw_scsi.cbw, inq_result, false));
 
@@ -89,7 +90,6 @@ usb_error scsi_test(device_config *const dev) {
   cbw_scsi.cbw.bCBWLUN                = 0;
   cbw_scsi.cbw.bCBWCBLength           = sizeof(_scsi_packet_test);
   cbw_scsi.cbw.dCBWDataTransferLength = 0;
-  cbw_scsi.cbw.dCBWTag[0]             = ++dev->tag;
 
   return do_scsi_cmd(dev, &cbw_scsi.cbw, 0, false);
 }
@@ -105,7 +105,6 @@ usb_error scsi_request_sense(device_config *const dev, scsi_sense_result *const 
   cbw_scsi.cbw.bCBWLUN                = 0;
   cbw_scsi.cbw.bCBWCBLength           = sizeof(_scsi_packet_request_sense);
   cbw_scsi.cbw.dCBWDataTransferLength = sizeof(scsi_sense_result);
-  cbw_scsi.cbw.dCBWTag[0]             = ++dev->tag;
 
   return do_scsi_cmd(dev, &cbw_scsi.cbw, sens_result, false);
 }
@@ -130,7 +129,6 @@ usb_error scsi_read_write(
   cbw.cbw.bCBWLUN                = 0;
   cbw.cbw.bCBWCBLength           = sizeof(_scsi_packet_read_write);
   cbw.cbw.dCBWDataTransferLength = 512 * sector_count;
-  cbw.cbw.dCBWTag[0]             = ++dev->tag;
 
   cbw.scsi_cmd.operation_code  = send ? 0x2A : 0x28;
   cbw.scsi_cmd.transfer_len[1] = sector_count;
@@ -154,7 +152,6 @@ usb_error scsi_eject(device_config *const dev) {
   cbw_scsi.cbw.bCBWLUN                = 0;
   cbw_scsi.cbw.bCBWCBLength           = sizeof(_scsi_packet_eject);
   cbw_scsi.cbw.dCBWDataTransferLength = 0;
-  cbw_scsi.cbw.dCBWTag[0]             = ++dev->tag;
 
   return do_scsi_cmd(dev, &cbw_scsi.cbw, 0, false);
 }
@@ -171,7 +168,6 @@ usb_error scsi_spike(device_config *const dev) {
   cbw_scsi.cbw.bCBWLUN                = 0;
   cbw_scsi.cbw.bCBWCBLength           = sizeof(_scsi_packet_eject);
   cbw_scsi.cbw.dCBWDataTransferLength = 0;
-  cbw_scsi.cbw.dCBWTag[0]             = ++dev->tag;
 
   return do_scsi_cmd(dev, &cbw_scsi.cbw, 0, false);
 }
