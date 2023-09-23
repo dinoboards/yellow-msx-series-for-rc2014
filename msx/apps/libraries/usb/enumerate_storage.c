@@ -7,23 +7,21 @@ void parse_endpoint_storage(device_config *const storage_dev, const endpoint_des
   if (!(pEndpoint->bmAttributes & 0x02))
     return;
 
-  const uint8_t x = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
+  const uint8_t         x   = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
+  endpoint_param *const eps = storage_dev->endpoints;
+  endpoint_param *      ep;
 
   if (pEndpoint->bmAttributes & 0x01) { // 3 -> Interrupt
-    if (pEndpoint->bEndpointAddress & 0x80) {
-      storage_dev->endpoints[ENDPOINT_INTERRUPT_IN].number           = pEndpoint->bEndpointAddress & 0x07;
-      storage_dev->endpoints[ENDPOINT_INTERRUPT_IN].toggle           = 0;
-      storage_dev->endpoints[ENDPOINT_INTERRUPT_IN].max_packet_sizex = x;
-    }
+    if (!(pEndpoint->bEndpointAddress & 0x80))
+      return;
+
+    ep = &eps[ENDPOINT_INTERRUPT_IN];
+
   } else {
-    if (pEndpoint->bEndpointAddress & 0x80) {
-      storage_dev->endpoints[ENDPOINT_BULK_IN].number           = pEndpoint->bEndpointAddress & 0x07;
-      storage_dev->endpoints[ENDPOINT_BULK_IN].toggle           = 0;
-      storage_dev->endpoints[ENDPOINT_BULK_IN].max_packet_sizex = x;
-    } else {
-      storage_dev->endpoints[ENDPOINT_BULK_OUT].number           = pEndpoint->bEndpointAddress & 0x07;
-      storage_dev->endpoints[ENDPOINT_BULK_OUT].toggle           = 0;
-      storage_dev->endpoints[ENDPOINT_BULK_OUT].max_packet_sizex = x;
-    }
+    ep = (pEndpoint->bEndpointAddress & 0x80) ? &eps[ENDPOINT_BULK_IN] : &eps[ENDPOINT_BULK_OUT];
   }
+
+  ep->number           = pEndpoint->bEndpointAddress & 0x07;
+  ep->toggle           = 0;
+  ep->max_packet_sizex = x;
 }
