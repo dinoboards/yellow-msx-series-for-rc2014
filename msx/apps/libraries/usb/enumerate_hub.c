@@ -56,25 +56,19 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
   uint8_t i = hub_description.bNbrPorts;
   do {
     CHECK(hub_clear_feature(FEAT_PORT_POWER, i));
-    delay_short();
 
     CHECK(hub_set_feature(FEAT_PORT_POWER, i));
-    delay_short();
 
     hub_clear_feature(FEAT_PORT_RESET, i);
-    delay_short();
 
     CHECK(hub_set_feature(FEAT_PORT_RESET, i));
-    delay_short();
 
     CHECK(hub_get_status_port(i, &port_status));
 
     if (port_status.wPortStatus.port_connection) {
       CHECK(hub_clear_feature(HUB_FEATURE_PORT_CONNECTION_CHANGE, i));
-      delay_short();
 
       CHECK(hub_clear_feature(FEAT_PORT_ENABLE_CHANGE, i));
-      delay_short();
 
       CHECK(hub_clear_feature(FEAT_PORT_RESET_CHANGE, i));
       delay_short();

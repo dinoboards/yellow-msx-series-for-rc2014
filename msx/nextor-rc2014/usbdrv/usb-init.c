@@ -126,13 +126,19 @@ inline void initialise_mass_storage_devices(_usb_state *const work_area) {
 
 #define ERASE_LINE "\x1B\x6C\r"
 
-uint8_t usb_host_init() {
+uint8_t usb_host_init(const uint8_t flag) __z88dk_fastcall {
+  if (flag == 0) {
+    ch_cmd_reset_all();
+
+    return 0;
+  }
+
   work_area *const p = get_work_area();
   __asm__("EI");
   _usb_state *const work_area = &p->ch376;
   memset(work_area, 0, sizeof(_usb_state));
 
-  ch_cmd_reset_all();
+  delay_short();
 
   if (!ch_probe()) {
     print_string("CH376:           NOT PRESENT\r\n");
