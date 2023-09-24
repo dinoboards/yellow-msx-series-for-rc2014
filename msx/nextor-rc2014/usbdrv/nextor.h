@@ -21,10 +21,24 @@
 #define INFO_FLAG_READ_ONLY 0x02
 #define INFO_FLAG_FLOPPY    0x04
 
-#define DEV_STATUS_NOT_AVAILABLE_OR_INVALID  0
+/**
+ * @defgroup DEV_STATUS code returned by nextor driver's DEV_STATUS function
+ *
+ * @{
+ */
+
+/** The device or logical unit is not available, or the  device or logical unit number supplied is invalid. **/
+#define DEV_STATUS_NOT_AVAILABLE_OR_INVALID 0
+/** The device or logical unit is available and has not changed since the last status request. */
 #define DEV_STATUS_AVAILABLE_AND_NOT_CHANGED 1
-#define DEV_STATUS_AVAILABLE_AND_CHANGED     2
-#define DEV_STATUS_AVAILABLE                 3
+/** The device or logical unit is available and has changed since the last status request (for devices, the device has been
+ * unplugged and a different device has been plugged which has been assigned the same device index; for logical units, the media has
+ * been changed). */
+#define DEV_STATUS_AVAILABLE_AND_CHANGED 2
+/** The device or logical unit is available, but it is not possible to determine whether it has been changed or not since the last
+ * status request.*/
+#define DEV_STATUS_AVAILABLE 3
+/** @} */
 
 typedef struct _nextor_lun_info {
   uint8_t  medium_type;

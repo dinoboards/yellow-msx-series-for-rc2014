@@ -74,6 +74,7 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
       delay_short();
 
       CHECK(hub_get_status_port(i, &port_status));
+      delay_short();
 
       CHECK(read_all_configs(working->state));
 

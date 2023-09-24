@@ -16,20 +16,21 @@ ZCC := zcc +msx -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs -
 
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)exports.asm \
+	$(BINDIR)exports.c.o \
+	$(BINDIR)extended-bios.c.o \
 	$(BINDIR)libraries/delay/delay.c.o \
 	$(BINDIR)libraries/usb/ch376.c.o \
 	$(BINDIR)libraries/usb/class_hub.c.o \
-	$(BINDIR)libraries/usb/dev_transfers.c.o \
-	$(BINDIR)libraries/usb/enumerate_storage.c.o \
-	$(BINDIR)libraries/usb/protocol.c.o \
-	$(BINDIR)libraries/usb/transfers.c.o \
-	$(BINDIR)exports.c.o \
-	$(BINDIR)extended-bios.c.o \
 	$(BINDIR)libraries/usb/class_printer.c.o \
 	$(BINDIR)libraries/usb/class_scsi.c.o \
 	$(BINDIR)libraries/usb/class_ufi.c.o \
+	$(BINDIR)libraries/usb/dev_transfers.c.o \
 	$(BINDIR)libraries/usb/enumerate_hub.c.o \
+	$(BINDIR)libraries/usb/enumerate_storage.c.o \
 	$(BINDIR)libraries/usb/enumerate.c.o \
+	$(BINDIR)libraries/usb/protocol.c.o \
+	$(BINDIR)libraries/usb/transfers.c.o \
+	$(BINDIR)libraries/usb/usb_cbi.c.o \
 	$(BINDIR)print.o \
 	$(BINDIR)printer_drv.c.o \
 	$(BINDIR)printer_drv.o \

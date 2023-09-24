@@ -8,7 +8,7 @@ uint8_t usb_lun_info_ufi(device_config *const dev, const uint8_t lun, nextor_lun
   if (lun != 1)
     return 1;
 
-  const usb_error result = ufi_capacity(dev, &response);
+  const usb_error result = ufi_read_format_capacities(dev, &response);
   if (result != USB_ERR_OK)
     return 1;
 

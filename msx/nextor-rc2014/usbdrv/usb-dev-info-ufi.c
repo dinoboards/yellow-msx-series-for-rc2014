@@ -8,9 +8,13 @@
 
 uint8_t usb_dev_info_ufi(device_config *const dev, const dev_info_request request_info, uint8_t *const buffer) {
   ufi_inquiry_response response;
+  memset(&response, 0, sizeof(ufi_inquiry_response));
 
   if (request_info == BASIC_INFORMATION)
     return usb_dev_info_basic_information(buffer);
+
+  if (wait_for_device_ready(dev, 5000) != 0)
+    return 1;
 
   memset(&response, 0, sizeof(ufi_inquiry_response));
   const usb_error result = ufi_inquiry(dev, &response);

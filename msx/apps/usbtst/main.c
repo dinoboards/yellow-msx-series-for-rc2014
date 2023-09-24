@@ -9,6 +9,9 @@
 #include <class_scsi.h>
 #include <enumerate.h>
 
+#include <class_ufi.h>
+#include <delay.h>
+
 void chput(const char c) __z88dk_fastcall { printf("%c", c); }
 
 usb_error usb_host_bus_reset() {
@@ -39,10 +42,11 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   const bool hasCdc     = work_area->cdc_config.address != 0;
   const bool hasPrinter = work_area->printer_config.address != 0;
 
-  uint8_t              index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  const device_config *storage_device = &work_area->storage_device[0];
+  uint8_t        index          = MAX_NUMBER_OF_STORAGE_DEVICES;
+  device_config *storage_device = &work_area->storage_device[0];
+  usb_error      result;
 
-  uint8_t buffer[130];
+  uint8_t buffer[512];
 
   if (hasUsb)
     print_string("USB HUB:\r\n");
@@ -54,8 +58,6 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
   if (hasPrinter) {
     print_string("PRINTER\r\n");
-
-    usb_error result;
 
     // result = prt_soft_reset(&work_area->printer);
     // printf(" prt_reset\r\n", result);
@@ -81,20 +83,63 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
     memset(buffer, 0, sizeof(buffer));
 
     if (t == USB_IS_FLOPPY) {
-      nextor_lun_info info;
-      memset(&info, 0, sizeof(info));
 
-      print_string("UFI\r\n   MANUFACTURER NAME: ");
+      ufi_request_sense_response sense;
+      memset(&sense, 0, sizeof(sense));
 
-      usb_dev_info_ufi((device_config *const)storage_device, MANUFACTURER_NAME, (uint8_t *const)buffer);
+      ufi_format_capacities_response r;
+      memset(&r, 0, sizeof(r));
 
-      right_trim(buffer);
-      print_string(buffer);
-      print_string("\r\n   SECTOR_SIZE: ");
+      ufi_inquiry_response const inquiry;
+      memset(&inquiry, 0, sizeof(inquiry));
 
-      usb_lun_info_ufi((device_config *const)storage_device, 1, &info);
+      uint8_t counter = 5;
 
-      printf("%d\r\n   NUMBER_OF_SECTORS: %ld\r\n", info.sector_size, info.number_of_sectors);
+      result = wait_for_device_ready(storage_device, 5000);
+      printf("wait_for_device_ready: %d\r\n", result);
+
+      printf("--\r\n");
+
+      result = ufi_read_format_capacities(storage_device, &r);
+      printf("ufi_read_format_capacities: %d,", result);
+      log_ufi_format_capacities_response(&r);
+      delay(10);
+
+      result = ufi_request_sense(storage_device, &sense);
+      printf("ufi_request_sense: %d,", result);
+      log_ufi_request_sense_response(&sense);
+
+      result = ufi_inquiry(storage_device, &inquiry);
+      printf("ufi_inquiry: %d,", result);
+      log_usb_inquiry_response(&inquiry);
+      printf("--\r\n");
+
+      result = wait_for_device_ready(storage_device, 1000);
+      printf("wait_for_device_ready: %d\r\n", result);
+
+      result = ufi_read_write_sector(storage_device, false, 1, 1, buffer);
+      printf("ufi_read_write_sector: %d\r\n", result);
+
+      result = ufi_request_sense(storage_device, &sense);
+      printf("ufi_request_sense: %d,", result);
+      log_ufi_request_sense_response(&sense);
+
+      // const usb_error result = ufi_request_sense(dev, &response);
+
+      // nextor_lun_info info;
+      // memset(&info, 0, sizeof(info));
+
+      // print_string("UFI\r\n   MANUFACTURER NAME: ");
+
+      // usb_dev_info_ufi((device_config *const)storage_device, MANUFACTURER_NAME, (uint8_t *const)buffer);
+
+      // right_trim(buffer);
+      // print_string(buffer);
+      // print_string("\r\n   SECTOR_SIZE: ");
+
+      // usb_lun_info_ufi((device_config *const)storage_device, 1, &info);
+
+      // printf("%d\r\n   NUMBER_OF_SECTORS: %ld\r\n", info.sector_size, info.number_of_sectors);
     } else if (t == USB_IS_MASS_STORAGE) {
       print_string("SCSI\r\n  VENDOR NAME: ");
 

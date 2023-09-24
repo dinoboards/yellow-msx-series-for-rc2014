@@ -37,6 +37,12 @@ extern void logHubDescription(const hub_descriptor *const hub_descriptor);
 
 extern void logHubPortStatus(const hub_port_status *const port_status);
 
+extern void log_ufi_format_capacities_response(const ufi_format_capacities_response const *response);
+
+extern void log_ufi_request_sense_response(const ufi_request_sense_response *const response);
+
+extern void log_usb_inquiry_response(const ufi_inquiry_response *const inquiry);
+
 #else
 
 #define trace_printf(...)
@@ -47,9 +53,11 @@ extern void logHubPortStatus(const hub_port_status *const port_status);
 #define logWorkArea(...)
 #define logInquiryResponse(...)
 #define logSetupPacket(...)
-// #define logNextorLunInfo(...)
 #define logHubDescription(...)
 #define logHubPortStatus(...)
+#define log_ufi_format_capacities_response(...)
+#define log_ufi_request_sense_response(...)
+#define log_usb_inquiry_response(...)
 
 #endif
 
