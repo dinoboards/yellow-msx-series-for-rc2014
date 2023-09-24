@@ -1,14 +1,19 @@
 #include "usb-lun-info-ufi.h"
 #include <class_ufi.h>
 #include <stdlib.h>
+#include <string.h>
 
 uint8_t usb_lun_info_ufi(device_config *const dev, const uint8_t lun, nextor_lun_info *const info) {
   ufi_format_capacities_response response;
+  memset(&response, 0, sizeof(ufi_format_capacities_response));
 
   if (lun != 1)
     return 1;
 
-  const usb_error result = ufi_capacity(dev, &response);
+  if (wait_for_device_ready(dev, 2500) != 0)
+    return 1;
+
+  const usb_error result = ufi_read_format_capacities(dev, &response);
   if (result != USB_ERR_OK)
     return 1;
 

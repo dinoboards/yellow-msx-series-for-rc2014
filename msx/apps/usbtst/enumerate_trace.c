@@ -1,3 +1,4 @@
+#include "class_ufi.h"
 #include "nextor.h"
 #include "print.h"
 #include "usb_state.h"
@@ -118,5 +119,49 @@ void logHubDescription(const hub_descriptor *const hub_descriptor) {
 
 // void logHubPortStatus(const hub_port_status *const port_status) { printf("hub: wPortStatus=%04x,wPortChange=%04x\r\n",
 // port_status->wPortStatus.val, port_status->wPortChange.val); }
+
+void log_ufi_format_capacities_response(const ufi_format_capacities_response const *response) {
+  uint32_t       number_of_sectors;
+  const uint32_t sector_size = response->block_size[1] << 8 + response->block_size[0];
+
+  uint8_t *      no_sectors = ((uint8_t *)&number_of_sectors);
+  const uint8_t *no_blocks  = response->number_of_blocks + 3;
+
+  *no_sectors++ = *no_blocks--;
+  *no_sectors++ = *no_blocks--;
+  *no_sectors++ = *no_blocks--;
+  *no_sectors   = *no_blocks--;
+
+  printf("CODE %02X, LEN %d, SEC_SIZ: %ld, NUM_OF_SEC: %ld\r\n", response->descriptor_code, response->capacity_list_length,
+         sector_size, number_of_sectors);
+}
+
+void log_ufi_request_sense_response(const ufi_request_sense_response *const response) {
+
+  printf("Code: %02X, key: %02X, ASC: %02X, ASCQ: %02X\r\n", response->error_code, response->sense_key, response->asc,
+         response->ascq);
+}
+
+void log_usb_inquiry_response(const ufi_inquiry_response *const inquiry) {
+
+  printf("Device Type: %02X, Removable Media: %02X, Additional Length: %02X\r\n", inquiry->device_type, inquiry->removable_media,
+         inquiry->additional_length);
+
+  char vendor[9];
+  char product_id[17];
+  char product_revision[5];
+
+  memset(vendor, 0, 9);
+  memset(product_id, 0, 17);
+  memset(product_revision, 0, 5);
+
+  memcpy(vendor, inquiry->vendor_information, 8);
+  memcpy(product_id, inquiry->product_id, 8);
+  memcpy(product_revision, inquiry->product_revision, 4);
+
+  printf(" Vendor: %s\r\n", vendor);
+  printf(" Product ID: %s\r\n", product_id);
+  printf(" Product Revision: %s\r\n", product_revision);
+}
 
 #endif

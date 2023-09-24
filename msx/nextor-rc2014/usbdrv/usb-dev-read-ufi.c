@@ -11,6 +11,9 @@ uint8_t usb_dev_read_ufi(device_config *const dev,
   if (lun != 1)
     return NEXTOR_ERR_IDEVL;
 
+  if (wait_for_device_ready(dev, 50) != 0)
+    return NEXTOR_ERR_NRDY;
+
   if (ufi_read_write_sector(dev, false, sector_number, number_sectors_to_read, buffer) != USB_ERR_OK)
     return NEXTOR_ERR_DISK;
 

@@ -1,43 +1,35 @@
-#ifndef __CLASS_UFI
-#define __CLASS_UFI
+#ifndef __CLASS_UFI2
+#define __CLASS_UFI2
 
 #include "ch376.h"
 #include "protocol.h"
+#include "usb_cbi.h"
 #include "usb_state.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
 typedef struct {
-  uint8_t operation_code; /*0*/
-  union {                 /*1*/
-    uint8_t byte_1;
-    struct {
-      uint8_t rel_adr : 1;
-      uint8_t reserved1 : 2;
-      uint8_t fua : 1;
-      uint8_t dpo : 1;
-      uint8_t lun : 3;
-    };
-  };
-  uint8_t lba[4];             /*2, 3, 4, 5*/
-  uint8_t reserved2;          /*6*/
-  uint8_t transfer_length[2]; /*7, 8*/
-  uint8_t reserved3[3];       /*9, 10, 11*/
-} ufi_read_write;
+  uint8_t bASC;
+  uint8_t bASCQ;
+} ufi_interrupt_status;
 
 typedef struct {
   uint8_t operation_code;
-  uint8_t lun;
+  uint8_t reserverd1 : 5;
+  uint8_t lun : 3;
   uint8_t reserved1[5];
   uint8_t allocation_length[2];
   uint8_t reserved[3];
-} ufi_read_format_capacities;
+} ufi_read_format_capacities_command;
+
+typedef enum { UNFORMATTED_MEDIA = 1, FORMATTED_MEDIA = 2, NO_MEDIA = 3 } UFI_DESCRIPTOR_CODE;
 
 typedef struct {
-  uint8_t capacity_list_length[4];
+  uint8_t reserved1[3];
+  uint8_t capacity_list_length;
   uint8_t number_of_blocks[4];
-  uint8_t descriptor_code : 2;
-  uint8_t reserved : 6;
+  uint8_t descriptor_code : 2; // UFI_DESCRIPTOR_CODE
+  uint8_t reserved2 : 6;
   uint8_t block_size[3];
 } ufi_format_capacities_response;
 
@@ -45,19 +37,30 @@ typedef struct {
   uint8_t operation_code;
   uint8_t lun;
   uint8_t reserved[10];
-} ufi_request_test_unit_ready;
+} ufi_test_unit_ready_command;
 
-typedef struct _ufi_request_inquiry { // contains information about a specific device
+typedef struct {
   uint8_t operation_code;
-  uint8_t lun;
-  uint8_t reserved1;
-  uint8_t reserved2;
-  uint8_t allocation_length;
+  uint8_t evpd : 1;
+  uint8_t reserved1 : 4;
+  uint8_t lun : 3;
+  uint8_t page_code;
   uint8_t reserved3;
-  uint8_t pad[6];
-} ufi_request_inquiry;
+  uint8_t allocation_length;
+  uint8_t reserved4[7];
+} ufi_inquiry_command;
 
-typedef struct _ufi_response_inquiry {
+typedef struct {
+  uint8_t operation_code;
+  uint8_t reserverd1 : 5;
+  uint8_t lun : 3;
+  uint8_t reserved2;
+  uint8_t reserved3;
+  uint8_t allocation_length;
+  uint8_t reserved4[7];
+} ufi_request_sense_command;
+
+typedef struct {
   uint8_t error_code;
   uint8_t reserved1;
   uint8_t sense_key : 4;
@@ -68,10 +71,9 @@ typedef struct _ufi_response_inquiry {
   uint8_t asc;  // Additional Sense Code
   uint8_t ascq; // Additional Sense Code Qualifier
   uint8_t reserved4[4];
-} ufi_response_inquiry;
+} ufi_request_sense_response;
 
-typedef struct _ufi_inquiry_response {
-
+typedef struct {
   // device_type: identifies the device currently connected to the requested logical unit.
   // 00h Direct-access device (floppy)
   // 1Fh none (no FDD connected to the requested logical unit)
@@ -110,9 +112,31 @@ typedef struct _ufi_inquiry_response {
   char product_revision[4];
 } ufi_inquiry_response;
 
-extern usb_error ufi_inquiry(device_config *const storage_device, ufi_inquiry_response const *response);
+typedef struct {
+  uint8_t operation_code; /*0*/
+  union {                 /*1*/
+    uint8_t byte_1;
+    struct {
+      uint8_t rel_adr : 1;
+      uint8_t reserved1 : 2;
+      uint8_t fua : 1;
+      uint8_t dpo : 1;
+      uint8_t lun : 3;
+    };
+  };
+  uint8_t lba[4];             /*2, 3, 4, 5*/
+  uint8_t reserved2;          /*6*/
+  uint8_t transfer_length[2]; /*7, 8*/
+  uint8_t reserved3[3];       /*9, 10, 11*/
+} ufi_read_write_command;
 
-extern usb_error ufi_capacity(device_config *const storage_device, ufi_format_capacities_response const *response);
+extern usb_error ufi_request_sense(device_config *const storage_device, ufi_request_sense_response const *response);
+
+extern usb_error ufi_read_format_capacities(device_config *const storage_device, ufi_format_capacities_response const *response);
+
+extern usb_error ufi_test_unit_ready(device_config *const storage_device, ufi_request_sense_response const *response);
+
+extern usb_error ufi_inquiry(device_config *const storage_device, ufi_inquiry_response const *response);
 
 extern usb_error ufi_read_write_sector(device_config *const storage_device,
                                        const bool           send,
@@ -120,6 +144,6 @@ extern usb_error ufi_read_write_sector(device_config *const storage_device,
                                        const uint8_t        sector_count,
                                        const uint8_t *const buffer);
 
-extern uint8_t ufi_test_disk(device_config *const storage_device);
+uint8_t wait_for_device_ready(device_config *const storage_device, const uint16_t timeout_period);
 
 #endif

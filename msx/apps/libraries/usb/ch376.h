@@ -70,6 +70,13 @@ extern int printf(const char *msg, ...);
     return result;                                                                                                                 \
   }
 
+#define TRACE_USB_ERROR(result, ...)                                                                                               \
+  {                                                                                                                                \
+    if (result != USB_ERR_OK) {                                                                                                    \
+      printf("USB: %s:%d %d\r\n", __FILE__, __LINE__, result);                                                                     \
+    }                                                                                                                              \
+  }
+
 #else
 
 #define CHECK(fn)                                                                                                                  \
@@ -84,6 +91,8 @@ extern int printf(const char *msg, ...);
     result = fn;                                                                                                                   \
     return result;                                                                                                                 \
   }
+
+#define TRACE_USB_ERROR(result, ...)
 
 #endif
 

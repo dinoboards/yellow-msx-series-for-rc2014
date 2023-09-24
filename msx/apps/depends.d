@@ -44,13 +44,15 @@
  usbtst/nextor.h libraries/usb/protocol.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
  libraries/usb/transfers.h libraries/usb/class_ufi.h \
- libraries/usb/protocol.h libraries/usb/usb_state.h usbtst/usb-dev-info.h \
- libraries/usb/usb_state.h
-./bin/usbtst/enumerate_trace.c.asm: usbtst/enumerate_trace.c usbtst/nextor.h \
- usbtst/print.h libraries/usb/usb_state.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h libraries/usb/protocol.h \
+ libraries/usb/protocol.h libraries/usb/usb_cbi.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
+ usbtst/usb-dev-info.h libraries/usb/usb_state.h
+./bin/usbtst/enumerate_trace.c.asm: usbtst/enumerate_trace.c libraries/usb/class_ufi.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- libraries/usb/enumerate_trace.h
+ libraries/usb/usb_cbi.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h usbtst/nextor.h \
+ usbtst/print.h libraries/usb/usb_state.h libraries/usb/enumerate_trace.h
 ./bin/usbtst/work-area.c.asm: usbtst/work-area.c libraries/usb/usb_state.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h
@@ -58,7 +60,8 @@
  usbtst/nextor.h libraries/usb/protocol.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
  libraries/usb/transfers.h libraries/usb/class_ufi.h \
- libraries/usb/protocol.h libraries/usb/usb_state.h
+ libraries/usb/protocol.h libraries/usb/usb_cbi.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h
 ./bin/usbtst/main.c.asm: usbtst/main.c usbtst/main.h libraries/usb/enumerate_trace.h \
  usbtst/print.h usbtst/printer_drv.h libraries/usb/usb_state.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
@@ -66,7 +69,10 @@
  usbtst/usb-dev-info-ufi.h usbtst/nextor.h libraries/usb/protocol.h \
  usbtst/usb-lun-info-ufi.h libraries/usb/ch376.h \
  libraries/usb/class_printer.h libraries/usb/class_scsi.h \
- libraries/usb/enumerate.h libraries/usb/usb_state.h
+ libraries/usb/enumerate.h libraries/usb/usb_state.h \
+ libraries/usb/class_ufi.h libraries/usb/usb_cbi.h \
+ libraries/usb/dev_transfers.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h
 ./bin/fdisk/fdisk.c.asm: fdisk/fdisk.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
  fdisk/fdisk2.h datatypes.h fdisk/partition.h \
  libraries/msxbios/system_vars.h
@@ -108,6 +114,11 @@
  libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/enumerate_trace.h
+./bin/libraries/usb/usb_cbi.c.asm: libraries/usb/usb_cbi.c libraries/usb/usb_cbi.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/dev_transfers.h libraries/usb/ch376.h \
+ libraries/usb/transfers.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h
 ./bin/libraries/usb/enumerate.c.asm: libraries/usb/enumerate.c libraries/usb/enumerate.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
@@ -134,8 +145,10 @@
 ./bin/libraries/usb/class_ufi.c.asm: libraries/usb/class_ufi.c libraries/usb/class_ufi.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- libraries/usb/usb_state.h libraries/delay/delay.h \
- libraries/msxbios/system_vars.h libraries/usb/enumerate_trace.h
+ libraries/usb/usb_cbi.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/usb/enumerate_trace.h
 ./bin/libraries/usb/ch376.c.asm: libraries/usb/ch376.c libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
