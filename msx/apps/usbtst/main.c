@@ -16,13 +16,13 @@ void chput(const char c) __z88dk_fastcall { printf("%c", c); }
 
 usb_error usb_host_bus_reset() {
   ch_cmd_set_usb_mode(CH_MODE_HOST);
-  delay_medium();
+  delay_short();
 
   ch_cmd_set_usb_mode(CH_MODE_HOST_RESET);
-  delay_medium();
+  delay_short();
 
   ch_cmd_set_usb_mode(CH_MODE_HOST);
-  delay_medium();
+  delay_short();
 
   ch_configure_nak_retry_3s();
 

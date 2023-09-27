@@ -118,19 +118,26 @@ uint8_t ch_read_data(uint8_t *buffer, uint16_t buffer_size) {
 void ch_cmd_reset_all() { ch_command(CH_CMD_RESET_ALL); }
 
 inline uint8_t ch_cmd_check_exist() {
+  uint8_t complement;
+  ch_command(CH_CMD_CHECK_EXIST);
+  CH376_DATA_PORT = (uint8_t)~0x55;
+  complement = CH376_DATA_PORT;
+  if (complement != 0x55)
+    return false;
+
   ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x89;
-  delay_short();
-  return CH376_DATA_PORT == 0x89;
+  complement = CH376_DATA_PORT;
+  return complement == 0x89;
 }
 
 uint8_t ch_probe() {
-  uint8_t i = 14;
+  uint8_t i = 5;
   do {
     if (ch_cmd_check_exist())
       return true;
 
-    delay_short();
+    delay_medium();
   } while (--i != 0);
 
   return false;
