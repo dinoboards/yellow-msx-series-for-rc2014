@@ -63,12 +63,6 @@ A video of the board in operation: https://www.youtube.com/watch?v=Sx03ejKu43Y
 * Onboard ROM, with MSX-MUSIC basic extensions and bios implemented
 * Full SST39SF040 ROM (re)flashing with MSX-DOS flash utility
 
-### Key difference with previous revision of this board
-
-* Improved noise filtering.  A low pass filter added to the power supply to the YM2413 and audio circuit to reduce some of the digital and EMF interference that be heard when no sound was playing.
-* Pads for some components are slightly bigger to aid in soldering
-* Small change to the roll off frequency of the audio output to produce a slightly warmer sound - (closer to the original spec).
-
 ### What is the 'Yellow MSX Series of Boards'?
 
 These are a series of boards that I am developing to achieve MSX compatibility for RC2014 systems.
@@ -89,17 +83,15 @@ The SST39SF040 ROM is supplied flashed with MSX-MUSIC extensions for MSX BASIC.
 
 |Count   | Name  |
 |:------:|-------|
+|  1     | PCB |
 |  1     | 3.5mm audio socket|
-|  2     | 1uF Electrolytic Capacitors|
-|  2     | 2.2uF  Electrolytic Capacitors|
-|  2     | 220uF  Electrolytic Capacitors LOW ESR|
-|  2     | 1000uF  Electrolytic Capacitors LOW ESR|
-|  8     | 0.1uF Ceramic Capacitors|
-|  2     | 33pF Ceramic Capacitors|
-|  2     | 10-22nF Ceramic Capacitors (C9, C10)*|
-|  1     | 1nF Ceramic Capacitor|
+|  2     |1uF Electrolytic Capacitors|
+|  7     |0.1uF Ceramic Capacitors|
+|  2     |33pF Ceramic Capacitors|
+|  2     |22pF Ceramic Capacitors|
+|  1     |1nF Ceramic Capacitor|
+|  1     |4.7  Electrolytic Capacitors|
 |  1     | 1x2 Right Angle Header |
-|  1     | 560 uH Inductor |
 |  1     | 1K Ω Resistor |
 |  1     | 100K Ω Resistor |
 |  4     | 2K2 Ω Resistor |
@@ -111,7 +103,7 @@ The SST39SF040 ROM is supplied flashed with MSX-MUSIC extensions for MSX BASIC.
 |  1     | 74HCT32 |
 |  1     | 74HCT21 |
 |  1     | SST39SF040 512K NOR Flash ROM |
-|  1     | TL071IP op-amp |
+|  1     | TL071IP opamp |
 |  1     | TC7660 charge pump |
 |  1     | 3.579545MHz crystal |
 |  1     | 32 POS IC SOCKET |
@@ -121,15 +113,14 @@ The SST39SF040 ROM is supplied flashed with MSX-MUSIC extensions for MSX BASIC.
 |  2     | 14 POS IC SOCKET |
 |  2     | 8 POS IC SOCKET |
 
-\* (C9, C10 - 10nF to 22nF) The selection of value for these 2 capacitors will adjust the roll off frequency of the audio output.  A higher value will increase the frequency roll off slightly.
 
 ### What else do I need to make this work?
 
-* Although it should be possible to operate this module on a stock RC2014 - I am unaware of any software that will drive it, so its recommended you have a fully operational Yellow MSX system on your RC2014 system (memory, video, etc)**
+* Although it should be possible to operate this module on a stock RC2014 - I am unaware of any software that will drive it, so its recommended you have a fully operational Yellow MSX system on your RC2014 system (memory, video, etc)*
 
 * The onboard MSX-MUSIC basic extensions, requires your main Memory board has MSX-BASIC installed.  The MSX-MUSIC programming feature can be used to create a new main ROM.
 
-\** The onboard ROM can only be accessed when running your RC2014 in full MSX configuration.
+\* The onboard ROM can only be accessed when running your RC2014 in full MSX configuration.
 
 ### Port Mapping
 
@@ -251,33 +242,37 @@ The noise from nearby digital circuits of your RC2014 will be picked up and ampl
 
 Assembled
 ---------
-<img src="images/MSX-MUSIC-PROFILE.jpg" alt="Assembled Profiled" width="80%"/>
+<img src="images/assembled-profile.jpg" alt="Assembled Profiled" width="100%"/>
 
-<img src="images/MSX-MUSIC-ASSEMBLED.jpg" alt="Assembled Top" width="80%"/>
+<img src="images/assembled-top.jpg" alt="Assembled Top" width="100%"/>
 
 Basic kit
 ---------
-<img src="images/MSX-MUSIC-KIT.jpg" alt="Basic Kit components" width="80%"/>
+<img src="images/kit.jpg" alt="Basic Kit components" width="100%"/>
+
+Installed
+---------
+<img src="images/installed.jpg" alt="Installed" width="100%"/>
 
 PCB Front
 ---------
-<img src="images/MSX-MUSIC-FRONT.jpg" alt="PCB Front" width="80%"/>
+<img src="images/pcb-front.jpg" alt="PCB Front" width="100%"/>
 
 PCB Back
 ---------
-<img src="images/MSX-MUSIC-BACK.jpg" alt="PCB Back" width="80%"/>
+<img src="images/pcb-back.jpg" alt="PCB Back" width="100%"/>
 
 ## Resources
 
-* Schematic: [schematic (v1.7).pdf](./schematic-v1.7.pdf "Schematic V1.7")
+* Schematic: [schematic.pdf](./schematic.pdf "Schematic")
 * Datasheet: [YM2413-Yamaha.pdf](./YM2413-Yamaha.pdf "YM2413-Yamaha Datasheet")
-
 
 ## References
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-### Other References
+Kits available at: https://www.tindie.com/products/dinotron/ym2413-msx-music-module-designed-for-rc2014/
+
 * https://arduinoplusplus.wordpress.com/2020/02/22/making-music-with-a-yamaha-ym2413-synthesizer-part-2/
 * https://arduinoplusplus.wordpress.com/2020/03/07/making-music-with-a-yamaha-ym2413-synthesizer-part-3/
 * https://raw.githubusercontent.com/RBSC/F4-FMPAC/master/Doc/schematics.png
