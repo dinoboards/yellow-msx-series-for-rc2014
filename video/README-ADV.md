@@ -3,7 +3,10 @@
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-<a href="https://www.tindie.com/products/dinotron/v9958-msx-video-advanced-module-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+> This kit has been retired, and the [RGB version](./README-RGB.md) is the recommended module now.
+
+<a href="https://www.tindie.com/products/dinotron/v9958-msx-rgb-video-module-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+
 
 ### Description
 

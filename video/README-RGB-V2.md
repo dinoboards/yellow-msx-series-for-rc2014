@@ -7,49 +7,31 @@ Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project
 
 ### Description
 
-A complete kit to give your RC2014 the advanced graphic capabilities of the mid to late 80s. It based around the V9938 or V9958 Video Display Processor (VDP) which powered the MSX2/MSX2+ line of 8 bit Z80 computers.
+A complete kit to give your RC2014 the advanced graphic capabilities of the mid to late 80s. It's based on the V9958 Video Display Processor (VDP) which powered
+the MSX2+ line of 8 bit Z80 computers.
 
-The board can be configured to operate the V9938 or the V9958 processors.
-
-This V9958 chip, was produced by Yamaha in the late 80s and was an update to the the V9938 chip, which was itself, a successor to TI's TMS9918.  The V9938/V9958 addressed many of the shortcomings of the original TMS9918.
-
-The V9938 and V9958 are very similar in capability.  See the relevant datasheets below to get some details of the differences.
+This V9958 chip, was produced by Yamaha in the late 80s and was an update to the their V9938 chip, which was itself, a successor to TI's TMS9918.  The V9938/V9958 addressed many of the shortcomings of the original TMS9918.
 
 ### Key features of this module
 
 * Compatible with RC2014 (enhanced bus required)
 * 128K of RAM
 * RGBs via 15-pin DSUB/VGA connector
-* Support for either the V9938 or V9958 Video Display Processor
-
-### Key difference with previous revision of this board
-
-* Support for either a V9958 or a V9938 Video Processor
-* Pads for some components are slightly bigger to aid in soldering
-* Re-arrangements of some components to reduced output noise from nearby digital signals
-
-## Assembly Images
+* Easy prototyping to various V9958 pins such as the colour bus, clock and other syncing signals.
 
 <table>
   <tr>
-    <td width="50%"><a href="pictures/RGB-PCB-FRONT.jpg"><img src="./pictures/RGB-PCB-FRONT.jpg" width="90%"/></a></td>
-    <td width="50%"><a href="pictures/RGB-PCB-BACK.jpg"><img src="./pictures/RGB-PCB-BACK.jpg" width="90%"/></a></td>
+    <td><a href="pictures/rgb-pcb-front-v2.2.4.jpg"><img src="./pictures/rgb-pcb-front-v2.2.4.jpg" width="100%"/></a></td>
+    <td><a href="pictures/rgb-pcb-rear-v2.2.4.jpg"><img src="./pictures/rgb-pcb-rear-v2.2.4.jpg" width="88%"/></a></td>
   </tr>
   <tr>
-    <td width="50%"><a href="pictures/RGB-V9938-ASSEMBLED.jpg"><img src="./pictures/RGB-V9938-ASSEMBLED.jpg" width="90%"/></a></td>
-    <td width="50%"><a href="pictures/RGB-V9938-PROFILE.jpg"><img src="./pictures/RGB-V9938-PROFILE.jpg" width="90%"/></a></td>
+    <td><a href="pictures/video-rgb-v2.2.4.jpg"><img src="./pictures/video-rgb-v2.2.4.jpg" width="100%"/></a>V2.2.4</td>
+    <td><a href="pictures/video-rgb-profile.jpg"><img src="./pictures/video-rgb-profile.jpg" width="100%"/></a></td>
   </tr>
   <tr>
-    <td width="50%"><a href="pictures/RGB-V9958-ASSEMBLED.jpg"><img src="./pictures/RGB-V9958-ASSEMBLED.jpg" width="90%"/></a></td>
-    <td width="50%"><a href="pictures/RGB-V9958-PROFILE.jpg"><img src="./pictures/RGB-V9958-PROFILE.jpg" width="90%"/></a></td>
+    <td><a href="pictures/rgb-top-with-low-esr.jpg"><img src="./pictures/rgb-top-with-low-esr.jpg" width="100%"/></a></td>
+    <td><a href="pictures/rgb-profile-with-low-esr.jpg"><img src="./pictures/rgb-profile-with-low-esr.jpg" width="100%"/></a></td>
   </tr>
-
-  <tr>
-    <td width="50%"><a href="pictures/RGB-BASE-KIT.jpg"><img src="./pictures/RGB-BASE-KIT.jpg" width="90%"/></a></td>
-    <td  style="text-align:center;" width="50%"><a href="pictures/v9938.jpg"><img src="./pictures/v9938.jpg" width="43%"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
-      <a href="pictures/v9958.jpg"><img src="./pictures/v9958.jpg" width="42%"/></a></td>
-  </tr>
-
 </table>
 
 ### DSUB pin out
@@ -64,49 +46,54 @@ The V9938 and V9958 are very similar in capability.  See the relevant datasheets
   <tr><td>4</td><td>NC     </td></tr>
   <tr><td>5-8, 10-11</td><td>GND     </td></tr>
   <tr><td>9, 12</td><td>NC   </td></tr>
-  <tr><td>13</td><td>CSync  </td></tr>
+  <tr><td>13</td><td>Sync**  </td></tr>
   <tr><td>14,15</td><td>NC    </td></tr>
 
 </table>
+
+\* The sync provided is as per the selection of J5.
+
+To select TTL level for sync - apply a jumper to J5's top two pins
+
+To select standard 1vpp sync signal - apply the jumper to J5 bottom two pins.
+
+> **Please note that using a TTL level sync signal to device not designed for this level of voltage, may damage the monitor/converter's components.**
 
 ### Bill of Materials
 
 |Count   | Name  |
 |:------:|-------|
-| 2	     | 22pF |
-| 1	     | 47pF |
-| 8	     | 0.1uF |
-| 3      | 10uF   |
-| 1	     | 10uF (LOW ESR) |
-| 4	     | 220uF |
-| 3      | HEADERS 1x3 |
-| 3      | SHUNT 1x2 |
-| 1      | 5.6uH Inductor   |
-| 1      | 1N4148 Diode |
-| 1      | 15-PIN DSUB  |
-| 3	     | 2N3906 |
-| 1	     | 2N3904 |
-| 6	     | 10K Ω |
-| 3	     | 12K Ω |
-| 3	     | 27k Ω |
-| 1	     | 4k7 Ω |
-| 5	     | 1K Ω |
-| 1	     | 470 Ω |
-| 8	     | 100 Ω |
-| 1	     | ATF16V8 |
-| 1      | V9958 or V9938   |
-| 4      | 41464C  |
-| 1	     | 21.47727MHz |
-| 1	     | Right Angle 20x2 Header |
-| 1	     | Right Angle 1x20 Header |
-| 1	     | 20 POS IC SOCKET |
-| 4	     | 18 POS IC SOCKET |
-| 1	     | 64 POS IC SOCKET |
+| 1      |  47pF  |
+| 8     |   0.1uF |
+| 5      |  10uF   |
+| 4      |  220uF   |
+| 2      |  22pF  |
+| 1      | HDR 1x3 |
+| 1      | SHUNT 1x2 |
+| 1      |  5.6uH   |
+| 1      |  15-PIN DSUB  |
+| 3      |  2N3906  |
+| 1      |  2N3904  |
+| 3      |  10K  |
+| 3      |  12K  |
+| 3      |  27K  |
+| 4      |  1K   |
+| 1      |  470  |
+| 8      |  100   |
+| 1      |  V9958   |
+| 1      |  ATF16V8  |
+| 4      |  41464C  |
+| 1      |  21.47727MHz  |
+| 1      | Right Angle 20x2 Header |
+| 1      | Right Angle header 1x20 |
+| 4      |  18 POS IC SOCKET    |
+| 1      |  20 POS IC SOCKET    |
+| 1      |  64 POS IC SOCKET    |
 
 
 ### Output connections
 
-You will want to think about how you plan to connect this board to your chosen monitor.  The video signals produced by 80's hardware is not trivial to connect to modern LCD monitors.  For such monitors you will need a converter to upscale the output.  Although VGA Monitors can accept a RGB signal, they are unlikely to support the lower frequency of 15Khz produced by these modules.
+You will want to think about how you plan to connect this board to your chosen monitor.  The video signals produced by 80's hardware is not trivial to connect to modern HDMI LCD monitors.  For such monitors you will need a converter to upscale the output.  Although VGA Monitors can accept a RGB signal, they are unlikely to support the lower frequency of 15Khz produced by these modules.
 
 The RGBs module provides connection via the 15-pin DSUB/VGA connector.  This output is well suited to connect via a VGA cable to a compatible HDMI/VGA up-converter that accepts a RGBs signal over the 15pin connection, such as the OSSC, GBS8200 or HD-VC9900 converters.  For more information on the DSUB RGB/VGA see [RetroRGB's VGA article](https://www.retrorgb.com/vgaconnector.html)
 
@@ -153,7 +140,7 @@ For specific details on programming the chip, I recommend:
 
 ## Resources
 
-* Schematic (revision 3.3): [schematic-video-rgb-v3.3.pdf](./schematic-video-rgb-v3.3.pdf "Schematic (revision 3.3")
+* Schematic (revision 2.2): [schematic-video-rgb-v2.2.pdf](./schematic-video-rgb-v2.2.pdf "Schematic (revision 2.2")
 
 
 ## Construction notes
@@ -162,10 +149,22 @@ Please note that due to the finer pitch pins of the V9958, the soldering of this
 
 Extra care needed when inserting the V9958 into its socket - there are lots of pins, take your time to avoid bending pins.
 
-> **Extremely important to ensure the jumpers are in the correction position for your chosen Video Display Processor.  Incorrect selection may result in damage to your video processor.  See the silkscreen for the 3 relevant jumpers.  Short the top 2 pins only for a V9958.  Short the bottom 2 pins only for a V9938.**
+The pads for the transistor footprints are very close together - take extra care not to bridge the pins.  Its recommend you solder the inner pins first.  After soldering each transistor, double check with a multimeter that there are no unexpected shorts.
+
+### Revisions
+
+* V2.2.3 - First revision sold on Tindie
+* V2.2.4 - Minor changes to layout to allow for larger capacitors to be installed
+
+### Errata for V2.2.3
+
+The Diodes D1 and D2 are not required.  Solder a wire where the silkscreen has the diodes layed out (bottom right of pcb).
+
+<img src="./pictures/video-RGB-assembled.jpg" width="50%"/>
+
 
 ## License
-Copyright 2023 Dean Netherton
+Copyright 2021 Dean Netherton
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
