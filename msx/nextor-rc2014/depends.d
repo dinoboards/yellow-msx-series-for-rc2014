@@ -141,7 +141,7 @@
  ../apps/libraries/usb/ch376inc.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/transfers.h ../apps/libraries/usb/usb_state.h \
- ../apps/libraries/usb/protocol.h usbdrv/usb-lun-info.h \
+ ../apps/libraries/usb/protocol.h usbdrv/usb-dev.h usbdrv/usb-lun-info.h \
  ../apps/libraries/usb/class_scsi.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h \
  ../apps/libraries/usb/enumerate.h ../apps/libraries/usb/usb_state.h \
