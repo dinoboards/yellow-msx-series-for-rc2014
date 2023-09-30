@@ -305,9 +305,25 @@ DRV_NO_MUSIC:
 
 	RET	Z					; NO USB STORAGE FOUND
 
-	LD	A, (IX+ST_WRKAREA.PRESENT)
-	OR	PRES_USB
-	LD	(IX+ST_WRKAREA.PRESENT), A		; SET BIT FLAG TO INDICATE USB IS PRESENT
+	CALL	_get_number_of_usb_drives		; L -> number of USB devices
+
+	LD	A, L
+	OR	A
+	RET	Z					; NO USB STORAGE DEVICES FOUND
+
+	LD	B, A
+	XOR	A
+USB_X_PRES:
+	SCF
+	RLA
+	DJNZ	USB_X_PRES
+
+	RLCA
+	RLCA
+
+	LD	B, (IX+ST_WRKAREA.PRESENT)
+	OR	B
+	LD	(IX+ST_WRKAREA.PRESENT), A		; SET BIT FLAG TO INDICATE USBs ARE PRESENT
 
 	RET
 
@@ -609,7 +625,16 @@ DRV_DIRECT4:
 DRV_CONFIG:
 	CP	1
 	JR	Z, DRV_CONFIG_COUNT
+	CP	2
+	JR	Z, DRV_CONFIG_DEFAULT
 	LD	A, 1
+	RET
+
+DRV_CONFIG_DEFAULT:
+	INC	C
+	LD	B, C
+	LD	C, 1
+	XOR	A
 	RET
 
 DRV_CONFIG_COUNT:
@@ -620,20 +645,28 @@ DRV_CONFIG_COUNT:
 	INC	B
 
 DRV_CFG_NO_CF:
-	BIT	BIT_PRES_MS, A
-	JR	Z, DRV_CFG_NO_MS
-	INC	B
+	; BIT	BIT_PRES_MS, A
+	; JR	Z, DRV_CFG_NO_MS
+	; INC	B
 
 DRV_CFG_NO_MS:
-	BIT	BIT_PRES_USB, A
-	JR	Z, DRV_CFG_NO_USB
+	BIT	BIT_PRES_USB1, A
+	JR	Z, DRV_NO_MORE
+	INC	B
 
-	CALL	_get_number_of_usb_drives
-	LD	A, L
-	ADD	B
-	LD	B, A
+	BIT	BIT_PRES_USB2, A
+	JR	Z, DRV_NO_MORE
+	INC	B
 
-DRV_CFG_NO_USB:
+	BIT	BIT_PRES_USB3, A
+	JR	Z, DRV_NO_MORE
+	INC	B
+
+	BIT	BIT_PRES_USB4, A
+	JR	Z, DRV_NO_MORE
+	INC	B
+
+DRV_NO_MORE:
 	XOR	A
 	RET
 
@@ -751,7 +784,7 @@ DEV_INFO:
 	CP	DEV_MAP_USB1
 	JR	C, DEV_INFO_NO_DEV		; jump to err if < usb1
 	CP	DEV_MAP_USB4+1
-	JP	C, DEV_INFO_USB		; jump to usb if <= usb4
+	JP	C, DEV_INFO_USB			; jump to usb if <= usb4
 
 DEV_INFO_NO_DEV:
 	LD	A, 1
@@ -1081,105 +1114,17 @@ LUN_INFO_ROM_INVALID:
 ;	    = 4 -> USB-STORAGE
 ;	    = 0 -> no drive present
 
-; | ROM | CF  | MUSIC | USB | INDX 1  | INDX 2  | INDX 3  | INDX 4  | INDX 5 | INDX 6 | INDX 7 |
-; | T   | F   | F     | F   | ROM     | NONE    | NONE    | NONE    | NONE   | NONE   | NONE   | 000
-; | T   | T   | F     | F   | CF      | ROM     | NONE    | NONE    | NONE   | NONE   | NONE   | 001
-; | T   | F   | T     | F   | MUSIC   | ROM     | NONE    | NONE    | NONE   | NONE   | NONE   | 010
-; | T   | T   | T     | F   | CF      | MUSIC   | ROM     | NONE    | NONE   | NONE   | NONE   | 011
-; | T   | F   | F     | T   | USB1    | ROM     | USB2    | USB3    | USB4   | NONE   | NONE   | 100
-; | T   | T   | F     | T   | CF      | USB     | ROM     | USB2    | USB3   | USB4   | NONE   | 101
-; | T   | F   | T     | T   | USB1    | MUSIC   | ROM     | USB2    | USB3   | USB4   | NONE   | 110
-; | T   | T   | T     | T   | CF      | USB1    | MUSIC   | ROM     | USB2   | USB3   | USB4   | 111
-
-;
 DEVICE_MAPPING:
 	PUSH	HL
 	PUSH	BC
-	LD	HL, TBL_IDX1
-	SUB	1			; sub 1 from a and multiple by 8
-	RLCA
-	RLCA
-	RLCA
-	LD	C, A
-	LD	B, 0
-	ADD	HL, BC			; CALC OFFSET TO CORRECT TABLE
-	CALL	DRV_GET_PRESENT
-	LD	C, A
-	ADD	HL, BC
-	LD	A, (HL)
+	PUSH	DE
+	LD	L, A
+	CALL	_device_mapping
+	LD	A, L
+	POP	DE
 	POP	BC
 	POP	HL
 	RET
-
-TBL_IDX1:
-	DB	DEV_MAP_ROM
-	DB	DEV_MAP_CF
-	DB	DEV_MAP_MS
-	DB	DEV_MAP_CF
-	DB	DEV_MAP_USB1
-	DB	DEV_MAP_CF
-	DB	DEV_MAP_USB1
-	DB	DEV_MAP_CF
-
-TBL_IDX2:
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_ROM
-	DB	DEV_MAP_ROM
-	DB	DEV_MAP_MS
-	DB	DEV_MAP_ROM
-	DB	DEV_MAP_USB1
-	DB	DEV_MAP_MS
-	DB	DEV_MAP_USB1
-
-TBL_IDX3:
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_ROM
-	DB	DEV_MAP_USB2
-	DB	DEV_MAP_ROM
-	DB	DEV_MAP_ROM
-	DB	DEV_MAP_MS
-
-TBL_IDX4:
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_USB3
-	DB	DEV_MAP_USB2
-	DB	DEV_MAP_USB2
-	DB	DEV_MAP_ROM
-
-TBL_IDX5:
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_USB3
-	DB	DEV_MAP_USB3
-	DB	DEV_MAP_USB3
-	DB	DEV_MAP_USB2
-
-TBL_IDX6:
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_USB4
-	DB	DEV_MAP_USB4
-	DB	DEV_MAP_USB3
-
-TBL_IDX7:
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_NONE
-	DB	DEV_MAP_USB4
 
 ;-----------------------------------------------------------------------------
 ;
@@ -1276,7 +1221,8 @@ MY_STWORK:
 
 
 ;-----------------------------------------------------------------------------
-; SET NZ IF CF IS PRESENT???????
+; GET PRESENT FLAG
+; output A is ST_WRKAREA.PRESENT bitmask
 
 DRV_GET_PRESENT:
 	PUSH	BC

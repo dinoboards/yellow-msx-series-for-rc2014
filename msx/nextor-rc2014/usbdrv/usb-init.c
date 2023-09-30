@@ -1,6 +1,7 @@
 #include "nextor.h"
 #include "print.h"
 #include "printer_drv.h"
+#include "usb-dev.h"
 #include "usb-lun-info.h"
 #include "work-area.h"
 #include <ch376.h>
@@ -72,10 +73,9 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   const bool hasCdc     = work_area->cdc_config.address != 0;
   const bool hasPrinter = work_area->printer_config.address != 0;
 
-  uint8_t              storage_count  = 0;
-  uint8_t              device_index   = 1;
-  uint8_t              index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  const device_config *storage_device = &work_area->storage_device[0];
+  uint8_t storage_count = 0;
+  uint8_t index         = 1; // MAX_NUMBER_OF_STORAGE_DEVICES;
+  // const device_config *storage_device = &work_area->storage_device[0];
 
   if (hasUsbHub)
     print_string("USB HUB:\r\n");
@@ -89,21 +89,20 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
     print_string("    PRINTER\r\n");
 
   do {
-    const usb_device_type t = storage_device->type;
+    const device_config *const storage_device = get_usb_driver(index);
+    const usb_device_type      t              = storage_device->type;
     if (t == USB_IS_FLOPPY) {
       print_string("    FLOPPY  (");
-      print_disk_size(device_index);
+      print_disk_size(index);
       storage_count++;
 
     } else if (t == USB_IS_MASS_STORAGE) {
       print_string("    STORAGE (");
-      print_disk_size(device_index);
+      print_disk_size(index);
       storage_count++;
     }
 
-    storage_device++;
-    device_index++;
-  } while (--index != 0);
+  } while (++index != MAX_NUMBER_OF_STORAGE_DEVICES);
 
   if (!hasUsbHub && !hasCdc && !hasPrinter && storage_count == 0) {
     print_string("\r\n");

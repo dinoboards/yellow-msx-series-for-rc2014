@@ -121,13 +121,13 @@ inline uint8_t ch_cmd_check_exist() {
   uint8_t complement;
   ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x55;
-  complement = CH376_DATA_PORT;
+  complement      = CH376_DATA_PORT;
   if (complement != 0x55)
     return false;
 
   ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x89;
-  complement = CH376_DATA_PORT;
+  complement      = CH376_DATA_PORT;
   return complement == 0x89;
 }
 

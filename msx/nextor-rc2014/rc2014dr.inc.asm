@@ -27,3 +27,4 @@ _usb_dev_write:			EQU		DRIVER_ASM_END+15
 _fn_enum:			EQU		DRIVER_ASM_END+18
 _get_number_of_usb_drives:	EQU		DRIVER_ASM_END+21
 _drv_direct4:			EQU		DRIVER_ASM_END+24
+_device_mapping:		EQU		DRIVER_ASM_END+27
