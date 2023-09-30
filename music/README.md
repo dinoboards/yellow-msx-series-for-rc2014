@@ -8,6 +8,8 @@
 
 YM2413 MSX-Music Module Designed for RC2014
 
+<img src="images/MSX-MUSIC-PROFILE.jpg" alt="Assembled Profiled" width="80%"/>
+
 ## Brief Description
 
 Give your RC2014 MSX build MSX-Music OPLL Sounds
@@ -247,25 +249,19 @@ The noise from nearby digital circuits of your RC2014 will be picked up and ampl
 
 
 
-## Assembly Images
+## Images
 
-Assembled
----------
-<img src="images/MSX-MUSIC-PROFILE.jpg" alt="Assembled Profiled" width="80%"/>
+<table>
+  <tr>
+    <td width="50%"><a href="images/MSX-MUSIC-ASSEMBLED.jpg"><img src="images/MSX-MUSIC-ASSEMBLED.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="images/MSX-MUSIC-INSTALLED.jpg"><img src="./images/MSX-MUSIC-INSTALLED.jpg" width="90%"/></a></td>
+  </tr>
+  <tr>
+    <td width="50%"><a href="images/MSX-MUSIC-FRONT.jpg"><img src="images/MSX-MUSIC-FRONT.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="images/MSX-MUSIC-BACK.jpg"><img src="images/MSX-MUSIC-BACK.jpg" width="90%"/></a></td>
+  </tr>
+</table>
 
-<img src="images/MSX-MUSIC-ASSEMBLED.jpg" alt="Assembled Top" width="80%"/>
-
-Basic kit
----------
-<img src="images/MSX-MUSIC-KIT.jpg" alt="Basic Kit components" width="80%"/>
-
-PCB Front
----------
-<img src="images/MSX-MUSIC-FRONT.jpg" alt="PCB Front" width="80%"/>
-
-PCB Back
----------
-<img src="images/MSX-MUSIC-BACK.jpg" alt="PCB Back" width="80%"/>
 
 ## Resources
 

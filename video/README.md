@@ -3,7 +3,24 @@
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-There are two variations to this module. The *Video Advanced Module*, that has support for RGB, Composite and S-Video outputs.  And the *RGBs DSUB/VGA Module* that outputs RGBs via a standard 15-pin DSUB/VGA connector.
+There have been a few variations of the Video Module.
+
+## V99x8 MSX RGB Module for RC2014 (V3.3)
+
+This kit supports a RGBs output via a standard 15-pin DSUB/VGA connector. A standard VGA cable can be used to plug directly into a compatible device (converter or native 15kHz supported monitor).
+
+It can accommodate a V9938 or the slightly more advanced chip the V9958.
+
+* Kits available at: https://www.tindie.com/products/dinotron/v99x8-msx-rgb-video-module-for-rc2014/
+
+<table>
+  <tr><td style="text-align: center"><img src="./pictures/RGB-V9938-PROFILE.jpg" width="60%"/></td></tr>
+</table>
+
+[Click here for full Details](./README-RGB.md)
+
+
+# Retired Modules
 
 ## V9958 MSX RGB Module for RC2014 (V2.2)
 
@@ -17,7 +34,7 @@ It also has pin outs for installing optional headers for various V9958 signals, 
   <tr><td style="text-align: center"><img src="./pictures/video-rgb-profile.jpg" width="60%"/></td></tr>
 </table>
 
-[Click here for full Details](./README-RGB.md)
+[Click here for full Details](./README-RGB-V2.md)
 
 ## V9958 MSX Video Advanced Module for RC2014 (V1.9)
 

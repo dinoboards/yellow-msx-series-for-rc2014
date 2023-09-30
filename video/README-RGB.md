@@ -32,10 +32,6 @@ The V9938 and V9958 are very similar in capability.  See the relevant datasheets
 
 <table>
   <tr>
-    <td width="50%"><a href="pictures/RGB-PCB-FRONT.jpg"><img src="./pictures/RGB-PCB-FRONT.jpg" width="90%"/></a></td>
-    <td width="50%"><a href="pictures/RGB-PCB-BACK.jpg"><img src="./pictures/RGB-PCB-BACK.jpg" width="90%"/></a></td>
-  </tr>
-  <tr>
     <td width="50%"><a href="pictures/RGB-V9938-ASSEMBLED.jpg"><img src="./pictures/RGB-V9938-ASSEMBLED.jpg" width="90%"/></a></td>
     <td width="50%"><a href="pictures/RGB-V9938-PROFILE.jpg"><img src="./pictures/RGB-V9938-PROFILE.jpg" width="90%"/></a></td>
   </tr>
@@ -43,13 +39,10 @@ The V9938 and V9958 are very similar in capability.  See the relevant datasheets
     <td width="50%"><a href="pictures/RGB-V9958-ASSEMBLED.jpg"><img src="./pictures/RGB-V9958-ASSEMBLED.jpg" width="90%"/></a></td>
     <td width="50%"><a href="pictures/RGB-V9958-PROFILE.jpg"><img src="./pictures/RGB-V9958-PROFILE.jpg" width="90%"/></a></td>
   </tr>
-
   <tr>
-    <td width="50%"><a href="pictures/RGB-BASE-KIT.jpg"><img src="./pictures/RGB-BASE-KIT.jpg" width="90%"/></a></td>
-    <td  style="text-align:center;" width="50%"><a href="pictures/v9938.jpg"><img src="./pictures/v9938.jpg" width="43%"/></a>&nbsp;&nbsp;&nbsp;&nbsp;
-      <a href="pictures/v9958.jpg"><img src="./pictures/v9958.jpg" width="42%"/></a></td>
+    <td width="50%"><a href="pictures/RGB-PCB-FRONT.jpg"><img src="./pictures/RGB-PCB-FRONT.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="pictures/RGB-PCB-BACK.jpg"><img src="./pictures/RGB-PCB-BACK.jpg" width="90%"/></a></td>
   </tr>
-
 </table>
 
 ### DSUB pin out
