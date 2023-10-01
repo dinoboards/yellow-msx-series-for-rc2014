@@ -42,7 +42,7 @@ typedef enum {
   DEV_MAP_USB4 = 7
 } device_map;
 
-const uint8_t mappings[10][7] = {{DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
+const uint8_t mappings[20][7] = {{DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
                                  {DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
                                  {DEV_MAP_USB1, DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
                                  {DEV_MAP_USB1, DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
@@ -51,7 +51,20 @@ const uint8_t mappings[10][7] = {{DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE, DEV_M
                                  {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
                                  {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE},
                                  {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_USB4, DEV_MAP_ROM, DEV_MAP_NONE, DEV_MAP_NONE},
-                                 {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_USB4, DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_NONE}};
+                                 {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_USB4, DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_NONE},
+
+                                 {DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
+                                 {DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
+                                 {DEV_MAP_USB1, DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
+                                 {DEV_MAP_USB1, DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
+                                 {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE, DEV_MAP_NONE, DEV_MAP_NONE},
+                                 {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE, DEV_MAP_NONE},
+                                 {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE, DEV_MAP_NONE},
+                                 {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE},
+                                 {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_USB4, DEV_MAP_ROM, DEV_MAP_MS, DEV_MAP_NONE},
+                                 {DEV_MAP_USB1, DEV_MAP_USB2, DEV_MAP_USB3, DEV_MAP_USB4, DEV_MAP_CF, DEV_MAP_ROM, DEV_MAP_MS}
+
+};
 
 /**
  * @brief Convert a device index (1-7) to a device identity (USB, CompactFlash, etc)
@@ -79,6 +92,9 @@ device_map device_mapping(const uint8_t device_index) __z88dk_fastcall {
 
   if (present_mask & PRES_CF)
     usb_index++;
+
+  if (present_mask & PRES_MS)
+    usb_index += 10;
 
   return mappings[usb_index][device_index - 1];
 }
