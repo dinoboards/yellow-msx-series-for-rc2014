@@ -28,3 +28,4 @@ _fn_enum:			EQU		DRIVER_ASM_END+18
 _get_number_of_usb_drives:	EQU		DRIVER_ASM_END+21
 _drv_direct4:			EQU		DRIVER_ASM_END+24
 _device_mapping:		EQU		DRIVER_ASM_END+27
+_convert_and_print_disk_size:	EQU		DRIVER_ASM_END+30
