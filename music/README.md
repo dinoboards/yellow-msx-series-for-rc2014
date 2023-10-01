@@ -4,9 +4,7 @@
 
 <a href="https://www.tindie.com/products/dinotron/ym2413-msx-music-module-designed-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
 
-## Title
-
-YM2413 MSX-Music Module Designed for RC2014
+## YM2413 MSX-Music Module Designed for RC2014
 
 <img src="images/MSX-MUSIC-PROFILE.jpg" alt="Assembled Profiled" width="80%"/>
 
