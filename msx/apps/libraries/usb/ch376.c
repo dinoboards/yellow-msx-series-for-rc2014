@@ -199,6 +199,7 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
   if (buffer_size == 0)
     return USB_ERR_OK;
 
+  USB_MODULE_LEDS = 0x01;
   do {
     ch_issue_token_in(endpoint);
 
@@ -207,12 +208,16 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
     endpoint->toggle = !endpoint->toggle;
 
     count = ch_read_data(buffer, buffer_size);
-    if (count == 0)
+    if (count == 0) {
+      USB_MODULE_LEDS = 0x00;
       return USB_ERR_DATA_ERROR;
+    }
 
     buffer += count;
     buffer_size -= count;
   } while (buffer_size > 0);
+
+  USB_MODULE_LEDS = 0x00;
 
   return USB_ERR_OK;
 }
@@ -221,6 +226,8 @@ usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, end
   usb_error     result;
   const uint8_t number          = endpoint->number;
   const uint8_t max_packet_size = calc_max_packet_size(endpoint->max_packet_sizex);
+
+  USB_MODULE_LEDS = 0x02;
 
   while (buffer_length > 0) {
     const uint8_t size = max_packet_size < buffer_length ? max_packet_size : buffer_length;
@@ -232,6 +239,8 @@ usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, end
 
     endpoint->toggle = !endpoint->toggle;
   }
+
+  USB_MODULE_LEDS = 0x00;
 
   return USB_ERR_OK;
 }
