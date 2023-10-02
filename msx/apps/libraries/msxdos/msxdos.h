@@ -114,6 +114,7 @@ extern void msxbiosInitPalette();
 #define DAC    0xF7F6
 #define SCRMOD 0xFCAF
 #define EXPTBL 0xFCC1
+#define H_CHPH 0xFDA4
 
 extern uint8_t HOKVLD;
 extern uint8_t EXTBIO[5];

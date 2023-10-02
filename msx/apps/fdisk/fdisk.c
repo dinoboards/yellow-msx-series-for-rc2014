@@ -148,9 +148,14 @@ void printCentered(char *string) {
 void printRuler() {
   uint8_t i;
 
+  // "Hack" for korean MSX computers that do weird things
+  // when printing a character at the last column of the screen
+  const byte width = (*((byte *)H_CHPH) != 0xC9) ? currentScreenConfig.screenWidth - 1 : currentScreenConfig.screenWidth;
+
   homeCursor();
-  for (i = 0; i < currentScreenConfig.screenWidth; i++)
+  for (i = 0; i < width; i++) {
     printf("-");
+  }
 }
 
 void initializeWorkingScreen(char *header) {
