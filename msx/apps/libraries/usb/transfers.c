@@ -60,16 +60,11 @@ usb_error usb_control_transfer(const setup_packet *const cmd_packet,
     if (result == USB_ERR_OK || result == USB_ERR_STALL)
       return USB_ERR_OK;
 
-    CHECK(result);
-
-    return result;
+    RETURN_CHECK(result);
   }
 
   ch_issue_token_in_ep0();
   result = ch_long_wait_int_and_get_status();
-
-  if (result == USB_ERR_STALL)
-    return USB_ERR_STALL;
 
   RETURN_CHECK(result);
 }
