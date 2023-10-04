@@ -61,6 +61,21 @@ typedef struct {
   uint8_t  number;
 } msxdosLunInfo;
 
+/* Bit marks for msxdosLunInfo.flags */
+
+/* bit 0: if the medium is removable. */
+#define LUN_INFO_FLAG_REMOVABLE 0x01
+
+/* bit 1: if the medium is read only. A medium that can dinamically be write protected or write enabled is not considered  to be
+ * read-only.*/
+#define LUN_INFO_FLAG_READ_ONLY 0x02
+
+/* bit 2: if the medium is a floppy disk drive.*/
+#define LUN_INFO_FLAG_FLOPPY 0x04
+
+/* bit 3: 1 if the logical unit should not be used for automapping */
+#define LUN_INFO_FLAG_DISABLE_AUTOMAPPING 0x08
+
 typedef struct {
   uint8_t  status;
   uint8_t  typeCode;
@@ -70,6 +85,53 @@ typedef struct {
     uint32_t partitionSector;
   };
 } GPartInfo;
+
+typedef struct {
+  uint8_t status;
+  union {
+    struct {
+      uint8_t  letter;
+      uint8_t  flags;
+      uint8_t  reserved;
+      uint8_t  filename[13];
+      uint16_t startCluster;
+      uint32_t startSector;
+    } file;
+
+    struct {
+      uint8_t  slot;
+      uint8_t  segment;
+      uint8_t  number;
+      uint8_t  index;
+      uint8_t  lun;
+      uint32_t firstSectorNumber;
+      uint8_t  reserved[54];
+    } phyical;
+  };
+
+} driveLetterInfo;
+
+/**
+ * @brief  Get information about a drive letter (_GDLI, 79h)
+ *
+ * If a drive larger than the maximum drive number supported by the system is specified, an .IDRV error will be returned. Note that
+ * if a drive number is specified which is legal in Nextor, but is currently not assigned to any driver, then no error will be
+ * returned, but an empty information block will be returned (the drive status byte should be checked).
+ * The "first device sector number" is the absolute device sector number that is treated as the first logical sector for the drive;
+ * usually it is either the starting sector of a device partition, or the device absolute sector zero, if the device has no
+ * partitions. Note that you can't test this value against zero to check whether the drive is assigned to a block device on a
+ * device-based driver or not (use the “drive status” field for this purpose). The "start cluster" and "start sector" fields for
+ * mounted files were introduced in Nextor 2.1.1. Currently, they will always contain meaningful information, but in future versions
+ * of Nextor this could not be true (because non-FAT filesystems with no concept of "clusters" get supported, or for any other
+ * reason) and in these cases the fields will have a value of zero. These fields will also be returned as zero in versions of Nextor
+ * older than 2.1.1, therefore application programs using this function call should always verify that the values of these fields
+ * are non-zero before using them.
+ *
+ * @param drive_letter physical drive (0=A:, 1=B:, etc)
+ * @param pInfo        pointer to buffer to receive driveLetterInfo structure
+ * @return uint8_t
+ */
+extern uint8_t msxdosGetDriveLetterInfo(const uint8_t drive_letter, const driveLetterInfo *pInfo);
 
 extern uint8_t msxdosGdrvr(int8_t driverIndex, msxdosDriverInfo *data);
 extern uint8_t msxdosGpart(uint8_t    slotNumber,

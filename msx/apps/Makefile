@@ -17,71 +17,84 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst))
 
 include	Makefile.rules.mk
 
+zcchelp:
+	@$(ZCC) -Cl
+
+
 CONFIG_REQUEST := config_request.c
 SYSTEM_VARS := libraries/msxbios/system_vars.c
-MSXDOS := libraries/msxdos/msxdos.asm libraries/msxdos/msxdos_set_date.asm libraries/msxdos/msxdos_set_time.asm libraries/msxdos/msxdos_get_time.asm
+# MSXDOS := libraries/msxdos/msxdos.asm libraries/msxdos/msxdos_set_date.asm libraries/msxdos/msxdos_set_time.asm libraries/msxdos/msxdos_get_time.asm
+MSXDOS_LIB := $(BIN)msxdos_get_drive_letter_info.lib $(BIN)msxdos.lib $(BIN)msxdos_set_date.lib $(BIN)msxdos_set_time.lib $(BIN)msxdos_get_time.lib
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := libraries/delay/delay.c
 USBDRV := libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/usb_cbi.c libraries/usb/class_scsi.c
 
-fdisk_files = $(call app_files,fdisk,memmap-override.asm $(MSXDOS) $(SYSTEM_VARS))
-$(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files))
+fdisk_files = $(call app_files,fdisk,memmap-override.asm $(SYSTEM_VARS))
+$(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files)) $(MSXDOS_LIB)
 
 V9958_DEPS := v9958.c v9958.asm
 
-helloworld_files = $(call app_files,helloworld,$(MSXDOS) $(SYSTEM_VARS))
-$(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files))
+.PHONY: list
+list:
+	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
+
+clrdir_files = $(call app_files,clrdir,$(SYSTEM_VARS) $(addprefix libraries/fusion/,io.asm))
+$(BIN)clrdir.com: $(addprefix $(BIN),$(clrdir_files)) $(MSXDOS_LIB)
+clrdir.com.crt_enable_commandline:=1
+
+helloworld_files = $(call app_files,helloworld, $(SYSTEM_VARS))
+$(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
-usbtst_files = $(call app_files,usbtst,$(MSXDOS) $(SYSTEM_VARS) $(DELAY) $(USBDRV))
-$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files))
+usbtst_files = $(call app_files,usbtst, $(SYSTEM_VARS) $(DELAY) $(USBDRV))
+$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(MSXDOS_LIB)
 usbtst.com.crt_enable_commandline:=1
 
-dots_files = $(call app_files,dots,$(V9958_DEPS) $(MSXDOS) $(CONFIG_REQUEST))
-$(BIN)dots.com: $(addprefix $(BIN),$(dots_files))
+dots_files = $(call app_files,dots,$(V9958_DEPS) $(CONFIG_REQUEST))
+$(BIN)dots.com: $(addprefix $(BIN),$(dots_files)) $(MSXDOS_LIB)
 
-lines_files = $(call app_files,lines,$(V9958_DEPS) $(MSXDOS) $(CONFIG_REQUEST))
-$(BIN)lines.com: $(addprefix $(BIN),$(lines_files))
+lines_files = $(call app_files,lines,$(V9958_DEPS) $(CONFIG_REQUEST))
+$(BIN)lines.com: $(addprefix $(BIN),$(lines_files)) $(MSXDOS_LIB)
 
-mbrot_files = $(call app_files,mbrot,$(V9958_DEPS) $(MSXDOS) $(CONFIG_REQUEST))
-$(BIN)mbrot.com: $(addprefix $(BIN),$(mbrot_files))
+mbrot_files = $(call app_files,mbrot,$(V9958_DEPS) $(CONFIG_REQUEST))
+$(BIN)mbrot.com: $(addprefix $(BIN),$(mbrot_files)) $(MSXDOS_LIB)
 
-vramtest_files = $(call app_files,vramtest,$(V9958_DEPS) $(MSXDOS))
-$(BIN)vramtest.com: $(addprefix $(BIN),$(vramtest_files))
+vramtest_files = $(call app_files,vramtest,$(V9958_DEPS))
+$(BIN)vramtest.com: $(addprefix $(BIN),$(vramtest_files)) $(MSXDOS_LIB)
 
 cpusptst_files = $(call app_files,cpusptst,)
 $(BIN)cpusptst.com: $(addprefix $(BIN),$(cpusptst_files))
 
-extbio_files = $(call app_files,extbio,libraries/extbio/extbio.asm xstdio.asm getslt.asm $(MSXDOS))
-$(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files))
+extbio_files = $(call app_files,extbio,libraries/extbio/extbio.asm xstdio.asm getslt.asm)
+$(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files)) $(MSXDOS_LIB)
 
-rs232tst_files = $(call app_files,rs232tst,libraries/extbio/extbio.asm getslt.asm rs232.asm $(MSXDOS) $(SYSTEM_VARS))
-$(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files))
+rs232tst_files = $(call app_files,rs232tst,libraries/extbio/extbio.asm getslt.asm rs232.asm $(SYSTEM_VARS))
+$(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files)) $(MSXDOS_LIB)
 
-fosiltst_files = $(call app_files,fosiltst,libraries/extbio/extbio.asm $(MSXDOS) xstdio.asm getslt.asm $(FOSSIL) $(SYSTEM_VARS))
-$(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files))
+fosiltst_files = $(call app_files,fosiltst,libraries/extbio/extbio.asm xstdio.asm getslt.asm $(FOSSIL) $(SYSTEM_VARS))
+$(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files)) $(MSXDOS_LIB)
 
 fossilon_files = $(call app_files,fossilon,libraries/extbio/extbio.asm getslt.asm)
 $(BIN)fossilon.com: $(addprefix $(BIN),$(fossilon_files))
 
-term_files = $(call app_files,term,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
-$(BIN)term.com: $(addprefix $(BIN),$(term_files))
+term_files = $(call app_files,term,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(SYSTEM_VARS))
+$(BIN)term.com: $(addprefix $(BIN),$(term_files)) $(MSXDOS_LIB)
 term.com.crt_enable_commandline:=1
 
-xrecv2_files = $(call app_files,xrecv2,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) $(DELAY) getslt.asm print.c $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(MSXDOS) $(SYSTEM_VARS))
-$(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files))
+xrecv2_files = $(call app_files,xrecv2,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) $(DELAY) getslt.asm print.c $(addprefix libraries/fusion/,io.asm inkey.asm inputstring.asm inputchar.asm) $(SYSTEM_VARS))
+$(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files)) $(MSXDOS_LIB)
 xrecv2.com.crt_enable_commandline:=1
 
-rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c $(MSXDOS))
-$(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files))
+rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c)
+$(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files)) $(MSXDOS_LIB)
 rtccalb.com.crt_enable_commandline:=1
 
-esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) $(MSXDOS) xrecv2/crc16.c xrecv2/serial.c xrecv2/utils.c)
-$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files))
+esp8266_files = $(call app_files,esp8266,memmap-override.asm libraries/extbio/extbio.asm $(FOSSIL) getslt.asm print.c $(SYSTEM_VARS) $(DELAY) xrecv2/crc16.c xrecv2/serial.c xrecv2/utils.c)
+$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(MSXDOS_LIB)
 esp8266.com.crt_enable_commandline:=1
 
 siocfg_files = $(call app_files,siocfg,memmap-override.asm libraries/extbio/extbio.asm getslt.asm)

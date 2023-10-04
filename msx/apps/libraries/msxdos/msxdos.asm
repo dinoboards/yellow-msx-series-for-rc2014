@@ -2,41 +2,9 @@
 
 	include "msxdos.inc"
 
-INITXT	EQU	0x6C
-INIT32	EQU	0x6F
-POSIT	EQU	0xC6
-INIPLT	EQU	0x141
-EXTROM:	EQU	0015FH
-H_NMI:	EQU	0FDD6H
-NMI:	EQU	00066H
-
-; Function : Tests status of CTRL-STOP
-; Output   : Carry flag set when pressed
-; Registers: AF
-; Remark   : In this routine, interrupts are inhibited
-BREAKX		EQU	$00B7
-
-
-CALSLT	EQU	0x001C
-EXPTBL	EQU	0xFCC1
-_EXPLAIN	EQU	0x66
-_GDRVR	EQU	0x78
-_GPART	EQU	0x7A
-_CDRVR	EQU	0x7B
-_DIRIO	EQU	0x06
-
-; DRIVER FUNCTION ENTRY POINTS
-DEV_INFO	EQU 	0x4163
-LUN_INFO 	EQU	0x4169
-DEV_RW	EQU	0x4160
-
 	SECTION	DATA
 	PUBLIC _HOKVLD, _EXTBIO
-_HOKVLD:	EQU	0xFB20
-_EXTBIO:	EQU	0xFFCA
-
 	PUBLIC	_msxdosCommand
-_msxdosCommand	EQU	0x0080;
 
 	SECTION	CODE
 

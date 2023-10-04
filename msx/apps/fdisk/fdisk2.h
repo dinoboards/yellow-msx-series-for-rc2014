@@ -4,6 +4,8 @@
 #include "datatypes.h"
 #include "partition.h"
 
+extern void sectorBootCode();
+
 extern void    preparePartitioningProcess(uint8_t        _driverSlot,
                                           uint8_t        _deviceIndex,
                                           uint8_t        _selectedLunIndex,

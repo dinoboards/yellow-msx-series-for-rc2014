@@ -1,7 +1,9 @@
 
+#include "fdisk2.h"
 #include "fdisk.h"
-#include "msxdos.h"
-#include "partition.h"
+#include <fat.h>
+#include <msxdos.h>
+#include <partition.h>
 #include <string.h>
 
 static uint8_t        driverSlot;
@@ -15,8 +17,7 @@ static uint32_t       mainExtendedPartitionSectorCount;
 static uint32_t       mainExtendedPartitionFirstSector;
 static uint8_t        sectorBuffer[512];
 
-static void sectorBootCode() {}
-static int  getNewSerialNumber() { return 0; }
+static int getNewSerialNumber() { return 0; }
 
 #define readSectorFromDevice(driverSlot, deviceIndex, lunIndex, firstDeviceSector)                                                 \
   deviceSectorRead(driverSlot, deviceIndex, lunIndex, firstDeviceSector)

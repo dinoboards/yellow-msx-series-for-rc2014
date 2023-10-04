@@ -7,9 +7,15 @@ define assemble
 	echo "Assembled $(notdir $@) from $(notdir $<)"
 endef
 
+define buildlib
+	@mkdir -p $(dir $@)
+	z88dk-z80asm -x$@ $<
+	echo "Packaged $(notdir $@) from $(notdir $<)"
+endef
+
 define compile
 	@mkdir -p $(dir $@)
-	$(ZCC) --assemble-only $< -o $@
+	$(ZCC) --c-code-in-asm --assemble-only $< -o $@
 	echo "Compiled $(notdir $@) from $(notdir $<)"
 endef
 
@@ -31,10 +37,15 @@ $(BIN)%.o: $(BIN)%.asm; $(assemble)
 $(BIN)%.o: %.asm; $(assemble)
 $(BIN)%.m4.o: %.asm.m4; $(assemble)
 
+$(BIN)%.lib: libraries/msxdos/%.asm; $(buildlib)
+
+$(BIN)%.lib:
+	$(buildlib)
+
 $(BIN)%.com:
-	@mkdir -p $(dir $@)
+	@@mkdir -p $(dir $@)
 	$(eval $(notdir $@).crt_enable_commandline ?= 0)
-	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $(filter-out %.inc,$^) -o $@
+	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $(filter-out %.inc,$(filter-out %.lib,$^)) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
 	echo "Linked $(notdir $@) from $(notdir $^)"
 
 ZSDCPP_FLAGS=-iquote"." -isystem"${ZCCCFG}/../../include/_DEVELOPMENT/sdcc" $(LIBS)
