@@ -71,7 +71,8 @@ usb_error ufi_read_write_sector(device_config *const storage_device,
                                 const bool           send,
                                 const uint16_t       sector_number,
                                 const uint8_t        sector_count,
-                                const uint8_t *const buffer) {
+                                const uint8_t *const buffer,
+                                uint8_t *const       sense_codes) {
   ufi_read_write_command cmd;
   memset(&cmd, 0, sizeof(cmd));
   cmd.operation_code     = send ? 0x2A : 0x28;
@@ -79,7 +80,7 @@ usb_error ufi_read_write_sector(device_config *const storage_device,
   cmd.lba[3]             = sector_number & 0xFF;
   cmd.transfer_length[1] = sector_count;
 
-  usb_error result = usb_execute_cbi(storage_device, (uint8_t *)&cmd, send, 512 * sector_count, (uint8_t *)buffer, NULL);
+  usb_error result = usb_execute_cbi(storage_device, (uint8_t *)&cmd, send, 512 * sector_count, (uint8_t *)buffer, sense_codes);
 
   RETURN_CHECK(result);
 }

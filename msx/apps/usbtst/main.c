@@ -12,6 +12,44 @@
 #include <class_ufi.h>
 #include <delay.h>
 
+#include "usb-dev-read-ufi.h"
+#include "usb-dev-write-ufi.h"
+
+uint16_t dumpSector(device_config *config, const uint32_t number) {
+  usb_error error;
+
+  uint8_t buffer[512];
+  memset(buffer, 0, sizeof(buffer));
+  uint8_t read = 0;
+
+  printf("Sector %d\r\n", number);
+  if ((error = usb_dev_read_ufi(config, 1, 1, number, buffer, &read)) != 0) {
+    printf("usb_dev_read_ufi: %d, %d\n", error, read);
+    return error;
+  }
+
+  for (int i = 0; i < 32; i++) {
+    printf("%02X ", buffer[i]);
+    if (i % 16 == 15)
+      printf("\n");
+  }
+  return 0;
+}
+
+uint8_t writeSector(device_config *config, const uint32_t number) {
+  usb_error error;
+
+  uint8_t buffer[512];
+  uint8_t written = 0;
+  memset(buffer, 0, sizeof(buffer));
+  buffer[3] = 0xF6;
+  buffer[4] = number + 0x60;
+
+  error = usb_dev_write_ufi(config, 1, 1, number, buffer, &written);
+  printf("usb_dev_write_ufi: %d\n", error);
+  return error;
+}
+
 void chput(const char c) __z88dk_fastcall { printf("%c", c); }
 
 usb_error usb_host_bus_reset() {
@@ -84,45 +122,59 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
     if (t == USB_IS_FLOPPY) {
 
-      ufi_request_sense_response sense;
-      memset(&sense, 0, sizeof(sense));
+      // ufi_request_sense_response sense;
+      // memset(&sense, 0, sizeof(sense));
 
-      ufi_format_capacities_response r;
-      memset(&r, 0, sizeof(r));
+      // ufi_format_capacities_response r;
+      // memset(&r, 0, sizeof(r));
 
-      ufi_inquiry_response const inquiry;
-      memset(&inquiry, 0, sizeof(inquiry));
+      // ufi_inquiry_response const inquiry;
+      // memset(&inquiry, 0, sizeof(inquiry));
 
-      uint8_t counter = 5;
+      // // uint8_t counter = 5;
 
-      result = wait_for_device_ready(storage_device, 5000);
-      printf("wait_for_device_ready: %d\r\n", result);
+      // // result = wait_for_device_ready(storage_device, 5000);
+      // // printf("wait_for_device_ready: %d\r\n", result);
 
-      printf("--\r\n");
+      // // printf("--\r\n");
 
-      result = ufi_read_format_capacities(storage_device, &r);
-      printf("ufi_read_format_capacities: %d,", result);
-      log_ufi_format_capacities_response(&r);
-      delay(10);
+      // // result = ufi_read_format_capacities(storage_device, &r);
+      // // printf("ufi_read_format_capacities: %d,", result);
+      // // log_ufi_format_capacities_response(&r);
+      // // delay(10);
 
-      result = ufi_request_sense(storage_device, &sense);
-      printf("ufi_request_sense: %d,", result);
-      log_ufi_request_sense_response(&sense);
+      // // result = ufi_request_sense(storage_device, &sense);
+      // // printf("ufi_request_sense: %d,", result);
+      // // log_ufi_request_sense_response(&sense);
 
-      result = ufi_inquiry(storage_device, &inquiry);
-      printf("ufi_inquiry: %d,", result);
-      log_usb_inquiry_response(&inquiry);
-      printf("--\r\n");
+      // // result = ufi_inquiry(storage_device, &inquiry);
+      // // printf("ufi_inquiry: %d,", result);
+      // // log_usb_inquiry_response(&inquiry);
+      // // printf("--\r\n");
 
-      result = wait_for_device_ready(storage_device, 1000);
-      printf("wait_for_device_ready: %d\r\n", result);
+      // // result = wait_for_device_ready(storage_device, 1000);
+      // // printf("wait_for_device_ready: %d\r\n", result);
 
-      result = ufi_read_write_sector(storage_device, false, 1, 1, buffer);
-      printf("ufi_read_write_sector: %d\r\n", result);
+      // result = ufi_read_write_sector(storage_device, false, 1, 1, buffer);
+      // printf("ufi_read_write_sector: %d\r\n", result);
 
-      result = ufi_request_sense(storage_device, &sense);
-      printf("ufi_request_sense: %d,", result);
-      log_ufi_request_sense_response(&sense);
+      // result = ufi_request_sense(storage_device, &sense);
+      // printf("ufi_request_sense: %d,", result);
+      // log_ufi_request_sense_response(&sense);
+
+      writeSector(storage_device, 6);
+      // writeSector(storage_device, 7);
+      // writeSector(storage_device, 8);
+
+      dumpSector(storage_device, 6);
+
+      __asm
+      DI
+      HALT
+      __endasm;
+
+      // dumpSector(storage_device, 7);
+      // dumpSector(storage_device, 8);
 
       // const usb_error result = ufi_request_sense(dev, &response);
 

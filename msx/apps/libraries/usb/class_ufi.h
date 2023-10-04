@@ -142,7 +142,8 @@ extern usb_error ufi_read_write_sector(device_config *const storage_device,
                                        const bool           send,
                                        const uint16_t       sector_number,
                                        const uint8_t        sector_count,
-                                       const uint8_t *const buffer);
+                                       const uint8_t *const buffer,
+                                       uint8_t *const       sense_codes);
 
 uint8_t wait_for_device_ready(device_config *const storage_device, const uint16_t timeout_period);
 
