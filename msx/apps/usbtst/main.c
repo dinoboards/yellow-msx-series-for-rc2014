@@ -168,11 +168,6 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
       dumpSector(storage_device, 6);
 
-      __asm
-      DI
-      HALT
-      __endasm;
-
       // dumpSector(storage_device, 7);
       // dumpSector(storage_device, 8);
 

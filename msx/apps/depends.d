@@ -32,6 +32,14 @@
  print.h xrecv2/utils.h xrecv2/xmodem.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
  libraries/fossil/fossil.h
+./bin/clrdir/arguments.c.asm: clrdir/arguments.c clrdir/arguments.h
+./bin/clrdir/fdisk2.c.asm: clrdir/fdisk2.c clrdir/fdisk2.h datatypes.h \
+ libraries/msxdos/partition.h libraries/msxdos/fat.h \
+ libraries/msxdos/msxdos.h
+./bin/clrdir/clrdir.c.asm: clrdir/clrdir.c clrdir/arguments.h clrdir/fdisk2.h \
+ datatypes.h libraries/msxdos/partition.h libraries/msxdos/fat.h \
+ libraries/fusion/io.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h libraries/msxdos/msxdos.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
@@ -53,10 +61,25 @@
  libraries/usb/usb_cbi.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h usbtst/nextor.h \
  usbtst/print.h libraries/usb/usb_state.h libraries/usb/enumerate_trace.h
+./bin/usbtst/usb-dev-write-ufi.c.asm: usbtst/usb-dev-write-ufi.c \
+ usbtst/usb-dev-write-ufi.h usbtst/nextor.h libraries/usb/protocol.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/class_ufi.h libraries/usb/protocol.h \
+ libraries/usb/usb_cbi.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/usb/enumerate_trace.h
 ./bin/usbtst/work-area.c.asm: usbtst/work-area.c libraries/usb/usb_state.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h
 ./bin/usbtst/usb-lun-info-ufi.c.asm: usbtst/usb-lun-info-ufi.c usbtst/usb-lun-info-ufi.h \
+ usbtst/nextor.h libraries/usb/protocol.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
+ libraries/usb/transfers.h libraries/usb/class_ufi.h \
+ libraries/usb/protocol.h libraries/usb/usb_cbi.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h
+./bin/usbtst/usb-dev-read-ufi.c.asm: usbtst/usb-dev-read-ufi.c usbtst/usb-dev-read-ufi.h \
  usbtst/nextor.h libraries/usb/protocol.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
  libraries/usb/transfers.h libraries/usb/class_ufi.h \
@@ -72,12 +95,14 @@
  libraries/usb/enumerate.h libraries/usb/usb_state.h \
  libraries/usb/class_ufi.h libraries/usb/usb_cbi.h \
  libraries/usb/dev_transfers.h libraries/delay/delay.h \
- libraries/msxbios/system_vars.h
+ libraries/msxbios/system_vars.h usbtst/usb-dev-read-ufi.h \
+ usbtst/usb-dev-write-ufi.h
 ./bin/fdisk/fdisk.c.asm: fdisk/fdisk.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
- fdisk/fdisk2.h datatypes.h fdisk/partition.h \
+ fdisk/fdisk2.h datatypes.h libraries/msxdos/partition.h \
  libraries/msxbios/system_vars.h
-./bin/fdisk/fdisk2.c.asm: fdisk/fdisk2.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
- fdisk/partition.h datatypes.h
+./bin/fdisk/fdisk2.c.asm: fdisk/fdisk2.c fdisk/fdisk2.h datatypes.h \
+ libraries/msxdos/partition.h fdisk/fdisk.h libraries/msxdos/msxdos.h \
+ libraries/msxdos/fat.h
 ./bin/v9958.c.asm: v9958.c v9958.h
 ./bin/term/xymodem.c.asm: term/xymodem.c term/xymodem.h term/aofossilhelper.h \
  libraries/fusion/msx_fusion.h term/print.h libraries/fusion/io.h
@@ -178,6 +203,7 @@
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
+./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
 ./bin/usbtst/print.o: ./usbtst/print.asm
 ./bin/romflashwriter/romflashwriter.o: ./romflashwriter/romflashwriter.asm
 ./bin/fdisk/fdisk.o: ./fdisk/fdisk.asm
@@ -192,6 +218,7 @@
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
 ./bin/libraries/fusion/inputstring.o: ./libraries/fusion/inputstring.asm
 ./bin/libraries/fusion/inkey.o: ./libraries/fusion/inkey.asm
+./bin/libraries/msxdos/msxdos_get_drive_letter_info.o: ./libraries/msxdos/msxdos_get_drive_letter_info.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc
