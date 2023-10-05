@@ -65,7 +65,7 @@ $(BINDIR)$1.fdd.dsk: $1-nextor-kernel $(BINDIR)rcembdrv.bin
 	DATSIZ=$$$$(./scripts/getsymb.sh $(BINDIR)rcembdrv.exp.asm DATSIZ)
 	rm -f $(BINDIR)$1.fdd.dsk
 	dd status=none if=/dev/zero of=$(BINDIR)$1.fdd.dsk bs=$$$$(($$$$DATSIZ*17)) count=1
-	mkfs.vfat -F 12 -f 1 $(BINDIR)$1.fdd.dsk > /dev/null
+	mkfs.vfat -F 12 -f 1 -n rc2014 -i 80000000 -a $(BINDIR)$1.fdd.dsk > /dev/null
 	mmd -i $(BINDIR)$1.fdd.dsk system
 	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/*.com ::/system/
 	mmove -i $(BINDIR)$1.fdd.dsk ::/system/command2.com ::/
