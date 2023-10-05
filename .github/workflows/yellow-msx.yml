@@ -21,7 +21,7 @@ jobs:
         run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.13 make RELEASE=true -C msx jeds
 
       - name: build-rc2014-apps
-        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.13 make RELEASE=true -C apps-rc2014
+        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.13 make RELEASE=true -C apps-rc2014 -B
 
       - name: build-msx-apps
         run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.13 make RELEASE=true -C msx/apps

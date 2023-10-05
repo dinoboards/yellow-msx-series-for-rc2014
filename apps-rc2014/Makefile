@@ -5,7 +5,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 BIN = ../bin/
-ZCC := zcc +cpm -clib=sdcc_iy -SO3 -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 --max-allocs-per-node200000 -create-app
+ZCC := zcc +cpm -compiler=sdcc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 -create-app
 
 APPS := dots lines mbrot control msxkeyb rtctest
 
@@ -27,7 +27,7 @@ $(TARGETS):
 	@mkdir -p $(BIN)
 	$(ZCC) $(filter-out %.h,$^) -o $(notdir $@)
 	mv $(call uppercase,$(notdir $@)) "$@"
-	rm *.bin
+	rm -f *.com
 	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
 
 release:
