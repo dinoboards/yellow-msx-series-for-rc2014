@@ -44,7 +44,7 @@
 
 #include "io.h"
 
-__at 0xFC9E unsigned int uiTickCount;
+__at (0xFC9E) unsigned int uiTickCount;
 
 // X and YMODEM Vars
 #define RcvPktSize 2200

@@ -11,14 +11,14 @@ typedef struct {
   uint8_t  data[];
 } rs232Buff;
 
-uint8_t  __at 0xFB03 RS_TMP;
-uint8_t  __at 0xFB1A RS_ERRORS;
-uint8_t  __at 0xFB17 RS_DATCNT;
-uint8_t  __at 0xFB1C RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
-uint8_t  __at 0xFB1B RS_FLAGS;  // RS-232C bit flags
-uint8_t *__at 0xFB18 RS_BUFEND;
+uint8_t  __at (0xFB03) RS_TMP;
+uint8_t  __at (0xFB1A) RS_ERRORS;
+uint8_t  __at (0xFB17) RS_DATCNT;
+uint8_t  __at (0xFB1C) RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
+uint8_t  __at (0xFB1B) RS_FLAGS;  // RS-232C bit flags
+uint8_t *__at (0xFB18) RS_BUFEND;
 
-rs232Buff *__at 0xFB04 RS_FCB;
+rs232Buff *__at (0xFB04) RS_FCB;
 
 void extern debugBreak();
 void extern enableVdpInterrupts();
