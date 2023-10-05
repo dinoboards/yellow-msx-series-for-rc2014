@@ -1,0 +1,25 @@
+name: yellow-msx
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+
+defaults:
+  run:
+    working-directory: yellow-msx
+
+jobs:
+  yellow-msx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: build
+        run: docker run -v ./msx/:/src/ -it vipoo/yellow-msx-rc2014-tool-chain:latest make release
