@@ -11,7 +11,7 @@ endif
 
 LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb
 
-ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc  -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -DSTACK_TRACE_ENABLED -DENUMERATE_TRACE_ENABLED -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
+ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc --vc --less-pedantic -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -DSTACK_TRACE_ENABLED -DENUMERATE_TRACE_ENABLED -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
 
 BIN := ./bin/
 SRC := ./
