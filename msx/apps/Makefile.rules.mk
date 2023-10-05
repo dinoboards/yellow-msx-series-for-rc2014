@@ -36,11 +36,7 @@ $(BIN)%.c.asm: %.c; $(compile)
 $(BIN)%.o: $(BIN)%.asm; $(assemble)
 $(BIN)%.o: %.asm; $(assemble)
 $(BIN)%.m4.o: %.asm.m4; $(assemble)
-
-$(BIN)%.lib: libraries/msxdos/%.asm; $(buildlib)
-
-$(BIN)%.lib:
-	$(buildlib)
+%.lib: %.o; $(buildlib)
 
 $(BIN)%.com:
 	@@mkdir -p $(dir $@)
