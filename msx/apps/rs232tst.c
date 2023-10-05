@@ -14,13 +14,13 @@ typedef struct {
 } rs232Buffer;
 
 #define buffer_size 64
-rs232Buffer __at 0xC000 buffer; // needs to be in page 3
-uint8_t     __at 0xFB03 RS_TMP;
-uint8_t     __at 0xFB1A RS_ERRORS;
-uint8_t     __at 0xFB17 RS_DATCNT;
-uint8_t     __at 0xFB1C RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
-uint8_t     __at 0xFB1B RS_FLAGS;  // RS-232C bit flags
-uint8_t *   __at 0xFB18 RS_BUFEND;
+rs232Buffer __at (0xC000) buffer; // needs to be in page 3
+uint8_t     __at (0xFB03) RS_TMP;
+uint8_t     __at (0xFB1A) RS_ERRORS;
+uint8_t     __at (0xFB17) RS_DATCNT;
+uint8_t     __at (0xFB1C) RS_ESTBLS; // RTSON:		EQU	$		; Bit boolean. (RS-232C)
+uint8_t     __at (0xFB1B) RS_FLAGS;  // RS-232C bit flags
+uint8_t *   __at (0xFB18) RS_BUFEND;
 
 int main(const int argc, const unsigned char **argv) {
   (void)argc;

@@ -59,7 +59,7 @@
 #define ETB 0x17
 #define CAN 0x18
 
-extern __at 0xFC9E unsigned int uiTickCount;
+extern __at (0xFC9E) unsigned int uiTickCount;
 #define XYMODEM_PACKET_TIMEOUT      360
 #define XYMODEM_STARTPACKET_RETRIES 3
 #define XYMODEM_PACKET_RETRIES      10
