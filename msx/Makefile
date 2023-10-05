@@ -6,7 +6,7 @@ MAKEFLAGS += --no-builtin-rules
 
 MAKEFLAGS += -s
 
-all: nextor-mfr apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com
+all: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com
 
 pmsxsysromimages:
 	@$(MAKE) -j -O msxsysromimages --no-print-directory
@@ -49,7 +49,7 @@ $(eval $(call BUILD_versions,rc2014))
 
 .PHONY: nextor-mfr
 nextor-mfr:
-	@mkdir -p ./bin
+	mkdir -p ./bin
 	cd nextor/source
 	BUILD_TYPE=std $(MAKE) ../bin/mfr.nextor-2.1.1.rom -O -j --no-print-directory -f Makefile-rc2014.mk
 	cp -u ../bin/mfr.nextor-2.1.1.rom ../../bin/
