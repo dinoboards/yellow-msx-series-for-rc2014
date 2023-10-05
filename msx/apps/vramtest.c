@@ -1,6 +1,5 @@
 #include "v9958.h"
 #include <msxdos.h>
-#include <stdarg.h>
 #include <stdio.h>
 
 #define BUFFER_SIZE 1024

@@ -1,9 +1,7 @@
-#define __Z88DK_R2L_CALLING_CONVENTION
 #include "fossil.h"
 #include "msxdos.h"
 #include "xstdio.h"
 #include <extbio.h>
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

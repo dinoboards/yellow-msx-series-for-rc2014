@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <stdarg.h>
-
 #define DRIVER_NAME_LENGTH       32
 #define MAX_INSTALLED_DRIVERS    8
 #define MAX_LUNS_PER_DEVICE      7

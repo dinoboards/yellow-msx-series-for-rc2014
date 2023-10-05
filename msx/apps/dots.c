@@ -1,9 +1,7 @@
-#define __Z88DK_R2L_CALLING_CONVENTION
 #include "config_request.h"
 #include "v9958.h"
 #include <conio.h>
 #include <msxdos.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

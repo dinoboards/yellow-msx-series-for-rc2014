@@ -1,7 +1,5 @@
 // CPU SPEED TEST
 
-#define __Z88DK_R2L_CALLING_CONVENTION
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
