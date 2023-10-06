@@ -17,37 +17,7 @@ RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/
     dpkg --add-architecture i386 && \
     apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y --no-install-recommends \
-        bison \
-        build-essential \
-        ca-certificates \
-        clang-format \
-        curl \
-        dos2unix \
-        dosfstools \
-        flex \
-        git \
-        gnupg2 \
-        libboost-all-dev \
-        libxml2-dev \
-        m4 \
-        mtools \
-        pasmo \
-        software-properties-common \
-        ssh \
-        subversion \
-        texi2html \
-        texinfo \
-        wget \
-        xxd \
-        zip \
-        zlib1g-dev && \
-    wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add - && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F && \
-    apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' && \
-    apt update -y && \
-    apt install -y wine32 && \
-    rm -rf /var/lib/apt/lists/*
+    apt install -y --no-install-recommends ca-certificates mtools build-essential dos2unix libboost-all-dev texinfo texi2html libxml2-dev subversion bison flex zlib1g-dev m4 git wget dosfstools curl
 
 RUN mv /usr/bin/svn /usr/bin/org-svn
 COPY ./svnshim.sh /usr/bin/svn
@@ -103,38 +73,41 @@ RUN cd /opt && \
     make clean && \
     make
 
-FROM basebuilder
+FROM ubuntu:jammy-20230916
 
-RUN apt update
-RUN apt install vim nano less -y
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/ubuntu/archive/|g' /etc/apt/sources.list && \
+    apt update -y && \
+    apt dist-upgrade -y && \
+    apt install -y --no-install-recommends ca-certificates mtools dos2unix pasmo dosfstools clang-format m4 ssh xxd gnupg2 software-properties-common zip wget && \
+    wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add - && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F && \
+    apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' && \
+    dpkg --add-architecture i386 && \
+    apt update -y && \
+    apt install -y --no-install-recommends wine32 build-essential && \
+    ln -s /usr/lib/wine/wine /usr/bin/wine && \
+    rm -rf /var/lib/apt/lists/* && \
+    adduser --disabled-password --gecos "" builder
 
-COPY Wincupl/Shared /opt/wincupl
-
-COPY --from=nodejsbuild /opt/nodejs /opt/nodejs
-COPY --from=sdccbuild /opt/sdcc-4.3.0 /opt/sdcc-4.3.0
-COPY --from=cpmbuild /opt/cpm /opt/cpm
-COPY --from=hex2binbuild /opt/hex2bin /opt/hex2bin
-COPY --from=sjasmplusbuild /opt/sjasmplus /opt/sjasmplus
-COPY --from=z88dkbuild /opt/z88dk/bin /opt/z88dk/bin
-COPY --from=z88dkbuild /opt/z88dk/include /opt/z88dk/include
-COPY --from=z88dkbuild /opt/z88dk/lib /opt/z88dk/lib
-COPY --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_peeph*.* /opt/z88dk/libsrc/_DEVELOPMENT/
-COPY --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_opt*.* /opt/z88dk/libsrc/_DEVELOPMENT/
-COPY --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_iy /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_iy
-COPY --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix
-COPY --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80
+COPY --link Wincupl/Shared /opt/wincupl
+COPY --link --from=nodejsbuild /opt/nodejs /opt/nodejs
+COPY --link --from=sdccbuild /opt/sdcc-4.3.0 /opt/sdcc-4.3.0
+COPY --link --from=cpmbuild /opt/cpm /opt/cpm
+COPY --link --from=hex2binbuild /opt/hex2bin /opt/hex2bin
+COPY --link --from=sjasmplusbuild /opt/sjasmplus /opt/sjasmplus
+COPY --link --from=z88dkbuild /opt/z88dk/bin /opt/z88dk/bin
+COPY --link --from=z88dkbuild /opt/z88dk/include /opt/z88dk/include
+COPY --link --from=z88dkbuild /opt/z88dk/lib /opt/z88dk/lib
+COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_peeph*.* /opt/z88dk/libsrc/_DEVELOPMENT/
+COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/sdcc_opt*.* /opt/z88dk/libsrc/_DEVELOPMENT/
+COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_iy /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_iy
+COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix
+COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80
+COPY --link bashrc /home/builder/.bashrc
 
 ENV Z88DK_PATH="/opt/z88dk" \
     PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.3.0/bin:/opt/hex2bin:/opt/cpm:/opt/sjasmplus:${PATH}" \
     ZCCCFG="/opt/z88dk/lib/config/"
-
-RUN sjasmplus --version
-
-RUN adduser --disabled-password --gecos "" builder
-
-COPY bashrc /home/builder/.bashrc
-
-RUN su builder -c "wine cmd.exe /C dir"
 
 WORKDIR /src/
 

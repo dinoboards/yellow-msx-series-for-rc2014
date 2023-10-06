@@ -21,14 +21,14 @@ jobs:
         run: docker pull vipoo/yellow-msx-rc2014-tool-chain:0.0.13
 
       - name: build-jeds
-        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.13 make RELEASE=true -C msx jeds
+        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.15 make RELEASE=true -C msx jeds
 
       - name: build-rc2014-apps
-        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.13 make RELEASE=true -C apps-rc2014 -B
+        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.15 make RELEASE=true -C apps-rc2014 -B
 
       - name: build-msx-apps
-        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.13 make RELEASE=true -C msx/apps
+        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.15 make RELEASE=true -C msx/apps
 
       - name: build-msx-roms
-        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.13 make RELEASE=true -C msx VERSION=$(date +%Y-%m-%d)
+        run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.15 make RELEASE=true -C msx VERSION=$(date +%Y-%m-%d)
 
