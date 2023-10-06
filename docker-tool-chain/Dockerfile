@@ -56,7 +56,7 @@ FROM basebuilder as z88dkbuild
 
 RUN git clone https://github.com/z88dk/z88dk.git ${Z88DK_PATH}
 WORKDIR /opt/z88dk
-RUN git checkout 8d70c5aaa6a6de544d66731015aaaa0d8f0253da
+RUN git checkout 35abc0ed24564f0295ed8c2a2483e40c122172b0
 RUN git submodule update --init --recursive
 RUN rm -rf .git*
 RUN chmod 777 build.sh
@@ -66,9 +66,9 @@ RUN rm -fR ${SDCC_PATH}
 FROM basebuilder as sdccbuild
 
 RUN cd /opt && \
-	wget https://sourceforge.net/projects/sdcc/files/sdcc-linux-amd64/4.0.0/sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2/download -O "sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2" && \
-	tar -xjf  sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2 && \
-	rm sdcc-4.0.0-amd64-unknown-linux2.5.tar.bz2
+	wget https://sourceforge.net/projects/sdcc/files/sdcc-linux-amd64/4.3.0/sdcc-4.3.0-amd64-unknown-linux2.5.tar.bz2/download -O "sdcc-4.3.0-amd64-unknown-linux2.5.tar.bz2" && \
+	tar -xjf sdcc-4.3.0-amd64-unknown-linux2.5.tar.bz2 && \
+	rm sdcc-4.3.0-amd64-unknown-linux2.5.tar.bz2
 
 FROM basebuilder as hex2binbuild
 
@@ -105,10 +105,13 @@ RUN cd /opt && \
 
 FROM basebuilder
 
+RUN apt update
+RUN apt install vim nano less -y
+
 COPY Wincupl/Shared /opt/wincupl
 
 COPY --from=nodejsbuild /opt/nodejs /opt/nodejs
-COPY --from=sdccbuild /opt/sdcc-4.0.0 /opt/sdcc-4.0.0
+COPY --from=sdccbuild /opt/sdcc-4.3.0 /opt/sdcc-4.3.0
 COPY --from=cpmbuild /opt/cpm /opt/cpm
 COPY --from=hex2binbuild /opt/hex2bin /opt/hex2bin
 COPY --from=sjasmplusbuild /opt/sjasmplus /opt/sjasmplus
@@ -122,7 +125,7 @@ COPY --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix /opt/z88dk/lib
 COPY --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80
 
 ENV Z88DK_PATH="/opt/z88dk" \
-    PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.0.0/bin:/opt/hex2bin:/opt/cpm:/opt/sjasmplus:${PATH}" \
+    PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.3.0/bin:/opt/hex2bin:/opt/cpm:/opt/sjasmplus:${PATH}" \
     ZCCCFG="/opt/z88dk/lib/config/"
 
 RUN sjasmplus --version
