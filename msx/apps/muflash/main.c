@@ -19,10 +19,10 @@ void wait_at_least_25ms() {
   }
 }
 
-uint8_t __at (0x8000) buffer[4096]; // Must not be within page1 (0x4000-0x7FFF) as that is where the ROM will be mapped.
+uint8_t __at(0x8000) buffer[4096]; // Must not be within page1 (0x4000-0x7FFF) as that is where the ROM will be mapped.
 
 static uint16_t slot_assignment;
-static FILE *   file;
+static FILE    *file;
 
 const uint8_t progress_bar_length = 20;
 

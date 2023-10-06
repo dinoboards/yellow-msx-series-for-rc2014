@@ -52,7 +52,7 @@ typedef struct fossil_info_struct {
 
 typedef struct {
   uint8_t slot_id;
-  void *  jump_table;
+  void   *jump_table;
 } fossil_jump_table;
 
 extern uint16_t      fossil_get_version();
@@ -78,7 +78,7 @@ extern void          fossil_fastint(uint8_t x) __z88dk_fastcall;
 extern void          fossil_hookstat(uint8_t x) __z88dk_fastcall;
 extern void          fossil_chput_hook(uint8_t x) __z88dk_fastcall;
 extern void          fossil_keyb_hook(uint8_t x) __z88dk_fastcall;
-extern fossil_info * fossil_get_info();
+extern fossil_info  *fossil_get_info();
 
 extern void fossil_rs_string(const char *pString);
 extern void fossil_rs_flush();

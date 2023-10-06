@@ -144,7 +144,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 
   case USB_IS_PRINTER: {
     work_area->printer_config.type = USB_IS_PRINTER;
-    CHECK(configure_device(working, interface, (device_config *const) & work_area->printer_config));
+    CHECK(configure_device(working, interface, (device_config *const)&work_area->printer_config));
     break;
   }
 
@@ -156,7 +156,7 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
 
   case USB_IS_HUB: {
     work_area->hub_config.type = USB_IS_HUB;
-    CHECK(configure_device(working, interface, (device_config *const) & work_area->hub_config));
+    CHECK(configure_device(working, interface, (device_config *const)&work_area->hub_config));
     CHECK(configure_usb_hub(working));
     break;
   }

@@ -173,7 +173,7 @@ unsigned char JoystickRead(char joyNumber);    // Read Joystick Port (joynumber)
 unsigned char TriggerRead(char TriggerNumber); // Read Button state (Joynnmber)
 unsigned int  MouseRead(int MousePort);        // Read Mouse Offset x and y
 void          MouseReadTo(unsigned char MousePort,
-                          MOUSE_DATA *  md); // Read Mouse Offset x and y, mouse button and return to the MOUSE_DATA Structure
+                          MOUSE_DATA   *md); // Read Mouse Offset x and y, mouse button and return to the MOUSE_DATA Structure
 
 /* --------------------------------------------------------- */
 /* I/O port functions										 */
@@ -272,12 +272,12 @@ void  IntSwap(int *a, int *b); // Swap two Int Variables
 #define Pokew(address, data) (*((volatile unsigned int *)(address)) = ((unsigned int)(data)))
 #define Peek(address)        (*((volatile unsigned char *)(address)))
 #define Peekw(address)       (*((volatile unsigned int *)(address)))
-char *       MemChr(char *adr, char c, int n);            // returns pointer to char in n bytes of adr, or NULL if not found
+char        *MemChr(char *adr, char c, int n);            // returns pointer to char in n bytes of adr, or NULL if not found
 void         MemFill(char *adr, char c, int n);           // FIll mem at *adr with n bytes of c
 void         MemCopy(char *dst, char *src, int n);        // copy n bytes from src to dst
 void         MemCopyReverse(char *dst, char *src, int n); // copy n bytes from src to dst From end to the begining
 int          MemCompare(char *s1, char *s2, int n);       // compares n bytes of s1 and s2, returns -1 (s1<s2), 0 (s1=s2), 1 (s1>s2)
-void *       MMalloc(unsigned int size);                  // Memory Allocation system Adapted for MSX
+void        *MMalloc(unsigned int size);                  // Memory Allocation system Adapted for MSX
 unsigned int ReadTPA(void);                               // Read and return High TPA Adress
 unsigned int ReadSP(void);                                // Read SP register. Return the adress of the stack
 

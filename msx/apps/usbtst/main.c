@@ -205,7 +205,7 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
       uint16_t sector_size = scsi_response.block_size[2] << 8 + scsi_response.block_size[3];
       uint32_t number_of_sectors;
 
-      uint8_t *      no_sectors = ((uint8_t *)&number_of_sectors);
+      uint8_t       *no_sectors = ((uint8_t *)&number_of_sectors);
       const uint8_t *no_blocks  = scsi_response.number_of_blocks + 3;
 
       *no_sectors++ = *no_blocks--;

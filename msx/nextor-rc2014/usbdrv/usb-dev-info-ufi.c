@@ -24,7 +24,7 @@ uint8_t usb_dev_info_ufi(device_config *const dev, const dev_info_request reques
 
   memset(buffer, ' ', 64);
 
-  void *  src;
+  void   *src;
   uint8_t size;
 
   switch (request_info) {

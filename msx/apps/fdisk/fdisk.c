@@ -9,7 +9,7 @@
 #include <system_vars.h>
 
 extern uint8_t workingMsxDosBuff[];
-uint8_t *      pWorkingBuffer;
+uint8_t       *pWorkingBuffer;
 
 // CAPUTED ENUMERATED DRIVER/DEVICE/LUN INFO
 static msxdosDriverInfo drivers[MAX_INSTALLED_DRIVERS];
@@ -21,14 +21,14 @@ static screenConfiguration currentScreenConfig;
 static screenConfiguration originalScreenConfig;
 static uint8_t             screenLinesCount;
 static uint8_t             installedDriversCount;
-static msxdosDriverInfo *  selectedDriver;
+static msxdosDriverInfo   *selectedDriver;
 static char                selectedDriverName[50];
 static bool                availableDevicesCount;
-static deviceInfo *        currentDevice;
+static deviceInfo         *currentDevice;
 static uint8_t             selectedDeviceIndex;
 static uint8_t             availableLunsCount;
 static uint8_t             selectedLunIndex;
-static msxdosLunInfo *     selectedLun;
+static msxdosLunInfo      *selectedLun;
 static uint8_t             partitionsCount;
 static bool                partitionsExistInDisk;
 static bool                canCreatePartitions;
@@ -216,7 +216,7 @@ void showDriverSelectionScreen() {
   char              rev[3];
   msxdosDriverInfo *currentDriver;
   uint8_t           revByte;
-  char *            driverName;
+  char             *driverName;
 
   clearInformationArea();
 
@@ -269,7 +269,7 @@ void getDevicesInformation() {
   uint16_t    error         = 0;
   uint8_t     deviceIndex   = 1;
   deviceInfo *currentDevice = &devices[0];
-  char *      currentDeviceName;
+  char       *currentDeviceName;
 
   availableDevicesCount = 0;
 
@@ -1026,7 +1026,7 @@ void addPartition() {
   uint16_t maxPartitionSizeInM;
   uint16_t maxPartitionSizeInK;
   uint8_t  lineLength;
-  char *   pointer;
+  char    *pointer;
   char     ch;
   bool     validNumberEntered = false;
   uint32_t enteredSizeInK     = 0;

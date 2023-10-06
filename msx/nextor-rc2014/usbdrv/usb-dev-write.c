@@ -9,14 +9,14 @@ typedef uint8_t (*usb_dev_write_driver)(device_config *const dev,
                                         const uint8_t        lun,
                                         uint8_t              number_sectors_to_write,
                                         uint32_t             sector_number,
-                                        uint8_t *            buffer,
+                                        uint8_t             *buffer,
                                         uint8_t *const       number_of_sectors_written);
 
 static uint8_t no_driver(device_config *const dev,
                          const uint8_t        lun,
                          uint8_t              number_sectors_to_write,
                          uint32_t             sector_number,
-                         uint8_t *            buffer,
+                         uint8_t             *buffer,
                          uint8_t *const       number_of_sectors_written) {
 
   (void)dev;
@@ -35,7 +35,7 @@ uint8_t usb_dev_write(const uint8_t  device_index,
                       const uint8_t  lun,
                       uint8_t        number_sectors_to_write,
                       uint32_t       sector_number,
-                      uint8_t *      buffer,
+                      uint8_t       *buffer,
                       uint8_t *const number_of_sectors_written) {
 
   device_config *const  dev  = get_usb_driver(device_index);

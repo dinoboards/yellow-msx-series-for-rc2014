@@ -44,7 +44,7 @@
 
 #include "io.h"
 
-__at (0xFC9E) unsigned int uiTickCount;
+__at(0xFC9E) unsigned int uiTickCount;
 
 // X and YMODEM Vars
 #define RcvPktSize 2200
@@ -274,10 +274,10 @@ unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned cha
   if ((Action == 'C') || (Action == 'G'))
     Retries = XYMODEM_STARTPACKET_RETRIES;
   else // otherwise XYMODEM_PACKET_RETRIES
-      if (!G)
-    Retries = XYMODEM_PACKET_RETRIES;
-  else
-    Retries = 1; // YMODEM-G - no retries at all, once wrong, cancel
+    if (!G)
+      Retries = XYMODEM_PACKET_RETRIES;
+    else
+      Retries = 1; // YMODEM-G - no retries at all, once wrong, cancel
 
   // Ok, so let's do the packet game while we can retry
   for (i = 0; i < Retries; i++) {

@@ -15,7 +15,7 @@ uint8_t usb_lun_info_scsi(device_config *const dev, const uint8_t lun, nextor_lu
   info->medium_type = 0; // block_device
   info->sector_size = response.block_size[2] << 8 + response.block_size[3];
 
-  uint8_t *      no_sectors = ((uint8_t *)&info->number_of_sectors);
+  uint8_t       *no_sectors = ((uint8_t *)&info->number_of_sectors);
   const uint8_t *no_blocks  = response.number_of_blocks + 3;
 
   *no_sectors++ = *no_blocks--;

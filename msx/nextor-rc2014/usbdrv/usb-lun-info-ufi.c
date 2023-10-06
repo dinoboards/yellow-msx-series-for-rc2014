@@ -20,7 +20,7 @@ uint8_t usb_lun_info_ufi(device_config *const dev, const uint8_t lun, nextor_lun
   info->medium_type = 0; // block_device
   info->sector_size = response.block_size[1] << 8 + response.block_size[0];
 
-  uint8_t *      no_sectors = ((uint8_t *)&info->number_of_sectors);
+  uint8_t       *no_sectors = ((uint8_t *)&info->number_of_sectors);
   const uint8_t *no_blocks  = response.number_of_blocks + 3;
 
   *no_sectors++ = *no_blocks--;
