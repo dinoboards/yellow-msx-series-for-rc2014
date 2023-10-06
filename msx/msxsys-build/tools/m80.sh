@@ -2,7 +2,7 @@
 
 set -e
 
-outfile=$(tempfile)
+outfile=$(mktemp)
 
 function finish {
   rm "${outfile}"
