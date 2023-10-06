@@ -123,8 +123,8 @@ extern int _io_errno; /* to see error code in register A after CALL 5 */
 
 extern int Open(char *name, int mode); /* opens file, returns number fH= 3...15 as file handler, or -1 on error */
 extern int
-            OpenAttrib(char *name, int mode, int attr); /* opens file providing attributes for MSXDOS2, (attributes = mode, default) */
-extern int  Create(char *name);                         /* creates file, opens, see open */
+OpenAttrib(char *name, int mode, int attr);     /* opens file providing attributes for MSXDOS2, (attributes = mode, default) */
+extern int  Create(char *name);                 /* creates file, opens, see open */
 extern int  CreateAttrib(char *name, int attr); /* creates file providing attributes for MSXDOS2, (attributes = mode, default) */
 extern int  Close(int fH);                      /* closes file by file handler, returns 0, or -1 on error in _io_error */
 extern int  Read(int fH, void *buf, unsigned int nbytes);  /* reads from file to buffer */

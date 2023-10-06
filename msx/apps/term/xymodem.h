@@ -59,12 +59,12 @@
 #define ETB 0x17
 #define CAN 0x18
 
-extern __at (0xFC9E) unsigned int uiTickCount;
+extern __at(0xFC9E) unsigned int uiTickCount;
 #define XYMODEM_PACKET_TIMEOUT      360
 #define XYMODEM_STARTPACKET_RETRIES 3
 #define XYMODEM_PACKET_RETRIES      10
 
-char *        ultostr(unsigned long value, char *ptr, int base);
+char         *ultostr(unsigned long value, char *ptr, int base);
 unsigned char XYModemPacketReceive(int *File, unsigned char Action, unsigned char PktNumber, unsigned char isYmodem);
 void          CancelTransfer(void);
 void          XYModemGet(unsigned char chTelnetTransfer);

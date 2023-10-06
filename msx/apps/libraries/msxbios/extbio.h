@@ -19,13 +19,13 @@ typedef struct {
 
 typedef struct {
   uint8_t slot_id;
-  void *  jump_table;
+  void   *jump_table;
   uint8_t reserved;
 } rs232_extbio_info;
 
 typedef struct {
   uint8_t slot_id;
-  void *  jump_table;
+  void   *jump_table;
   uint8_t number_of_free_segments;
   uint8_t number_of_segments;
   uint8_t reserved[3];
@@ -48,7 +48,7 @@ extern extbio_device_table *extbio_get_dev(extbio_device_table *table) __z88dk_f
 #define SIO_CLK_2457600 5
 #define SIO_CLK_3686400 6
 
-extern void *  extbio_fossil_install();
+extern void   *extbio_fossil_install();
 extern uint8_t extbio_sio_get_clock();
 extern uint8_t extbio_sio_set_clock(const uint8_t new_code) __z88dk_fastcall;
 extern uint8_t extbio_sio_get_present();

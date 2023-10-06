@@ -3,17 +3,17 @@
 
 #include <stdlib.h>
 
-#define JIFFY_ADDR  __at (0xFC9E)
-#define NEWKEY_ADDR __at (0xFBE5)
-#define PUTPNT_ADDR __at (0xF3F8)
-#define GETPNT_ADDR __at (0xF3FA)
-#define TXTNAM_ADDR __at (0xF3B3)
-#define CSRY_ADDR   __at (0xF3DC)
-#define CSRX_ADDR   __at (0xF3DD)
-#define LINLEN_ADDR __at (0xF3B0)
-#define CSRSW_ADDR  __at (0xFCA9)
-#define LINL40_ADDR __at (0xF3AE)
-#define RG8SAV_ADDR __at (0xFFE7)
+#define JIFFY_ADDR  __at(0xFC9E)
+#define NEWKEY_ADDR __at(0xFBE5)
+#define PUTPNT_ADDR __at(0xF3F8)
+#define GETPNT_ADDR __at(0xF3FA)
+#define TXTNAM_ADDR __at(0xF3B3)
+#define CSRY_ADDR   __at(0xF3DC)
+#define CSRX_ADDR   __at(0xF3DD)
+#define LINLEN_ADDR __at(0xF3B0)
+#define CSRSW_ADDR  __at(0xFCA9)
+#define LINL40_ADDR __at(0xF3AE)
+#define RG8SAV_ADDR __at(0xFFE7)
 
 // FC9E-FC9F: software clock, updated at each VDP interrupt
 extern uint16_t JIFFY_ADDR JIFFY;

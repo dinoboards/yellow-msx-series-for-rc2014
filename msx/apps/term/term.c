@@ -47,7 +47,7 @@
 
 // Those won't change, so we won't waste memory and use global constants
 const unsigned char ucWindowSize[]  = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 24,
-                                      IAC, SE}; // our terminal is 80x24
+                                       IAC, SE}; // our terminal is 80x24
 const unsigned char ucWindowSize0[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 40, 0, 24,
                                        IAC, SE}; // our terminal is 40x24
 const unsigned char ucWindowSize1[] = {IAC, WILL, CMD_WINDOW_SIZE, IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 25,

@@ -9,7 +9,7 @@ void parse_endpoint_storage(device_config *const storage_dev, const endpoint_des
 
   const uint8_t         x   = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
   endpoint_param *const eps = storage_dev->endpoints;
-  endpoint_param *      ep;
+  endpoint_param       *ep;
 
   if (pEndpoint->bmAttributes & 0x01) { // 3 -> Interrupt
     if (!(pEndpoint->bEndpointAddress & 0x80))

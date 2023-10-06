@@ -58,7 +58,7 @@ void preparePartitioningProcess(uint8_t        _driverSlot,
 
 uint8_t toggleStatusBit(uint8_t partitionTableEntryIndex, uint32_t partitonTablesector) {
   uint8_t              error;
-  masterBootRecord *   mbr = (masterBootRecord *)sectorBuffer;
+  masterBootRecord    *mbr = (masterBootRecord *)sectorBuffer;
   partitionTableEntry *entry;
 
   error = readSectorFromDevice(driverSlot, deviceIndex, selectedLunIndex, partitonTablesector);
@@ -297,8 +297,8 @@ static uint8_t createFatFileSystem(
 
 uint8_t createPartition(uint8_t index) {
   uint8_t              error;
-  masterBootRecord *   mbr       = (masterBootRecord *)sectorBuffer;
-  partitionInfo *      partition = &partitions[index];
+  masterBootRecord    *mbr       = (masterBootRecord *)sectorBuffer;
+  partitionInfo       *partition = &partitions[index];
   uint32_t             mbrSector;
   uint32_t             firstFileSystemSector;
   partitionTableEntry *tableEntry;

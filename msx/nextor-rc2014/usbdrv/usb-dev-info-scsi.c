@@ -20,7 +20,7 @@ uint8_t usb_dev_info_scsi(device_config *const dev, const dev_info_request reque
 
   memset(buffer, ' ', 64);
 
-  void *  src;
+  void   *src;
   uint8_t size;
 
   switch (request_info) {
