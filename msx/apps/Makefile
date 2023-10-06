@@ -145,6 +145,7 @@ chip8test:
 .PHONY: clean
 clean:
 	@rm -rf ./bin
+	$(MAKE) --no-print-directory -C chip8 clean
 
 .PHONY: format
 format: SHELL:=/bin/bash

@@ -10,7 +10,12 @@ create 24 bit color graphic file ,  portable pixmap file = PPM
 see http://en.wikipedia.org/wiki/Portable_pixmap
 to see the file use external application ( graphic viewer)
  */
+
 #include "config_request.h"
+
+/* must include stdbool before conio, as conio include msx.h which will define its own bool if none defined */
+#include <stdbool.h>
+
 #include <conio.h>
 #include <math.h>
 #include <msxdos.h>
