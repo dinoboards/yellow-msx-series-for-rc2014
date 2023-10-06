@@ -38,6 +38,10 @@
 #define _TELNET_HEADER_INCLUDED
 
 #include "msx_fusion.h"
+
+/* must include stdbool before stdio, as stdio include msx.h which will define its own bool if none defined */
+#include <stdbool.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
