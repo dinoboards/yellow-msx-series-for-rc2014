@@ -17,7 +17,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -28,6 +28,7 @@ zcchelp:
 CONFIG_REQUEST := config_request.c
 SYSTEM_VARS := libraries/msxbios/system_vars.c
 MSXDOS_LIB := $(addprefix $(BIN)libraries/msxdos/,msxdos_get_drive_letter_info.lib msxdos.lib msxdos_set_date.lib msxdos_set_time.lib msxdos_get_time.lib)
+EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio_usb_get_present.lib extbio_usb_get_device_descriptor.lib)
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := libraries/delay/delay.c
 USBDRV := libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/usb_cbi.c libraries/usb/class_scsi.c
@@ -49,6 +50,10 @@ helloworld_files = $(call app_files,helloworld, $(SYSTEM_VARS))
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
+usbctrl_files = $(call app_files,usbctrl, $(SYSTEM_VARS) $(DELAY) usbtst/enumerate_trace.c)
+$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB)
+usbctrl.com.crt_enable_commandline:=1
+
 usbtst_files = $(call app_files,usbtst, $(SYSTEM_VARS) $(DELAY) $(USBDRV))
 $(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(MSXDOS_LIB)
 usbtst.com.crt_enable_commandline:=1
@@ -69,7 +74,7 @@ cpusptst_files = $(call app_files,cpusptst,)
 $(BIN)cpusptst.com: $(addprefix $(BIN),$(cpusptst_files))
 
 extbio_files = $(call app_files,extbio,libraries/extbio/extbio.asm xstdio.asm getslt.asm)
-$(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files)) $(MSXDOS_LIB)
+$(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files)) $(MSXDOS_LIB) $(EXTBIO_LIB)
 
 rs232tst_files = $(call app_files,rs232tst,libraries/extbio/extbio.asm getslt.asm rs232.asm $(SYSTEM_VARS))
 $(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files)) $(MSXDOS_LIB)

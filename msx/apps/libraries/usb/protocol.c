@@ -38,6 +38,27 @@ usb_error usbtrn_get_descriptor(device_descriptor *const buffer) {
   RETURN_CHECK(usb_control_transfer(&cmd, (uint8_t *)buffer, 0, buffer->bMaxPacketSize0));
 }
 
+/**
+ * @brief Issue GET_DESCRIPTOR request to retrieve the device descriptor for usb device at the specified address
+ *
+ * @param buffer the buffer to store the device descriptor in
+ * @return usb_error USB_ERR_OK if all good, otherwise specific error code
+ */
+usb_error usbtrn_get_descriptor2(device_descriptor *const buffer, const uint8_t device_address) {
+  usb_error    result;
+  setup_packet cmd;
+  cmd         = cmd_get_device_descriptor;
+  cmd.wLength = 8;
+
+  result = usb_control_transfer(&cmd, (uint8_t *)buffer, device_address, 8);
+
+  CHECK(result);
+
+  cmd         = cmd_get_device_descriptor;
+  cmd.wLength = 18;
+  RETURN_CHECK(usb_control_transfer(&cmd, (uint8_t *)buffer, device_address, buffer->bMaxPacketSize0));
+}
+
 const setup_packet cmd_set_device_address = {0x00, 5, {0, 0}, {0, 0}, 0};
 
 /**

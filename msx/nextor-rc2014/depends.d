@@ -156,6 +156,7 @@ usb-init.o: usbdrv/usb-init.c usbdrv/nextor.h usbdrv/print.h \
 ./bin/work-area.o: ./usbdrv/work-area.asm ./usbdrv/msx.inc
 ./bin/print.o: ./usbdrv/print.asm ./usbdrv/msx.inc
 ./bin/printer_drv.o: ./usbdrv/printer_drv.asm
+./bin/usb-dev.o: ./usbdrv/usb-dev.asm
 ./bin/drvend.o: ./drvend.asm
 ./bin/unapi-nextor-id.o: ./unapi-nextor-id.asm
 ./bin/ch376drv.o: ./ch376drv.asm

@@ -56,6 +56,7 @@ typedef struct _endpoint_descriptor {
 } endpoint_descriptor;
 
 extern usb_error usbtrn_get_descriptor(device_descriptor *const buffer);
+extern usb_error usbtrn_get_descriptor2(device_descriptor *const buffer, const uint8_t device_address);
 
 extern usb_error usbtrn_get_config_descriptor(config_descriptor *const buffer,
                                               const uint8_t            config_index,

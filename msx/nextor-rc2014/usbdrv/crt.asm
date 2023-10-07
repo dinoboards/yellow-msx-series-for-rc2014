@@ -9,7 +9,8 @@
 	EXTERN	_get_number_of_usb_drives
 	EXTERN	_drv_direct4
 	EXTERN	_device_mapping
-	EXTERN _convert_and_print_disk_size
+	EXTERN	_convert_and_print_disk_size
+	EXTERN	_extbio_rc2014
 
 	ORG	$5000
 usb_host_init:
@@ -34,3 +35,5 @@ device_mapping:
 	JP	_device_mapping
 convert_and_print_disk_size:
 	JP	_convert_and_print_disk_size
+extbio_rc2014:
+	JP	_extbio_rc2014
