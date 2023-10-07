@@ -64,7 +64,7 @@ $(BINDIR)$1.fdd.dsk: $1-nextor-kernel $(BINDIR)rcembdrv.bin
 	@mkdir -p $(BINDIR)
 	DATSIZ=$$$$(./scripts/getsymb.sh $(BINDIR)rcembdrv.exp.asm DATSIZ)
 	rm -f $(BINDIR)$1.fdd.dsk
-	dd status=none if=/dev/zero of=$(BINDIR)$1.fdd.dsk bs=$$$$(($$$$DATSIZ*17)) count=1
+	dd status=none if=/dev/zero of=$(BINDIR)$1.fdd.dsk bs=$$$$(($$$$DATSIZ*18)) count=1
 	mkfs.vfat -F 12 -f 1 -n RC2014 -i 80000000 -a $(BINDIR)$1.fdd.dsk > /dev/null
 	mmd -i $(BINDIR)$1.fdd.dsk system
 	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/*.com ::/system/
@@ -81,10 +81,10 @@ $(BINDIR)$1.driver-with-sectors.bin: $(BINDIR)rc2014dr.bin $(BINDIR)rcembdrv.bin
 	dd status=none if=/dev/zero of=$1.driver-with-sectors.bin bs=16k count=19 seek=0
 	dd status=none conv=notrunc if=rc2014dr.bin of=$1.driver-with-sectors.bin bs=8k count=2 seek=0
 	BNK_START_ADDR=$$$$((SECSTRT-16384))
-	for i in {2..18}
+	for i in {1..18}
 	do
 		BNK_ADDR=$$$$(($$$$BNK_START_ADDR + (16384*($$$$i))))
-		SKIP=$$$$(($$$$DATSIZ*($$$$i-2)))
+		SKIP=$$$$(($$$$DATSIZ*($$$$i-1)))
 		dd status=none conv=notrunc if=rcembdrv.bin of=$1.driver-with-sectors.bin bs=8k count=1 seek=$$$$((2*$$$$i))
 		dd status=none conv=notrunc if=$1.fdd.dsk of=$1.driver-with-sectors.bin bs=1 count=$$$${DATSIZ} seek=$$$$BNK_ADDR skip=$$$$SKIP
 	done
