@@ -37,25 +37,6 @@ usb_device_type identify_class_driver(_working *const working) {
   return 0;
 }
 
-usb_error get_config_descriptor(const uint8_t  config_index,
-                                const uint8_t  device_address,
-                                const uint8_t  max_packet_size,
-                                uint8_t *const buffer) {
-  usb_error result;
-
-  trace_printf("GET CONFIG %d, %d, %d\r\n", config_index, device_address, max_packet_size);
-
-  CHECK(usbtrn_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address,
-                                     max_packet_size));
-
-  // if wTotalLength > MAX_CONFIG_SIZE bad things might happen
-  CHECK(usbtrn_get_config_descriptor((config_descriptor *)buffer, config_index, ((config_descriptor *)buffer)->wTotalLength,
-                                     device_address, max_packet_size));
-  logConfig((config_descriptor *)buffer);
-
-  return USB_ERR_OK;
-}
-
 usb_error op_interface_next(_working *const working) __z88dk_fastcall {
   if (--working->interface_count == 0)
     return USB_ERR_OK;
@@ -188,7 +169,10 @@ usb_error op_get_config_descriptor(_working *const working) __z88dk_fastcall {
 
   const uint8_t max_packet_size = working->desc.bMaxPacketSize0;
 
-  CHECK(get_config_descriptor(working->config_index, working->state->next_device_address, max_packet_size, working->config.buffer));
+  CHECK(usbtrn_get_full_config_descriptor(working->config_index, working->state->next_device_address, max_packet_size,
+                                          MAX_CONFIG_SIZE, working->config.buffer));
+
+  logConfig((config_descriptor *)working->config.buffer);
 
   working->ptr             = (working->config.buffer + sizeof(config_descriptor));
   working->interface_count = working->config.desc.bNumInterfaces;

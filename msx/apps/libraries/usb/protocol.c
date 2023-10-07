@@ -117,6 +117,25 @@ usb_error usbtrn_get_config_descriptor(config_descriptor *const buffer,
   RETURN_CHECK(usb_control_transfer(&cmd, (uint8_t *)buffer, device_address, max_packet_size));
 }
 
+usb_error usbtrn_get_full_config_descriptor(const uint8_t  config_index,
+                                            const uint8_t  device_address,
+                                            const uint8_t  max_packet_size,
+                                            const uint8_t  max_buffer_size,
+                                            uint8_t *const buffer) {
+  usb_error result;
+
+  CHECK(usbtrn_get_config_descriptor((config_descriptor *)buffer, config_index, sizeof(config_descriptor), device_address,
+                                     max_packet_size));
+
+  uint8_t max_length = ((config_descriptor *)buffer)->wTotalLength;
+  if (max_length > max_buffer_size)
+    max_length = max_buffer_size;
+
+  CHECK(usbtrn_get_config_descriptor((config_descriptor *)buffer, config_index, max_length, device_address, max_packet_size));
+
+  return USB_ERR_OK;
+}
+
 const setup_packet usb_cmd_clear_endpoint_halt = {2, 1, {0, 0}, {255, 0}, 0}; //    ;byte 4 is the endpoint to be cleared
 
 usb_error usbtrn_clear_endpoint_halt(const uint8_t endpoint_number, const uint8_t device_address, const uint8_t max_packet_size) {
