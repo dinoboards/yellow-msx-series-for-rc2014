@@ -144,6 +144,8 @@ uint8_t usb_host_init(const uint8_t flag) __z88dk_fastcall {
     return false;
   }
 
+  p->present |= PRES_CH376;
+
   const uint8_t ver = ch_cmd_get_ic_version();
   print_string("CH376:           PRESENT (VER ");
   print_hex(ver);

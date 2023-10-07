@@ -47,6 +47,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)usb-dev-write-ufi.c.o \
 	$(BINDIR)usb-dev-write.c.o \
 	$(BINDIR)usb-dev.c.o \
+	$(BINDIR)usb-dev.o \
 	$(BINDIR)usb-init.c.o \
 	$(BINDIR)usb-lun-info-scsi.c.o \
 	$(BINDIR)usb-lun-info-ufi.c.o \

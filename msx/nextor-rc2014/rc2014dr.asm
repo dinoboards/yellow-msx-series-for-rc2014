@@ -397,7 +397,22 @@ DRV_BASDEV:
 ; D'=1 if the old hook must be called, D'=0 otherwise.
 ; It is entered with D'=1.
 
+EXTBIO_RC2014_ID		EQU	214
+
 UNAPI_EXTBIO:
+	PUSH	AF
+
+	LD	A, D
+	CP	EXTBIO_RC2014_ID
+	JR	NZ, NOT_EXTBIO_RC2014
+
+	POP	AF
+	CALL	extbio_rc2014
+	RET
+
+NOT_EXTBIO_RC2014:
+	pop	af
+
 	push	hl
 	push	bc
 	push	af
