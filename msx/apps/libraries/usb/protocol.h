@@ -64,6 +64,12 @@ extern usb_error usbtrn_get_config_descriptor(config_descriptor *const buffer,
                                               const uint8_t            device_address,
                                               const uint8_t            max_packet_size);
 
+extern usb_error usbtrn_get_full_config_descriptor(const uint8_t  config_index,
+                                                   const uint8_t  device_address,
+                                                   const uint8_t  max_packet_size,
+                                                   const uint8_t  max_buffer_size,
+                                                   uint8_t *const buffer);
+
 extern usb_error usbtrn_set_configuration(const uint8_t device_address, const uint8_t max_packet_size, const uint8_t configuration);
 
 extern usb_error usbtrn_set_address(const uint8_t device_address) __z88dk_fastcall;
