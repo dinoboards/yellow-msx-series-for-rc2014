@@ -32,6 +32,7 @@ EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio_usb_get_present.lib ext
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := $(BIN)libraries/delay/delay.c.lib
 USBDRV := libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/usb_cbi.c libraries/usb/class_scsi.c
+FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib)
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm $(SYSTEM_VARS))
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files)) $(MSXDOS_LIB)
@@ -42,8 +43,8 @@ V9958_DEPS := v9958.c v9958.asm
 list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
 
-clrdir_files = $(call app_files,clrdir,$(SYSTEM_VARS) $(addprefix libraries/fusion/,io.asm))
-$(BIN)clrdir.com: $(addprefix $(BIN),$(clrdir_files)) $(MSXDOS_LIB)
+clrdir_files = $(call app_files,clrdir,$(SYSTEM_VARS))
+$(BIN)clrdir.com: $(addprefix $(BIN),$(clrdir_files)) $(MSXDOS_LIB) $(FUSION_LIB)
 clrdir.com.crt_enable_commandline:=1
 
 helloworld_files = $(call app_files,helloworld, $(SYSTEM_VARS))
@@ -51,7 +52,7 @@ $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
 usbctrl_files = $(call app_files,usbctrl, $(SYSTEM_VARS) $(DELAY) usbtst/enumerate_trace.c)
-$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY)
+$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY)  $(FUSION_LIB)
 usbctrl.com.crt_enable_commandline:=1
 
 usbtst_files = $(call app_files,usbtst, $(SYSTEM_VARS) $(DELAY) $(USBDRV))
