@@ -25,16 +25,11 @@ uint8_t main(const int argc, const char *argv[]) {
   if (h) {
     printf("Number of usb devices connected: %d\r\n", l);
 
-    hl = extbio_usb_get_device_descriptor(2, &my_device_descriptor);
-
-    printf("Device %d: %04X\r\n", 1, hl);
-    // printf("X %d\r\n", my_device_descriptor.bDescriptorType);
-    logDevice(&my_device_descriptor);
-
-    // for(uint8_t device_index = 1; device_index <= l; device_index++) {
-    //   hl = extbio_usb_get_device_descriptor(device_index, &my_device_descriptor);
-    //   printf("Device %d: %d\r\n", device_index, hl);
-    // }
+    for (uint8_t i = 1; i <= l; i++) {
+      hl = extbio_usb_get_device_descriptor(i, &my_device_descriptor);
+      printf("Device %d: %02X\r\n", i, hl);
+      logDevice(&my_device_descriptor);
+    }
   }
 
   return 0;

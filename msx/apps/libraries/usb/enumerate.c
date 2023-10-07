@@ -228,10 +228,12 @@ usb_error enumerate_all_devices() {
   _usb_state *const work_area = get_usb_work_area();
   enumeration_state state;
   memset(&state, 0, sizeof(enumeration_state));
-  state.next_device_address       = 1;
+  state.next_device_address       = 0;
   state.next_storage_device_index = -1;
 
   usb_error result = read_all_configs(&state);
+
+  work_area->count_of_detected_usb_devices = state.next_device_address;
 
   CHECK(result);
 

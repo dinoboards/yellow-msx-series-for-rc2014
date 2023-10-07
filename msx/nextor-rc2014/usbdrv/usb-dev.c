@@ -42,22 +42,10 @@ uint16_t extbio_rc2014_usb_get_present() {
 
   work_area *const p = get_work_area();
 
-  if (p->present & PRES_USB1)
-    l++;
+  if (!(p->present & PRES_CH376))
+    return 0;
 
-  if (p->present & PRES_USB2)
-    l++;
-
-  if (p->present & PRES_USB3)
-    l++;
-
-  if (p->present & PRES_USB4)
-    l++;
-
-  if (p->present & PRES_CH376)
-    return (uint16_t)l | 0x0100;
-
-  return l;
+  return (uint16_t)p->ch376.count_of_detected_usb_devices | 0x0100;
 }
 
 /**

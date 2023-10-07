@@ -12,7 +12,8 @@ typedef struct __usb_state {
   device_config_hub     hub_config;
   device_config         cdc_config;
   device_config_printer printer_config;
-  uint8_t               printer_time_throttle_flag;
+  uint8_t               printer_time_throttle_flag : 1;
+  uint8_t               count_of_detected_usb_devices : 4;
 } _usb_state;
 
 extern _usb_state *get_usb_work_area();
