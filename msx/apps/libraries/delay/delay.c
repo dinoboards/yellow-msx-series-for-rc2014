@@ -15,3 +15,9 @@ void long_delay(const int16_t seconds) __z88dk_fastcall {
   while (!is_time_past(ft))
     ;
 }
+
+void delay_20ms() { delay(1); }
+
+void delay_short() { delay(3); }
+
+void delay_medium() { delay(30); }

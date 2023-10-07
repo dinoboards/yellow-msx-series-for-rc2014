@@ -47,17 +47,3 @@ uint16_t extbio_rc2014_usb_get_present() {
 
   return (uint16_t)p->ch376.count_of_detected_usb_devices | 0x0100;
 }
-
-/**
- * @brief Retrieve the usb device descritor for the usb device at the specified address
- *
- * @param device_address the address the device has been configured to respond to
- * @param p_device_descriptor a buffer to store the device descriptor in - must be in the top page
- * @return uint16_t low byte is 0 if no error, otherwise the error code
- */
-uint16_t extbio_rc2014_usb_get_descriptor(const uint8_t device_address, device_descriptor *const p_device_descriptor) {
-  (void)device_address;
-  (void)p_device_descriptor;
-
-  return usbtrn_get_descriptor2(p_device_descriptor, device_address);
-}
