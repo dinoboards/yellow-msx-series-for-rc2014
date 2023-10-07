@@ -40,7 +40,8 @@ clrdir.o: clrdir/clrdir.c clrdir/arguments.h clrdir/fdisk2.h datatypes.h \
  libraries/fusion/io.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
 vramtest.o: vramtest.c v9958.h libraries/msxdos/msxdos.h
-usbctrl.o: usbctrl/usbctrl.c libraries/msxbios/extbio.h \
+usbctrl.o: usbctrl/usbctrl.c libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
  libraries/msxbios/extbio_rc2014.h libraries/usb/protocol.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
@@ -217,9 +218,9 @@ romflash.o: romflash/romflash.c romflash/flashloader.h \
 ./bin/memmap-override.o: ./memmap-override.asm
 ./bin/muflash/slot_helpers.o: ./muflash/slot_helpers.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc
-./bin/libraries/extbio/extbio_usb_get_device_descriptor.o: ./libraries/extbio/extbio_usb_get_device_descriptor.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_get_present.o: ./libraries/extbio/extbio_usb_get_present.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_control_transfer.o: ./libraries/extbio/extbio_usb_control_transfer.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
 ./bin/libraries/fusion/inputstring.o: ./libraries/fusion/inputstring.asm

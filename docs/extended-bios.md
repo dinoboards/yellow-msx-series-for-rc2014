@@ -902,17 +902,27 @@ HL -a buffer to store the device descriptor in - must be in the top page</dd>
 <dt>Output:</dt><dd>L == 0 if no error, otherwise the error code</dd>
 </dl>
 
-### Function 0x82 (130): (RC2014_USB_USB_DESCRIPTOR)
+### Function 0x82 (130): (RC2014_USB_CONTROL_TRANSFER)
 
 <dl>
-<dt>Use:</dt><dd>Retrieve an attached USB's device descriptor</dd>
-<dt>Entry:</dt><dd>A = USB device's assigned address</br>
-HL = an 18 byte buffer for storage of the USB device descriptor*  (must be in the top page)<br>
+<dt>Use:</dt><dd>Perform a USB control transfer (in or out)</br>
+  See https://www.beyondlogic.org/usbnutshell/usb4.shtml for a description of the USB control transfer</dd>
+<dt>Entry:</dt><dd></br>
+HL = address within page 3, that references the parameter for the function<br>
+
+```
+HL+0 cmd_packet         = address of command packet to be sent
+HL+2 buffer             = ddress of data to be sent or received
+HL+4 device_address     = address of the target USB device
+HL+5 max_packet_size    = packet size to be used for the control transfer
+```
+
+all pointers and buffers must be in page 3<br>
 </dd>
-<dt>Output:</dt><dd>HL = 0 if success</br>
+<dt>Output:</dt><dd>L = 0 if success</br>
 </dl>
 
-> *for details, refer to the protocol.h for a struct description or the USB specification.
+> The current solution does not support hot plugging/removal of USB devices.  So any change to USB's current assigned address or configuration will result incorrect behaviour of the system.
 
 ## 0F1h (241) - MultiMente (Unofficial)
 ### Function 0:

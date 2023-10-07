@@ -2,12 +2,6 @@
 #include <delay.h>
 #include <stdbool.h>
 
-void delay_20ms() { delay(1); }
-
-void delay_short() { delay(3); }
-
-void delay_medium() { delay(30); }
-
 void ch_command(const uint8_t command) __z88dk_fastcall {
   uint8_t counter = 255;
   while ((CH376_COMMAND_PORT & PARA_STATE_BUSY) && --counter != 0)

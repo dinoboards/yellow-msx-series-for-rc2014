@@ -10,6 +10,7 @@
 const ufi_request_sense_command          ufi_cmd_request_sense          = {0x03, 0, 0, 0, 0, 18, {0, 0, 0, 0, 0, 0, 0}};
 const ufi_read_format_capacities_command ufi_cmd_read_format_capacities = {0x23, 0, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 const ufi_inquiry_command                ufi_cmd_inquiry                = {0x12, 0, 0, 0, 0, 0, 0x24, {0, 0, 0, 0, 0, 0, 0}};
+const ufi_format_command ufi_cmd_format = {0x04, 0, 0, 0, 0, 0, {0, 0}, {0, 0}, {0, sizeof(ufi_format_parameter_list)}, {0, 0}};
 
 uint8_t wait_for_device_ready(device_config *const storage_device, const uint16_t timeout_period) {
   usb_error                  result;
@@ -81,6 +82,33 @@ usb_error ufi_read_write_sector(device_config *const storage_device,
   cmd.transfer_length[1] = sector_count;
 
   usb_error result = usb_execute_cbi(storage_device, (uint8_t *)&cmd, send, 512 * sector_count, (uint8_t *)buffer, sense_codes);
+
+  RETURN_CHECK(result);
+}
+
+usb_error
+ufi_format(device_config *const storage_device, const uint8_t side, const uint8_t track_number, const uint8_t interleave) {
+  uint8_t const sense_codes[2];
+
+  ufi_format_parameter_list parameter_list;
+  memset(&parameter_list, 0, sizeof(parameter_list));
+
+  ufi_format_command cmd;
+  memcpy(&cmd, &ufi_cmd_format, sizeof(cmd));
+
+  cmd.track_number  = track_number;
+  cmd.interleave[1] = interleave;
+
+  parameter_list.defect_list_header.side         = side;
+  parameter_list.defect_list_header.immediate    = 1;
+  parameter_list.defect_list_header.reserved2    = 0;
+  parameter_list.defect_list_header.single_track = 1;
+  parameter_list.defect_list_header.dcrt         = 0;
+  parameter_list.defect_list_header.extend       = 1;
+  parameter_list.defect_list_header.fov          = 0;
+
+  usb_error result =
+      usb_execute_cbi(storage_device, (uint8_t *)&cmd, TRUE, sizeof(parameter_list), (uint8_t *)&parameter_list, sense_codes);
 
   RETURN_CHECK(result);
 }
