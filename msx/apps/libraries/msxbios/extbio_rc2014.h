@@ -10,7 +10,6 @@
  */
 extern uint16_t extbio_usb_get_present();
 
-
 /**
  * @brief Retrieve the usb device descritor for the usb device at the specified address
  *
