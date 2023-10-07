@@ -40,12 +40,17 @@ clrdir.o: clrdir/clrdir.c clrdir/arguments.h clrdir/fdisk2.h datatypes.h \
  libraries/fusion/io.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
 vramtest.o: vramtest.c v9958.h libraries/msxdos/msxdos.h
-usbctrl.o: usbctrl/usbctrl.c libraries/delay/delay.h \
- libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
- libraries/msxbios/extbio_rc2014.h libraries/usb/protocol.h \
- libraries/usb/ch376.h libraries/usb/ch376inc.h \
+reporters.o: usbctrl/reporters.c usbctrl/reporters.h \
+ libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- libraries/usb/enumerate_trace.h
+ libraries/fusion/io.h
+usbctrl.o: usbctrl/usbctrl.c usbctrl/arguments.h usbctrl/reporters.h \
+ libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/msxbios/extbio.h libraries/msxbios/extbio_rc2014.h \
+ libraries/fusion/io.h
+arguments.o: usbctrl/arguments.c usbctrl/arguments.h
 helloworld.o: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
 printer_drv.o: usbtst/printer_drv.c libraries/usb/class_printer.h \
