@@ -1,5 +1,6 @@
 #include "arguments.h"
 #include "reporters.h"
+#include "rotator.h"
 #include <delay.h>
 #include <extbio.h>
 #include <extbio_rc2014.h>
@@ -14,6 +15,10 @@ uint8_t report_all_devices(const uint8_t last_device_address, const char *const 
   usb_error result      = 0;
   FILE     *file_handle = NULL;
 
+  printf("Enumerating %d devices\r\n", last_device_address);
+
+  rotate_init();
+
   memset(buffer, 0, sizeof(buffer));
   file_handle = fopen(filename, "w");
 
@@ -23,6 +28,8 @@ uint8_t report_all_devices(const uint8_t last_device_address, const char *const 
   fprintf(file_handle, "Device Count: %d\r", last_device_address);
 
   for (uint8_t device_address = 1; device_address <= last_device_address; device_address++) {
+    erase_line();
+    printf("\rdevice %d  ", device_address);
     usb_error result = usbtrn_get_descriptor2(&my_device_descriptor, device_address);
     if (result) {
       printf("usbtrn_get_descriptor2 failed %d\r\n", result);
@@ -32,21 +39,25 @@ uint8_t report_all_devices(const uint8_t last_device_address, const char *const 
     report_device_descriptor(&my_device_descriptor, file_handle);
 
     for (uint8_t config_index = 0; config_index < my_device_descriptor.bNumConfigurations; config_index++) {
+      erase_line();
+      printf("\rdevice %d config %d  ", device_address, config_index);
+
       memset(buffer, 0, sizeof(buffer));
-      // result = usbtrn_get_full_config_descriptor(config_index, device_address, my_device_descriptor.bMaxPacketSize0, 150,
-      // buffer);
+      result = usbtrn_get_full_config_descriptor(config_index, device_address, my_device_descriptor.bMaxPacketSize0, 150, buffer);
       if (result) {
         printf("usbtrn_get_full_config_descriptor failed %d\r\n", result);
         continue;
       }
 
       const config_descriptor *const config = (config_descriptor *)buffer;
-      // logConfig(config);
+      report_device_configuration(config, file_handle);
 
       for (uint8_t interface_index = 0; interface_index < config->bNumInterfaces; interface_index++) {
+        erase_line();
+        printf("\rdevice %d config %d interface %d ", device_address, config_index, interface_index);
         const interface_descriptor *const interface =
             (interface_descriptor *)(buffer + sizeof(config_descriptor) + interface_index * sizeof(interface_descriptor));
-        // logInterface(interface);
+        report_device_interface(interface, file_handle);
 
         // for(uint8_t endpoint_index = 0; endpoint_index < interface->bNumEndpoints; endpoint_index++) {
         //     const endpoint_descriptor *const endpoint = (endpoint_descriptor *)(buffer + sizeof(config_descriptor) +
@@ -57,6 +68,8 @@ uint8_t report_all_devices(const uint8_t last_device_address, const char *const 
   }
 
   fclose(file_handle);
+  rotate_stop();
+  erase_line();
 }
 
 uint8_t main(const int argc, const char *argv[]) {
