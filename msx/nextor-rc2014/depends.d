@@ -1,38 +1,38 @@
 
-usb-dev-write-scsi.o: usbdrv/usb-dev-write-scsi.c \
+./bin/usbdrv/usb-dev-write-scsi.c.o: usbdrv/usb-dev-write-scsi.c \
  usbdrv/usb-dev-write-scsi.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h usbdrv/work-area.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
  ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/protocol.h \
  usbdrv/nextor.h ../apps/libraries/usb/class_scsi.h
-extended-bios.o: usbdrv/extended-bios.c usbdrv/print.h
-exports.o: usbdrv/exports.c ../apps/libraries/usb/usb_state.h \
+./bin/usbdrv/extended-bios.c.o: usbdrv/extended-bios.c usbdrv/print.h
+./bin/usbdrv/exports.c.o: usbdrv/exports.c ../apps/libraries/usb/usb_state.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/transfers.h
-usb-dev-read.o: usbdrv/usb-dev-read.c usbdrv/nextor.h \
+./bin/usbdrv/usb-dev-read.c.o: usbdrv/usb-dev-read.c usbdrv/nextor.h \
  usbdrv/usb-dev-read-scsi.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h usbdrv/work-area.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
  ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/protocol.h \
  usbdrv/usb-dev-read-ufi.h usbdrv/usb-dev.h
-printer_drv.o: usbdrv/printer_drv.c ../apps/libraries/usb/class_printer.h \
+./bin/usbdrv/printer_drv.c.o: usbdrv/printer_drv.c ../apps/libraries/usb/class_printer.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/transfers.h usbdrv/print.h usbdrv/work-area.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/usb_state.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h
-usb-lun-info.o: usbdrv/usb-lun-info.c usbdrv/nextor.h usbdrv/usb-dev.h \
+./bin/usbdrv/usb-lun-info.c.o: usbdrv/usb-lun-info.c usbdrv/nextor.h usbdrv/usb-dev.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  usbdrv/work-area.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/transfers.h ../apps/libraries/usb/usb_state.h \
  ../apps/libraries/usb/protocol.h usbdrv/usb-lun-info-scsi.h \
  usbdrv/usb-lun-info-ufi.h
-usb-dev-write.o: usbdrv/usb-dev-write.c usbdrv/nextor.h \
+./bin/usbdrv/usb-dev-write.c.o: usbdrv/usb-dev-write.c usbdrv/nextor.h \
  usbdrv/usb-dev-write-scsi.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h usbdrv/work-area.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \
@@ -41,7 +41,7 @@ usb-dev-write.o: usbdrv/usb-dev-write.c usbdrv/nextor.h \
  usbdrv/usb-dev-write-ufi.h ../apps/libraries/usb/class_ufi.h \
  ../apps/libraries/usb/usb_cbi.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/usb_state.h usbdrv/usb-dev.h
-usb-dev-info.o: usbdrv/usb-dev-info.c usbdrv/nextor.h \
+./bin/usbdrv/usb-dev-info.c.o: usbdrv/usb-dev-info.c usbdrv/nextor.h \
  usbdrv/usb-dev-info-scsi.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
@@ -50,20 +50,20 @@ usb-dev-info.o: usbdrv/usb-dev-info.c usbdrv/nextor.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/class_ufi.h \
  ../apps/libraries/usb/usb_cbi.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/usb_state.h
-usb-dev-read-scsi.o: usbdrv/usb-dev-read-scsi.c \
+./bin/usbdrv/usb-dev-read-scsi.c.o: usbdrv/usb-dev-read-scsi.c \
  usbdrv/usb-dev-read-scsi.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h usbdrv/work-area.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
  ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/protocol.h \
  usbdrv/nextor.h ../apps/libraries/usb/class_scsi.h
-usb-dev-status-scsi.o: usbdrv/usb-dev-status-scsi.c usbdrv/nextor.h \
+./bin/usbdrv/usb-dev-status-scsi.c.o: usbdrv/usb-dev-status-scsi.c usbdrv/nextor.h \
  usbdrv/work-area.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/transfers.h ../apps/libraries/usb/usb_state.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/class_scsi.h
-usb-dev-status-ufi.o: usbdrv/usb-dev-status-ufi.c usbdrv/nextor.h \
+./bin/usbdrv/usb-dev-status-ufi.c.o: usbdrv/usb-dev-status-ufi.c usbdrv/nextor.h \
  usbdrv/work-area.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
@@ -71,13 +71,13 @@ usb-dev-status-ufi.o: usbdrv/usb-dev-status-ufi.c usbdrv/nextor.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/class_ufi.h \
  ../apps/libraries/usb/usb_cbi.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/usb_state.h
-usb-dev.o: usbdrv/usb-dev.c usbdrv/usb-dev.h \
+./bin/usbdrv/usb-dev.c.o: usbdrv/usb-dev.c usbdrv/usb-dev.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  usbdrv/work-area.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/transfers.h ../apps/libraries/usb/usb_state.h \
  ../apps/libraries/usb/protocol.h
-usb-dev-info-scsi.o: usbdrv/usb-dev-info-scsi.c \
+./bin/usbdrv/usb-dev-info-scsi.c.o: usbdrv/usb-dev-info-scsi.c \
  usbdrv/usb-dev-info-scsi.h usbdrv/nextor.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h ../apps/libraries/usb/dev_transfers.h \
@@ -85,13 +85,13 @@ usb-dev-info-scsi.o: usbdrv/usb-dev-info-scsi.c \
  ../apps/libraries/usb/class_scsi.h ../apps/libraries/usb/protocol.h \
  usbdrv/usb-dev-info.h usbdrv/work-area.h \
  ../apps/libraries/usb/usb_state.h
-usb-lun-info-scsi.o: usbdrv/usb-lun-info-scsi.c usbdrv/usb-lun-info-ufi.h \
+./bin/usbdrv/usb-lun-info-scsi.c.o: usbdrv/usb-lun-info-scsi.c usbdrv/usb-lun-info-ufi.h \
  usbdrv/nextor.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/class_scsi.h \
  ../apps/libraries/usb/protocol.h
-usb-dev-info-ufi.o: usbdrv/usb-dev-info-ufi.c usbdrv/usb-dev-info-ufi.h \
+./bin/usbdrv/usb-dev-info-ufi.c.o: usbdrv/usb-dev-info-ufi.c usbdrv/usb-dev-info-ufi.h \
  usbdrv/nextor.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
@@ -99,7 +99,7 @@ usb-dev-info-ufi.o: usbdrv/usb-dev-info-ufi.c usbdrv/usb-dev-info-ufi.h \
  ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/class_ufi.h ../apps/libraries/usb/usb_cbi.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/usb_state.h
-usb-dev-status.o: usbdrv/usb-dev-status.c usbdrv/nextor.h \
+./bin/usbdrv/usb-dev-status.c.o: usbdrv/usb-dev-status.c usbdrv/nextor.h \
  usbdrv/usb-dev-status-scsi.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
@@ -108,7 +108,7 @@ usb-dev-status.o: usbdrv/usb-dev-status.c usbdrv/nextor.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/class_ufi.h \
  ../apps/libraries/usb/usb_cbi.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/usb_state.h
-usb-dev-write-ufi.o: usbdrv/usb-dev-write-ufi.c \
+./bin/usbdrv/usb-dev-write-ufi.c.o: usbdrv/usb-dev-write-ufi.c \
  usbdrv/usb-dev-write-ufi.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h ../apps/libraries/usb/class_ufi.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/protocol.h \
@@ -116,19 +116,19 @@ usb-dev-write-ufi.o: usbdrv/usb-dev-write-ufi.c \
  ../apps/libraries/usb/usb_cbi.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/usb_state.h usbdrv/nextor.h usbdrv/work-area.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/usb_state.h
-work-area.o: usbdrv/work-area.c usbdrv/work-area.h \
+./bin/usbdrv/work-area.c.o: usbdrv/work-area.c usbdrv/work-area.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
  ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/protocol.h
-usb-lun-info-ufi.o: usbdrv/usb-lun-info-ufi.c usbdrv/usb-lun-info-ufi.h \
+./bin/usbdrv/usb-lun-info-ufi.c.o: usbdrv/usb-lun-info-ufi.c usbdrv/usb-lun-info-ufi.h \
  usbdrv/nextor.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/class_ufi.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/usb_cbi.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/usb_state.h
-usb-dev-read-ufi.o: usbdrv/usb-dev-read-ufi.c usbdrv/usb-dev-read-ufi.h \
+./bin/usbdrv/usb-dev-read-ufi.c.o: usbdrv/usb-dev-read-ufi.c usbdrv/usb-dev-read-ufi.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  usbdrv/work-area.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
@@ -136,7 +136,7 @@ usb-dev-read-ufi.o: usbdrv/usb-dev-read-ufi.c usbdrv/usb-dev-read-ufi.h \
  ../apps/libraries/usb/protocol.h usbdrv/nextor.h \
  ../apps/libraries/usb/class_ufi.h ../apps/libraries/usb/usb_cbi.h \
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/usb_state.h
-usb-init.o: usbdrv/usb-init.c usbdrv/nextor.h usbdrv/print.h \
+./bin/usbdrv/usb-init.c.o: usbdrv/usb-init.c usbdrv/nextor.h usbdrv/print.h \
  usbdrv/printer_drv.h usbdrv/work-area.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \

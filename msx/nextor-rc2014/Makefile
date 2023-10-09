@@ -109,4 +109,4 @@ endif
 
 .PHONY: version.asm
 version.asm:
-	echo -e "INFO_S:			DB	10, 13, \"MSX ON RC2014 ($(VERSION))\", 10, 13\r\n" > "./version.asm"
+	@echo -e "INFO_S:			DB	10, 13, \"MSX ON RC2014 ($(VERSION))\", 10, 13\r\n" > "./version.asm"

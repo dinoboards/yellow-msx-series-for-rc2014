@@ -114,8 +114,8 @@ deps:
 		file_no_ext="$${file%.*}"
 		file_no_ext=$${file_no_ext#./}
 		filename=$$(basename $$file_no_ext)
-		from="$$filename.rel"
-		to="$(BINDIR)$$filename.c.asm"
+		from="$$filename.o"
+		to="$(BINDIR)$$file_no_ext.c.asm"
 		sdcpp ${ZSDCPP_FLAGS} -MM -MF /tmp/deps.deps $$file
 		sed "s+$$from+$$to+g" /tmp/deps.deps >> ./depends.d
 	done
