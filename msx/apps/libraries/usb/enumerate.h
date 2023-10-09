@@ -32,6 +32,6 @@ typedef struct __working {
 } _working;
 
 extern usb_error read_all_configs(enumeration_state *const state);
-extern usb_error enumerate_all_devices();
+extern usb_error enumerate_all_devices(void);
 
 #endif

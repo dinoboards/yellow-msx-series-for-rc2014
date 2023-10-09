@@ -2,6 +2,6 @@
 #ifndef __FLASH_LOADER
 #define __FLASH_LOADER
 
-extern void flashLoader();
+extern void flashLoader(void);
 
 #endif

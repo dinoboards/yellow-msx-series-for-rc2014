@@ -8,7 +8,7 @@
 
 uint8_t sectorBuffer[512];
 
-static int getNewSerialNumber() { return 0; }
+static int getNewSerialNumber(void) { return 0; }
 
 uint16_t deviceSectorRead(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t sectorNumber) {
   return msxdosDevRead(driverSlot, deviceIndex, lunIndex, sectorNumber, 1, sectorBuffer);
@@ -18,9 +18,9 @@ uint16_t deviceSectorWrite(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunI
   return msxdosDevWrite(driverSlot, deviceIndex, lunIndex, sectorNumber, 1, sectorBuffer);
 }
 
-void clearSectorBuffer() { memset(sectorBuffer, 0, sizeof(sectorBuffer)); }
+void clearSectorBuffer(void) { memset(sectorBuffer, 0, sizeof(sectorBuffer)); }
 
-static void createFat12BootSector() {
+static void createFat12BootSector(void) {
   fatBootSector *sector = (fatBootSector *)sectorBuffer;
 
   clearSectorBuffer();

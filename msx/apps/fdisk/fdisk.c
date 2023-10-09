@@ -105,20 +105,20 @@ uint8_t getRemainingBy1024String(uint32_t value, char *destination) {
   return 0;
 }
 
-void saveOriginalScreenConfiguration() {
+void saveOriginalScreenConfiguration(void) {
   originalScreenConfig.screenMode          = *(uint8_t *)SCRMOD;
   originalScreenConfig.screenWidth         = LINLEN;
   originalScreenConfig.functionKeysVisible = (*(uint8_t *)CNSDFG != 0);
 }
 
-void composeWorkScreenConfiguration() {
+void composeWorkScreenConfiguration(void) {
   currentScreenConfig.screenMode          = 0;
   currentScreenConfig.screenWidth         = 80;
   currentScreenConfig.functionKeysVisible = false;
   screenLinesCount                        = *(uint8_t *)CRTCNT;
 }
 
-void setScreenConfiguration() {
+void setScreenConfiguration(void) {
   LINL40 = 80;
   msxbiosInitxt();
 }
@@ -143,7 +143,7 @@ void printCentered(char *string) {
   printf(string);
 }
 
-void printRuler() {
+void printRuler(void) {
   uint8_t i;
 
   // "Hack" for korean MSX computers that do weird things
@@ -165,9 +165,9 @@ void initializeWorkingScreen(char *header) {
   printRuler();
 }
 
-char getKey() { return msxdosDirio(0xFF); }
+char getKey(void) { return msxdosDirio(0xFF); }
 
-uint8_t waitKey() {
+uint8_t waitKey(void) {
   uint8_t key;
 
   while ((key = getKey()) == 0)
@@ -175,7 +175,7 @@ uint8_t waitKey() {
   return key;
 }
 
-void clearInformationArea() {
+void clearInformationArea(void) {
   uint8_t i;
 
   locate(0, 2);
@@ -184,7 +184,7 @@ void clearInformationArea() {
   }
 }
 
-void getDriversInformation() {
+void getDriversInformation(void) {
   uint8_t           error         = 0;
   uint8_t           driverIndex   = 1;
   msxdosDriverInfo *currentDriver = &drivers[0];
@@ -210,7 +210,7 @@ void printStateMessage(char *string) {
   printf(string);
 }
 
-void showDriverSelectionScreen() {
+void showDriverSelectionScreen(void) {
   uint8_t           i;
   char              slot[4];
   char              rev[3];
@@ -265,7 +265,7 @@ void showDriverSelectionScreen() {
   printStateMessage("Select the device driver");
 }
 
-void getDevicesInformation() {
+void getDevicesInformation(void) {
   uint16_t    error         = 0;
   uint8_t     deviceIndex   = 1;
   deviceInfo *currentDevice = &devices[0];
@@ -293,7 +293,7 @@ void getDevicesInformation() {
   }
 }
 
-void showDeviceSelectionScreen() {
+void showDeviceSelectionScreen(void) {
   deviceInfo *currentDevice;
   uint8_t     i;
 
@@ -334,7 +334,7 @@ void showDeviceSelectionScreen() {
   printStateMessage("Select the device");
 }
 
-void getLunsInformation() {
+void getLunsInformation(void) {
   uint16_t       error      = 0;
   uint8_t        lunIndex   = 1;
   msxdosLunInfo *currentLun = &luns[0];
@@ -359,9 +359,9 @@ void getLunsInformation() {
   }
 }
 
-void printDeviceInfoWithIndex() { printf(" (Id = %d)", selectedDeviceIndex); }
+void printDeviceInfoWithIndex(void) { printf(" (Id = %d)", selectedDeviceIndex); }
 
-void showLunSelectionScreen() {
+void showLunSelectionScreen(void) {
   uint8_t        i;
   msxdosLunInfo *currentLun;
 
@@ -438,7 +438,7 @@ void initializePartitioningVariables(uint8_t lunIndex) {
   recalculateAutoPartitionSize(true);
 }
 
-void printTargetInfo() {
+void printTargetInfo(void) {
   locate(0, 3);
   printf(selectedDriverName);
   printf(currentDevice->deviceName);
@@ -449,7 +449,7 @@ void printTargetInfo() {
   newLine();
 }
 
-uint8_t getDiskPartitionsInfo() {
+uint8_t getDiskPartitionsInfo(void) {
   uint8_t        primaryIndex  = 1;
   uint8_t        extendedIndex = 0;
   uint8_t        error;
@@ -487,7 +487,7 @@ uint8_t getDiskPartitionsInfo() {
   return 0;
 }
 
-bool getYesOrNo() {
+bool getYesOrNo(void) {
   char key;
 
   displayCursor();
@@ -531,7 +531,7 @@ void printOnePartitionInfo(partitionInfo *info) {
   newLine();
 }
 
-void addAutoPartition() {
+void addAutoPartition(void) {
   partitionInfo *partition = &partitions[partitionsCount];
 
   partition->status        = partitionsCount == 0 ? 0x80 : 0;
@@ -598,7 +598,7 @@ void togglePartitionActive(uint8_t partitionIndex) {
   }
 }
 
-void showPartitions() {
+void showPartitions(void) {
   int            i;
   int            firstShownPartitionIndex = 1;
   int            lastPartitionIndexToShow;
@@ -702,7 +702,7 @@ void initializeScreenForTestDeviceAccess(const char *message) {
   printStateMessage("Press any key to stop...");
 }
 
-void testDeviceAccess() {
+void testDeviceAccess(void) {
   uint32_t    sectorNumber = 0;
   const char *message      = "Now reading device sector ";
   uint8_t     messageLen   = strlen(message);
@@ -777,7 +777,7 @@ bool writeSector(uint32_t targetSector) {
       },                                                                                                                           \
       s)
 
-void testDeviceWriteAccess() {
+void testDeviceWriteAccess(void) {
   uint16_t error;
   uint16_t i;
 
@@ -858,7 +858,7 @@ bool readWriteError(const char *errorMessageHeader, const uint16_t error, const 
 
 void increment32Bit(uint32_t *p) __z88dk_fastcall { (*p)++; }
 
-void testDeviceFullWriteAccess() {
+void testDeviceFullWriteAccess(void) {
   const char *message      = "Now testing sector ";
   uint32_t    sectorNumber = 0;
   uint8_t     messageLen   = strlen(message);
@@ -960,7 +960,7 @@ bool confirmDataDestroy(char *action) {
   return getYesOrNo();
 }
 
-void printDone() {
+void printDone(void) {
   printCentered("Done!");
   printf("\x0A\x0D\x0A\x0A\x0A");
   printCentered("If this device had drives mapped,");
@@ -968,7 +968,7 @@ void printDone() {
   printCentered("please reset the computer.");
 }
 
-bool writePartitionTable() {
+bool writePartitionTable(void) {
   uint8_t i;
   uint8_t error = 0;
 
@@ -1009,7 +1009,7 @@ bool writePartitionTable() {
   return true;
 }
 
-void deleteAllPartitions() {
+void deleteAllPartitions(void) {
   sprintf(buffer, "Discard all %s partitions? (y/n) ", partitionsExistInDisk ? "existing" : "defined");
   printStateMessage(buffer);
   if (!getYesOrNo()) {
@@ -1022,7 +1022,7 @@ void deleteAllPartitions() {
   recalculateAutoPartitionSize(true);
 }
 
-void addPartition() {
+void addPartition(void) {
   uint16_t maxPartitionSizeInM;
   uint16_t maxPartitionSizeInK;
   uint8_t  lineLength;
@@ -1110,7 +1110,7 @@ void addPartition() {
   recalculateAutoPartitionSize(false);
 }
 
-void goPartitioningMainMenuScreen() {
+void goPartitioningMainMenuScreen(void) {
   char    key;
   uint8_t error;
   bool    canAddPartitionsNow;
@@ -1303,7 +1303,7 @@ void goDeviceSelectionScreen(uint8_t driverIndex) {
   }
 }
 
-void goDriverSelectionScreen() {
+void goDriverSelectionScreen(void) {
   uint8_t key;
 
   while (true) {
@@ -1326,7 +1326,7 @@ void goDriverSelectionScreen() {
   }
 }
 
-void main() {
+void main(void) {
   installedDriversCount = 0;
   selectedDeviceIndex   = 0;
   selectedLunIndex      = 0;

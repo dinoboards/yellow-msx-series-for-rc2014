@@ -158,12 +158,12 @@ extern void    msxdosGetTime(uint8_t *hour, uint8_t *minutes, uint8_t *seconds);
 #define _NOFIL 0xD7
 
 // MSX BIOS functions
-extern void msxbiosInit32();
-extern void msxbiosInitxt();
+extern void msxbiosInit32(void);
+extern void msxbiosInitxt(void);
 extern void _msxbiosPosit(uint16_t col_and_row) __z88dk_fastcall;
 #define msxbiosPosit(col, row) _msxbiosPosit(((uint16_t)(col)) * 256 + row)
-extern bool msxbiosBreakX();
-extern void msxbiosInitPalette();
+extern bool msxbiosBreakX(void);
+extern void msxbiosInitPalette(void);
 
 /* MSX work area variables */
 

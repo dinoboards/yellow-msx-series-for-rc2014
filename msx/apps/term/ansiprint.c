@@ -3,14 +3,14 @@
 
 unsigned char usingAnsiDrv;
 
-void initPrint() { usingAnsiDrv = 0; }
+void initPrint(void) { usingAnsiDrv = 0; }
 
-void StartPrintBuffer() {
+void StartPrintBuffer(void) {
   if (usingAnsiDrv)
     AnsiStartBuffer();
 }
 
-void EndPrintBuffer() {
+void EndPrintBuffer(void) {
   if (usingAnsiDrv)
     AnsiEndBuffer();
 }
@@ -21,7 +21,7 @@ void initAnsi(unsigned int uiCallBackFunction) {
   AnsiCallBack(uiCallBackFunction);
 }
 
-void endAnsi() {
+void endAnsi(void) {
   usingAnsiDrv = 0;
   AnsiFinish();
 }

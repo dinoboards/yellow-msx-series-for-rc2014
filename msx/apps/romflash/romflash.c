@@ -9,7 +9,7 @@ memmap_extbio_info info_table;
 
 const char pFileName[] = "TEST.ROM";
 
-void main() {
+void main(void) {
   printf("Spike erasing last sector\r\n");
   flashLoader();
 

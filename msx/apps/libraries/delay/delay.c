@@ -16,8 +16,8 @@ void long_delay(const int16_t seconds) __z88dk_fastcall {
     ;
 }
 
-void delay_20ms() { delay(1); }
+void delay_20ms(void) { delay(1); }
 
-void delay_short() { delay(3); }
+void delay_short(void) { delay(3); }
 
-void delay_medium() { delay(30); }
+void delay_medium(void) { delay(30); }

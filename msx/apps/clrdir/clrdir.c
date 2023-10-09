@@ -29,7 +29,7 @@ uint16_t dumpSector(const uint32_t number) {
   return 0;
 }
 
-uint16_t testReadWrite() {
+uint16_t testReadWrite(void) {
   const fatBootSector *sector = (fatBootSector *)sectorBuffer;
 
   // msxdosLunInfo lunInfo;
@@ -77,7 +77,7 @@ uint16_t testReadWrite() {
   return 0;
 }
 
-uint16_t captureSectorsToFile() {
+uint16_t captureSectorsToFile(void) {
   uint16_t error;
   int      iFile = 0;
 

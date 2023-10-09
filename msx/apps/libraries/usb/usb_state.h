@@ -16,6 +16,6 @@ typedef struct __usb_state {
   uint8_t               count_of_detected_usb_devices : 4;
 } _usb_state;
 
-extern _usb_state *get_usb_work_area();
+extern _usb_state *get_usb_work_area(void);
 
 #endif

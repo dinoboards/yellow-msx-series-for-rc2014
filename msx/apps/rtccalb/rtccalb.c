@@ -7,7 +7,7 @@
 #include <string.h>
 
 uint32_t measurement = 0;
-void     measure_timing();
+void     measure_timing(void);
 
 static uint32_t clock    = 3686400;
 static bool     m1_state = false;
@@ -19,7 +19,7 @@ static bool     m1_state = false;
 // (clock / 921600)
 #define WAIT_T_STATES (m1_state ? T_STATES_WITHOUT_M1 : T_STATES_WITH_M1)
 
-uint8_t abort_with_help() {
+uint8_t abort_with_help(void) {
   print_str("Usage:  rtccalb [options]\r\n\r\n"
             "RTC Calibration Tool\r\n\r\n"
             "  /c<clock>, /cpu=<clock> (Optional)\r\n"

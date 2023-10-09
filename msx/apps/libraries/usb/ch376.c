@@ -34,13 +34,13 @@ usb_error ch_wait_int_and_get_status(const int16_t timeout) __z88dk_fastcall {
   return ch_get_status();
 }
 
-usb_error ch_long_wait_int_and_get_status() { return ch_wait_int_and_get_status(from_ms_50hz(5000)); }
+usb_error ch_long_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(from_ms_50hz(5000)); }
 
-usb_error ch_short_wait_int_and_get_status() { return ch_wait_int_and_get_status(from_ms_50hz(100)); }
+usb_error ch_short_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(from_ms_50hz(100)); }
 
-usb_error ch_very_short_wait_int_and_get_status() { return ch_wait_int_and_get_status(from_ms_50hz(10)); }
+usb_error ch_very_short_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(from_ms_50hz(10)); }
 
-usb_error ch_get_status() {
+usb_error ch_get_status(void) {
   ch_command(CH_CMD_GET_STATUS);
   uint8_t ch_status = CH376_DATA_PORT;
 
@@ -109,9 +109,9 @@ uint8_t ch_read_data(uint8_t *buffer, uint16_t buffer_size) {
   return amount_received;
 }
 
-void ch_cmd_reset_all() { ch_command(CH_CMD_RESET_ALL); }
+void ch_cmd_reset_all(void) { ch_command(CH_CMD_RESET_ALL); }
 
-inline uint8_t ch_cmd_check_exist() {
+inline uint8_t ch_cmd_check_exist(void) {
   uint8_t complement;
   ch_command(CH_CMD_CHECK_EXIST);
   CH376_DATA_PORT = (uint8_t)~0x55;
@@ -125,7 +125,7 @@ inline uint8_t ch_cmd_check_exist() {
   return complement == 0x89;
 }
 
-uint8_t ch_probe() {
+uint8_t ch_probe(void) {
   uint8_t i = 5;
   do {
     if (ch_cmd_check_exist())
@@ -151,7 +151,7 @@ uint8_t ch_cmd_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
   return (result == CH_CMD_RET_SUCCESS) ? USB_ERR_OK : USB_ERR_FAIL;
 }
 
-uint8_t ch_cmd_get_ic_version() {
+uint8_t ch_cmd_get_ic_version(void) {
   ch_command(CH_CMD_GET_IC_VER);
   return CH376_DATA_PORT & 0x1f;
 }
@@ -180,11 +180,11 @@ void ch_issue_token_out(const endpoint_param *const endpoint) __z88dk_fastcall {
   ch_issue_token(endpoint->toggle ? 0x40 : 0x00, endpoint->number, CH_PID_OUT);
 }
 
-void ch_issue_token_out_ep0() { ch_issue_token(0x40, 0, CH_PID_OUT); }
+void ch_issue_token_out_ep0(void) { ch_issue_token(0x40, 0, CH_PID_OUT); }
 
-void ch_issue_token_in_ep0() { ch_issue_token(0x80, 0, CH_PID_IN); }
+void ch_issue_token_in_ep0(void) { ch_issue_token(0x80, 0, CH_PID_IN); }
 
-void ch_issue_token_setup() { ch_issue_token(0, 0, CH_PID_SETUP); }
+void ch_issue_token_setup(void) { ch_issue_token(0, 0, CH_PID_SETUP); }
 
 usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_param *const endpoint) {
   uint8_t   count;

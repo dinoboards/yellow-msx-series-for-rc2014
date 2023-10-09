@@ -51,7 +51,7 @@ extbio_device_table table[32];
 
 extern uint8_t getSlotPage0(void *) __z88dk_fastcall;
 
-void main() {
+void main(void) {
   const bool extendedBiosReady = HOKVLD & 1;
   if (!extendedBiosReady) {
     xprintf("No bios extenstions installed\r\n");

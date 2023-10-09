@@ -119,19 +119,19 @@ __sfr __at(0x89) CH376_COMMAND_PORT;
 
 __sfr __at(0x8A) USB_MODULE_LEDS;
 
-extern void delay_short();
-extern void delay_medium();
+extern void delay_short(void);
+extern void delay_medium(void);
 
 extern void           ch_command(const uint8_t command) __z88dk_fastcall;
-extern usb_error      ch_get_status();
-extern usb_error      ch_long_wait_int_and_get_status();
-extern usb_error      ch_short_wait_int_and_get_status();
-extern usb_error      ch_very_short_wait_int_and_get_status();
+extern usb_error      ch_get_status(void);
+extern usb_error      ch_long_wait_int_and_get_status(void);
+extern usb_error      ch_short_wait_int_and_get_status(void);
+extern usb_error      ch_very_short_wait_int_and_get_status(void);
 extern uint8_t        ch_read_data(uint8_t *buffer, uint16_t buffer_size);
-extern void           ch_cmd_reset_all();
-extern uint8_t        ch_probe();
+extern void           ch_cmd_reset_all(void);
+extern uint8_t        ch_probe(void);
 extern usb_error      ch_cmd_set_usb_mode(const uint8_t mode) __z88dk_fastcall;
-extern uint8_t        ch_cmd_get_ic_version();
+extern uint8_t        ch_cmd_get_ic_version(void);
 extern const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length);
 
 extern void ch_set_usb_address(const uint8_t device_address) __z88dk_fastcall;
@@ -152,8 +152,8 @@ inline void ch_configure_nak_retry(const ch_nak_retry_type retry, const uint8_t 
 #define ch_configure_nak_retry_disable()    ch_configure_nak_retry(CH_NAK_RETRY_DONT, 0x1F)
 #define ch_configure_nak_retry_3s()         ch_configure_nak_retry(CH_NAK_RETRY_3S, 0x1F)
 
-extern void ch_issue_token_setup();
-extern void ch_issue_token_out_ep0();
-extern void ch_issue_token_in_ep0();
+extern void ch_issue_token_setup(void);
+extern void ch_issue_token_out_ep0(void);
+extern void ch_issue_token_in_ep0(void);
 
 #endif

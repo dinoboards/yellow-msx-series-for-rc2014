@@ -46,7 +46,7 @@ void outRegIndInt(uint16_t b) __z88dk_fastcall {
   // clang-format on
 }
 
-uint8_t inDat() __naked __z88dk_fastcall {
+uint8_t inDat(void) __naked __z88dk_fastcall {
   // clang-format off
   __asm
   IN A, (0x98)
@@ -158,7 +158,7 @@ void setPalette(RGB *pPalette) __z88dk_fastcall {
   EI;
 }
 
-void clearAllMemory() {
+void clearAllMemory(void) {
   DI;
   writeRegister(14, 0);
   outCmd(0);
@@ -210,7 +210,7 @@ static uint16_t x;
 uint16_t        _toX;
 uint16_t        _toY;
 
-void _drawLine() {
+void _drawLine(void) {
   if (_fromY > _toY) {
     t      = _fromY;
     _fromY = _toY;

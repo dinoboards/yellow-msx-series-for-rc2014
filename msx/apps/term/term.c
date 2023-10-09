@@ -175,7 +175,7 @@ void negotiate(unsigned char *ucBuf) {
 // print those, as well try to negotiate it using our negotiate function.
 // Also clear double FF's (this is how telnet indicate FF) and replace by a
 // single FF.
-void ParseTelnetData() {
+void ParseTelnetData(void) {
   unsigned char *chTmp   = ucRcvDataMemory;
   unsigned char *chLimit = chTmp + uiGetSize;
 
@@ -278,7 +278,7 @@ void SendCursorPosition(unsigned int uiCursorPosition) __z88dk_fastcall {
   TxUnsafeData(uchPositionResponse, strlen((char *)uchPositionResponse));
 }
 
-extern void debugBreak();
+extern void debugBreak(void);
 
 int main(const int argc, const unsigned char **argv) {
   process_cli_arguments(argc, argv);

@@ -11,7 +11,7 @@ void fossil_rs_string(const char *pString) {
  * consume characters on input stream, until no characters received for a short period
  *
  */
-void fossil_rs_flush() {
+void fossil_rs_flush(void) {
   int16_t timeout = get_future_time(from_ms(1500));
 
   while (!is_time_past(timeout)) {

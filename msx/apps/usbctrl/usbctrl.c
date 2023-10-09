@@ -67,6 +67,8 @@ uint8_t report_all_devices(const uint8_t last_device_address, const char *const 
   Close(file_handle);
   rotate_stop();
   erase_line();
+
+  return 0;
 }
 
 void report_floppies(const uint8_t last_device_address) __sdcccall(1) {
