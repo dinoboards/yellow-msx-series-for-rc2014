@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-extern uint8_t  rp5c01Detect();
+extern uint8_t  rp5c01Detect(void);
 extern uint16_t rp5c01GetByte(uint8_t index) __z88dk_fastcall;
 extern uint8_t  _rp5c01SetByte(uint16_t r) __z88dk_fastcall;
 extern void     rp5c01TestMode(uint8_t testBits) __z88dk_fastcall;

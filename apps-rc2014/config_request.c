@@ -6,7 +6,7 @@
 
 char input[4];
 
-uint8_t getVideoMode() {
+uint8_t getVideoMode(void) {
   while (true) {
     printf("NTSC (n) or PAL (p) mode?\r\n");
     fgets(input, sizeof(input), stdin);
@@ -22,7 +22,7 @@ uint8_t getVideoMode() {
   }
 }
 
-uint8_t getLineCount() {
+uint8_t getLineCount(void) {
   while (true) {
     printf("Vertical dot count 212(2) or 192?\r\n");
     fgets(input, sizeof(input), stdin);

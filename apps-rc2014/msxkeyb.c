@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 extern uint8_t scanRow(const uint8_t rowIndex) __z88dk_fastcall;
-extern void    initPPI();
+extern void    initPPI(void);
 
 uint8_t keyPatterns[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -14,7 +14,7 @@ void printBinary(uint8_t n) {
   }
 }
 
-void main() {
+void main(void) {
   printf("Testing MSX keyboard interface\r\n");
   printf("As you press down each key, you should see the corresponding row and column bit go to 0.  Upon releasing key, the bit "
          "should return to 1\r\n");

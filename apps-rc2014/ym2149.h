@@ -15,9 +15,9 @@ typedef struct _audioCommand {
 
 extern audioCommand command;
 
-extern bool ym2149Probe();
+extern bool ym2149Probe(void);
 extern void ym2149Play(uint16_t period) __z88dk_fastcall;
-extern void ym2149Stop();
+extern void ym2149Stop(void);
 
 #define ym2149Init() (command.channel = 1)
 

@@ -45,7 +45,7 @@ float Zy2;
 uint16_t iX, iY;
 uint8_t  iteration;
 
-void main() {
+void main(void) {
   const uint8_t mode  = getVideoMode();
   const uint8_t lines = getLineCount();
 

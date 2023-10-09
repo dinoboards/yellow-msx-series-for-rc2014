@@ -5,7 +5,7 @@
 
 /* Return a character without echoing if one is waiting; zero if none is available. */
 
-extern uint8_t cRawIo();
-extern char    cRead();
+extern uint8_t cRawIo(void);
+extern char    cRead(void);
 
 #endif
