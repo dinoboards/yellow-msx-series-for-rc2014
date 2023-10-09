@@ -10,10 +10,10 @@
 
 extern unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
-extern void fossil_rs_flush_with_log();
+extern void fossil_rs_flush_with_log(void);
 extern bool fossil_rs_read_line(const bool withLogging) __z88dk_fastcall;
 
-extern void resetModem();
+extern void resetModem(void);
 
 extern void abortWithError(const char *pMessage) __z88dk_fastcall;
 

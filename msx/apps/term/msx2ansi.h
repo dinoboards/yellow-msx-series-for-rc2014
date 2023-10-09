@@ -23,7 +23,7 @@
  * You MUST call it, otherwise results might be unpredictable and crash
  *
  */
-void AnsiInit();
+void AnsiInit(void);
 
 /*
  * AnsiFinish needs no parameters
@@ -36,7 +36,7 @@ void AnsiInit();
  * before returning.
  *
  */
-void AnsiFinish();
+void AnsiFinish(void);
 
 /*
  * AnsiStartBuffer needs no parameters
@@ -47,7 +47,7 @@ void AnsiFinish();
  * start and end of buffer printing
  *
  */
-void AnsiStartBuffer();
+void AnsiStartBuffer(void);
 
 /*
  * AnsiEndBuffer needs no parameters
@@ -58,7 +58,7 @@ void AnsiStartBuffer();
  * start and end of buffer printing
  *
  */
-void AnsiEndBuffer();
+void AnsiEndBuffer(void);
 
 /*
  * AnsiCallBack - parameter in HL, 16 byte address to callback function
@@ -87,7 +87,7 @@ void AnsiCallBack(unsigned int uiCallBackAddress) __z88dk_fastcall;
  * Will return current cursor position, Column in the LSB and Row in MSB
  *
  */
-unsigned int AnsiGetCursorPosition();
+unsigned int AnsiGetCursorPosition(void);
 
 /*
  * AnsiPutChar will put ucChar on screen of in ANSI / VT command buffer

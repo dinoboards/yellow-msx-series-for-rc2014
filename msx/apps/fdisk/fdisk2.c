@@ -17,7 +17,7 @@ static uint32_t       mainExtendedPartitionSectorCount;
 static uint32_t       mainExtendedPartitionFirstSector;
 static uint8_t        sectorBuffer[512];
 
-static int getNewSerialNumber() { return 0; }
+static int getNewSerialNumber(void) { return 0; }
 
 #define readSectorFromDevice(driverSlot, deviceIndex, lunIndex, firstDeviceSector)                                                 \
   deviceSectorRead(driverSlot, deviceIndex, lunIndex, firstDeviceSector)
@@ -72,7 +72,7 @@ uint8_t toggleStatusBit(uint8_t partitionTableEntryIndex, uint32_t partitonTable
   return writeSectorToDevice(driverSlot, deviceIndex, selectedLunIndex, partitonTablesector);
 }
 
-static void clearSectorBuffer() { memset(sectorBuffer, 0, sizeof(sectorBuffer)); }
+static void clearSectorBuffer(void) { memset(sectorBuffer, 0, sizeof(sectorBuffer)); }
 
 static uint8_t calculateFatFileSystemParametersFat12(uint32_t fileSystemSizeInK, dosFilesystemParameters *parameters) {
   // Note: Partitions <=16M are defined to have at most 3 sectors per FAT,

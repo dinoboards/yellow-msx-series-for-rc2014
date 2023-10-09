@@ -8,12 +8,12 @@ uint8_t buffer[BUFFER_SIZE];
 uint8_t buffer2[BUFFER_SIZE];
 uint8_t buffer3[BUFFER_SIZE];
 
-void setTextMode() {
+void setTextMode(void) {
   msxbiosInitxt();
   msxbiosInitPalette();
 }
 
-uint8_t conductTest() {
+uint8_t conductTest(void) {
   uint32_t vramAddress = 0x4000;
 
   vramReadSlow(vramAddress, buffer, BUFFER_SIZE);
@@ -35,7 +35,7 @@ uint8_t conductTest() {
   return 0;
 }
 
-void main() {
+void main(void) {
   printf("Testing VRAM\r\n");
 
   setMode6(212, NTSC);

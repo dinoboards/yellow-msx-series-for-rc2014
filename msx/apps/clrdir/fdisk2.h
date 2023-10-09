@@ -4,11 +4,11 @@
 #include "datatypes.h"
 #include "partition.h"
 
-extern void sectorBootCode();
+extern void sectorBootCode(void);
 
 extern uint8_t createFat12FileSystem(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex);
 
-extern void clearSectorBuffer();
+extern void clearSectorBuffer(void);
 
 extern uint16_t deviceSectorRead(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t sectorNumber);
 extern uint16_t deviceSectorWrite(uint8_t driverSlot, uint8_t deviceIndex, uint8_t lunIndex, uint32_t sectorNumber);

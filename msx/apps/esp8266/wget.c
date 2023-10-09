@@ -42,7 +42,7 @@ char *strnstr(const char *haystack, const char *needle, size_t len) {
   return NULL;
 }
 
-void subCommandWGet() {
+void subCommandWGet(void) {
   print_str("Attempting to retrieve file ");
   print_str(pFileName);
   print_str(" from ");
@@ -54,7 +54,7 @@ void subCommandWGet() {
   wget();
 }
 
-void wget() {
+void wget(void) {
   xmodem_enable_extended_info_packet_support();
   firstPacket   = true;
   started       = false;

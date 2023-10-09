@@ -6,9 +6,9 @@
 
 extern void delay(const uint8_t period) __z88dk_fastcall;
 extern void long_delay(const int16_t milliseconds) __z88dk_fastcall;
-extern void delay_20ms();
-extern void delay_short();
-extern void delay_medium();
+extern void delay_20ms(void);
+extern void delay_short(void);
+extern void delay_medium(void);
 
 #define from_ms_50hz(period)    ((int16_t)(1L * (period) * (50) / 1000))
 #define from_ms(period)         ((int16_t)(1L * (period) * (GET_VDP_FREQUENCY()) / 1000))

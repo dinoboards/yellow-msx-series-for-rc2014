@@ -22,7 +22,7 @@ void abortWithError(const char *pMessage) __z88dk_fastcall {
   exit(1);
 }
 
-void fossil_rs_flush_with_log() {
+void fossil_rs_flush_with_log(void) {
   int16_t timeout = get_future_time(from_ms(5000));
 
   while (!is_time_past(timeout)) {
@@ -61,7 +61,7 @@ bool fossil_rs_read_line(const bool withLogging) __z88dk_fastcall {
   return is_time_past(timeout);
 }
 
-bool read_until_ok_or_error() {
+bool read_until_ok_or_error(void) {
   int16_t timeout      = get_future_time(from_ms(2000));
   bool    lineReceived = true;
 
@@ -82,7 +82,7 @@ bool read_until_ok_or_error() {
   return strncmp(responseStr, "OK", 2) == 0;
 }
 
-void subCommandTimeSync() {
+void subCommandTimeSync(void) {
   fossil_rs_flush();
   fossil_rs_string("\r\nAT+time?\r\n");
   if (fossil_rs_read_line(false)) {
@@ -118,7 +118,7 @@ void subCommandTimeSync() {
   printf("Time: %04d:%02d:%02d %02d:%02d:%02d\r\n", year, month, day, hour, min, sec);
 }
 
-void subCommandSetTimeZone() {
+void subCommandSetTimeZone(void) {
   fossil_rs_flush();
   fossil_rs_string("\r\nat+locale=");
   fossil_rs_string(pNewTimeZone);
@@ -139,7 +139,7 @@ void subCommandSetTimeZone() {
   print_str("\r\n");
 }
 
-void subCommandSetWiFi() {
+void subCommandSetWiFi(void) {
   fossil_rs_flush();
   fossil_rs_string("\r\nat+cwjap=");
   fossil_rs_string(pNewSSID);
@@ -150,7 +150,7 @@ void subCommandSetWiFi() {
   read_until_ok_or_error();
 }
 
-void resetModem() {
+void resetModem(void) {
   delay(ONE_SECOND);
   fossil_rs_string("+++");
   delay(ONE_SECOND);

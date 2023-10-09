@@ -51,9 +51,9 @@ unsigned char ucFossilUnsafeDataTXBuffer[128];
 // const char    modem_disc[] = "ATH\r\n";
 unsigned char cmdline[134];
 
-void Breath() { return; }
+void Breath(void) { return; }
 
-unsigned char InitializeTCPIP() {
+unsigned char InitializeTCPIP(void) {
   if (!fossil_link())
     return 0;
 
@@ -67,7 +67,7 @@ unsigned char InitializeTCPIP() {
   return 1;
 }
 
-void CloseConnection() {
+void CloseConnection(void) {
   unsigned char ucCount = 0;
 
   do {

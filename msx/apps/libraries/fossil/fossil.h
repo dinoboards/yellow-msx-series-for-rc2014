@@ -55,32 +55,32 @@ typedef struct {
   void   *jump_table;
 } fossil_jump_table;
 
-extern uint16_t      fossil_get_version();
-extern bool          fossil_link();
+extern uint16_t      fossil_get_version(void);
+extern bool          fossil_link(void);
 extern uint8_t       fossil_ex_link(fossil_jump_table *jtable) __z88dk_fastcall;
-extern int           fossil_getversion();
-extern void          fossil_init();
-extern void          fossil_deinit();
+extern int           fossil_getversion(void);
+extern void          fossil_init(void);
+extern void          fossil_deinit(void);
 extern uint16_t      fossil_set_baud(uint16_t transmit_and_receive_baud) __z88dk_fastcall;
 extern void          fossil_set_protocol(uint8_t x) __z88dk_fastcall;
 extern void          fossil_setchannel(uint8_t x) __z88dk_fastcall;
-extern unsigned char fossil_rs_in();
+extern unsigned char fossil_rs_in(void);
 extern void          fossil_rs_out(uint8_t ch) __z88dk_fastcall;
-extern uint8_t       fossil_rs_in_stat();
-extern void          fossil_rs_out_stat();
+extern uint8_t       fossil_rs_in_stat(void);
+extern void          fossil_rs_out_stat(void);
 extern void          fossil_dtr(uint8_t x) __z88dk_fastcall;
 extern void          fossil_rts(uint8_t x) __z88dk_fastcall;
-extern uint8_t       fossil_carrier();
-extern uint16_t      fossil_chars_in_buf();
-extern uint16_t      fossil_size_of_buf();
-extern void          fossil_flushbuf();
+extern uint8_t       fossil_carrier(void);
+extern uint16_t      fossil_chars_in_buf(void);
+extern uint16_t      fossil_size_of_buf(void);
+extern void          fossil_flushbuf(void);
 extern void          fossil_fastint(uint8_t x) __z88dk_fastcall;
 extern void          fossil_hookstat(uint8_t x) __z88dk_fastcall;
 extern void          fossil_chput_hook(uint8_t x) __z88dk_fastcall;
 extern void          fossil_keyb_hook(uint8_t x) __z88dk_fastcall;
-extern fossil_info  *fossil_get_info();
+extern fossil_info  *fossil_get_info(void);
 
 extern void fossil_rs_string(const char *pString);
-extern void fossil_rs_flush();
+extern void fossil_rs_flush(void);
 
 #endif

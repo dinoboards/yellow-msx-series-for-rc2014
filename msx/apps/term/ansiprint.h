@@ -3,10 +3,10 @@
 
 #include "print.h"
 
-void StartPrintBuffer();
-void EndPrintBuffer();
-void initPrint();
+void StartPrintBuffer(void);
+void EndPrintBuffer(void);
+void initPrint(void);
 void initAnsi(unsigned int uiCallBackFunction);
-void endAnsi();
+void endAnsi(void);
 
 #endif

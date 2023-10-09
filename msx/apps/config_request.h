@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-uint8_t getVideoMode();
-uint8_t getLineCount();
+uint8_t getVideoMode(void);
+uint8_t getLineCount(void);
 
 #endif

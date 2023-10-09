@@ -12,7 +12,7 @@ extern bool
 msx_music_verify_4K_page(const uint8_t page,
                          const uint8_t buffer[4096]); // Page is 0 to 127 - to address a 4K block within the 512K ROM address range.
 
-void wait_at_least_25ms() {
+void wait_at_least_25ms(void) {
   int16_t start_time = JIFFY;
   while (JIFFY - start_time <= 3) {
     __asm HALT __endasm;
@@ -26,7 +26,7 @@ static FILE    *file;
 
 const uint8_t progress_bar_length = 20;
 
-void exit_cleanup() { fclose(file); }
+void exit_cleanup(void) { fclose(file); }
 
 void main(const int argc, const unsigned char **argv) {
 

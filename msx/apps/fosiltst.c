@@ -20,11 +20,11 @@ uint8_t *__at(0xFB18) RS_BUFEND;
 
 rs232Buff *__at(0xFB04) RS_FCB;
 
-void extern debugBreak();
-void extern enableVdpInterrupts();
-void extern disableVdpInterrupts();
+void extern debugBreak(void);
+void extern enableVdpInterrupts(void);
+void extern disableVdpInterrupts(void);
 
-void main() {
+void main(void) {
   printf("fossil_link should return false before install %d\r\n", fossil_link());
 
   void *p = extbio_fossil_install();

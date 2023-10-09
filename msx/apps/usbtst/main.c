@@ -52,7 +52,7 @@ uint8_t writeSector(device_config *config, const uint32_t number) {
 
 void chput(const char c) __z88dk_fastcall { printf("%c", c); }
 
-usb_error usb_host_bus_reset() {
+usb_error usb_host_bus_reset(void) {
   ch_cmd_set_usb_mode(CH_MODE_HOST);
   delay_short();
 

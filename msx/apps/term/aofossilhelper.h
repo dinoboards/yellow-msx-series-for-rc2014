@@ -62,7 +62,7 @@ enum TcpipErrorCodes {
 // some "breathing room" so they can work on VDP Interrupt and proccess data.
 //
 // It is not relevant for AO Fossil Adepter
-void Breath();
+void Breath(void);
 
 // InitializeTCPIP
 //
@@ -71,12 +71,12 @@ void Breath();
 //
 // Return 0 if no TCP-IP Unapi implementation found
 // Return 1 if a TCP-IP Unapi implementation has been found
-unsigned char InitializeTCPIP();
+unsigned char InitializeTCPIP(void);
 
 // CloseConnection
 //
 // Will return ERR_OK if success
-void CloseConnection();
+void CloseConnection(void);
 
 // RXData
 //

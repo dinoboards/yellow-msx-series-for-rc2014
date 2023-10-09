@@ -36,7 +36,7 @@ char *str_append_upper(char *dest, const char *src) {
   return dest;
 }
 
-char *currentLine() {
+char *currentLine(void) {
   if (curLine) {
     nextLinePtr = (char *)memchr(curLine, '\r', 1024 - (curLine - pStart));
     if (!nextLinePtr)
@@ -62,9 +62,9 @@ char *eachLine(char *p) __z88dk_fastcall {
   return currentLine();
 }
 
-void nextLine() { curLine = nextLinePtr ? (nextLinePtr + 2) : NULL; }
+void nextLine(void) { curLine = nextLinePtr ? (nextLinePtr + 2) : NULL; }
 
-int8_t getNumberOfPages() {
+int8_t getNumberOfPages(void) {
   msxHubUrl[0] = 0;
   char *p      = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
   p            = str_append_upper(p, pMsxHubPackageName);
@@ -95,7 +95,7 @@ void getFileListForPage(int8_t i) __z88dk_fastcall {
   wget();
 }
 
-const char *getInstallDirectory() {
+const char *getInstallDirectory(void) {
   msxHubUrl[0] = 0;
   char *p      = str_append(msxHubUrl, MSX_HUB_API_PREFIX);
   p            = str_append_upper(p, pMsxHubPackageName);
@@ -140,7 +140,7 @@ void downloadFile(const char *fileName) __z88dk_fastcall {
   wget();
 }
 
-void subCommandMsxHub() {
+void subCommandMsxHub(void) {
   const char *installDir = getInstallDirectory();
   createInstallDirectory(installDir);
 

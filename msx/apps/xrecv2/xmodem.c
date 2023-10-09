@@ -35,9 +35,9 @@ inline XMODEM_SIGNAL delay_start(uint16_t period, XMODEM_SIGNAL next_signal) {
   return DELAY_WAIT;
 }
 
-XMODEM_SIGNAL delay_reached() { return ((delay_point - ((int16_t)JIFFY) >= 0)) ? DELAY_WAIT : delay_resume; }
+XMODEM_SIGNAL delay_reached(void) { return ((delay_point - ((int16_t)JIFFY) >= 0)) ? DELAY_WAIT : delay_resume; }
 
-static bool check_crc() {
+static bool check_crc(void) {
   const unsigned char *buf = &xmodemState.packetBuffer[3];
   const uint16_t       sz  = xmodemState.currentPacketSize;
   uint16_t             counter;
@@ -49,7 +49,7 @@ static bool check_crc() {
   return (crc == tcrc);
 }
 
-static bool check_sum() {
+static bool check_sum(void) {
   const unsigned char *buf = &xmodemState.packetBuffer[3];
   const uint16_t       sz  = xmodemState.currentPacketSize;
 
@@ -62,7 +62,7 @@ static bool check_sum() {
 
 static void flush_input(void) { serial_flush_input((DLY_1S * 3) >> 1); }
 
-bool read_packet_crc() {
+bool read_packet_crc(void) {
   unsigned char *p = xmodemState.packetBuffer;
 
   serial_in_block_start("\r\nReceiving Packet with CRC\r\n");
@@ -80,7 +80,7 @@ bool read_packet_crc() {
   return true;
 }
 
-bool read_packet_sum() {
+bool read_packet_sum(void) {
   unsigned char *p = xmodemState.packetBuffer;
 
   serial_in_block_start("\r\nReceiving Packet with CHKSUM\r\n");
@@ -99,7 +99,7 @@ bool read_packet_sum() {
   return true;
 }
 
-XMODEM_SIGNAL read_first_header() {
+XMODEM_SIGNAL read_first_header(void) {
   packetno = 1;
   retry = retrans = MAXRETRANS;
 
@@ -228,7 +228,7 @@ XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   return signal | READ_HEADER;
 }
 
-XMODEM_SIGNAL xmodem_too_many_errors() __z88dk_fastcall {
+XMODEM_SIGNAL xmodem_too_many_errors(void) __z88dk_fastcall {
   flush_input();
   serial_out(CAN);
   serial_out(CAN);

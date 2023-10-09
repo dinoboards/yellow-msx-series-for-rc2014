@@ -48,10 +48,10 @@ extern extbio_device_table *extbio_get_dev(extbio_device_table *table) __z88dk_f
 #define SIO_CLK_2457600 5
 #define SIO_CLK_3686400 6
 
-extern void   *extbio_fossil_install();
-extern uint8_t extbio_sio_get_clock();
+extern void   *extbio_fossil_install(void);
+extern uint8_t extbio_sio_get_clock(void);
 extern uint8_t extbio_sio_set_clock(const uint8_t new_code) __z88dk_fastcall;
-extern uint8_t extbio_sio_get_present();
+extern uint8_t extbio_sio_get_present(void);
 
 // RS232 DRIVER
 #define RS232_RAW_MODE 4
@@ -59,10 +59,10 @@ extern uint8_t extbio_sio_get_present();
 extern void     rs232_link(rs232_extbio_info *p) __z88dk_fastcall;
 extern uint8_t  rs232_init(rs232_init_params *) __z88dk_fastcall;
 extern void     rs232_open(uint8_t mode, uint8_t buffer_length, uint8_t *buffer);
-extern void     rs232_close();
+extern void     rs232_close(void);
 extern uint8_t  rs232_sndchr(const char ch) __z88dk_fastcall;
-extern uint16_t rs232_getchr();
-extern uint16_t rs232_loc();
+extern uint16_t rs232_getchr(void);
+extern uint16_t rs232_loc(void);
 
 extern void memmap_link(memmap_extbio_info *p) __z88dk_fastcall;
 

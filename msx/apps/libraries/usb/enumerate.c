@@ -208,7 +208,7 @@ usb_error read_all_configs(enumeration_state *const state) {
   return USB_ERR_OK;
 }
 
-usb_error enumerate_all_devices() {
+usb_error enumerate_all_devices(void) {
   _usb_state *const work_area = get_usb_work_area();
   enumeration_state state;
   memset(&state, 0, sizeof(enumeration_state));
