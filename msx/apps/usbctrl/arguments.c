@@ -6,7 +6,7 @@ const char *report_file_name;
 subcommands subcommand;
 
 const unsigned char *usage = "Usage: usbctrl <options> <subcommand>\r\n\n"
-                             " inspected and managed connected\r\nUSB devices\r\n\n"
+                             "inspected and managed connected\r\nUSB devices\r\n\n"
                              "/h       Display help message\r\n\n"
                              " report <filename>\r\n"
                              " report all connected devices to the file\r\n\n"
@@ -25,7 +25,7 @@ uint8_t arg_report_to_file(const uint8_t i, const char **argv, const int argc) _
     return i;
 
   const char *arg_subcommand = argv[1];
-  if (strncmp(arg_subcommand, "report", 6) != 0)
+  if (strncmp(arg_subcommand, "report", 7) != 0)
     return i;
 
   if (argc != 3)
@@ -43,13 +43,15 @@ uint8_t arg_report_floppies(const uint8_t i, const char **argv, const int argc) 
     return i;
 
   const char *arg_subcommand = argv[1];
-  if (strncmp(arg_subcommand, "report-floppy", 6) != 0)
+  if (strncmp(arg_subcommand, "report-floppy", 14) != 0)
     return i;
 
   if (argc != 2)
     return abort_with_help();
 
   subcommand = cmd_report_floppies;
+
+  return i + 1;
 }
 
 uint8_t arg_help_msg(const uint8_t i, const char **argv) __sdcccall(1) {
