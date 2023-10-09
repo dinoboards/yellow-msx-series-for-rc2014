@@ -5,11 +5,13 @@
 const char *report_file_name;
 subcommands subcommand;
 
-const unsigned char *usage = "Usage: usbctrl report <filename>\r\n\n"
-                             "inspected and managed connected\r\nUSB devices\r\n\n"
-                             "report   report all connected devices\r\n"
-                             "         to file\r\n\n"
-                             "/h       Display help message\r\n\n";
+const unsigned char *usage = "Usage: usbctrl <options> <subcommand>\r\n\n"
+                             " inspected and managed connected\r\nUSB devices\r\n\n"
+                             "/h       Display help message\r\n\n"
+                             " report <filename>\r\n"
+                             " report all connected devices to the file\r\n\n"
+                             " report-floppy\r\n"
+                             " identify connected floppy desvices\r\n\n";
 
 uint8_t abort_with_help(void) {
   printf(usage);
@@ -22,20 +24,32 @@ uint8_t arg_report_to_file(const uint8_t i, const char **argv, const int argc) _
   if (i != 1)
     return i;
 
+  const char *arg_subcommand = argv[1];
+  if (strncmp(arg_subcommand, "report", 6) != 0)
+    return i;
+
   if (argc != 3)
     return abort_with_help();
 
-  const char *arg_subcommand = argv[1];
-  const char *arg_filename   = argv[2];
+  const char *arg_filename = argv[2];
 
-  if (strncmp(arg_subcommand, "report", 6) != 0) {
-    printf("Invalid sub command.\r\nExpected report <filename>\r\n");
-    return abort_with_help();
-  }
-
-  subcommand       = report_to_file;
+  subcommand       = cmd_report_to_file;
   report_file_name = argv[2];
   return i + 2;
+}
+
+uint8_t arg_report_floppies(const uint8_t i, const char **argv, const int argc) __sdcccall(1) {
+  if (i != 1)
+    return i;
+
+  const char *arg_subcommand = argv[1];
+  if (strncmp(arg_subcommand, "report-floppy", 6) != 0)
+    return i;
+
+  if (argc != 2)
+    return abort_with_help();
+
+  subcommand = cmd_report_floppies;
 }
 
 uint8_t arg_help_msg(const uint8_t i, const char **argv) __sdcccall(1) {
@@ -56,7 +70,7 @@ uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) __sdcccal
 
 void process_cli_arguments(const int argc, const char **argv) __sdcccall(1) {
   report_file_name = NULL;
-  subcommand       = none;
+  subcommand       = cmd_none;
 
   for (uint8_t i = 1; i < argc;) {
     const uint8_t current_i = i;
@@ -69,11 +83,15 @@ void process_cli_arguments(const int argc, const char **argv) __sdcccall(1) {
     if (current_i != i)
       continue;
 
+    i = arg_report_floppies(i, argv, argc);
+    if (current_i != i)
+      continue;
+
     abort_with_invalid_arg_msg(i, argv);
   }
 
-  if (subcommand == none) {
-    printf("Missing sub command\r\nExpected report <filename>\r\n");
+  if (subcommand == cmd_none) {
+    printf("Missing sub command\r\nExpected report or report-floppy\r\n");
     abort_with_help();
   }
 }

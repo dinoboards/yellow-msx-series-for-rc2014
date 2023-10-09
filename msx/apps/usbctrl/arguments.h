@@ -9,8 +9,9 @@
 #include <string.h>
 
 typedef enum {
-  none,
-  report_to_file,
+  cmd_none,
+  cmd_report_to_file,
+  cmd_report_floppies,
 } subcommands;
 
 extern const char *report_file_name;

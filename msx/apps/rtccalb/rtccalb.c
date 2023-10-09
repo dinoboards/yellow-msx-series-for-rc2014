@@ -84,10 +84,6 @@ uint8_t arg_m1_state(const uint8_t i, const char **argv) {
 }
 
 void process_cli_arguments(const int argc, const char **argv) {
-  (void)argc;
-  (void)argv;
-
-  // abort_with_help();
   for (uint8_t i = 1; i < argc;) {
     const uint8_t current_i = i;
     i                       = arg_cpu_clock(i, argv);
