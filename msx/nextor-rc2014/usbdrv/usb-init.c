@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-usb_error usb_host_bus_reset() {
+usb_error usb_host_bus_reset(void) {
   ch_cmd_set_usb_mode(CH_MODE_HOST);
   delay_medium();
 

@@ -12,7 +12,7 @@ endif
 LIBS := -I./../apps/libraries/msxbios/ -I./../apps/libraries/delay/ -I./../apps/libraries/usb
 SRC := ./usbdrv/
 
-ZCC := zcc +msx --vc --less-pedantic -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
+ZCC := zcc +msx --vc -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)exports.asm \

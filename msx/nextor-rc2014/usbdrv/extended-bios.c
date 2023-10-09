@@ -11,8 +11,7 @@ typedef struct {
   uint16_t hl;
 } registers;
 
-// __z88dk_fastcall
-uint8_t fn_enum() {
+uint8_t fn_enum(void) {
   print_string("fn_enum\r\n");
   return 1;
 }
