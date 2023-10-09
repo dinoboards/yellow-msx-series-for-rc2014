@@ -61,7 +61,7 @@ void logController(const uint8_t i) {
   oldb2[i] = b2;
 }
 
-void main() {
+void main(void) {
   const bool ym2149Found = ym2149Probe();
 
   if (!ym2149Found) {

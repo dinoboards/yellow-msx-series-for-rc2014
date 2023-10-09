@@ -19,14 +19,14 @@ static void convert(rtcDateTime *datetime) __z88dk_fastcall {
 rtcDateTime datetime;
 char        line[10];
 
-uint8_t stringToBcd() {
+uint8_t stringToBcd(void) {
   const uint8_t firstNibble  = (line[0] - '0') & 0xF;
   const uint8_t secondNibble = (line[1] - '0') & 0xF;
 
   return (firstNibble << 4) + secondNibble;
 }
 
-uint8_t readSetting() {
+uint8_t readSetting(void) {
   line[0] = 0;   /* Ensure empty line if no input delivered */
   line[8] = 255; //~'\0';  /* Ensure no false-null at end of buffer */
   line[9] = 0;   //~'\0';
@@ -45,7 +45,7 @@ uint8_t readSetting() {
   return stringToBcd();
 }
 
-void main() {
+void main(void) {
   printf("Test application for RC5C01 RTC chip\r\n");
 
   const uint8_t detected = rp5c01Detect();

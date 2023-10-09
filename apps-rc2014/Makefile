@@ -5,7 +5,7 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 BIN = ../bin/
-ZCC := zcc +cpm -compiler=sdcc --vc --less-pedantic -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 -create-app
+ZCC := zcc +cpm -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 -create-app
 
 APPS := dots lines mbrot control msxkeyb rtctest
 

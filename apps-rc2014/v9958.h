@@ -16,7 +16,7 @@ typedef struct {
 extern void outCmd(uint8_t b) __z88dk_fastcall;
 extern void outDat(uint8_t b) __z88dk_fastcall;
 
-extern void clearAllMemory();
+extern void clearAllMemory(void);
 extern void setPalette(RGB *) __z88dk_fastcall;
 extern void setMode6(uint8_t lines, uint8_t mode);
 extern void setMode7(uint8_t lines, uint8_t mode);
@@ -34,8 +34,8 @@ extern void _writeRegister(uint16_t rd) __z88dk_fastcall;
 #define CMD_LOGIC_IMP   0x00
 #define CMD_LOGIC_AND   0x01
 
-void commandDrawLine();
-void waitForCommandCompletion();
+void commandDrawLine(void);
+void waitForCommandCompletion(void);
 
 extern uint8_t  dir;
 extern uint16_t longSide;
@@ -56,7 +56,7 @@ extern uint16_t _toY;
   _toY       = (toY);                                                                                                              \
   _drawLine()
 
-extern void _drawLine();
+extern void _drawLine(void);
 
 #define pointSet(x, y, color, operation)                                                                                           \
   _fromX     = (x);                                                                                                                \
