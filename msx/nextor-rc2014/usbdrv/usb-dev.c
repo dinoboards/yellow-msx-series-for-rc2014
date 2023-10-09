@@ -37,7 +37,7 @@ device_config *get_usb_driver(const uint8_t device_index) __z88dk_fastcall {
  *
  * @return uint16_t low byte is the number of USB devices present, high byte is 1 if CH376 is present
  */
-uint16_t extbio_rc2014_usb_get_present() {
+uint16_t extbio_rc2014_usb_get_present(void) {
   uint8_t l = 0;
 
   work_area *const p = get_work_area();
