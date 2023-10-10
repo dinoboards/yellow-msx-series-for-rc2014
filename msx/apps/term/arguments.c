@@ -17,7 +17,7 @@ const unsigned char *usage = "Usage:  term [options]\r\n\n"
                              "         instructions\r\n"
                              "/b<rate> select baud rate\r\n";
 
-uint8_t abort_with_help() {
+uint8_t abort_with_help(void) {
   printf(usage);
   exit(1);
 

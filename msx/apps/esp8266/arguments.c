@@ -15,7 +15,7 @@ uint8_t     requestLargePacket;
 const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",    "4800",
                                     "9600", "19200", "38400", "57600", "unknown", "115200"};
 
-uint8_t abort_with_help() {
+uint8_t abort_with_help(void) {
   print_str("Usage:  esp8266 <options> <subcommand>\r\n\r\n"
             "Utility to manage RC2014 Wifi Module\r\n\r\n"
             "  /b<rate>, /baud=<rate>\r\n"
@@ -36,12 +36,12 @@ uint8_t abort_with_help() {
   return 255;
 }
 
-uint8_t abort_with_invalid_options() {
+uint8_t abort_with_invalid_options(void) {
   print_str("Invalid usage\r\n");
   return abort_with_help();
 }
 
-uint8_t abort_with_invalid_package_name() {
+uint8_t abort_with_invalid_package_name(void) {
   print_str("msxhub package name is invalid.  Must be 8 or less characters\r\n");
   return 255;
 }
@@ -125,7 +125,7 @@ uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) {
   return abort_with_help();
 }
 
-uint8_t abort_with_missing_sub_command_msg() {
+uint8_t abort_with_missing_sub_command_msg(void) {
   print_str("Missing subcommand argument.\r\n\r\n");
   return abort_with_help();
 }

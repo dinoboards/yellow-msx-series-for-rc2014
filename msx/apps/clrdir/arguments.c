@@ -9,7 +9,7 @@ const unsigned char *usage = "Usage:  clrdir [drive-leter] [options]\r\n\n"
                              "<drive-letter>\r\n"
                              "         Floppy drive to be erased\r\n";
 
-uint8_t abort_with_help() {
+uint8_t abort_with_help(void) {
   printf(usage);
   exit(1);
 

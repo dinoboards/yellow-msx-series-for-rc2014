@@ -10,7 +10,7 @@ const char *pDialAddress = NULL;
 const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",    "4800",
                                     "9600", "19200", "38400", "57600", "unknown", "115200"};
 
-uint8_t abort_with_help() {
+uint8_t abort_with_help(void) {
   print_str("Usage:  xrecv <filename> [options]\r\n\r\n"
             "Receive a file using xmodem protocol\r\n"
             "using the active fossil driver\r\n\r\n"
@@ -25,7 +25,7 @@ uint8_t abort_with_help() {
   return 255;
 }
 
-uint8_t abort_with_invalid_options() {
+uint8_t abort_with_invalid_options(void) {
   print_str("Invalid usage\r\n");
   return abort_with_help();
 }
@@ -158,7 +158,7 @@ uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) {
   return abort_with_help();
 }
 
-uint8_t abort_with_missing_file_name_msg() {
+uint8_t abort_with_missing_file_name_msg(void) {
   print_str("Missing filename.\r\n\r\n");
   return abort_with_help();
 }

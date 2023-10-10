@@ -11,7 +11,7 @@ void serial_out(uint8_t ch) __z88dk_fastcall {
   return fossil_rs_out(ch);
 }
 
-unsigned char serial_in() {
+unsigned char serial_in(void) {
   const unsigned char r = fossil_rs_in();
   fputc(r, fptrDiagnostics);
   return r;

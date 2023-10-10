@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern void             intOn();
-extern void             intOff();
+extern void             intOn(void);
+extern void             intOff(void);
 extern uint16_t         counter;
 extern uint16_t         period;
 extern volatile uint8_t intTriggered;
 
-void main() {
+void main(void) {
 
   intOn();
 
