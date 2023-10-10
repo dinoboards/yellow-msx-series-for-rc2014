@@ -60,7 +60,7 @@ void main(void) {
   // printf("Free Slot %d, Total Slots: %d\r\n", info_table.number_of_free_segments, info_table.number_of_segments);
 }
 
-// void main() {
+// void main(void) {
 //   printf("MSX-DOS Memory mapping interface testing....\r\n");
 
 //   extbio_get_dev_info_table(4, &info_table);

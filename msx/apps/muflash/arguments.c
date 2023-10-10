@@ -4,7 +4,7 @@
 
 const char *flash_file_name;
 
-uint8_t abort_with_help() {
+uint8_t abort_with_help(void) {
   printf("Usage:  muflash <filename>\r\n\r\n"
          "Flash the onboard ROM of the MSX MUSIC Module\r\n\r\n"
          "  filename\r\n"
@@ -41,7 +41,7 @@ uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) {
   return abort_with_help();
 }
 
-uint8_t abort_with_missing_file_name_msg() {
+uint8_t abort_with_missing_file_name_msg(void) {
   printf("Missing filename.\r\n\r\n");
   return abort_with_help();
 }

@@ -21,7 +21,7 @@ void    terminateRightPaddedString(char *string, uint8_t length);
 void    composeSlotString(uint8_t slot, char *destination);
 void    printSize(uint32_t sizeInK);
 uint8_t getRemainingBy1024String(uint32_t value, char *destination);
-// uint8_t     getDiskPartitionsInfo();
+// uint8_t     getDiskPartitionsInfo(void);
 // const char *getDosErrorMessage(uint8_t code);
 
 typedef struct {

@@ -12,7 +12,7 @@ const unsigned char *usage = "Usage:  siocfg [options]\r\n\n"
                              "         Set the hardwired clock\r\n"
                              "         speed\r\n";
 
-uint8_t abort_with_help() {
+uint8_t abort_with_help(void) {
   printf(usage);
   exit(1);
 
