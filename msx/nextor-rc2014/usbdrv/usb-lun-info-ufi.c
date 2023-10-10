@@ -10,18 +10,23 @@ uint8_t usb_lun_info_ufi(device_config *const dev, const uint8_t lun, nextor_lun
   if (lun != 1)
     return 1;
 
-  if (wait_for_device_ready(dev, 2500) != 0)
-    return 1;
+  wait_for_device_ready(dev, 2500);
+
+  // not sure if we need to do this to 'clear' some state
+  ufi_inquiry_response inquiry;
+  ufi_inquiry(dev, &inquiry);
+
+  wait_for_device_ready(dev, 1500);
 
   const usb_error result = ufi_read_format_capacities(dev, &response);
   if (result != USB_ERR_OK)
     return 1;
 
   info->medium_type = 0; // block_device
-  info->sector_size = response.block_size[1] << 8 + response.block_size[0];
+  info->sector_size = response.descriptors[0].block_size[1] << 8 + response.descriptors[0].block_size[0];
 
   uint8_t       *no_sectors = ((uint8_t *)&info->number_of_sectors);
-  const uint8_t *no_blocks  = response.number_of_blocks + 3;
+  const uint8_t *no_blocks  = response.descriptors[0].number_of_blocks + 3;
 
   *no_sectors++ = *no_blocks--;
   *no_sectors++ = *no_blocks--;

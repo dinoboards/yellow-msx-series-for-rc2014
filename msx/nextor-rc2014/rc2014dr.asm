@@ -131,15 +131,6 @@ CUR_BANK	equ	40FFh
 
 ;-----------------------------------------------------------------------------
 ;
-; Built-in format choice strings
-;
-
-NULL_MSG  equ     781Fh	;Null string (disk can't be formatted)
-SING_DBL  equ     7820h ;"1-Single side / 2-Double side"
-
-
-;-----------------------------------------------------------------------------
-;
 ; Driver signature
 ;
 	db	"NEXTOR_DRIVER",0

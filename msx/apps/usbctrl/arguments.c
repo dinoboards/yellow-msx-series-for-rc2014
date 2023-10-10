@@ -2,16 +2,21 @@
 #include <stdint.h>
 #include <string.h>
 
-const char *report_file_name;
-subcommands subcommand;
+const char             *report_file_name;
+subcommands             subcommand;
+device_config_interface device_interface;
 
 const unsigned char *usage = "Usage: usbctrl <options> <subcommand>\r\n\n"
                              "inspected and managed connected\r\nUSB devices\r\n\n"
                              "/h       Display help message\r\n\n"
                              " report <filename>\r\n"
-                             " report all connected devices to the file\r\n\n"
-                             " report-floppy\r\n"
-                             " identify connected floppy desvices\r\n\n";
+                             "   report all connected devices to the file\r\n"
+                             " floopy report\r\n"
+                             "   identify connected floppy desvices\r\n"
+                             " floppy format <address> <config> <interface>\r\n"
+                             "   initiate ufi format command\r\n"
+                             " floppy check <address> <config> <interface>\r\n"
+                             "   write and verify all sectors\r\n";
 
 uint8_t abort_with_help(void) {
   printf(usage);
@@ -43,15 +48,63 @@ uint8_t arg_report_floppies(const uint8_t i, const char **argv, const int argc) 
     return i;
 
   const char *arg_subcommand = argv[1];
-  if (strncmp(arg_subcommand, "report-floppy", 14) != 0)
+  if (strncmp(arg_subcommand, "floppy", 7) != 0)
     return i;
 
-  if (argc != 2)
+  const char *floppy_action = argv[2];
+  if (strncmp(floppy_action, "report", 7) != 0)
+    return i;
+
+  if (argc != 3)
     return abort_with_help();
 
   subcommand = cmd_report_floppies;
 
-  return i + 1;
+  return i + 2;
+}
+
+uint8_t arg_format_floppy(const uint8_t i, const char **argv, const int argc) __sdcccall(1) {
+  if (i != 1)
+    return i;
+
+  const char *arg_subcommand = argv[1];
+  if (strncmp(arg_subcommand, "floppy", 7) != 0)
+    return i;
+
+  const char *floppy_action = argv[2];
+  if (strncmp(floppy_action, "format", 7) != 0)
+    return i;
+
+  if (argc != 6)
+    return abort_with_help();
+
+  subcommand                       = cmd_format_floppy;
+  device_interface.address         = atoi(argv[3]);
+  device_interface.config_index    = atoi(argv[4]);
+  device_interface.interface_index = atoi(argv[5]);
+  return i + 5;
+}
+
+uint8_t arg_check_floppy_sectors(const uint8_t i, const char **argv, const int argc) __sdcccall(1) {
+  if (i != 1)
+    return i;
+
+  const char *arg_subcommand = argv[1];
+  if (strncmp(arg_subcommand, "floppy", 7) != 0)
+    return i;
+
+  const char *floppy_action = argv[2];
+  if (strncmp(floppy_action, "check", 6) != 0)
+    return i;
+
+  if (argc != 6)
+    return abort_with_help();
+
+  subcommand                       = cmd_check_floppy_sectors;
+  device_interface.address         = atoi(argv[3]);
+  device_interface.config_index    = atoi(argv[4]);
+  device_interface.interface_index = atoi(argv[5]);
+  return i + 5;
 }
 
 uint8_t arg_help_msg(const uint8_t i, const char **argv) __sdcccall(1) {
@@ -86,6 +139,14 @@ void process_cli_arguments(const int argc, const char **argv) __sdcccall(1) {
       continue;
 
     i = arg_report_floppies(i, argv, argc);
+    if (current_i != i)
+      continue;
+
+    i = arg_format_floppy(i, argv, argc);
+    if (current_i != i)
+      continue;
+
+    i = arg_check_floppy_sectors(i, argv, argc);
     if (current_i != i)
       continue;
 

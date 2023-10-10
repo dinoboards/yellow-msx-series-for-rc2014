@@ -924,6 +924,18 @@ all pointers and buffers must be in page 3<br>
 
 > The current solution does not support hot plugging/removal of USB devices.  So any change to USB's current assigned address or configuration will result incorrect behaviour of the system.
 
+### Function 0x83 (131): (RC2014_USB_OUT_TRANSFER)
+
+<dl>
+<dt>Use</dt><dd>Perform a USB data out transfer</dd>
+</dl>
+
+### Function 0x84 (132): (RC2014_USB_IN_TRANSFER)
+
+<dl>
+<dt>Use</dt><dd>Perform a USB data in transfer</dd>
+</dl>
+
 ## 0F1h (241) - MultiMente (Unofficial)
 ### Function 0:
 <dl>
