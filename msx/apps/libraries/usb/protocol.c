@@ -78,7 +78,7 @@ usb_error usbtrn_set_address(const uint8_t device_address) __z88dk_fastcall {
 const setup_packet cmd_set_configuration = {0x00, 9, {0, 0}, {0, 0}, 0};
 
 /**
- * @brief configure device at address 0 to be assigned a new device address
+ * @brief configure device at address 0 to be assigned a new configuration
  *
  * @param config the device to be configured
  * @return usb_error USB_ERR_OK if all good, otherwise specific error code

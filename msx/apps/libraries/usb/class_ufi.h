@@ -25,12 +25,16 @@ typedef struct {
 typedef enum { UNFORMATTED_MEDIA = 1, FORMATTED_MEDIA = 2, NO_MEDIA = 3 } UFI_DESCRIPTOR_CODE;
 
 typedef struct {
-  uint8_t reserved1[3];
-  uint8_t capacity_list_length;
   uint8_t number_of_blocks[4];
   uint8_t descriptor_code : 2; // UFI_DESCRIPTOR_CODE
   uint8_t reserved2 : 6;
   uint8_t block_size[3];
+} ufi_format_capacity_descriptor;
+
+typedef struct {
+  uint8_t                        reserved1[3];
+  uint8_t                        capacity_list_length;
+  ufi_format_capacity_descriptor descriptors[4]; // support upto
 } ufi_format_capacities_response;
 
 typedef struct {
@@ -131,19 +135,6 @@ typedef struct {
 } ufi_read_write_command;
 
 typedef struct {
-  uint8_t operation_code; /*0*/
-  uint8_t defect_list_format : 3;
-  uint8_t cmp_list : 1;
-  uint8_t format_data : 1;
-  uint8_t lun : 3;
-  uint8_t track_number;
-  uint8_t interleave[2];
-  uint8_t reserved1[2];
-  uint8_t parameter_list_length[2];
-  uint8_t reserved2[3];
-} ufi_format_command;
-
-typedef struct {
   struct {
     uint8_t reserved1;
     uint8_t side : 1;
@@ -157,12 +148,32 @@ typedef struct {
     uint8_t defect_list_length_lsb;
   } defect_list_header;
 
-  struct {
-    uint8_t number_of_blocks[4];
-    uint8_t reserved;
-    uint8_t block_length[4];
-  } format_descriptor;
+  ufi_format_capacity_descriptor format_descriptor;
 } ufi_format_parameter_list;
+
+typedef struct {
+  uint8_t operation_code; /* 0x04 */
+  uint8_t defect_list_format : 3;
+  uint8_t cmp_list : 1;
+  uint8_t format_data : 1;
+  uint8_t lun : 3;
+  uint8_t track_number;
+  uint8_t interleave[2];
+  uint8_t reserved1[2];
+  uint8_t parameter_list_length[2];
+  uint8_t reserved2[3];
+} ufi_format_command;
+
+typedef struct {
+  uint8_t operation_code; /*0x1D*/
+  uint8_t unit_of_l : 1;
+  uint8_t def_of_l : 1;
+  uint8_t self_test : 1;
+  uint8_t reserved1 : 1;
+  uint8_t pf : 1;
+  uint8_t lun : 3;
+  uint8_t reserved[10];
+} ufi_send_diagnostic_command;
 
 extern usb_error ufi_request_sense(device_config *const storage_device, ufi_request_sense_response const *response);
 
@@ -181,6 +192,11 @@ extern usb_error ufi_read_write_sector(device_config *const storage_device,
 
 uint8_t wait_for_device_ready(device_config *const storage_device, const uint16_t timeout_period);
 
-usb_error ufi_format(device_config *const storage_device, const uint8_t side, const uint8_t track_number, const uint8_t interleave);
+usb_error ufi_format(device_config *const                        storage_device,
+                     const uint8_t                               side,
+                     const uint8_t                               track_number,
+                     const ufi_format_capacity_descriptor *const format);
+
+usb_error ufi_send_diagnostics(device_config *const storage_device);
 
 #endif

@@ -47,11 +47,18 @@
 ./bin/usbctrl/usbctrl.c.asm: usbctrl/usbctrl.c usbctrl/arguments.h usbctrl/reporters.h \
  libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- usbctrl/rotator.h libraries/delay/delay.h \
- libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
- libraries/msxbios/extbio_rc2014.h libraries/fusion/fusion_ext.h \
- libraries/fusion/io.h
+ usbctrl/rotator.h usbctrl/ufi_reporters.h libraries/usb/class_ufi.h \
+ libraries/usb/protocol.h libraries/usb/usb_cbi.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/msxbios/extbio.h libraries/msxbios/extbio_rc2014.h \
+ libraries/fusion/fusion_ext.h libraries/fusion/io.h
 ./bin/usbctrl/arguments.c.asm: usbctrl/arguments.c usbctrl/arguments.h
+./bin/usbctrl/ufi_reporters.c.asm: usbctrl/ufi_reporters.c libraries/usb/class_ufi.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/usb_cbi.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h
 ./bin/usbctrl/rotator.c.asm: usbctrl/rotator.c usbctrl/rotator.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
@@ -228,6 +235,8 @@
 ./bin/muflash/slot_helpers.o: ./muflash/slot_helpers.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_get_present.o: ./libraries/extbio/extbio_usb_get_present.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_data_out_transfer.o: ./libraries/extbio/extbio_usb_data_out_transfer.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_control_transfer.o: ./libraries/extbio/extbio_usb_control_transfer.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm

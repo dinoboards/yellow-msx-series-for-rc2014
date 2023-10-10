@@ -125,23 +125,21 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
       // ufi_request_sense_response sense;
       // memset(&sense, 0, sizeof(sense));
 
-      // ufi_format_capacities_response r;
-      // memset(&r, 0, sizeof(r));
+      ufi_format_capacities_response r;
+      memset(&r, 0, sizeof(r));
 
       // ufi_inquiry_response const inquiry;
       // memset(&inquiry, 0, sizeof(inquiry));
 
-      // // uint8_t counter = 5;
+      result = wait_for_device_ready(storage_device, 2500);
+      printf("wait_for_device_ready: %d\r\n", result);
 
-      // // result = wait_for_device_ready(storage_device, 5000);
-      // // printf("wait_for_device_ready: %d\r\n", result);
+      printf("--\r\n");
 
-      // // printf("--\r\n");
-
-      // // result = ufi_read_format_capacities(storage_device, &r);
-      // // printf("ufi_read_format_capacities: %d,", result);
-      // // log_ufi_format_capacities_response(&r);
-      // // delay(10);
+      result = ufi_read_format_capacities(storage_device, &r);
+      printf("ufi_read_format_capacities: %d,", result);
+      log_ufi_format_capacities_response(&r);
+      // delay(10);
 
       // // result = ufi_request_sense(storage_device, &sense);
       // // printf("ufi_request_sense: %d,", result);
@@ -162,11 +160,11 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
       // printf("ufi_request_sense: %d,", result);
       // log_ufi_request_sense_response(&sense);
 
-      writeSector(storage_device, 6);
+      // writeSector(storage_device, 6);
       // writeSector(storage_device, 7);
       // writeSector(storage_device, 8);
 
-      dumpSector(storage_device, 6);
+      // dumpSector(storage_device, 6);
 
       // dumpSector(storage_device, 7);
       // dumpSector(storage_device, 8);
