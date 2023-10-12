@@ -9,3 +9,5 @@ AlignConsecutiveMacros: true
 AlignEscapedNewlines: Right
 BinPackArguments: true
 BinPackParameters: false
+IncludeBlocks: Preserve
+SortIncludes: CaseInsensitive
