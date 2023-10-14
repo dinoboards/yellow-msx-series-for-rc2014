@@ -102,7 +102,7 @@ usb_error ufi_read_write_sector(device_config *const storage_device,
                                 uint8_t *const       sense_codes) {
   ufi_read_write_command cmd;
   memset(&cmd, 0, sizeof(cmd));
-  cmd.operation_code     = send ? 0x2E : 0x28;
+  cmd.operation_code     = send ? 0x2A : 0x28;
   cmd.lba[2]             = sector_number >> 8;
   cmd.lba[3]             = sector_number & 0xFF;
   cmd.transfer_length[1] = sector_count;

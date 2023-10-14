@@ -1,5 +1,6 @@
 #include "command_floppy_format.h"
 #include "device_search.h"
+#include "format_mapping.h"
 #include "usb_trace.h"
 #include <class_ufi.h>
 #include <string.h>
@@ -23,7 +24,28 @@ usb_error command_floppy_format(void) __sdcccall(1) {
   if (result)
     return result;
 
-  log_ufi_format_capacities_response(&r);
+  const disk_geometry *const geometry = size_to_geometry(convert_from_msb_first(&r.descriptors[0].number_of_blocks[0]));
+
+  if (geometry == NULL) {
+    printf("Unsupported disk geometry/size\r\n");
+    return 255;
+  }
+
+  printf("Total Sectors: %4d\r\n", geometry->number_of_blocks);
+  printf("Tracks:        %4d\r\n", geometry->tracks);
+  printf("Sides:         %4d\r\n", geometry->sides);
+  printf("Sectors/track: %4d\r\n", geometry->sectors_per_track);
+  printf("Description:   %s\r\n", geometry->description);
+
+  printf("WARNING, ALL DATA ON\r\nDRIVE %c: WILL BE LOST!\r\nProceed with Format (Y/N)? ", floppy_drive_letter);
+
+  char c = getchar();
+  if (c != 'Y' && c != 'y') {
+    printf("\r\n");
+    return 255;
+  }
+
+  printf("\r\n");
 
   for (uint8_t track_number = 0; track_number < 80; track_number++)
     for (uint8_t side = 0; side < 2; side++) {

@@ -4,6 +4,6 @@
 #include <ch376.h>
 #include <dev_transfers.h>
 
-usb_error read_sector(device_config *const storage_device, const uint16_t sector_number, uint8_t *buffer);
+usb_error read_sector(device_config *const storage_device, const uint16_t sector_number, uint8_t *buffer) __sdcccall(1);
 
 #endif

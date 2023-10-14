@@ -2,7 +2,7 @@
 #include <class_ufi.h>
 #include <string.h>
 
-usb_error write_sector(device_config *const storage_device, const uint16_t sector_number, uint8_t *buffer) {
+usb_error write_sector(device_config *const storage_device, const uint16_t sector_number, uint8_t *buffer) __sdcccall(1) {
   usb_error            result;
   ufi_interrupt_status sense_codes;
 
@@ -29,7 +29,7 @@ usb_error write_sector(device_config *const storage_device, const uint16_t secto
   return 0;
 }
 
-usb_error read_sector(device_config *const storage_device, const uint16_t sector_number, uint8_t *buffer) {
+usb_error read_sector(device_config *const storage_device, const uint16_t sector_number, uint8_t *buffer) __sdcccall(1) {
 
   if (wait_for_device_ready(storage_device, 2000) != 0)
     return 255;
