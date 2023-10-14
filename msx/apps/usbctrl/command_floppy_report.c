@@ -1,7 +1,7 @@
 #include "command_floppy_report.h"
 #include "device_search.h"
 
-usb_error report_floppies(const uint8_t last_device_address) __sdcccall(1) {
+usb_error command_floppy_report(const uint8_t last_device_address) __sdcccall(1) {
   device_config_interface floppy_interface;
   memset(&floppy_interface, 0, sizeof(device_config_interface));
 

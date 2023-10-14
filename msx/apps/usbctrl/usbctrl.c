@@ -22,22 +22,22 @@ uint8_t main(const int argc, const char *argv[]) {
   case cmd_none:
     break;
 
-  case cmd_format_floppy:
-    return format_floppy();
+  case cmd_floppy_format:
+    return command_floppy_format();
 
-  case cmd_check_floppy_sectors:
-    return check_floppy_sectors();
+  case cmd_floppy_check:
+    return command_floppy_check();
 
-  case cmd_report_to_file:
-    report_all_devices(l);
+  case cmd_report_all_devices:
+    command_report_all_devices(l);
     printf("usb device details saved to file %s\r\n", report_file_name);
     break;
 
-  case cmd_report_floppies:
-    return report_floppies(l);
+  case cmd_floppy_report:
+    return command_floppy_report(l);
 
   case cmd_floppy_find:
-    return floppy_find();
+    return command_floppy_find();
   }
 
   return 0;

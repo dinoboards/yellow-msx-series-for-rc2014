@@ -41,7 +41,7 @@ uint8_t arg_report_to_file(const uint8_t i, const char **argv, const int argc) _
 
   const char *arg_filename = argv[2];
 
-  subcommand       = cmd_report_to_file;
+  subcommand       = cmd_report_all_devices;
   report_file_name = argv[2];
   return i + 2;
 }
@@ -61,7 +61,7 @@ uint8_t arg_report_floppies(const uint8_t i, const char **argv, const int argc) 
   if (argc != 3)
     return abort_with_help();
 
-  subcommand = cmd_report_floppies;
+  subcommand = cmd_floppy_report;
 
   return i + 2;
 }
@@ -81,7 +81,7 @@ uint8_t arg_format_floppy(const uint8_t i, const char **argv, const int argc) __
   if (argc != 6)
     return abort_with_help();
 
-  subcommand                       = cmd_format_floppy;
+  subcommand                       = cmd_floppy_format;
   device_interface.address         = atoi(argv[3]);
   device_interface.config_index    = atoi(argv[4]);
   device_interface.interface_index = atoi(argv[5]);
@@ -124,7 +124,7 @@ invalid:
   return abort_with_help();
 }
 
-uint8_t arg_check_floppy_sectors(const uint8_t i, const char **argv, const int argc) __sdcccall(1) {
+uint8_t arg_command_floppy_check(const uint8_t i, const char **argv, const int argc) __sdcccall(1) {
   if (i != 1)
     return i;
 
@@ -139,7 +139,7 @@ uint8_t arg_check_floppy_sectors(const uint8_t i, const char **argv, const int a
   if (argc != 6)
     return abort_with_help();
 
-  subcommand                       = cmd_check_floppy_sectors;
+  subcommand                       = cmd_floppy_check;
   device_interface.address         = atoi(argv[3]);
   device_interface.config_index    = atoi(argv[4]);
   device_interface.interface_index = atoi(argv[5]);
@@ -185,7 +185,7 @@ void process_cli_arguments(const int argc, const char **argv) __sdcccall(1) {
     if (current_i != i)
       continue;
 
-    i = arg_check_floppy_sectors(i, argv, argc);
+    i = arg_command_floppy_check(i, argv, argc);
     if (current_i != i)
       continue;
 

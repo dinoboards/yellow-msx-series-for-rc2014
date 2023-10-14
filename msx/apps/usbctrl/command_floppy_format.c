@@ -4,7 +4,7 @@
 #include <class_ufi.h>
 #include <string.h>
 
-usb_error format_floppy(void) __sdcccall(1) {
+usb_error command_floppy_format(void) __sdcccall(1) {
   usb_error result;
 
   ufi_format_capacities_response r;

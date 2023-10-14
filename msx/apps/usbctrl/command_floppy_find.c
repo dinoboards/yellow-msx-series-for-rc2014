@@ -6,7 +6,7 @@
 #include <msxdos_rc2014_ex.h>
 #include <stdio.h>
 
-usb_error floppy_find(void) {
+usb_error command_floppy_find(void) {
   driveLetterInfo info;
   memset(&info, 0, sizeof(driveLetterInfo));
 

@@ -16,10 +16,10 @@ typedef struct {
 
 typedef enum {
   cmd_none,
-  cmd_report_to_file,
-  cmd_report_floppies,
-  cmd_format_floppy,
-  cmd_check_floppy_sectors,
+  cmd_report_all_devices,
+  cmd_floppy_report,
+  cmd_floppy_format,
+  cmd_floppy_check,
   cmd_floppy_find
 } subcommands;
 

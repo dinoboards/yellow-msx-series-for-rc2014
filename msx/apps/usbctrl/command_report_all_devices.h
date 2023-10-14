@@ -5,6 +5,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-usb_error report_all_devices(const uint8_t last_device_address) __sdcccall(1);
+usb_error command_report_all_devices(const uint8_t last_device_address) __sdcccall(1);
 
 #endif
