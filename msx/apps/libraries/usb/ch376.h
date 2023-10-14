@@ -50,6 +50,8 @@ extern int printf(const char *msg, ...);
 
 #if STACK_TRACE_ENABLED
 
+#define trace_printf printf
+
 #define CHECK(fn)                                                                                                                  \
   {                                                                                                                                \
     result = fn;                                                                                                                   \
@@ -79,6 +81,8 @@ extern int printf(const char *msg, ...);
   }
 
 #else
+
+#define trace_printf(...)
 
 #define CHECK(fn)                                                                                                                  \
   {                                                                                                                                \

@@ -51,19 +51,6 @@ __msxbiosPosit:
 	POP	IX
 	RET
 
-; extern bool msxbiosBreakX();
-	PUBLIC	_msxbiosBreakX
-_msxbiosBreakX:
-	PUSH	IX
-	LD	IY, (EXPTBL-1)
-	LD	IX, BREAKX
-	CALL	CALSLT
-	EI
-	LD	L, 0
-	POP	IX
-	RET	NC
-	LD	L, 1
-	RET
 
 ; extern uint8_t msxdosDirio(uint8_t code) __z88dk_fastcall;
 	PUBLIC	_msxdosDirio

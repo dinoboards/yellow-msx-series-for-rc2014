@@ -27,7 +27,7 @@ zcchelp:
 
 CONFIG_REQUEST := config_request.c
 SYSTEM_VARS := libraries/msxbios/system_vars.c
-MSXDOS_LIB := $(addprefix $(BIN)libraries/msxdos/,msxdos_get_drive_letter_info.lib msxdos.lib msxdos_set_date.lib msxdos_set_time.lib msxdos_get_time.lib msxdos_drv_direct_1.lib)
+MSXDOS_LIB := $(addprefix $(BIN)libraries/msxdos/,msxdos_get_drive_letter_info.lib msxbios_break_x.lib msxdos.lib msxdos_set_date.lib msxdos_set_time.lib msxdos_get_time.lib msxdos_drv_direct_1.lib)
 EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio_usb_get_present.lib extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer.lib) $(BIN)libraries/usb/class_ufi.c.lib $(BIN)libraries/usb/usb_cbi.c.lib  $(BIN)libraries/usb/dev_transfers.c.lib  $(BIN)libraries/usb/protocol.c.lib
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := $(BIN)libraries/delay/delay.c.lib

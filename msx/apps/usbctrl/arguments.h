@@ -23,10 +23,10 @@ typedef enum {
   cmd_floppy_find
 } subcommands;
 
-extern const char             *report_file_name;
-extern device_config_interface device_interface;
-extern char                    floppy_drive_letter;
-extern subcommands             subcommand;
+extern const char *report_file_name;
+// extern device_config_interface device_interface;
+extern char        floppy_drive_letter;
+extern subcommands subcommand;
 
 void process_cli_arguments(const int argc, const char **argv) __sdcccall(1);
 

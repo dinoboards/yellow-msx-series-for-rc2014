@@ -70,7 +70,8 @@
  libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
- libraries/usb/usb_state.h libraries/usb/protocol.h
+ libraries/usb/usb_state.h libraries/msxdos/msxdos.h \
+ libraries/msxdos/msxdos_rc2014_ex.h libraries/usb/protocol.h
 ./bin/usbctrl/command_floppy_format.c.asm: usbctrl/command_floppy_format.c \
  usbctrl/command_floppy_format.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h usbctrl/device_search.h usbctrl/arguments.h \
@@ -85,7 +86,7 @@
  libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
- libraries/usb/usb_state.h
+ libraries/usb/usb_state.h libraries/msxdos/msxdos.h
 ./bin/usbctrl/ufi_reporters.c.asm: usbctrl/ufi_reporters.c libraries/usb/class_ufi.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
@@ -290,6 +291,7 @@
 ./bin/libraries/msxdos/msxdos_drv_direct_1.o: ./libraries/msxdos/msxdos_drv_direct_1.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_drive_letter_info.o: ./libraries/msxdos/msxdos_get_drive_letter_info.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxbios_break_x.o: ./libraries/msxdos/msxbios_break_x.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_date.o: ./libraries/msxdos/msxdos_set_date.asm ./libraries/msxdos/msxdos.inc

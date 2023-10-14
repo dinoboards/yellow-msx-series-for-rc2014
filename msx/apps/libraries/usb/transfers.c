@@ -22,7 +22,7 @@ usb_error usb_control_transfer_external(const setup_packet *const cmd_packet,
   if (((uint16_t)cmd_packet & 0xC000) == 0)
     return USB_BAD_ADDRESS;
 
-  if (((uint16_t)buffer & 0xC000) == 0)
+  if (buffer != 0 && ((uint16_t)buffer & 0xC000) == 0)
     return USB_BAD_ADDRESS;
 
   return usb_control_transfer(cmd_packet, buffer, device_address, max_packet_size);
@@ -86,7 +86,7 @@ usb_error usb_data_in_transfer_external(uint8_t              *buffer,
                                         const uint16_t        buffer_size,
                                         const uint8_t         device_address,
                                         endpoint_param *const endpoint) {
-  if (((uint16_t)buffer & 0xC000) == 0)
+  if (buffer != 0 && ((uint16_t)buffer & 0xC000) == 0)
     return USB_BAD_ADDRESS;
 
   if (((uint16_t)endpoint & 0xC000) == 0)
@@ -116,7 +116,7 @@ usb_error usb_data_out_transfer_external(const uint8_t        *buffer,
                                          uint16_t              buffer_size,
                                          const uint8_t         device_address,
                                          endpoint_param *const endpoint) {
-  if (((uint16_t)buffer & 0xC000) == 0)
+  if (buffer != 0 && ((uint16_t)buffer & 0xC000) == 0)
     return USB_BAD_ADDRESS;
 
   if (((uint16_t)endpoint & 0xC000) == 0)

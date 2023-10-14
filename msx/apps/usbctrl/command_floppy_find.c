@@ -50,9 +50,9 @@ usb_error command_floppy_find(void) {
   printf(" configIndex %02X\r\n", lunInfoEx.extendedInfo.usbInfo.configIndex);
   printf(" interfaceIndex %02X\r\n", lunInfoEx.extendedInfo.usbInfo.interfaceIndex);
 
-  device_interface.address         = lunInfoEx.extendedInfo.usbInfo.address;
-  device_interface.config_index    = lunInfoEx.extendedInfo.usbInfo.configIndex;
-  device_interface.interface_index = lunInfoEx.extendedInfo.usbInfo.interfaceIndex;
+  // device_interface.address         = lunInfoEx.extendedInfo.usbInfo.address;
+  // device_interface.config_index    = lunInfoEx.extendedInfo.usbInfo.configIndex;
+  // device_interface.interface_index = lunInfoEx.extendedInfo.usbInfo.interfaceIndex;
 
   ufi_format_capacities_response r;
   memset(&r, 0, sizeof(r));
@@ -60,7 +60,7 @@ usb_error command_floppy_find(void) {
   device_config storage_device;
   memset(&storage_device, 0, sizeof(storage_device));
 
-  result = construct_device_config(&storage_device);
+  result = get_device_config_from_drive_letter(&storage_device);
   if (result)
     return result;
 
