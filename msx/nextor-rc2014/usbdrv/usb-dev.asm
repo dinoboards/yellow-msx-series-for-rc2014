@@ -99,3 +99,37 @@ loop_data_in:
 	inc	sp
 
 	JR	extbio_handled
+
+; ---------------------------
+
+	PUBLIC	_drv_direct1
+	EXTERN	_rc2014_get_lun_info_ex
+
+RC2014_DRIVER_GET_LUN_INFO_EX_FN	EQU	1
+
+	; HL -> parameters
+	; A -> function number
+_drv_direct1:
+	CP	RC2014_DRIVER_GET_LUN_INFO_EX_FN
+	JR	Z, __drv_direct1_get_lun_info_ex
+
+	LD	HL, -1
+	RET
+
+__drv_direct1_get_lun_info_ex:
+
+	; duplicate 6 stack bytes
+	ld	bc, 4
+	add	hl, bc
+	ld	b, c
+loop_get_lun_info_ex:
+	dec	hl
+	ld	a, (hl)
+	push	af
+	inc	sp
+	djnz	loop_get_lun_info_ex
+
+	call	_rc2014_get_lun_info_ex
+	pop	af
+	pop	af
+	JR	extbio_handled

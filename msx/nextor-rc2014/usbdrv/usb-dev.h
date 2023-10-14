@@ -5,6 +5,6 @@
 #include "work-area.h"
 #include <stdbool.h>
 
-extern device_config *get_usb_driver(const uint8_t device_index) __z88dk_fastcall;
+extern device_config *get_usb_device_config(const uint8_t device_index) __z88dk_fastcall;
 
 #endif
