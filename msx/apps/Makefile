@@ -31,7 +31,7 @@ MSXDOS_LIB := $(addprefix $(BIN)libraries/msxdos/,msxdos_get_drive_letter_info.l
 EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio_usb_get_present.lib extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer.lib) $(BIN)libraries/usb/class_ufi.c.lib $(BIN)libraries/usb/usb_cbi.c.lib  $(BIN)libraries/usb/dev_transfers.c.lib  $(BIN)libraries/usb/protocol.c.lib
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := $(BIN)libraries/delay/delay.c.lib
-USBDRV := libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/usb_cbi.c libraries/usb/class_scsi.c
+USBDRV := $(BIN)libraries/usb/trace_ufi_format_capacities_response.c.lib libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/usb_cbi.c libraries/usb/class_scsi.c
 FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib fprintf.c.lib)
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm $(SYSTEM_VARS))

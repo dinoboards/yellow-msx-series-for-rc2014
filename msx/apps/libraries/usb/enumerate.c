@@ -2,7 +2,6 @@
 #include "enumerate_hub.h"
 #include "enumerate_storage.h"
 #include "protocol.h"
-#include <enumerate_trace.h>
 #include <string.h>
 
 void parse_endpoint_printer(const endpoint_descriptor const *pEndpoint) __z88dk_fastcall {
@@ -58,9 +57,6 @@ usb_error op_parse_endpoint(_working *const working) __z88dk_fastcall {
 
   const endpoint_descriptor *endpoint = (endpoint_descriptor *)working->ptr;
 
-  trace_printf("EndP: ");
-  logEndPointDescription(endpoint);
-
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE: {
@@ -106,9 +102,6 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   usb_error                         result;
   _usb_state *const                 work_area = get_usb_work_area();
   const interface_descriptor *const interface = (interface_descriptor *)working->ptr;
-
-  trace_printf("Intf ");
-  logInterface(interface);
 
   working->ptr += interface->bLength;
   working->endpoint_count = interface->bNumEndpoints;
@@ -172,8 +165,6 @@ usb_error op_get_config_descriptor(_working *const working) __z88dk_fastcall {
   CHECK(usbtrn_get_full_config_descriptor(working->config_index, working->state->next_device_address, max_packet_size,
                                           MAX_CONFIG_SIZE, working->config.buffer));
 
-  logConfig((config_descriptor *)working->config.buffer);
-
   working->ptr             = (working->config.buffer + sizeof(config_descriptor));
   working->interface_count = working->config.desc.bNumInterfaces;
 
@@ -192,8 +183,6 @@ usb_error read_all_configs(enumeration_state *const state) {
 
   CHECK(usbtrn_get_descriptor(&working.desc));
 
-  logDevice(&working.desc);
-
   state->next_device_address++;
   const uint8_t dev_address = state->next_device_address;
   CHECK(usbtrn_set_address(dev_address));
@@ -204,7 +193,6 @@ usb_error read_all_configs(enumeration_state *const state) {
     CHECK(op_get_config_descriptor(&working));
   }
 
-  trace_printf("read-all-ok\r\n");
   return USB_ERR_OK;
 }
 

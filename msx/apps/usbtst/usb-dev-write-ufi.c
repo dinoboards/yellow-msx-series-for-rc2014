@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "enumerate_trace.h"
-
 uint8_t usb_dev_write_ufi(device_config *const dev,
                           const uint8_t        lun,
                           uint8_t              number_sectors_to_write,

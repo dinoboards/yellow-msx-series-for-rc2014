@@ -2,7 +2,6 @@
 #include "class_hub.h"
 #include "protocol.h"
 #include <delay.h>
-#include <enumerate_trace.h>
 #include <string.h>
 
 const setup_packet cmd_set_feature     = {RT_HOST_TO_DEVICE | RT_CLASS | RT_OTHER, SET_FEATURE, {FEAT_PORT_POWER, 0}, {1, 0}, 0};
@@ -50,8 +49,6 @@ usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
   hub_port_status port_status;
 
   CHECK(hub_get_descriptor(&hub_description));
-
-  logHubDescription(&hub_description);
 
   uint8_t i = hub_description.bNbrPorts;
   do {

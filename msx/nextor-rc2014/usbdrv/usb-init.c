@@ -9,7 +9,6 @@
 #include <delay.h>
 #include <enumerate.h>
 #include <enumerate_hub.h>
-#include <enumerate_trace.h>
 #include <protocol.h>
 #include <stdbool.h>
 #include <stdlib.h>

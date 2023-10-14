@@ -1,19 +1,17 @@
 #include "main.h"
-#include "enumerate_trace.h"
 #include "print.h"
 #include "printer_drv.h"
 #include "usb-dev-info-ufi.h"
+#include "usb-dev-read-ufi.h"
+#include "usb-dev-write-ufi.h"
 #include "usb-lun-info-ufi.h"
 #include <ch376.h>
 #include <class_printer.h>
 #include <class_scsi.h>
-#include <enumerate.h>
-
 #include <class_ufi.h>
 #include <delay.h>
-
-#include "usb-dev-read-ufi.h"
-#include "usb-dev-write-ufi.h"
+#include <enumerate.h>
+#include <usb_trace.h>
 
 uint16_t dumpSector(device_config *config, const uint32_t number) {
   usb_error error;
