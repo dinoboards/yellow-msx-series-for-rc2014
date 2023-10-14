@@ -146,8 +146,7 @@
  ../apps/libraries/usb/class_scsi.h ../apps/libraries/delay/delay.h \
  ../apps/libraries/msxbios/system_vars.h \
  ../apps/libraries/usb/enumerate.h ../apps/libraries/usb/usb_state.h \
- ../apps/libraries/usb/enumerate_hub.h ../apps/libraries/usb/enumerate.h \
- ../apps/libraries/usb/enumerate_trace.h
+ ../apps/libraries/usb/enumerate_hub.h ../apps/libraries/usb/enumerate.h
 ./bin/rc2014dr.inc.o: ./rc2014dr.inc.asm 
 ./bin/rc2014dr.o: ./rc2014dr.asm
 ./bin/embinc.o: ./embinc.asm

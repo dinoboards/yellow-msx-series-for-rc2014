@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "enumerate_trace.h"
-
 const ufi_request_sense_command          _ufi_cmd_request_sense          = {0x03, 0, 0, 0, 0, 18, {0, 0, 0, 0, 0, 0, 0}};
 const ufi_read_format_capacities_command _ufi_cmd_read_format_capacities = {0x23, 0, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
 const ufi_inquiry_command                _ufi_cmd_inquiry                = {0x12, 0, 0, 0, 0, 0, 0x24, {0, 0, 0, 0, 0, 0, 0}};

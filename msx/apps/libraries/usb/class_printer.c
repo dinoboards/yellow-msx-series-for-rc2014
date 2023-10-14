@@ -1,5 +1,4 @@
 #include "class_printer.h"
-#include "enumerate_trace.h"
 #include "protocol.h"
 #include <string.h>
 
@@ -9,8 +8,6 @@ usb_error prt_get_port_status(const device_config_printer *const dev, uint8_t *b
   usb_error    result;
   setup_packet cmd;
   cmd = cmd_get_port_status;
-
-  trace_printf("prt_get_port_status %d, %d\r\n", dev->address, dev->max_packet_size);
 
   result = usb_control_transfer(&cmd, (uint8_t *)buffer, dev->address, dev->max_packet_size);
 
@@ -26,8 +23,6 @@ usb_error prt_get_device_id(const device_config_printer *const dev, uint8_t *buf
   setup_packet cmd;
   cmd = cmd_get_device_id;
 
-  trace_printf("prt_get_device_id %d, %d\r\n", dev->address, dev->max_packet_size);
-
   result = usb_control_transfer(&cmd, (uint8_t *)buffer, dev->address, dev->max_packet_size);
 
   CHECK(result);
@@ -41,8 +36,6 @@ usb_error prt_soft_reset(const device_config_printer *const dev) {
   usb_error    result;
   setup_packet cmd;
   cmd = cmd_soft_reset;
-
-  trace_printf("cmd_soft_reset %d, %d\r\n", dev->address, dev->max_packet_size);
 
   result = usb_control_transfer(&cmd, 0, dev->address, dev->max_packet_size);
 
