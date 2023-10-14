@@ -7,7 +7,7 @@
 #include <protocol.h>
 #include <string.h>
 
-usb_error report_all_devices(const uint8_t last_device_address) __sdcccall(1) {
+usb_error command_report_all_devices(const uint8_t last_device_address) __sdcccall(1) {
   uint8_t   buffer[151];
   usb_error result      = 0;
   int       file_handle = 0;

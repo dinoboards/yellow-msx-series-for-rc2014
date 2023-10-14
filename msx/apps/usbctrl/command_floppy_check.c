@@ -3,7 +3,7 @@
 #include <class_ufi.h>
 #include <string.h>
 
-uint8_t check_floppy_sectors(void) __sdcccall(1) {
+uint8_t command_floppy_check(void) __sdcccall(1) {
   usb_error result;
   uint8_t   buffer[512];
 

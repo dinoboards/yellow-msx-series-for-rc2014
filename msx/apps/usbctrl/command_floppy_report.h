@@ -5,6 +5,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-usb_error report_floppies(const uint8_t last_device_address) __sdcccall(1);
+usb_error command_floppy_report(const uint8_t last_device_address) __sdcccall(1);
 
 #endif
