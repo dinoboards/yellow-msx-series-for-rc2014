@@ -18,11 +18,11 @@ A extension module for RC2014 backplanes to support MSX Cartridges
 
 ### Description
 
-Tired of slow load times for your games?  Miss the days of flicking the power button and having your game instantly running?  Well perhaps this kit is for you.  Pair the Slot Extension with a MSX configured RC2014 build, and you can load cartridge based games and software with the simple of a flick of the power button.  
+Tired of slow load times for your games?  Miss the days of flicking the power button and having your game instantly running?  Well perhaps this kit is for you.  Pair the Slot Extension with a MSX configured RC2014 build, and you can load cartridge based games and software with the simple of a flick of the power button.
 
 This module attaches to the right most slot on a RC2014 backplane and gives your RC2014 two 50pin MSX card connectors slots.  It include required decoding logic for addressing the slots as per the MSX standard.
 
-It includes optional support for an on-board DC converter to step up the 5V from the RC2014 backplane to +12/-12 voltages. 
+It includes optional support for an on-board DC converter to step up the 5V from the RC2014 backplane to +12/-12 voltages.
 
 Once installed and operating on a MSX configured RC2014, you can boot up original 1980's MSX cartridges or install new modern release cartridges from places such as https://www.msxcartridgeshop.com/
 
@@ -30,15 +30,15 @@ Or perhaps you can select the optional MSX Cartridge 16K/32K ROM board and flash
 
 ### Key features
 
-* 2 MSX 50pin compatible cartridge slots 
+* 2 MSX 50pin compatible cartridge slots
 * Indicator LEDs when a cartridge is inserted and powered.
 * Optional DC converter to supply +12/-12V*
 * Optional 16K/32K blank rom for you to flash**
 
 Please note that mounting stand-offs are not supplied.
 
-\* Most cartridges do not need or use the 12V lines.  A 5 way screw power terminal is provided if you wish supply the +12V/-12V from an external source.  
-\*\* The supplied ROM is a blank SST39SF040 Flash chip.  You will need an external programmer to flash this chip. 
+\* Most cartridges do not need or use the 12V lines.  A 5 way screw power terminal is provided if you wish supply the +12V/-12V from an external source.
+\*\* The supplied ROM is a blank SST39SF040 Flash chip.  You will need an external programmer to flash this chip.
 
 You will also need a programmer to flash the ROM SST39SF040 -- I have used the [TL866II Plus from XGecu](http://www.xgecu.com/en/). You should be able to source original units your favourite marketplaces, such as AliExpress or ebay.
 
@@ -56,7 +56,7 @@ And for RC2014 details, check out its official site https://rc2014.co.uk/
 
 ### Other MSX Modules Required
 
-The MSX Cartridge slot extension is designed to work in a RC2014 with the Yellow MSX Modules for RC2014.  Your RC2014 needs to be able to boot as a MSX system. 
+The MSX Cartridge slot extension is designed to work in a RC2014 with the Yellow MSX Modules for RC2014.  Your RC2014 needs to be able to boot as a MSX system.
 
 You need at a minimum:
 
@@ -74,21 +74,21 @@ If are using a backplane such as the 12+1 Backplane, you can short the correspon
 
 ### Testing status:
 
-I have tested this slot extension with a limited set of MSX Cartridges.  It has been successfully tested with 3 different MSX1 original cartridges from the 80s, the recent 2021 release of *Mutants from the Deep* from https://www.msxcartridgeshop.com/ and the MegaFlashROM SD Flash unit.  
+I have tested this slot extension with a limited set of MSX Cartridges.  It has been successfully tested with 3 different MSX1 original cartridges from the 80s, the recent 2021 release of *Mutants from the Deep* from https://www.msxcartridgeshop.com/ and the MegaFlashROM SD Flash unit.
 
-It also has been successfully tested with the optional 16K/32K ROM Cartridge module. 
+It also has been successfully tested with the optional 16K/32K ROM Cartridge module.
 
 #### MegaFlashROM
 
-Operating this cartridge is possible, but it requires the NEXTOR kernel and disk images to be updated.  
+Operating this cartridge is possible, but it requires the NEXTOR kernel and disk images to be updated.
 
-The version of NEXTOR currently supplied in the MegaFlashROM, is version 2.1.0.  The version built for the Yellow MSX Memory module, is 2.1.1 (beta). 
+The version of NEXTOR currently supplied in the MegaFlashROM, is version 2.1.0.  The version built for the Yellow MSX Memory module, is 2.1.1 (beta).
 
 Although NEXTOR can operator with 2 kernel systems active, there seems to be a compatibility issue with these 2 versions.
 
 The process below, details how to update the kernel and disk images in the MegaFlashROM to a compatible new version.
 
-> Please note, MegaFlashROM requires the a version MSX-BASIC/BIOS.  It is not compatible with CBIOS, the version of the ROM supplied with the MSX Module.  See the file [msx/README.md](../msx/README.md) for details on updating your main ROM image. 
+> Please note, MegaFlashROM requires the a version MSX-BASIC/BIOS.  It is not compatible with CBIOS, the version of the ROM supplied with the MSX Module.  See the file [msx/README.md](../msx/README.md) for details on updating your main ROM image.
 
 > At this stage, you also need the Compact Flash module working in your MSX platform, to store the new MegaFlashROM images - These files are currently too large for the RamDisk.  (There is an item on my backlog to remove the need for the CompactFlash module)
 
@@ -148,12 +148,19 @@ If you wish to reset your MegaFlashROM, follow the official process to restore y
 |Count   | Name                    |
 |:------:|-------------------------|
 | 1     | 0.1uF ceramic capacitors |
-| 1      | HEADER 2x9	       | 
+| 1      | HEADER 2x9	       |
 | 2     | SHUNTS |
 | 5     | 10k Ω resistors |
 | 1      | SST39SF040        |
 | 1      | PCB   |
 
+#### 16K/32K ROM Cartridge
+
+If you order the main kit on my Tindie store, you can also optionally include a Blank Cartridge kit.
+
+You can also use the linked Gerber file, and order blank PCBs from your preferred PCB manufacturer.
+
+[Gerber for 16k/32k Blank Cartridge](./MSX-16K-32K-Cartridge-PCB-Gerber.zip)
 
 
 ### Disclaimer
