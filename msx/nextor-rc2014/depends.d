@@ -76,7 +76,8 @@
  usbdrv/work-area.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/transfers.h ../apps/libraries/usb/usb_state.h \
- ../apps/libraries/usb/protocol.h
+ ../apps/libraries/usb/protocol.h \
+ usbdrv/../../apps/libraries/msxdos/msxdos_rc2014_ex.h
 ./bin/usbdrv/usb-dev-info-scsi.c.asm: usbdrv/usb-dev-info-scsi.c \
  usbdrv/usb-dev-info-scsi.h usbdrv/nextor.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \

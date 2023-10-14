@@ -7,11 +7,11 @@
 
 #include "enumerate_trace.h"
 
-const ufi_request_sense_command          ufi_cmd_request_sense          = {0x03, 0, 0, 0, 0, 18, {0, 0, 0, 0, 0, 0, 0}};
-const ufi_read_format_capacities_command ufi_cmd_read_format_capacities = {0x23, 0, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
-const ufi_inquiry_command                ufi_cmd_inquiry                = {0x12, 0, 0, 0, 0, 0, 0x24, {0, 0, 0, 0, 0, 0, 0}};
-const ufi_format_command                 ufi_cmd_format                 = {0x04, 7, 0, 1, 0, 0, {0, 0}, {0, 0}, {0, 0}, {0, 0, 0}};
-const ufi_send_diagnostic_command        ufi_cmd_send_diagnostic        = {0x1D, 0, 0, 1, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+const ufi_request_sense_command          _ufi_cmd_request_sense          = {0x03, 0, 0, 0, 0, 18, {0, 0, 0, 0, 0, 0, 0}};
+const ufi_read_format_capacities_command _ufi_cmd_read_format_capacities = {0x23, 0, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
+const ufi_inquiry_command                _ufi_cmd_inquiry                = {0x12, 0, 0, 0, 0, 0, 0x24, {0, 0, 0, 0, 0, 0, 0}};
+const ufi_format_command                 _ufi_cmd_format                 = {0x04, 7, 0, 1, 0, 0, {0, 0}, {0, 0}, {0, 0}, {0, 0, 0}};
+const ufi_send_diagnostic_command        _ufi_cmd_send_diagnostic        = {0x1D, 0, 0, 1, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
 uint8_t wait_for_device_ready(device_config *const storage_device, const uint16_t timeout_period) {
   usb_error                  result;
@@ -42,6 +42,9 @@ usb_error ufi_test_unit_ready(device_config *const storage_device, ufi_request_s
 
   usb_execute_cbi(storage_device, (uint8_t *)&ufi_cmd_request_test_unit_ready, false, 0, NULL, NULL);
 
+  ufi_request_sense_command ufi_cmd_request_sense;
+  ufi_cmd_request_sense = _ufi_cmd_request_sense;
+
   result = usb_execute_cbi(storage_device, (uint8_t *)&ufi_cmd_request_sense, false, sizeof(ufi_request_sense_response),
                            (uint8_t *)response, NULL);
 
@@ -49,6 +52,9 @@ usb_error ufi_test_unit_ready(device_config *const storage_device, ufi_request_s
 }
 
 usb_error ufi_request_sense(device_config *const storage_device, ufi_request_sense_response const *response) {
+  ufi_request_sense_command ufi_cmd_request_sense;
+  ufi_cmd_request_sense = _ufi_cmd_request_sense;
+
   usb_error result = usb_execute_cbi(storage_device, (uint8_t *)&ufi_cmd_request_sense, false, sizeof(ufi_request_sense_response),
                                      (uint8_t *)response, NULL);
 
@@ -56,7 +62,10 @@ usb_error ufi_request_sense(device_config *const storage_device, ufi_request_sen
 }
 
 usb_error ufi_read_format_capacities(device_config *const storage_device, ufi_format_capacities_response const *response) {
-  usb_error result;
+  usb_error                          result;
+  ufi_read_format_capacities_command ufi_cmd_read_format_capacities;
+
+  ufi_cmd_read_format_capacities = _ufi_cmd_read_format_capacities;
   result = usb_execute_cbi(storage_device, (uint8_t *)&ufi_cmd_read_format_capacities, false, 12, (uint8_t *)response, NULL);
 
   TRACE_USB_ERROR(result);
@@ -71,7 +80,6 @@ usb_error ufi_read_format_capacities(device_config *const storage_device, ufi_fo
   memcpy(&cmd, &ufi_cmd_read_format_capacities, sizeof(cmd));
   cmd.allocation_length[1] = max_length;
 
-  trace_printf("ufi_read_format_capacities: max length: %d\r\n", max_length);
   result = usb_execute_cbi(storage_device, (uint8_t *)&cmd, false, max_length, (uint8_t *)response, NULL);
 
   TRACE_USB_ERROR(result);
@@ -79,6 +87,9 @@ usb_error ufi_read_format_capacities(device_config *const storage_device, ufi_fo
 }
 
 usb_error ufi_inquiry(device_config *const storage_device, ufi_inquiry_response const *response) {
+  ufi_inquiry_command ufi_cmd_inquiry;
+  ufi_cmd_inquiry = _ufi_cmd_inquiry;
+
   usb_error result =
       usb_execute_cbi(storage_device, (uint8_t *)&ufi_cmd_inquiry, false, sizeof(ufi_inquiry_response), (uint8_t *)response, NULL);
 
@@ -120,7 +131,8 @@ usb_error ufi_format(device_config *const                        storage_device,
   memset(&parameter_list, 0, sizeof(parameter_list));
 
   ufi_format_command cmd;
-  memcpy(&cmd, &ufi_cmd_format, sizeof(cmd));
+  cmd = _ufi_cmd_format;
+  // memcpy(&cmd, &_ufi_cmd_format, sizeof(cmd));
 
   cmd.track_number             = track_number;
   cmd.interleave[1]            = 0;
@@ -146,7 +158,10 @@ usb_error ufi_format(device_config *const                        storage_device,
 }
 
 usb_error ufi_send_diagnostics(device_config *const storage_device) {
-  usb_error result;
+  usb_error                   result;
+  ufi_send_diagnostic_command ufi_cmd_send_diagnostic;
+
+  ufi_cmd_send_diagnostic = _ufi_cmd_send_diagnostic;
 
   result = usb_execute_cbi(storage_device, (uint8_t *)&ufi_cmd_send_diagnostic, true, 0, NULL, NULL);
 

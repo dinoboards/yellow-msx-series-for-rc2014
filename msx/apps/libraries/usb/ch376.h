@@ -29,7 +29,8 @@ typedef enum {
   USB_ERR_OPEN_DIR                    = 0x41,
   USB_ERR_MISS_FILE                   = 0x42,
   USB_FILERR_MAX                      = 0xB4,
-  USB_INT_CONNECT                     = 0x81
+  USB_INT_CONNECT                     = 0x81,
+  USB_BAD_ADDRESS                     = 0x82
 } usb_error;
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;

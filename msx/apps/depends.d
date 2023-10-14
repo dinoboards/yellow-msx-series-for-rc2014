@@ -84,8 +84,12 @@
 ./bin/usbctrl/rotator.c.asm: usbctrl/rotator.c usbctrl/rotator.h
 ./bin/usbctrl/command_floppy_find.c.asm: usbctrl/command_floppy_find.c \
  usbctrl/command_floppy_find.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h usbctrl/arguments.h libraries/msxdos/msxdos.h \
- libraries/msxdos/msxdos_rc2014_ex.h
+ libraries/usb/ch376inc.h usbctrl/arguments.h usbctrl/device_search.h \
+ libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
+ libraries/usb/usb_state.h usbctrl/ufi_reporters.h \
+ libraries/msxdos/msxdos.h libraries/msxdos/msxdos_rc2014_ex.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
 ./bin/usbtst/printer_drv.c.asm: usbtst/printer_drv.c libraries/usb/class_printer.h \

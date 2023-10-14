@@ -6,9 +6,9 @@ EXTBIO_RC2014_USB_IN_TRANSFER_FN		EQU	0x84
 
 ;uint32_t extbio_rc2014(const uint16_t hl, const uint16_t de) __naked {
 	PUBLIC	_extbio_rc2014
-	EXTERN	_usb_control_transfer
-	EXTERN	_usb_data_out_transfer
-	EXTERN	_usb_data_in_transfer
+	EXTERN	_usb_control_transfer_external
+	EXTERN	_usb_data_out_transfer_external
+	EXTERN	_usb_data_in_transfer_external
 	EXTERN	_extbio_rc2014_usb_get_present
 
 _extbio_rc2014:
@@ -51,7 +51,7 @@ loop_ctrl:
 	inc	sp
 	djnz	loop_ctrl
 
-	call	_usb_control_transfer
+	call	_usb_control_transfer_external
 	pop	af
 	pop	af
 	pop	af
@@ -71,7 +71,7 @@ loop_data_out:
 	inc	sp
 	djnz	loop_data_out
 
-	call	_usb_data_out_transfer
+	call	_usb_data_out_transfer_external
 	pop	af
 	pop	af
 	pop	af
@@ -92,7 +92,7 @@ loop_data_in:
 	inc	sp
 	djnz	loop_data_in
 
-	call	_usb_data_in_transfer
+	call	_usb_data_in_transfer_external
 	pop	af
 	pop	af
 	pop	af
