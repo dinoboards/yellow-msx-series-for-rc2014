@@ -15,6 +15,19 @@
 #include <delay.h>
 #include <stdlib.h>
 
+usb_error usb_control_transfer_external(const setup_packet *const cmd_packet,
+                                        void *const               buffer,
+                                        const uint8_t             device_address,
+                                        const uint8_t             max_packet_size) {
+  if (((uint16_t)cmd_packet & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  if (((uint16_t)buffer & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  return usb_control_transfer(cmd_packet, buffer, device_address, max_packet_size);
+}
+
 /**
  * @brief Perform a USB control transfer (in or out)
  * See https://www.beyondlogic.org/usbnutshell/usb4.shtml for a description of the USB control transfer
@@ -69,6 +82,19 @@ usb_error usb_control_transfer(const setup_packet *const cmd_packet,
   RETURN_CHECK(result);
 }
 
+usb_error usb_data_in_transfer_external(uint8_t              *buffer,
+                                        const uint16_t        buffer_size,
+                                        const uint8_t         device_address,
+                                        endpoint_param *const endpoint) {
+  if (((uint16_t)buffer & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  if (((uint16_t)endpoint & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  return usb_data_in_transfer(buffer, buffer_size, device_address, endpoint);
+}
+
 /**
  * @brief Perform a USB data in on the specififed endpoint
  *
@@ -84,6 +110,19 @@ usb_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t 
   ch_set_usb_address(device_address);
 
   RETURN_CHECK(ch_data_in_transfer(buffer, buffer_size, endpoint));
+}
+
+usb_error usb_data_out_transfer_external(const uint8_t        *buffer,
+                                         uint16_t              buffer_size,
+                                         const uint8_t         device_address,
+                                         endpoint_param *const endpoint) {
+  if (((uint16_t)buffer & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  if (((uint16_t)endpoint & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  return usb_data_out_transfer(buffer, buffer_size, device_address, endpoint);
 }
 
 /**

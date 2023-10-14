@@ -191,10 +191,10 @@ uint8_t main(const int argc, const char *argv[]) {
   const uint8_t h  = hl >> 8;
   const uint8_t l  = hl & 0xFF;
 
-  // if (!h) {
-  //   printf("CH376 not detected\r\n");
-  //   return 255;
-  // }
+  if (!h) {
+    printf("CH376 not detected\r\n");
+    return 255;
+  }
 
   switch (subcommand) {
   case cmd_none:
@@ -217,22 +217,6 @@ uint8_t main(const int argc, const char *argv[]) {
   case cmd_floppy_find:
     return floppy_find();
   }
-
-  // if (h) {
-  //   report_all_devices(l);
-  //   // find first floppy drive
-  // }
-
-  // ufi_format_capacities_response r;
-  // memset(&r, 0, sizeof(r));
-
-  // device_config storage_device;
-
-  // if (wait_for_device_ready(&storage_device, 2500) == 0) {
-  //   hl = ufi_read_format_capacities(&storage_device, &r);
-  //   printf("ufi_read_format_capacities: %d,", hl);
-  //   log_ufi_format_capacities_response(&r);
-  // }
 
   return 0;
 }

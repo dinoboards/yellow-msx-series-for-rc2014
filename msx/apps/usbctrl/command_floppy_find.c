@@ -1,5 +1,7 @@
 #include "command_floppy_find.h"
 #include "arguments.h"
+#include "device_search.h"
+#include "ufi_reporters.h"
 #include <msxdos.h>
 #include <msxdos_rc2014_ex.h>
 #include <stdio.h>
@@ -47,6 +49,36 @@ usb_error floppy_find(void) {
   printf(" address %02X\r\n", lunInfoEx.extendedInfo.usbInfo.address);
   printf(" configIndex %02X\r\n", lunInfoEx.extendedInfo.usbInfo.configIndex);
   printf(" interfaceIndex %02X\r\n", lunInfoEx.extendedInfo.usbInfo.interfaceIndex);
+
+  device_interface.address         = lunInfoEx.extendedInfo.usbInfo.address;
+  device_interface.config_index    = lunInfoEx.extendedInfo.usbInfo.configIndex;
+  device_interface.interface_index = lunInfoEx.extendedInfo.usbInfo.interfaceIndex;
+
+  ufi_format_capacities_response r;
+  memset(&r, 0, sizeof(r));
+
+  device_config storage_device;
+  memset(&storage_device, 0, sizeof(storage_device));
+
+  result = construct_device_config(&storage_device);
+  if (result)
+    return result;
+
+  printf("storage_device.address %02X\r\n", storage_device.address);
+  printf("storage_device.interface_number %02X\r\n", storage_device.interface_number);
+  printf("storage_device.type %02X\r\n", storage_device.type);
+  printf("storage_device.max_packet_size %02X\r\n", storage_device.max_packet_size);
+  for (uint8_t i = 0; i < 3; i++) {
+    printf("storage_device.endpoints[%d].number %02X\r\n", i, storage_device.endpoints[i].number);
+    printf("storage_device.endpoints[%d].toggle %02X\r\n", i, storage_device.endpoints[i].toggle);
+    printf("storage_device.endpoints[%d].max_packet_sizex %02X\r\n", i, storage_device.endpoints[i].max_packet_sizex);
+  }
+
+  result = retrieve_floppy_formats(&storage_device, &r);
+  if (result)
+    return result;
+
+  log_ufi_format_capacities_response(&r);
 
   return result;
 }
