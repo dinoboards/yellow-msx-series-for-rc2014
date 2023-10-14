@@ -52,7 +52,7 @@ $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
 usbctrl_files = $(call app_files,usbctrl, $(SYSTEM_VARS) $(DELAY))
-$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY)  $(FUSION_LIB)
+$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY) $(FUSION_LIB)
 usbctrl.com.crt_enable_commandline:=1
 
 usbtst_files = $(call app_files,usbtst, $(SYSTEM_VARS) $(DELAY) $(USBDRV))
