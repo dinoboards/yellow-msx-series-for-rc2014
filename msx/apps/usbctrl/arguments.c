@@ -2,10 +2,10 @@
 #include <stdint.h>
 #include <string.h>
 
-const char             *report_file_name;
-char                    floppy_drive_letter;
-subcommands             subcommand;
-device_config_interface device_interface;
+const char *report_file_name;
+char        floppy_drive_letter;
+subcommands subcommand;
+// device_config_interface device_interface;
 
 const unsigned char *usage = "Usage: usbctrl <options> <subcommand>\r\n\n"
                              "inspected and managed connected\r\nUSB devices\r\n\n"
@@ -16,9 +16,9 @@ const unsigned char *usage = "Usage: usbctrl <options> <subcommand>\r\n\n"
                              "   identify connected floppy devices\r\n"
                              " floppy find <drive-letter>:\r\n"
                              "   find the usb device id\r\n"
-                             " floppy format <address> <config> <interface>\r\n"
+                             " floppy format <drive-letter>:\r\n"
                              "   initiate ufi format command\r\n"
-                             " floppy check <address> <config> <interface>\r\n"
+                             " floppy check <drive-letter>:\r\n"
                              "   write and verify all sectors\r\n";
 
 uint8_t abort_with_help(void) {
@@ -78,14 +78,28 @@ uint8_t arg_format_floppy(const uint8_t i, const char **argv, const int argc) __
   if (strncmp(floppy_action, "format", 7) != 0)
     return i;
 
-  if (argc != 6)
+  if (argc != 4)
     return abort_with_help();
 
-  subcommand                       = cmd_floppy_format;
-  device_interface.address         = atoi(argv[3]);
-  device_interface.config_index    = atoi(argv[4]);
-  device_interface.interface_index = atoi(argv[5]);
-  return i + 5;
+  subcommand                         = cmd_floppy_format;
+  const char *const arg_drive_letter = argv[3];
+
+  if (strlen(arg_drive_letter) != 2 || arg_drive_letter[1] != ':')
+    goto invalid;
+
+  if ((arg_drive_letter[0] >= 'A' && arg_drive_letter[0] <= 'Z')) {
+    floppy_drive_letter = arg_drive_letter[0];
+    return i + 4;
+  }
+
+  if ((arg_drive_letter[0] >= 'a' && arg_drive_letter[0] <= 'z')) {
+    floppy_drive_letter = arg_drive_letter[0] - ('a' - 'A');
+    return i + 4;
+  }
+
+invalid:
+  printf("Invalid drive letter (A: to Z:)\r\n");
+  return abort_with_help();
 }
 
 uint8_t arg_format_find(const uint8_t i, const char **argv, const int argc) __sdcccall(1) {
@@ -136,14 +150,28 @@ uint8_t arg_command_floppy_check(const uint8_t i, const char **argv, const int a
   if (strncmp(floppy_action, "check", 6) != 0)
     return i;
 
-  if (argc != 6)
+  if (argc != 4)
     return abort_with_help();
 
-  subcommand                       = cmd_floppy_check;
-  device_interface.address         = atoi(argv[3]);
-  device_interface.config_index    = atoi(argv[4]);
-  device_interface.interface_index = atoi(argv[5]);
-  return i + 5;
+  subcommand                         = cmd_floppy_check;
+  const char *const arg_drive_letter = argv[3];
+
+  if (strlen(arg_drive_letter) != 2 || arg_drive_letter[1] != ':')
+    goto invalid;
+
+  if ((arg_drive_letter[0] >= 'A' && arg_drive_letter[0] <= 'Z')) {
+    floppy_drive_letter = arg_drive_letter[0];
+    return i + 4;
+  }
+
+  if ((arg_drive_letter[0] >= 'a' && arg_drive_letter[0] <= 'z')) {
+    floppy_drive_letter = arg_drive_letter[0] - ('a' - 'A');
+    return i + 4;
+  }
+
+invalid:
+  printf("Invalid drive letter (A: to Z:)\r\n");
+  return abort_with_help();
 }
 
 uint8_t arg_help_msg(const uint8_t i, const char **argv) __sdcccall(1) {

@@ -38,13 +38,18 @@ usb_error usb_execute_cbi(device_config *const storage_device,
 
   if (send) {
     result = usbdev_bulk_out_transfer(storage_device, buffer, buffer_size);
+
+    if (result != USB_ERR_OK) {
+      TRACE_USB_ERROR(result);
+      return result;
+    }
   } else {
     result = usbdev_data_in_transfer(storage_device, buffer, buffer_size, ENDPOINT_BULK_IN);
-  }
 
-  if (result != USB_ERR_OK) {
-    TRACE_USB_ERROR(result);
-    return result;
+    if (result != USB_ERR_OK) {
+      TRACE_USB_ERROR(result);
+      return result;
+    }
   }
 
   if (sense_codes != NULL) {

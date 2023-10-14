@@ -7,15 +7,17 @@
 usb_error command_floppy_format(void) __sdcccall(1) {
   usb_error result;
 
-  ufi_format_capacities_response r;
-  memset(&r, 0, sizeof(r));
-
   device_config storage_device;
   memset(&storage_device, 0, sizeof(storage_device));
 
-  result = construct_device_config(&storage_device);
-  if (result)
+  result = get_device_config_from_drive_letter(&storage_device);
+  if (result) {
+    printf("Not a floppy or mapped drive\r\n");
     return result;
+  }
+
+  ufi_format_capacities_response r;
+  memset(&r, 0, sizeof(r));
 
   result = retrieve_floppy_formats(&storage_device, &r);
   if (result)

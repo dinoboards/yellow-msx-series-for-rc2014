@@ -165,3 +165,16 @@ usb_error ufi_send_diagnostics(device_config *const storage_device) {
 
   RETURN_CHECK(result);
 }
+
+uint32_t convert_from_msb_first(const uint8_t *const buffer) {
+  uint32_t       result;
+  uint8_t       *p_output = ((uint8_t *)&result);
+  const uint8_t *p_input  = buffer + 3;
+
+  *p_output++ = *p_input--;
+  *p_output++ = *p_input--;
+  *p_output++ = *p_input--;
+  *p_output   = *p_input--;
+
+  return result;
+}

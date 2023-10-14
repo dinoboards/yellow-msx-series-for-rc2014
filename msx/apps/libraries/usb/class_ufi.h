@@ -199,4 +199,6 @@ usb_error ufi_format(device_config *const                        storage_device,
 
 usb_error ufi_send_diagnostics(device_config *const storage_device);
 
+uint32_t convert_from_msb_first(const uint8_t *const buffer);
+
 #endif
