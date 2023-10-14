@@ -17,7 +17,7 @@ static uint8_t no_driver(device_config *const storage_device, const uint8_t lun)
 static const usb_dev_status_driver drivers[] = {&no_driver, &usb_dev_status_ufi, &usb_dev_status_scsi};
 
 uint8_t usb_dev_status(const uint8_t device_index, const uint8_t lun) {
-  device_config *const  dev  = get_usb_driver(device_index);
+  device_config *const  dev  = get_usb_device_config(device_index);
   const usb_device_type type = dev->type;
 
   return drivers[type](dev, lun);

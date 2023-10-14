@@ -454,7 +454,7 @@ DO_EXTBIO2:
 	ld	ix, GSLOT1
 	call	CALBNK
 	ld	b, $FF
-	ld	hl, DRV_DIRECT0
+	ld	hl, 0 ;DRV_DIRECT0
 	ld	de, $2222
 	exx
 	ld	d, 0  ;D'=0 --> don't execute old hook
@@ -582,11 +582,17 @@ FN_ENUM:
 ; to DIRECT0/1/2/3/4 respectively.
 ; Receives all register data from the caller except IX and AF'.
 
-DRV_DIRECT0:
+; DRV_DIRECT0:
+
+
+
 DRV_DIRECT1:
+	JP	_drv_direct1
+
 DRV_DIRECT2:
 DRV_DIRECT3:
 	ret
+
 DRV_DIRECT4:
 	JP	_drv_direct4
 ;-----------------------------------------------------------------------------
@@ -969,7 +975,7 @@ DEV_STATUS_CF:
 ;        0 if this information does not apply or is not available.
 ;+7 (1): Flags:
 ;        bit 0: 1 if the medium is removable.
-;        bit 1: 1 if the medium is read only. A medium that can dinamically
+;        bit 1: 1 if the medium is read only. A medium that can dynamically
 ;               be write protected or write enabled is not considered
 ;               to be read-only.
 ;        bit 2: 1 if the LUN is a floppy disk drive.

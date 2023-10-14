@@ -8,6 +8,7 @@
 	EXTERN  _fn_enum
 	EXTERN	_get_number_of_usb_drives
 	EXTERN	_drv_direct4
+	EXTERN	_drv_direct1
 	EXTERN	_device_mapping
 	EXTERN	_convert_and_print_disk_size
 	EXTERN	_extbio_rc2014
@@ -37,3 +38,5 @@ convert_and_print_disk_size:
 	JP	_convert_and_print_disk_size
 extbio_rc2014:
 	JP	_extbio_rc2014
+drv_direct1:
+	JP	_drv_direct1

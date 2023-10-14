@@ -1,0 +1,32 @@
+	include "msxdos.inc"
+
+	SECTION	CODE
+
+DRV_DIRECT0	EQU	7850h
+DRV_DIRECT1	EQU	7853h
+DRV_DIRECT2	EQU	7856h
+DRV_DIRECT3	EQU	7859h
+DRV_DIRECT4	EQU	785Ch
+; extern uint16_t rc2014GetLunInfoEx(const uint8_t slot_id, const uint8_t index, const uint8_t lun, rc2014_lun_info_extended* info);
+
+	PUBLIC	_rc2014GetLunInfoEx
+
+RC2014_DRIVER_GET_LUN_INFO_EX_FN	EQU	1
+
+_rc2014GetLunInfoEx:
+	PUSH	IX
+
+	LD	HL, 4
+	ADD	HL, SP		; ARGS @ HL
+
+	LD	A, (HL) 	; SLOTNUMBER
+	INC	HL		; HL POINTS TO 2ND ARGUMENT
+	LD	IYH, A
+
+	LD	A, RC2014_DRIVER_GET_LUN_INFO_EX_FN
+	LD	IX, DRV_DIRECT1
+	CALL	CALSLT
+	EI
+
+	POP	IX
+	RET

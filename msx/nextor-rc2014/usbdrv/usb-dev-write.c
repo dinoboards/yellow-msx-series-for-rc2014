@@ -38,7 +38,7 @@ uint8_t usb_dev_write(const uint8_t  device_index,
                       uint8_t       *buffer,
                       uint8_t *const number_of_sectors_written) {
 
-  device_config *const  dev  = get_usb_driver(device_index);
+  device_config *const  dev  = get_usb_device_config(device_index);
   const usb_device_type type = dev->type;
 
   return drivers[type](dev, lun, number_sectors_to_write, sector_number, buffer, number_of_sectors_written);

@@ -44,22 +44,48 @@
  libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  usbctrl/rotator.h libraries/fusion/fusion_ext.h
-./bin/usbctrl/usbctrl.c.asm: usbctrl/usbctrl.c usbctrl/arguments.h usbctrl/reporters.h \
- libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
+./bin/usbctrl/usbctrl.c.asm: usbctrl/usbctrl.c usbctrl/arguments.h \
+ usbctrl/command_floppy_find.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h usbctrl/command_floppy_report.h \
+ usbctrl/command_report_all_devices.h usbctrl/device_search.h \
+ libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- usbctrl/rotator.h usbctrl/ufi_reporters.h libraries/usb/class_ufi.h \
- libraries/usb/protocol.h libraries/usb/usb_cbi.h libraries/usb/ch376.h \
- libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
- libraries/delay/delay.h libraries/msxbios/system_vars.h \
- libraries/msxbios/extbio.h libraries/msxbios/extbio_rc2014.h \
- libraries/fusion/fusion_ext.h libraries/fusion/io.h
+ libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
+ libraries/usb/usb_state.h usbctrl/reporters.h libraries/usb/protocol.h \
+ usbctrl/rotator.h usbctrl/ufi_reporters.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
+ libraries/msxbios/extbio_rc2014.h libraries/fusion/fusion_ext.h \
+ libraries/fusion/io.h
+./bin/usbctrl/command_floppy_report.c.asm: usbctrl/command_floppy_report.c \
+ usbctrl/command_floppy_report.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h usbctrl/device_search.h usbctrl/arguments.h \
+ libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
+ libraries/usb/usb_state.h
 ./bin/usbctrl/arguments.c.asm: usbctrl/arguments.c usbctrl/arguments.h
+./bin/usbctrl/command_report_all_devices.c.asm: usbctrl/command_report_all_devices.c \
+ usbctrl/command_report_all_devices.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h usbctrl/arguments.h usbctrl/reporters.h \
+ libraries/usb/protocol.h libraries/usb/ch376.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ usbctrl/rotator.h libraries/fusion/fusion_ext.h libraries/fusion/io.h
+./bin/usbctrl/device_search.c.asm: usbctrl/device_search.c usbctrl/device_search.h \
+ usbctrl/arguments.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
+ libraries/usb/usb_state.h libraries/usb/protocol.h
 ./bin/usbctrl/ufi_reporters.c.asm: usbctrl/ufi_reporters.c libraries/usb/class_ufi.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h
 ./bin/usbctrl/rotator.c.asm: usbctrl/rotator.c usbctrl/rotator.h
+./bin/usbctrl/command_floppy_find.c.asm: usbctrl/command_floppy_find.c \
+ usbctrl/command_floppy_find.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h usbctrl/arguments.h libraries/msxdos/msxdos.h \
+ libraries/msxdos/msxdos_rc2014_ex.h
 ./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
 ./bin/usbtst/printer_drv.c.asm: usbtst/printer_drv.c libraries/usb/class_printer.h \
@@ -243,6 +269,7 @@
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
 ./bin/libraries/fusion/inputstring.o: ./libraries/fusion/inputstring.asm
 ./bin/libraries/fusion/inkey.o: ./libraries/fusion/inkey.asm
+./bin/libraries/msxdos/msxdos_drv_direct_1.o: ./libraries/msxdos/msxdos_drv_direct_1.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_drive_letter_info.o: ./libraries/msxdos/msxdos_get_drive_letter_info.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc

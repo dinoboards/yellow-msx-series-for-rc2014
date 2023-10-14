@@ -89,7 +89,7 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
     print_string("    PRINTER\r\n");
 
   do {
-    const device_config *const storage_device = get_usb_driver(index);
+    const device_config *const storage_device = get_usb_device_config(index);
     const usb_device_type      t              = storage_device->type;
     if (t == USB_IS_FLOPPY) {
       print_string("    FLOPPY  (");

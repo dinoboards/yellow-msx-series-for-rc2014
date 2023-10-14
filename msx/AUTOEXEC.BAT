@@ -4,4 +4,3 @@ SET EXPERT=ON
 SET TEMP=H:\
 
 SIOCFG CLK=307200
-usbctrl format 4 0 0
