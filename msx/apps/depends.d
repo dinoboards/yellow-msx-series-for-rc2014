@@ -44,10 +44,19 @@
  libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  usbctrl/rotator.h libraries/fusion/fusion_ext.h
+./bin/usbctrl/command_floppy_report_drive.c.asm: usbctrl/command_floppy_report_drive.c \
+ usbctrl/command_floppy_report_drive.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h usbctrl/arguments.h usbctrl/device_search.h \
+ libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
+ libraries/usb/usb_state.h usbctrl/ufi_reporters.h \
+ libraries/usb/format_mapping.h libraries/msxdos/msxdos.h \
+ libraries/msxdos/msxdos_rc2014_ex.h
 ./bin/usbctrl/usbctrl.c.asm: usbctrl/usbctrl.c usbctrl/arguments.h \
  usbctrl/command_floppy_check.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h usbctrl/command_floppy_find.h \
- usbctrl/command_floppy_format.h usbctrl/command_floppy_report.h \
+ libraries/usb/ch376inc.h usbctrl/command_floppy_format.h \
+ usbctrl/command_floppy_report.h usbctrl/command_floppy_report_drive.h \
  usbctrl/command_report_all_devices.h libraries/msxbios/extbio_rc2014.h \
  libraries/usb/protocol.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h
@@ -93,15 +102,6 @@
  libraries/usb/usb_cbi.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h
 ./bin/usbctrl/rotator.c.asm: usbctrl/rotator.c usbctrl/rotator.h
-./bin/usbctrl/command_floppy_find.c.asm: usbctrl/command_floppy_find.c \
- usbctrl/command_floppy_find.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h usbctrl/arguments.h usbctrl/device_search.h \
- libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
- libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
- libraries/usb/usb_state.h usbctrl/ufi_reporters.h \
- libraries/usb/format_mapping.h libraries/msxdos/msxdos.h \
- libraries/msxdos/msxdos_rc2014_ex.h
 ./bin/usbctrl/read_and_write_sectors.c.asm: usbctrl/read_and_write_sectors.c \
  usbctrl/read_and_write_sectors.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \

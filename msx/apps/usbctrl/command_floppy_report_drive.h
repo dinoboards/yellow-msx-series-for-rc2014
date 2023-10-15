@@ -3,6 +3,6 @@
 
 #include <ch376.h>
 
-usb_error command_floppy_find(void);
+usb_error command_floppy_report_drive(void);
 
 #endif

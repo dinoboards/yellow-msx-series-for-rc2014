@@ -24,6 +24,10 @@ typedef struct {
 
 typedef enum { UNFORMATTED_MEDIA = 1, FORMATTED_MEDIA = 2, NO_MEDIA = 3 } UFI_DESCRIPTOR_CODE;
 
+#define UFI_DESCRIPTOR_CODE_UNFORMATTED_MEDIA 1
+#define UFI_DESCRIPTOR_CODE_FORMATTED_MEDIA   2
+#define UFI_DESCRIPTOR_CODE_NO_MEDIA          3
+
 typedef struct {
   uint8_t number_of_blocks[4];
   uint8_t descriptor_code : 2; // UFI_DESCRIPTOR_CODE
