@@ -56,8 +56,8 @@ usb_error command_floppy_report_drive(void) {
   }
 
   const uint32_t number_of_blocks = convert_from_msb_first(&r.descriptors[0].number_of_blocks[0]);
-  const uint32_t sector_size =
-      (uint32_t)r.descriptors[0].block_size[0] << 16 | (uint16_t)r.descriptors[0].block_size[1] << 8 | r.descriptors[0].block_size[2];
+  const uint32_t sector_size      = (uint32_t)r.descriptors[0].block_size[0] << 16 | (uint16_t)r.descriptors[0].block_size[1] << 8 |
+                               r.descriptors[0].block_size[2];
 
   const disk_geometry *const geometry = size_to_geometry(number_of_blocks);
 
