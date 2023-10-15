@@ -37,7 +37,7 @@ usb_error command_floppy_format(void) __sdcccall(1) {
   printf("Sectors/track: %4d\r\n", geometry->sectors_per_track);
   printf("Description:   %s\r\n", geometry->description);
 
-  printf("WARNING, ALL DATA ON\r\nDRIVE %c: WILL BE LOST!\r\nProceed with Format (Y/N)? ", floppy_drive_letter);
+  printf("WARNING, ALL DATA ON DRIVE %c: WILL BE LOST!\r\nProceed with Format (Y/N)? ", floppy_drive_letter);
 
   char c = getchar();
   if (c != 'Y' && c != 'y') {

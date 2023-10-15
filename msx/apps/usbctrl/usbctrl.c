@@ -1,8 +1,8 @@
 #include "arguments.h"
 #include "command_floppy_check.h"
-#include "command_floppy_find.h"
 #include "command_floppy_format.h"
 #include "command_floppy_report.h"
+#include "command_floppy_report_drive.h"
 #include "command_report_all_devices.h"
 #include <extbio_rc2014.h>
 
@@ -36,8 +36,8 @@ uint8_t main(const int argc, const char *argv[]) {
   case cmd_floppy_report:
     return command_floppy_report(l);
 
-  case cmd_floppy_find:
-    return command_floppy_find();
+  case cmd_floppy_report_drive:
+    return command_floppy_report_drive();
   }
 
   return 0;

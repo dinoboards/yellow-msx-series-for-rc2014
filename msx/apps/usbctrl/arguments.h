@@ -20,7 +20,7 @@ typedef enum {
   cmd_floppy_report,
   cmd_floppy_format,
   cmd_floppy_check,
-  cmd_floppy_find
+  cmd_floppy_report_drive
 } subcommands;
 
 extern const char *report_file_name;
