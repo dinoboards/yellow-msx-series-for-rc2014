@@ -20,12 +20,13 @@ typedef enum {
   cmd_floppy_report,
   cmd_floppy_format,
   cmd_floppy_check,
-  cmd_floppy_report_drive
+  cmd_floppy_report_drive,
+  cmd_floppy_dump
 } subcommands;
 
 extern const char *report_file_name;
-// extern device_config_interface device_interface;
 extern char        floppy_drive_letter;
+extern bool        quick_format;
 extern subcommands subcommand;
 
 void process_cli_arguments(const int argc, const char **argv) __sdcccall(1);

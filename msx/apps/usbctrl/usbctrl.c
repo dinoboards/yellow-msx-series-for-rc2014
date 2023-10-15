@@ -1,5 +1,6 @@
 #include "arguments.h"
 #include "command_floppy_check.h"
+#include "command_floppy_dump.h"
 #include "command_floppy_format.h"
 #include "command_floppy_report.h"
 #include "command_floppy_report_drive.h"
@@ -38,6 +39,9 @@ uint8_t main(const int argc, const char *argv[]) {
 
   case cmd_floppy_report_drive:
     return command_floppy_report_drive();
+
+  case cmd_floppy_dump:
+    return command_floppy_dump();
   }
 
   return 0;

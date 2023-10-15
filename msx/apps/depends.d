@@ -44,6 +44,14 @@
  libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  usbctrl/rotator.h libraries/fusion/fusion_ext.h
+./bin/usbctrl/command_floppy_dump.c.asm: usbctrl/command_floppy_dump.c \
+ usbctrl/command_floppy_check.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h usbctrl/device_search.h usbctrl/arguments.h \
+ libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
+ libraries/usb/usb_state.h usbctrl/read_and_write_sectors.h \
+ libraries/msxdos/msxdos.h
 ./bin/usbctrl/command_floppy_report_drive.c.asm: usbctrl/command_floppy_report_drive.c \
  usbctrl/command_floppy_report_drive.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h usbctrl/arguments.h usbctrl/device_search.h \
@@ -55,11 +63,19 @@
  libraries/msxdos/msxdos_rc2014_ex.h
 ./bin/usbctrl/usbctrl.c.asm: usbctrl/usbctrl.c usbctrl/arguments.h \
  usbctrl/command_floppy_check.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h usbctrl/command_floppy_format.h \
- usbctrl/command_floppy_report.h usbctrl/command_floppy_report_drive.h \
+ libraries/usb/ch376inc.h usbctrl/command_floppy_dump.h \
+ usbctrl/command_floppy_format.h usbctrl/command_floppy_report.h \
+ usbctrl/command_floppy_report_drive.h \
  usbctrl/command_report_all_devices.h libraries/msxbios/extbio_rc2014.h \
  libraries/usb/protocol.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h
+./bin/usbctrl/format_fats.c.asm: usbctrl/format_fats.c usbctrl/format_fats.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/dev_transfers.h libraries/usb/ch376.h \
+ libraries/usb/transfers.h libraries/usb/format_mapping.h \
+ usbctrl/read_and_write_sectors.h usbctrl/rotator.h \
+ libraries/msxdos/fat.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h
 ./bin/usbctrl/command_floppy_report.c.asm: usbctrl/command_floppy_report.c \
  usbctrl/command_floppy_report.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h usbctrl/device_search.h usbctrl/arguments.h \
@@ -87,8 +103,9 @@
  libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
- libraries/usb/usb_state.h libraries/usb/format_mapping.h \
- libraries/usb/usb_trace.h libraries/usb/class_ufi.h
+ libraries/usb/usb_state.h usbctrl/format_fats.h \
+ libraries/usb/format_mapping.h libraries/usb/usb_trace.h \
+ libraries/usb/class_ufi.h
 ./bin/usbctrl/command_floppy_check.c.asm: usbctrl/command_floppy_check.c \
  usbctrl/command_floppy_check.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h usbctrl/device_search.h usbctrl/arguments.h \
@@ -273,6 +290,7 @@
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
+./bin/usbctrl/floopy_boot_code.o: ./usbctrl/floopy_boot_code.asm
 ./bin/usbtst/print.o: ./usbtst/print.asm
 ./bin/romflashwriter/romflashwriter.o: ./romflashwriter/romflashwriter.asm
 ./bin/fdisk/fdisk.o: ./fdisk/fdisk.asm

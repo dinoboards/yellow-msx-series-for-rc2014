@@ -3,6 +3,6 @@
 
 #include "ch376.h"
 
-usb_error command_floppy_check(void) __sdcccall(1);
+extern usb_error command_floppy_check(void) __sdcccall(1);
 
 #endif

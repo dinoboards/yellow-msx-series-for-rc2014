@@ -1,6 +1,9 @@
 #ifndef __FAT_H
 #define __FAT_H
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #define MAX_FAT12_CLUSTER_COUNT   4084
 #define MAX_FAT16_CLUSTER_COUNT   65524
 #define FAT12_ROOT_DIR_ENTRIES    112
