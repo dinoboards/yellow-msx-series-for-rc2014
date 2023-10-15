@@ -128,7 +128,8 @@
  ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/class_ufi.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/usb_cbi.h \
- ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/usb_state.h
+ ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/usb_state.h \
+ ../apps/libraries/usb/format_mapping.h
 ./bin/usbdrv/usb-dev-read-ufi.c.asm: usbdrv/usb-dev-read-ufi.c usbdrv/usb-dev-read-ufi.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  usbdrv/work-area.h ../apps/libraries/usb/protocol.h \

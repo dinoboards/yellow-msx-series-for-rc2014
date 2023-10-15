@@ -33,11 +33,11 @@ static void createFat12BootSector(void) {
   sector->sectorsPerCluster    = 1;
   sector->reservedSectors      = 1;
   sector->numberOfFats         = FAT_COPIES;
-  sector->rootDirectoryEntries = 224;
-  sector->smallSectorCount     = 2880;
-  sector->mediaId              = 0xF0;
-  sector->sectorsPerFat        = 9;
-  sector->sectorsPerTrack      = 18;
+  sector->rootDirectoryEntries = 224;  // 112 for 720k
+  sector->smallSectorCount     = 2880; // 1440 for 720k
+  sector->mediaId              = 0xF0; // f9 for 720k
+  sector->sectorsPerFat        = 9;    // 3 for 720k
+  sector->sectorsPerTrack      = 18;   // 9 for 720k
   sector->numberOfHeads        = 2;
   strcpy(sector->params.standard.volumeLabelString, "XYZ "); // it is same for DOS 2.20 format
   sector->params.standard.serialNumber        = 1234;        // it is same for DOS 2.20 format

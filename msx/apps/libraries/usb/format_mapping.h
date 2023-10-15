@@ -11,6 +11,6 @@ typedef struct {
   char *const description;
 } disk_geometry;
 
-const disk_geometry *size_to_geometry(uint16_t total_number_of_blocks) __sdcccall(1);
+extern const disk_geometry *size_to_geometry(const uint16_t total_number_of_blocks) __sdcccall(1);
 
 #endif

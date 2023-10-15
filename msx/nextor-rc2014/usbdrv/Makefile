@@ -28,6 +28,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/usb/enumerate_hub.c.o \
 	$(BINDIR)libraries/usb/enumerate_storage.c.o \
 	$(BINDIR)libraries/usb/enumerate.c.o \
+	$(BINDIR)libraries/usb/format_mapping.c.lib \
 	$(BINDIR)libraries/usb/protocol.c.o \
 	$(BINDIR)libraries/usb/transfers.c.o \
 	$(BINDIR)libraries/usb/usb_cbi.c.o \
@@ -62,7 +63,7 @@ $(BINDIR)exports.asm: $(BINDIR)exports.c.o
 
 $(BINDIR)%.bin:
 	@mkdir -p $(dir $@)
-	$(ZCC) $(filter-out %.inc,$^) -o $@
+	$(ZCC) $(filter-out %.inc,$(filter-out %.lib,$^)) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
 	echo "Linked $(notdir $@) from $(notdir $^)"
 
 define assemble
@@ -81,12 +82,20 @@ define objects
  $(patsubst %.asm,%.o,$(patsubst %.c,%.c.o,$(1)))
 endef
 
+define buildlib
+	@mkdir -p $(dir $@)
+	z88dk-z80asm -x$@ $<
+	echo "Packaged $(notdir $@) from $(notdir $<)"
+endef
+
+
 
 .PRECIOUS: $(BINDIR)%.c.asm
 $(BINDIR)%.c.asm: $(SRC)%.c; $(compile)
 $(BINDIR)%.o: $(BINDIR)%.asm; $(assemble)
 $(BINDIR)%.o: $(SRC)%.asm; $(assemble)
 $(BINDIR)%.m4.o: %.asm.m4; $(assemble)
+%.lib: %.o; $(buildlib)
 
 .PRECIOUS: $(BINDIR)libraries/delay/%.c.asm
 $(BINDIR)libraries/delay/%.c.asm: ../apps/libraries/delay/%.c; $(compile)
