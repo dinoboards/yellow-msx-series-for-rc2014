@@ -1,8 +1,8 @@
 #include "command_floppy_find.h"
 #include "arguments.h"
 #include "device_search.h"
-#include "format_mapping.h"
 #include "ufi_reporters.h"
+#include <format_mapping.h>
 #include <msxdos.h>
 #include <msxdos_rc2014_ex.h>
 #include <stdio.h>

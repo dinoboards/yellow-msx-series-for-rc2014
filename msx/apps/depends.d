@@ -78,7 +78,7 @@
  libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
- libraries/usb/usb_state.h usbctrl/format_mapping.h \
+ libraries/usb/usb_state.h libraries/usb/format_mapping.h \
  libraries/usb/usb_trace.h libraries/usb/class_ufi.h
 ./bin/usbctrl/command_floppy_check.c.asm: usbctrl/command_floppy_check.c \
  usbctrl/command_floppy_check.h libraries/usb/ch376.h \
@@ -93,15 +93,14 @@
  libraries/usb/usb_cbi.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h
 ./bin/usbctrl/rotator.c.asm: usbctrl/rotator.c usbctrl/rotator.h
-./bin/usbctrl/format_mapping.c.asm: usbctrl/format_mapping.c usbctrl/format_mapping.h
 ./bin/usbctrl/command_floppy_find.c.asm: usbctrl/command_floppy_find.c \
  usbctrl/command_floppy_find.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h usbctrl/arguments.h usbctrl/device_search.h \
  libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
- libraries/usb/usb_state.h usbctrl/format_mapping.h \
- usbctrl/ufi_reporters.h libraries/msxdos/msxdos.h \
+ libraries/usb/usb_state.h usbctrl/ufi_reporters.h \
+ libraries/usb/format_mapping.h libraries/msxdos/msxdos.h \
  libraries/msxdos/msxdos_rc2014_ex.h
 ./bin/usbctrl/read_and_write_sectors.c.asm: usbctrl/read_and_write_sectors.c \
  usbctrl/read_and_write_sectors.h libraries/usb/ch376.h \
@@ -253,6 +252,8 @@
  libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_state.h libraries/msxbios/system_vars.h
+./bin/libraries/usb/format_mapping.c.asm: libraries/usb/format_mapping.c \
+ libraries/usb/format_mapping.h
 ./bin/libraries/msxbios/system_vars.c.asm: libraries/msxbios/system_vars.c \
  libraries/msxbios/system_vars.h
 ./bin/libraries/fossil/fossil.c.asm: libraries/fossil/fossil.c libraries/fossil/fossil.h \

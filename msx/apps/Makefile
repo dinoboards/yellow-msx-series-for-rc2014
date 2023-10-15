@@ -31,7 +31,8 @@ MSXDOS_LIB := $(addprefix $(BIN)libraries/msxdos/,msxdos_get_drive_letter_info.l
 EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio_usb_get_present.lib extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer.lib) $(BIN)libraries/usb/class_ufi.c.lib $(BIN)libraries/usb/usb_cbi.c.lib  $(BIN)libraries/usb/dev_transfers.c.lib  $(BIN)libraries/usb/protocol.c.lib
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := $(BIN)libraries/delay/delay.c.lib
-USBDRV := $(BIN)libraries/usb/trace_ufi_format_capacities_response.c.lib libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/usb_cbi.c libraries/usb/class_scsi.c
+USBDRV := libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/usb_cbi.c libraries/usb/class_scsi.c
+USBSUPPORT := $(BIN)libraries/usb/format_mapping.c.lib $(BIN)libraries/usb/trace_ufi_format_capacities_response.c.lib
 FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib fprintf.c.lib)
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm $(SYSTEM_VARS))
@@ -51,11 +52,11 @@ helloworld_files = $(call app_files,helloworld, $(SYSTEM_VARS))
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
-usbctrl_files = $(call app_files,usbctrl, $(SYSTEM_VARS) $(DELAY))
+usbctrl_files = $(call app_files,usbctrl, $(SYSTEM_VARS) $(DELAY) $(USBSUPPORT))
 $(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY) $(FUSION_LIB)
 usbctrl.com.crt_enable_commandline:=1
 
-usbtst_files = $(call app_files,usbtst, $(SYSTEM_VARS) $(DELAY) $(USBDRV))
+usbtst_files = $(call app_files,usbtst, $(SYSTEM_VARS) $(DELAY) $(USBDRV) $(USBSUPPORT))
 $(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(MSXDOS_LIB)
 usbtst.com.crt_enable_commandline:=1
 
