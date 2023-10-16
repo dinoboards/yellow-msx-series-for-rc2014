@@ -1,6 +1,7 @@
 
 #include "fdisk2.h"
 #include "fdisk.h"
+#include "lun_selection.h"
 #include <fat.h>
 #include <msxdos.h>
 #include <partition.h>
@@ -8,7 +9,6 @@
 
 static uint8_t        driverSlot;
 static uint8_t        deviceIndex;
-static uint8_t        selectedLunIndex;
 static uint8_t        partitionsCount;
 static partitionInfo *partitions;
 static uint8_t        sectorsPerTrack;

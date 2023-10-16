@@ -21,9 +21,7 @@ const unsigned char *usage = "Usage: usbctrl <options> <subcommand>\r\n\n"
                              "   initiate ufi format command\r\n"
                              "   \\q do a quick format\r\n"
                              " floppy check <drive-letter>:\r\n"
-                             "   write and verify all sectors\r\n"
-                             " floppy dump <drive-letter>:\r\n"
-                             "   write sector hex to screen\r\n";
+                             "   write and verify all sectors\r\n";
 
 uint8_t abort_with_help(void) {
   printf(usage);

@@ -175,12 +175,37 @@
  libraries/usb/usb_state.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/usb/enumerate.h \
  libraries/usb/usb_trace.h libraries/usb/class_ufi.h
+./bin/fdisk/screen_control.c.asm: fdisk/screen_control.c fdisk/screen_control.h \
+ libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
+./bin/fdisk/driver_selection.c.asm: fdisk/driver_selection.c fdisk/driver_selection.h \
+ libraries/msxdos/msxdos.h fdisk/device_selection.h fdisk/key_inputs.h \
+ fdisk/screen_control.h fdisk/string_helper.h fdisk/temp.h \
+ libraries/msxdos/partition.h datatypes.h
+./bin/fdisk/string_helper.c.asm: fdisk/string_helper.c fdisk/string_helper.h
+./bin/fdisk/lun_selection.c.asm: fdisk/lun_selection.c fdisk/lun_selection.h \
+ libraries/msxdos/msxdos.h fdisk/device_selection.h \
+ fdisk/driver_selection.h fdisk/key_inputs.h fdisk/partition_selection.h \
+ libraries/msxdos/partition.h datatypes.h fdisk/screen_control.h \
+ fdisk/temp.h
 ./bin/fdisk/fdisk.c.asm: fdisk/fdisk.c fdisk/fdisk.h libraries/msxdos/msxdos.h \
- fdisk/fdisk2.h datatypes.h libraries/msxdos/partition.h \
- libraries/msxbios/system_vars.h
+ fdisk/device_selection.h fdisk/driver_selection.h fdisk/fdisk2.h \
+ datatypes.h libraries/msxdos/partition.h fdisk/key_inputs.h \
+ fdisk/lun_selection.h fdisk/partition_selection.h fdisk/screen_control.h \
+ fdisk/string_helper.h fdisk/temp.h libraries/msxbios/system_vars.h
 ./bin/fdisk/fdisk2.c.asm: fdisk/fdisk2.c fdisk/fdisk2.h datatypes.h \
  libraries/msxdos/partition.h fdisk/fdisk.h libraries/msxdos/msxdos.h \
- libraries/msxdos/fat.h
+ fdisk/lun_selection.h libraries/msxdos/fat.h
+./bin/fdisk/key_inputs.c.asm: fdisk/key_inputs.c fdisk/key_inputs.h \
+ fdisk/screen_control.h libraries/msxdos/msxdos.h
+./bin/fdisk/device_selection.c.asm: fdisk/device_selection.c fdisk/device_selection.h \
+ libraries/msxdos/msxdos.h fdisk/driver_selection.h fdisk/key_inputs.h \
+ fdisk/lun_selection.h fdisk/screen_control.h fdisk/string_helper.h \
+ fdisk/temp.h libraries/msxdos/partition.h datatypes.h
+./bin/fdisk/partition_selection.c.asm: fdisk/partition_selection.c \
+ fdisk/partition_selection.h libraries/msxdos/partition.h datatypes.h \
+ fdisk/device_selection.h libraries/msxdos/msxdos.h \
+ fdisk/driver_selection.h fdisk/key_inputs.h fdisk/lun_selection.h \
+ fdisk/screen_control.h fdisk/temp.h
 ./bin/v9958.c.asm: v9958.c v9958.h
 ./bin/term/xymodem.c.asm: term/xymodem.c term/xymodem.h term/aofossilhelper.h \
  libraries/fusion/msx_fusion.h term/print.h libraries/fusion/io.h
