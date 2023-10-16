@@ -20,15 +20,14 @@ void getDevicesInformation(void) {
   uint16_t    error         = 0;
   uint8_t     deviceIndex   = 1;
   deviceInfo *currentDevice = &devices[0];
-  char       *currentDeviceName;
 
   availableDevicesCount = 0;
 
   while (deviceIndex <= MAX_DEVICES_PER_DRIVER) {
 
-    currentDeviceName = currentDevice->deviceName;
-    error             = msxdosDrvDevLogicalUnitCount(selectedDriver->slot, deviceIndex, (msxdosDeviceBasicInfo *)currentDevice);
+    error = msxdosDrvDevLogicalUnitCount(selectedDriver->slot, deviceIndex, (msxdosDeviceBasicInfo *)currentDevice);
     if (error == 0) {
+      char *const currentDeviceName = currentDevice->deviceName;
       availableDevicesCount++;
       error = msxdosDrvDevGetName(selectedDriver->slot, deviceIndex, currentDeviceName);
 
