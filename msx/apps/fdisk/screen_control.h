@@ -27,8 +27,8 @@ extern uint8_t             screenLinesCount;
 extern void saveOriginalScreenConfiguration(void);
 extern void composeWorkScreenConfiguration(void);
 extern void setScreenConfiguration(void);
-extern void locateX(uint8_t x);
-extern void locate(uint8_t x, uint8_t y);
-extern void printCentered(char *string);
+extern void locateX(uint8_t x) __sdcccall(1);
+extern void locate(uint8_t x, uint8_t y) __sdcccall(1);
+extern void printCentered(char *string) __sdcccall(1);
 
 #endif

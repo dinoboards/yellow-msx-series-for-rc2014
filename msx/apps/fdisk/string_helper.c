@@ -1,6 +1,6 @@
 #include "string_helper.h"
 
-void terminateRightPaddedStringWithZero(char *string, uint8_t length) __sdcccall(1) {
+void terminateRightPaddedStringWithZero(char *string, uint8_t length) {
   char *pointer = string + length - 1;
   while (*pointer == ' ' && length > 0) {
     pointer--;

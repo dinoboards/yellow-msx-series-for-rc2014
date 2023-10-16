@@ -3,7 +3,7 @@
 
 #include "stdint.h"
 
-extern void terminateRightPaddedStringWithZero(char *string, uint8_t length) __sdcccall(1);
+extern void terminateRightPaddedStringWithZero(char *string, uint8_t length);
 extern void composeSlotString(uint8_t slot, char *destination);
 
 #endif
