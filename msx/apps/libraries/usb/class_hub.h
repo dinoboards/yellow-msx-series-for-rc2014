@@ -70,6 +70,6 @@ typedef struct {
 
 } hub_port_status;
 
-usb_error hub_get_descriptor(hub_descriptor *const hub_description) __z88dk_fastcall;
+usb_error hub_get_descriptor(const device_config_hub *const hub_config, hub_descriptor *const hub_description) __sdcccall(1);
 
 #endif

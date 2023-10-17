@@ -74,7 +74,6 @@ void right_trim(char *buffer) {
 }
 
 void state_devices(_usb_state *const work_area) __z88dk_fastcall {
-  const bool hasUsb     = work_area->hub_config.address != 0;
   const bool hasCdc     = work_area->cdc_config.address != 0;
   const bool hasPrinter = work_area->printer_config.address != 0;
 
@@ -84,10 +83,7 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
   uint8_t buffer[512];
 
-  if (hasUsb)
-    print_string("USB HUB:\r\n");
-  else
-    print_string("USB:\r\n");
+  print_string("USB: (%d)\r\n", work_area->count_of_detected_usb_devices);
 
   if (hasCdc)
     print_string("CDC\r\n");

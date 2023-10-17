@@ -26,7 +26,7 @@ void setScreenConfiguration(void) {
 
 void locateX(uint8_t x) __sdcccall(1) { msxbiosPosit(x + 1, CSRY); }
 
-void locate(uint8_t x, uint8_t y) __sdcccall(1)  { msxbiosPosit(x + 1, y + 1); }
+void locate(uint8_t x, uint8_t y) __sdcccall(1) { msxbiosPosit(x + 1, y + 1); }
 
 void printCentered(char *string) __sdcccall(1) {
   uint8_t pos = (currentScreenConfig.screenWidth - strlen(string)) / 2;

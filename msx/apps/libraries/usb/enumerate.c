@@ -92,10 +92,22 @@ configure_device(const _working *const working, const interface_descriptor *cons
 
   dev_cfg->interface_number = interface->bInterfaceNumber;
   dev_cfg->max_packet_size  = working->desc.bMaxPacketSize0;
-  dev_cfg->address          = working->state->next_device_address;
+  dev_cfg->address          = working->current_device_address;
   dev_cfg->type             = working->usb_device;
 
   RETURN_CHECK(usbtrn_set_configuration(dev_cfg->address, dev_cfg->max_packet_size, working->config.desc.bConfigurationvalue));
+}
+
+usb_error op_capture_hub_driver_interface(_working *const working) __sdcccall(1) {
+  const interface_descriptor *const interface = (interface_descriptor *)working->ptr;
+
+  usb_error         result;
+  device_config_hub hub_config;
+  working->hub_config = &hub_config;
+
+  hub_config.type = USB_IS_HUB;
+  CHECK(configure_device(working, interface, (device_config *const)&hub_config));
+  RETURN_CHECK(configure_usb_hub(working));
 }
 
 usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall {
@@ -129,14 +141,9 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   }
 
   case USB_IS_HUB: {
-    work_area->hub_config.type = USB_IS_HUB;
-    CHECK(configure_device(working, interface, (device_config *const)&work_area->hub_config));
-    CHECK(configure_usb_hub(working));
+    CHECK(op_capture_hub_driver_interface(working))
     break;
   }
-
-  default:
-    working->state->next_device_address;
   }
 
   CHECK(op_parse_endpoint(working));
@@ -155,15 +162,15 @@ usb_error op_identify_class_driver(_working *const working) __z88dk_fastcall {
   return result;
 }
 
-usb_error op_get_config_descriptor(_working *const working) __z88dk_fastcall {
+usb_error op_get_config_descriptor(_working *const working) __sdcccall(1) {
   usb_error result;
 
   memset(working->config.buffer, 0, MAX_CONFIG_SIZE);
 
   const uint8_t max_packet_size = working->desc.bMaxPacketSize0;
 
-  CHECK(usbtrn_get_full_config_descriptor(working->config_index, working->state->next_device_address, max_packet_size,
-                                          MAX_CONFIG_SIZE, working->config.buffer));
+  CHECK(usbtrn_get_full_config_descriptor(working->config_index, working->current_device_address, max_packet_size, MAX_CONFIG_SIZE,
+                                          working->config.buffer));
 
   working->ptr             = (working->config.buffer + sizeof(config_descriptor));
   working->interface_count = working->config.desc.bNumInterfaces;
@@ -184,8 +191,8 @@ usb_error read_all_configs(enumeration_state *const state) {
   CHECK(usbtrn_get_descriptor(&working.desc));
 
   state->next_device_address++;
-  const uint8_t dev_address = state->next_device_address;
-  CHECK(usbtrn_set_address(dev_address));
+  working.current_device_address = state->next_device_address;
+  CHECK(usbtrn_set_address(working.current_device_address));
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;

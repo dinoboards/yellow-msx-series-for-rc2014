@@ -9,7 +9,6 @@
 
 typedef struct __usb_state {
   device_config         storage_device[MAX_NUMBER_OF_STORAGE_DEVICES];
-  device_config_hub     hub_config;
   device_config         cdc_config;
   device_config_printer printer_config;
   uint8_t               printer_time_throttle_flag : 1;

@@ -73,16 +73,14 @@ void print_disk_size(const uint8_t device_index) {
 }
 
 bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
-  const bool hasUsbHub  = work_area->hub_config.address != 0;
   const bool hasCdc     = work_area->cdc_config.address != 0;
   const bool hasPrinter = work_area->printer_config.address != 0;
 
   uint8_t storage_count = 0;
   uint8_t index         = 1; // MAX_NUMBER_OF_STORAGE_DEVICES;
-  // const device_config *storage_device = &work_area->storage_device[0];
 
-  if (hasUsbHub)
-    print_string("USB HUB:\r\n");
+  if (work_area->count_of_detected_usb_devices > 1)
+    print_string("USB:\r\n");
   else
     print_string("USB:         ");
 
@@ -108,7 +106,7 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
 
   } while (++index != MAX_NUMBER_OF_STORAGE_DEVICES);
 
-  if (!hasUsbHub && !hasCdc && !hasPrinter && storage_count == 0) {
+  if (!hasCdc && !hasPrinter && storage_count == 0) {
     print_string("\r\n");
     return false;
   }

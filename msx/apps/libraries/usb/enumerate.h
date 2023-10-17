@@ -16,11 +16,13 @@ typedef struct {
 typedef struct __working {
   enumeration_state *state;
 
-  usb_device_type   usb_device;
-  device_descriptor desc;
-  uint8_t           config_index;
-  uint8_t           interface_count;
-  uint8_t           endpoint_count;
+  usb_device_type    usb_device;
+  device_descriptor  desc;
+  uint8_t            config_index;
+  uint8_t            interface_count;
+  uint8_t            endpoint_count;
+  uint8_t            current_device_address;
+  device_config_hub *hub_config;
 
   const uint8_t *ptr;
 
