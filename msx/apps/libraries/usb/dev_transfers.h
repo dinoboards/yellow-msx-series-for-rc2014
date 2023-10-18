@@ -32,9 +32,13 @@ typedef struct {
   COMMON_DEVICE_CONFIG
 } device_config_hub;
 
+#define PRINTER_BUFFER_SIZE 64
 typedef struct {
   COMMON_DEVICE_CONFIG
   endpoint_param endpoints[1]; // bulk out
+  uint8_t        buffer_length;
+  int8_t         buffer_wait;
+  uint8_t        buffer[PRINTER_BUFFER_SIZE];
 } device_config_printer;
 
 extern usb_error usbdev_control_transfer(device_config *const device, const setup_packet *const cmd, uint8_t *const buffer);

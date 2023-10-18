@@ -4,33 +4,51 @@
 #include <delay.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <system_vars.h>
+#include <transfers.h>
 
-uint8_t prt_send_ch(const uint8_t ch) __z88dk_fastcall {
-  _usb_state *const work_area = get_usb_work_area();
-  char              buffer[2] = {ch, 0};
+// overload the use of the system var LOWLIM (used during tape load/save) to
+// optmised interrupt handle when print buffer is empty.
 
-  usb_error result = prt_send_text(&work_area->printer_config, buffer);
+void drv_timi(void) {
+  if (!(LOWLIM & 0x80))
+    return;
 
-  return result == USB_ERR_OK ? 0 : -1;
-}
+  device_config_printer *const printer_config = &get_usb_work_area()->printer_config;
 
-// approx 100 chars per second (for 50hz)
-// or 120 chars per second (for 60hz)
-uint8_t USBPRT(const uint8_t ch) __z88dk_fastcall {
-  _usb_state *const work_area = get_usb_work_area();
-
-  if (work_area->printer_time_throttle_flag == 0) {
-    __asm ei __endasm;
-
-    int16_t time = get_future_time(1);
-    while (!is_time_past(time))
-      ;
+  if (printer_config->buffer_length == 0) {
+    printer_config->buffer_wait = 0;
+    LOWLIM &= 0x7F;
+    return;
   }
 
-  work_area->printer_time_throttle_flag += 1;
-  work_area->printer_time_throttle_flag &= 3;
+  if (printer_config->buffer_length != PRINTER_BUFFER_SIZE && printer_config->buffer_wait != 5) {
+    printer_config->buffer_wait++;
 
-  return prt_send_ch(ch);
+    return;
+  }
+
+  usb_data_out_transfer(printer_config->buffer, printer_config->buffer_length, printer_config->address,
+                        &printer_config->endpoints[0]);
+  printer_config->buffer_length = 0;
+  printer_config->buffer_wait   = 1;
+  LOWLIM &= 0x7F;
+}
+
+uint8_t USBPRT(const uint8_t ch) __z88dk_fastcall {
+  device_config_printer *const printer_config = &get_usb_work_area()->printer_config;
+
+  while (printer_config->buffer_length >= PRINTER_BUFFER_SIZE) {
+    __asm__("EI");
+    __asm__("HALT");
+  }
+
+  __asm__("DI");
+  printer_config->buffer[printer_config->buffer_length++] = ch;
+  LOWLIM |= 0x80;
+  __asm__("EI");
+
+  return 0;
 }
 
 #define H_LPTS_ADDR __at 0xFFBB

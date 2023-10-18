@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#define NTMSXP_ADDR __at(0xF417)
 #define JIFFY_ADDR  __at(0xFC9E)
 #define NEWKEY_ADDR __at(0xFBE5)
 #define PUTPNT_ADDR __at(0xF3F8)
@@ -14,6 +15,19 @@
 #define CSRSW_ADDR  __at(0xFCA9)
 #define LINL40_ADDR __at(0xF3AE)
 #define RG8SAV_ADDR __at(0xFFE7)
+#define LOWLIM_ADDR __at(0xFCA4)
+#define WINWID_ADDR __at(0xFCA5)
+
+// F417: switch indicating if hooked up printer is an MSX printer or not
+// values: 0: MSX-Printer, 1: no MSX-Printer
+// if the printer is no MSX-Printer, non-ASCII (>=128) characters are replaced
+// by spaces before sending them to the printer (ini: 0)
+extern uint8_t NTMSXP_ADDR NTMSXP;
+
+// FCA4-FCA5: parameter used at tap input, given a value during
+// reading of a headerblock from tape
+extern uint8_t LOWLIM_ADDR LOWLIM;
+extern uint8_t WINWID_ADDR WINWID;
 
 // FC9E-FC9F: software clock, updated at each VDP interrupt
 extern uint16_t JIFFY_ADDR JIFFY;

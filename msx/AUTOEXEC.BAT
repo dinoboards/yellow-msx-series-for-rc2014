@@ -4,4 +4,5 @@ SET EXPERT=ON
 SET TEMP=H:\
 
 SIOCFG CLK=307200
-fdisk
+
+mode 80

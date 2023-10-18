@@ -65,7 +65,7 @@
  usbctrl/command_floppy_check.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h usbctrl/command_floppy_dump.h \
  usbctrl/command_floppy_format.h usbctrl/command_floppy_report.h \
- usbctrl/command_floppy_report_drive.h \
+ usbctrl/command_floppy_report_drive.h usbctrl/command_printer_check.h \
  usbctrl/command_report_all_devices.h libraries/msxbios/extbio_rc2014.h \
  libraries/usb/protocol.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h
@@ -119,6 +119,15 @@
  libraries/usb/usb_cbi.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h
 ./bin/usbctrl/rotator.c.asm: usbctrl/rotator.c usbctrl/rotator.h
+./bin/usbctrl/command_printer_check.c.asm: usbctrl/command_printer_check.c \
+ usbctrl/command_printer_check.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h usbctrl/arguments.h usbctrl/device_search.h \
+ libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
+ libraries/usb/usb_state.h libraries/usb/class_printer.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/fusion/msx_fusion.h libraries/usb/protocol.h
 ./bin/usbctrl/read_and_write_sectors.c.asm: usbctrl/read_and_write_sectors.c \
  usbctrl/read_and_write_sectors.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -332,6 +341,7 @@
 ./bin/libraries/extbio/extbio_usb_control_transfer.o: ./libraries/extbio/extbio_usb_control_transfer.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
+./bin/libraries/fusion/interrupts.o: ./libraries/fusion/interrupts.asm
 ./bin/libraries/fusion/inputstring.o: ./libraries/fusion/inputstring.asm
 ./bin/libraries/fusion/inkey.o: ./libraries/fusion/inkey.asm
 ./bin/libraries/msxdos/msxdos_drv_direct_1.o: ./libraries/msxdos/msxdos_drv_direct_1.asm ./libraries/msxdos/msxdos.inc

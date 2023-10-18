@@ -168,11 +168,10 @@ DRV_NAME:
 ;
 ; Jump table for the driver public routines
 ;
-
 	; These routines are mandatory for all drivers
         ; (but probably you need to implement only DRV_INIT)
 
-	jp	0;DRV_TIMI
+	jp	_drv_timi
 	jp	DRV_VERSION
 	jp	DRV_INIT
 	jp	DRV_BASSTAT
@@ -254,6 +253,7 @@ DRV_INIT1:
 
 	;NOTE THAT CY IS 0 (NO INTERRUPT HOOKING NEEDED)
 	XOR	A
+	CCF
 	LD	HL, ST_WRKAREA
 	RET
 

@@ -4,6 +4,7 @@
 #include "command_floppy_format.h"
 #include "command_floppy_report.h"
 #include "command_floppy_report_drive.h"
+#include "command_printer_check.h"
 #include "command_report_all_devices.h"
 #include <extbio_rc2014.h>
 
@@ -42,6 +43,9 @@ uint8_t main(const int argc, const char *argv[]) {
 
   case cmd_floppy_dump:
     return command_floppy_dump();
+
+  case cmd_printer_check:
+    return command_printer_check(l);
   }
 
   return 0;

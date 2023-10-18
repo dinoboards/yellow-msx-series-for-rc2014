@@ -7,9 +7,8 @@
 
 uint8_t prt_send_ch(const uint8_t ch) __z88dk_fastcall {
   _usb_state *const work_area = get_usb_work_area();
-  char              buffer[2] = {ch, 0};
 
-  usb_error result = prt_send_text(&work_area->printer_config, buffer);
+  usb_error result = prt_send_text(&work_area->printer_config, &ch, 1);
 
   return result == USB_ERR_OK ? 0 : -1;
 }

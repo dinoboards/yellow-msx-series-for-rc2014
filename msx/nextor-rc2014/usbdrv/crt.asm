@@ -12,6 +12,7 @@
 	EXTERN	_device_mapping
 	EXTERN	_convert_and_print_disk_size
 	EXTERN	_extbio_rc2014
+	EXTERN	_drv_timi
 
 	ORG	$5000
 usb_host_init:
@@ -40,3 +41,5 @@ extbio_rc2014:
 	JP	_extbio_rc2014
 drv_direct1:
 	JP	_drv_direct1
+drv_timi:
+	JP	_drv_timi

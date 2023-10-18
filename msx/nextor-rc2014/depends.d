@@ -24,7 +24,8 @@
  ../apps/libraries/usb/transfers.h usbdrv/print.h usbdrv/work-area.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/protocol.h \
  ../apps/libraries/usb/usb_state.h ../apps/libraries/delay/delay.h \
- ../apps/libraries/msxbios/system_vars.h
+ ../apps/libraries/msxbios/system_vars.h \
+ ../apps/libraries/usb/transfers.h
 ./bin/usbdrv/usb-lun-info.c.asm: usbdrv/usb-lun-info.c usbdrv/nextor.h usbdrv/usb-dev.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
  usbdrv/work-area.h ../apps/libraries/usb/protocol.h \

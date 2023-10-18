@@ -21,7 +21,6 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/delay/delay.c.o \
 	$(BINDIR)libraries/usb/ch376.c.o \
 	$(BINDIR)libraries/usb/class_hub.c.o \
-	$(BINDIR)libraries/usb/class_printer.c.o \
 	$(BINDIR)libraries/usb/class_scsi.c.o \
 	$(BINDIR)libraries/usb/class_ufi.c.o \
 	$(BINDIR)libraries/usb/dev_transfers.c.o \

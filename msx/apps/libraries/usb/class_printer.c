@@ -9,6 +9,8 @@ usb_error prt_get_port_status(const device_config_printer *const dev, uint8_t *b
   setup_packet cmd;
   cmd = cmd_get_port_status;
 
+  cmd.bIndex[1] = dev->interface_number;
+
   result = usb_control_transfer(&cmd, (uint8_t *)buffer, dev->address, dev->max_packet_size);
 
   CHECK(result);
@@ -44,12 +46,10 @@ usb_error prt_soft_reset(const device_config_printer *const dev) {
   return result;
 }
 
-usb_error prt_send_text(device_config_printer *dev, const char *text) {
+usb_error prt_send_text(device_config_printer *dev, const uint8_t *text, const uint8_t length) {
   usb_error result;
 
-  dev->endpoints[0].toggle = 0;
-
-  CHECK(usb_data_out_transfer((const uint8_t *)text, strlen(text), dev->address, &dev->endpoints[0]));
+  CHECK(usb_data_out_transfer(text, length, dev->address, &dev->endpoints[0]));
 
   return result;
 }

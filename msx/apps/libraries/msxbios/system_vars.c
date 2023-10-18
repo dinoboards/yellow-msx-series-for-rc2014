@@ -1,5 +1,17 @@
 #include "system_vars.h"
 
+// F417: switch indicating if hooked up printer is an MSX printer or not
+// values: 0: MSX-Printer, 1: no MSX-Printer
+// if the printer is no MSX-Printer, non-ASCII (>=128) characters are replaced
+// by spaces before sending them to the printer (ini: 0)
+// RC2014 Extension - bit 7 indicate printer buffer has content
+uint8_t NTMSXP_ADDR NTMSXP;
+
+// FCA4-FCA5: parameter used at tap input, given a value during
+// reading of a headerblock from tape
+uint8_t LOWLIM_ADDR LOWLIM;
+uint8_t WINWID_ADDR WINWID;
+
 // FC9E-FC9F: software clock, updated at each VDP interrupt
 uint16_t JIFFY_ADDR JIFFY;
 
