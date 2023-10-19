@@ -101,7 +101,7 @@ The V9938 and V9958 are very similar in capability.  See the relevant datasheets
 
 You will want to think about how you plan to connect this board to your chosen monitor.  The video signals produced by 80's hardware is not trivial to connect to modern LCD monitors.  For such monitors you will need a converter to upscale the output.  Although VGA Monitors can accept a RGB signal, they are unlikely to support the lower frequency of 15Khz produced by these modules.
 
-The RGBs module provides connection via the 15-pin DSUB/VGA connector.  This output is well suited to connect via a VGA cable to a compatible HDMI/VGA up-converter that accepts a RGBs signal over the 15pin connection, such as the OSSC, GBS8200 or HD-VC9900 converters.  For more information on the DSUB RGB/VGA see [RetroRGB's VGA article](https://www.retrorgb.com/vgaconnector.html)
+The RGBs module provides connection via the 15-pin DSUB/VGA connector.  This output is well suited to connect via a VGA cable to a compatible HDMI/VGA up-converter that accepts a RGBs signal over the 15pin connection, such as the OSSC, GBS-8200 or HD-VC9900 converters.  For more information on the DSUB RGB/VGA see [RetroRGB's VGA article](https://www.retrorgb.com/vgaconnector.html)
 
 The [RetroRGB upscalers article](https://www.retrorgb.com/upscalers.html) has a good description for some of the converter options.
 
@@ -111,6 +111,24 @@ I have found the low cost arcade converters such as the GBS-8200 and HD-VC9900 c
 
 The GBS-8200 can also be easily modified to produce more customisable and higher quality output - again RetroRGB has it all explained at [GBS Control](https://www.retrorgb.com/gbs-control-installation-overview.html)
 
+
+### Video Upscaling Testing status
+
+1. I have tested both V9958 and V9938 versions of the kit with the low cost GBS-8200 and HD-VC9900 upscalers.  These have produced solid stable images for the respective VGA and HDMI output.  They seem very tolerant of CSYNC voltage signal levels.
+
+2. I also successfully tested the previous iteration of the V9958 RGB kit on the OSSC. With the new iteration of the Video kit, there have emerged some compatibility issues.
+
+> Please note that the version of the OSSC I have is from a few years ago.  I note the newer revision of the OSSC have more refinements with its processing of the CYSNC signal - your milage may vary.  No guarantee can be stated here.
+
+With the V9958 version of this kit, I was able to get the kit to work through my version of the OSSC, but I did need to **remove the jumper from J3** - the jumper at the top right.
+
+With the V9938 version of this kit, I am currently not able to get the OSSC to sync.  Further refinements will need to be figured out.
+
+My recommendation is to use GBS-8200 or the HD-VC9900 upscalers.  The quality is fine and I do most of my testing on these converters.  Just google their codes and you will find the usual retailers/marketplaces (eg: ebay/amazon/aliexpress) have plenty of purchase options.
+
+I have **not** tested this kit with:
+1. A real CRT monitor.
+2. retroTink
 
 ## Sample Apps
 
