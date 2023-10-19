@@ -1,4 +1,4 @@
-# RomWBW Configuration
+# RomWBW CPM applications
 
 The [apps-rc2014](./apps-rc2014) directory contains source code to test and explorer the functionality of these boards under a RomWBW system.
 

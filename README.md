@@ -7,84 +7,182 @@ Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project
 
 </br>
 
-The repo describes a series of boards designed for RC2014, to give MSX+ compatiblity.
+The repo describes a series of boards designed to be compatible with the RC2014 bus.  Once the minimum set of boards are assembled, you will have your very own MSX+ compatible computer -- built by you!
 
 The idea is that you can build each board one at a time, test it and play with it under RomWBW - and then once you have the set - load up some MSX/MSX2+ games!
 
 The story of the prototyping and development these boards can be found at the Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014) project page.
 
+## Summary of all kits
+
+### MSX Cassette + USB Module <img src="cassette-and-usb/images/new.png" width="30px"/>
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/??"><img src="cassette-and-usb/images/pcb-profile-usb-top.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/stores/dinotron/)
+
+See the [README file here](./cassette-and-usb/README.md)
+
+
+</td></tr></table>
+
+<hr/>
+
+### 12+1 Backplane
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/121-backplane-designed-for-rc2014-systems/"><img src="backplane/profile-powered.jpg" width="100%"/></a>
+</td>
+<td width="80%">
+
+See the [README file here](./backplane/readme.md)
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/121-backplane-designed-for-rc2014-systems)
+
+</td></tr></table>
+
+<hr/>
+
+### Turbo CPU
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/turbo-cpu-module-designed-for-rc2014/"><img src="turbo-cpu/images/assembled-profile.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+See the [README file here](./turbo-cpu/readme.md)
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/turbo-cpu-module-designed-for-rc2014)
+
+</td></tr></table>
+
+<hr/>
+
+### MSX Memory Module
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/msx-memory-board-for-rc2014/"><img src="memory/PXL_20210410_071727624.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+See the [README file here](./memory/README.md)
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/msx-memory-board-for-rc2014)
+
+</td></tr></table>
+
+<hr/>
+
+### V99x8 MSX Video Module
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/v99x8-msx-rgb-video-module-for-rc2014/"><img src="video/pictures/RGB-V9938-PROFILE.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+See the [README file here](./video/README-RGB.md)
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/v99x8-msx-rgb-video-module-for-rc2014/)
+</td>
+<tr>
+</table>
+
+<hr/>
+
+### YM2149 Game Module
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/ym2149-msx-game-board-for-rc2014/"><img src="game/images/assembled.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+See the [README file here](./game/README.md)
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/ym2149-msx-game-board-for-rc2014)
+
+</td></tr></table>
+
+<hr/>
+
+### Real-Time-Clock Module
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/msx-rp5c01-rtc-and-msx-f4-board-for-rc2014/"><img src="rtc/assembled.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+See the [README file here](./rtc/README.md)
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/msx-rp5c01-rtc-and-msx-f4-board-for-rc2014)
+
+</td></tr></table>
+
+<hr/>
+
+### PPI Module & Keyboard
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/msx-keyboard-designed-for-rc2014/"><img src="keyboard/images/image1.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/msx-keyboard-designed-for-rc2014)
+
+See the [PPI README file here](./ppi/README.md)
+
+See the [Keyboard README file here](./keyboard/README.md)
+
+Switches & Caps available at the [Tindie](https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard)
+
+</td></tr></table>
+
+<hr/>
+
+### YM2413 MSX-Music Module
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/ym2413-msx-music-module-designed-for-rc2014/"><img src="music/images/assembled-profile.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+See the [README file here](./music/README.md)
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/ym2413-msx-music-module-designed-for-rc2014)
+
+</td></tr></table>
+
+<hr/>
+
+### MSX Cartridge Slot Extension for the 12+1 Backplane
+
+<table><tr><td  >
+<a href="https://www.tindie.com/products/dinotron/msx-cartridge-slot-extension-for-rc2014-bus/"><img src="slot-extension/profile.jpg" width="100%"/></a>
+</td>
+<td width="90%">
+
+See the [README file here](./slot-extension/readme.md)
+
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/msx-cartridge-slot-extension-for-rc2014-bus)
+
+</td></tr></table>
+
+<hr/>
+
+
 ## Configuration and Software Notes
 
 Click thru for more information on:
 
-**[RomWBW Configuration](./readme-romwbw.md) specific instructions**
+**[RomWBW Apps](./readme-romwbw-apps.md) specific instructions**
 
-**[Recommended RC2014 Configuration for MSX modules](./readme-msx.md)**
+**[Compatibility with RC2014 Configuration](./readme-romwbw-compatibility.md)**
 
 **[General MSX documents](./msx/docs/index.md)**
 
-**[Details of compiling and assembling](./msx/README.md) MSX applications and bios images**
-
-
-## Hardware, construction and module specific Instructions
-
-#### V9958 MSX Video Modules for RC2014 (Advanced and RGB versions)
-
-See the [README file here](./video/README.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/v9958-msx-video-advanced-module-for-rc2014) store
-
-#### YM2149 Game Module Designed for RC2014
-
-See the [README file here](./game/README.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/ym2149-msx-game-board-for-rc2014) store
-
-#### Real-Time-Clock Module Designed for RC2014
-
-See the [README file here](./rtc/README.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/msx-rp5c01-rtc-and-msx-f4-board-for-rc2014) store
-
-#### PPI Module Designed for RC2014 & Keyboard
-
-See the [PPI README file here](./ppi/README.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/msx-keyboard-designed-for-rc2014) store
-
-See the [Keyboard README file here](./keyboard/README.md)
-
-Switches & Caps available at the [Tindie](https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard) store
-
-#### MSX Memory Module Designed for RC2014
-
-See the [README file here](./memory/README.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/msx-memory-board-for-rc2014) store
-
-#### YM2413 MSX-Music Module Designed for RC2014
-
-See the [README file here](./music/README.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/ym2413-msx-music-module-designed-for-rc2014) store
-
-#### MSX Cartridge Slot Extension for RC2014 Bus
-
-See the [README file here](./slot-extension/readme.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/msx-cartridge-slot-extension-for-rc2014-bus) store
-
-#### 12+1 Backplane designed for RC2014 systems
-
-See the [README file here](./backplane/readme.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/121-backplane-designed-for-rc2014-systems) store
-
-#### Turbo CPU designed for RC2014 systems
-
-See the [README file here](./turbo-cpu/readme.md)
-
-Kit available at [Tindie](https://www.tindie.com/products/dinotron/turbo-cpu-module-designed-for-rc2014) store
+**[Details of compiling and assembling code](./msx/README.md) MSX applications and bios images**
 
 #### Integrating the ESP8266 Wifi Module
 
@@ -93,11 +191,6 @@ Click [here](./wifi/README.md) for instructions on integrating the stock RC2014 
 Kits are available from the official RC2014 stores at [z80Kits](https://z80kits.com/shop/esp8266-wifi-module) and [Tindie](https://www.tindie.com/products/semachthemonkey/esp8266-wifi-module-for-rc2014/)
 
 
-## Other Board ideas
-
-* Incorporate existing RC2014 boards, such as Floppy, IDE, Flash storage, Serial etc into a MSX system.
-* Cassette Interface
-* Others....
 
 ## Cloning this repo
 

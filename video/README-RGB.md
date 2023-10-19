@@ -1,9 +1,9 @@
 
-## V9958 Video Modules Designed for RC2014
+## V99x8 Video Module Designed for RC2014
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-<a href="https://www.tindie.com/products/dinotron/v9958-msx-rgb-video-module-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+<a href="https://www.tindie.com/products/dinotron/v99x8-msx-rgb-video-module-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
 
 ### Description
 

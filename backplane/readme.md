@@ -47,18 +47,18 @@ The 13th slot is offset slightly from the rest of the slots, to allow for connec
 * Reset tactile switch
 * 4 way power terminal block for easy extension or alternative powering
 * Optional direct 5V in via DC barrel connector
-* 12 5V LEDs between each slot 
+* 12 5V LEDs between each slot
 * 8 3.4mm Mounting holes for M3 fitting
 
 Please note that mounting stand-offs are not supplied.
 
 ### What is the 'Yellow MSX Series of Boards'?
 
-These are a series of boards developed to achieve MSX compatibility for [RC2014](https://rc2014.co.uk/) systems.
+These are a series of boards developed to achieve MSX+ compatibility.
 
 The idea is that you can build each board one at a time, test it and play with it under RomWBW - and then once you have the set - load up some MSX games!
 
-This backplane kit will give you the perfect foundation for the RC2014 system. 
+This backplane kit will give you the perfect foundation for the RC2014 system.
 
 More details of the development of the Yellow MSX series of modules can be found on my [hackaday project](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 

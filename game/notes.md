@@ -17,13 +17,13 @@ and generally compatible with the AY-3-8910.  Although this board is designed fo
 
 ### What is the 'Yellow MSX Series of Boards'?
 
-These are a series of boards that I am developing to achieve MSX compatibility for RC2014 systems.
+These are a series of boards developed to achieve MSX+ compatibility.
 
 The idea is that you can build each board one at a time, test it and play with it under RomWBW - and then once you have the set - load up some MSX/MSX2+ games!
 
-The first board in the series is the [V9958 Video board](https://www.tindie.com/products/dinotron/v9958-msx-video-advanced-module-for-rc2014)
+The first board in the series is the [V99x8 Video board](https://www.tindie.com/products/dinotron/v99x8-msx-rgb-video-module-for-rc2014/)
 
-The Game board is the second in that series.
+The Game board was the second in that series.
 
 More details are available within the [hackaday project](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 

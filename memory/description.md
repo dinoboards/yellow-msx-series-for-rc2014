@@ -31,7 +31,7 @@ Also included on the PCB are optional pinouts for potential future RAM upgrade t
 
 ### What is the 'Yellow MSX Series of Boards'?
 
-These are a series of boards developed to achieve MSX compatibility for RC2014 systems.
+These are a series of boards developed to achieve MSX+ compatibility.
 
 The idea is that you can build each board one at a time, test it and play with it under RomWBW - and then once you have the set - load up some MSX games!
 

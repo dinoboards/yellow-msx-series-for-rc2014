@@ -1,10 +1,22 @@
-# RomWBW Configuration
+# Stock RC2014 Configurations
 
-## Recommended RC2014 Configuration
+## Kits that will work in a basic RC2014 configuration*
 
-You should be able to install the V9958, Game and keyboard modules into any stock RC2014 builds.  RomWBW now has support for the keyboard and video modules.
+1. **[V99x8 Video](./video/README-RGB.md)** - RomWBW includes driver support
 
-If you wish to operate in MSX Compatibility module, in addition to the GAME, VIDEO, KEYBOARD, you will need the MEMORY module and the following stock RC2014 modules (configured as described):
+2. **[YM2149 GAME](./game/README.md)** - Add sound and joystick/game pad ports
+
+3. **[MSX Keyboard](./keyboard/README.md)** full size keyboard
+
+> *RC2014's Backplane Pro required.
+
+## Upgrading RC2014 to MSX operation
+
+In addition to the above, you will need:
+
+1. **[MSX Memory](./memory/README.md)** - this module provided RAM and ROM for the MSX system and must replace any existing RC2014 memory modules.
+
+The following rc2014 kits will work with/required for complete MSX operation:
 
 1. **[Enhanced CPU](https://rc2014.co.uk/modules/cpu/z80-cpu-v2-1/)** - you need a CPU of course - running at 3.5Mhz.  The CBIOS image can operate at the 7Mhz rate, but many applications will not work at this frequency.  The MSXSYS based builds only work when the CPU is clocked at 3.5MHz
 

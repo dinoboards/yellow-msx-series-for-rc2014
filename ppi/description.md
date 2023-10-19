@@ -24,11 +24,11 @@ As the 82C55 is a general purpose interface chip, you could, within the constrai
 
 ### What is the 'Yellow MSX Series of Boards'?
 
-These are a series of boards that I am developing to achieve MSX compatibility for RC2014 systems.
+These are a series of boards developed to achieve MSX+ compatibility.
 
 The idea is that you can build each board one at a time, test it and play with it under RomWBW - and then once you have the set - load up some MSX/MSX2+ games!
 
-The first board in the series is the [V9958 Video board](https://www.tindie.com/products/dinotron/v9958-msx-video-advanced-module-for-rc2014)
+The first board in the series is the [V99x8 Video board](https://www.tindie.com/products/dinotron/v99x8-msx-rgb-video-module-for-rc2014)
 
 The PPI board is a central component, needed for keyboard and memory management.
 

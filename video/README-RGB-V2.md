@@ -1,5 +1,5 @@
 
-## V9958 Video Modules Designed for RC2014
+## V9958 Video Module Designed for RC2014
 
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
