@@ -38,7 +38,10 @@ uint8_t usb_dev_read(const uint8_t  device_index,
                      uint8_t       *buffer,
                      uint8_t *const number_of_sectors_read) {
 
-  device_config *const  dev  = get_usb_device_config(device_index);
+  device_config *const dev = get_usb_device_config(device_index);
+  if (dev == NULL)
+    return 1; // is not a usb device
+
   const usb_device_type type = dev->type;
 
   return drivers[type](dev, lun, number_sectors_to_read, sector_number, buffer, number_of_sectors_read);

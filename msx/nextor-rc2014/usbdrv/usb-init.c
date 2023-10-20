@@ -92,7 +92,10 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
 
   do {
     const device_config *const storage_device = get_usb_device_config(index);
-    const usb_device_type      t              = storage_device->type;
+    if (storage_device == NULL)
+      break;
+
+    const usb_device_type t = storage_device->type;
     if (t == USB_IS_FLOPPY) {
       print_string("    FLOPPY  (");
       print_disk_size(index);
@@ -104,7 +107,7 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
       storage_count++;
     }
 
-  } while (++index != MAX_NUMBER_OF_STORAGE_DEVICES);
+  } while (++index != MAX_NUMBER_OF_STORAGE_DEVICES + 1);
 
   if (!hasCdc && !hasPrinter && storage_count == 0) {
     print_string("\r\n");
