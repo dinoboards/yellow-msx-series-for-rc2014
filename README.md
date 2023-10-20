@@ -18,7 +18,7 @@ The story of the prototyping and development these boards can be found at the Ha
 ### MSX Cassette + USB Module <img src="cassette-and-usb/images/new.png" width="30px"/>
 
 <table><tr><td  >
-<a href="https://www.tindie.com/products/dinotron/??"><img src="cassette-and-usb/images/pcb-profile-usb-top.jpg" width="100%"/></a>
+<a href="https://www.tindie.com/products/edit/msx-cassette-usb-module-designed-for-rc2014"><img src="cassette-and-usb/images/pcb-profile-usb-top.jpg" width="100%"/></a>
 </td>
 <td width="90%">
 

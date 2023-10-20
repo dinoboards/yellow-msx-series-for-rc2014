@@ -2,7 +2,7 @@
 
 * [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
-<a href="https://www.tindie.com/stores/dinotron/"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
+<a href="https://www.tindie.com/products/edit/msx-cassette-usb-module-designed-for-rc2014"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="Available for purchase at Tindie" width="200" height="55"></a>
 
 ## MSX Cassette + USB Module Designed for RC2014
 
