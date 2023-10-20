@@ -220,8 +220,17 @@ release:
 	@version=$$(date +%y-%m-%d)
 	mkdir -p ../release
 	rm -f ../release/msx-rc2014-$${version}.zip
-	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*
-	cd ./bin && tar -czvf ../../release/msx-rc2014-$${version}.tar.gz *
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*.jed
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*.doc
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*.com
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/msxsyssrc-*.rom
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/yellow-*.rom
+	(cd ./bin && tar -cvf ../../release/msx-rc2014-$${version}.tar *.jed)
+	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar *.doc)
+	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar *.com)
+	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar msxsyssrc-*.rom)
+	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar yellow-*.rom)
+	(cd ./bin && gzip -qf ../../release/msx-rc2014-$${version}.tar)
 
 bin/bbcbasic.com: $(wildcard bbcbasic-z80/*)
 	@$(MAKE) -C bbcbasic-z80 --no-print-directory

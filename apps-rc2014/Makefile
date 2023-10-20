@@ -11,6 +11,9 @@ APPS := dots lines mbrot control msxkeyb rtctest
 
 all: $(addsuffix .com,$(APPS))
 
+clean:
+	@rm -rf ../bin
+
 $(BIN)dots.com: dots.c v9958.c v9958.h v9958.asm config_request.c config_request.h cpm.asm cpm.h
 $(BIN)lines.com: lines.c v9958.c v9958.c v9958.asm config_request.c config_request.h cpm.asm cpm.h
 $(BIN)mbrot.com: mbrot.c v9958.c v9958.c v9958.asm config_request.c config_request.h cpm.asm cpm.h

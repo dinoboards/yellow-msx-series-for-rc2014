@@ -78,7 +78,7 @@ FROM ubuntu:jammy-20230916
 RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/ubuntu/archive/|g' /etc/apt/sources.list && \
     apt update -y && \
     apt dist-upgrade -y && \
-    apt install -y --no-install-recommends ca-certificates mtools dos2unix pasmo dosfstools clang-format m4 ssh xxd gnupg2 software-properties-common zip wget && \
+    apt install -y --no-install-recommends ca-certificates mtools dos2unix pasmo dosfstools clang-format m4 ssh xxd gnupg2 software-properties-common zip wget git && \
     wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add - && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F && \
     apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' && \
@@ -104,6 +104,8 @@ COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_iy /opt/z8
 COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix
 COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80
 COPY --link bashrc /home/builder/.bashrc
+
+RUN git config --global --add safe.directory /src
 
 ENV Z88DK_PATH="/opt/z88dk" \
     PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.3.0/bin:/opt/hex2bin:/opt/cpm:/opt/sjasmplus:${PATH}" \
