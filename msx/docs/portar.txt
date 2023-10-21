@@ -223,8 +223,8 @@ of a secondary slot).
 Theoretically each PSLOT could be subclassed by separate SSLOT registers.
 Commonly only one of the PSLOTs is subclassed though, and older computers with
 not more than 32K ROM do not contain any SSLOT registers at all. Beside for
-the internal usuage, SSLOTs might be found in Slot Expansion Cartridges which
-would then allow to connect up to four cartridges to a single cartride slot.
+the internal usage, SSLOTs might be found in Slot Expansion Cartridges which
+would then allow to connect up to four cartridges to a single cartridge slot.
 As for PSLOTs, there is no standard that defines which PSLOT should contain an
 SSLOTs, and which of the SSLOTs should contain RAM...
 
@@ -238,7 +238,7 @@ default values for Port FC-FF are 03-00.
   Port FF   RAM bank number to be mapped at C000-FFFF
 Usually the mapping circuit latches only the actually used lower 3, 4, or 5
 bits of the bank numbers, depending on whether 128K, 256K, or 512K RAM are
-built-in. Theoretically (fully exanped) a total of 4MByte RAM (16Kbyte * 256
+built-in. Theoretically (fully expanded) a total of 4MByte RAM (16Kbyte * 256
 blocks) could be controlled by the mapping registers.
 To enable/disable RAM, use the PSLOT register (Port A8h), and (if any) the
 SSLOT register (Address FFFFh).
@@ -258,7 +258,7 @@ chips.
 Further Memory
 Video Memory is not part of the memory map because VRAM can be accessed
 through I/O ports only (as described in the chapter about the Video Display
-Processor). Some computers may also include japanese character set ROMs, these
+Processor). Some computers may also include Japanese character set ROMs, these
 can be read out only through I/O ports either (as described in the chapter
 about Kanji ROM).
 
@@ -316,7 +316,7 @@ A-C. Theoretically these registers can be used as input or output ports.
 However, in the MSX, PPI Port A and C are always used as output, and PPI Port
 B as input. The BIOS initializes it like that by writing 82h to Port ABh on
 startup. Afterwards it makes no sense to change this setting, and thus needs
-no further explanatation here.
+no further explanation here.
 
 The MSX Keyboard Matrix
 The names in this table refer to the original MSX1 keyboard map (which is
@@ -334,12 +334,12 @@ mostly identical to the US-keymap on PCs).
  ( 9    NUM4  NUM3  NUM2  NUM1  NUM0  NUM/  NUM+  NUM*  )
  ( 10   NUM.  NUM,  NUM-  NUM9  NUM8  NUM7  NUM6  NUM5  )
 Line 9 and 10 are used/reserved for numeric keypad, the NUM/, NUM+, NUM* keys
-might be exchanged in some coutries. (Most MSX1 and MSX2 models do not include
+might be exchanged in some countries. (Most MSX1 and MSX2 models do not include
 a numeric keypad at all though).
 
 MSX2 models have been delivered with country-specific BIOSes and keymaps, in
 that case the logical keynames change. For example the key in Line 1, Bit 5 is
-always the key to the right of the "P"-key, but on german keyboards that key
+always the key to the right of the "P"-key, but on German keyboards that key
 would be used as "UE" rather than "[".
 
 About the five function keys (F1-F5), note that the key-combinations
@@ -471,15 +471,15 @@ tiles in lines 1,5,9,etc. use the next two bytes, and so on.
 --- Below Screens 4-8 and the 80 column text screen exist on MSX2 only ---
 
 SCREEN 4 (256*192 Graphics mode with multicolour sprites):
-  0000-17FF   Charcter patterns
+  0000-17FF   Character patterns
   1800-1AFF   Name table (char positions)
   1C00-1DFF   Sprite colours
   1E00-1E7F   Sprite attribute table
   1E80-1E9F   Palette
   2000-37FF   PixelByte colour table
   3800-3FFF   Sprite character patterns
-This is mostly the same as Screen 2, except that the foregound sprites can
-have additional color attributes, and with the abilty to display a maximum of
+This is mostly the same as Screen 2, except that the foreground sprites can
+have additional color attributes, and with the ability to display a maximum of
 8 sprites per line.
 
 The "Palette" entry in the memory maps for screen 4-8 does not have a physical
@@ -545,7 +545,7 @@ SCREEN 0 (Text mode, 80 column):
   0000-077F (086F)   Name table (char positions)
   0800-08EF (090D)   Character attribute (Blink)
   1000-17FF          Character patterns (font)
-(Addresses in pharentheses is used in 26.5 lines mode. Observe that they are
+(Addresses in parentheses is used in 26.5 lines mode. Observe that they are
 overlapping).
 The Characters attribute table is an array of bits, ie. the first byte of the
 table contains bits for the first 8 characters on the screen.
@@ -565,11 +565,11 @@ four bytes:
   2: Pattern number
   3: Attributes. b0-3:Color, b4-6:unused, b7:EC (Early Clock)
 If EC is set to 1, the X-pos is subtracted by 32 (can be used to place sprites
-particulary offscreen to the left.
+particularly offscreen to the left.
 
 When using 16x16 pixel sprites the lower two bits of the sprite number are
 ignored (should be zero). A 16x16 sprite logically consists of four 8x8
-sprites, whereas the first 8x8 sprite is displayed in upperleft, the second
+sprites, whereas the first 8x8 sprite is displayed in upper left, the second
 one in lower left, the third in upper right, and the fourth in lower right.
 
 If Y-pos is set to 208 (D0h), the sprite AND ALL FOLLOWING sprites are hidden!
@@ -580,12 +580,12 @@ If the display is scrolled via VDP register 17h, this also affects the
 positions of the sprites! Ie. the actual visible position of the sprite would
 be YLOC+1-VDP(17h).
 However, the special hide-the-sprites-value (YLOC=216) is hardcoded,
-independendly of the screen offset in VDP register 17h! If a sprite should be
+independently of the screen offset in VDP register 17h! If a sprite should be
 displayed in that line, either 215 or 217 must be used instead!
 
 Sprite colours
 In MSX2 video modes with colored sprites (screen 4-8), the fourth byte of the
-OAM entires is unused. Instead, the sprite attributes are stored in a separate
+OAM entries is unused. Instead, the sprite attributes are stored in a separate
 'color table'.
 That table is always placed at the address of the above sprite attribute table
 minus 200h. The color table contains 20h entries (one for each entry of the
@@ -629,7 +629,7 @@ pointer is automatically incremented, allowing to read/write a stream of bytes
 without having to setup the pointer each time.
 
 Port 99h, VRAM Address Pointer Setup
-The VRAM read/write pointer is initalized by writing TWO BYTES to port 99h
+The VRAM read/write pointer is initialized by writing TWO BYTES to port 99h
 with BIT 7 CLEARED in the second byte.
   Byte 1/Bit 0-7  Lower bits of VRAM Pointer
   Byte 2/Bit 0-5  Upper bits of VRAM Pointer
@@ -672,8 +672,8 @@ haven't displayed properly, then Bit 0-4 specify the first of these bad
 sprites.
 
 A sprite is overlapping another if a non-transparent pixel of a sprite hits a
-non-transparent pixel of another sprite. Whereas in MSX2 colored sprite modes
-this verfication can be made optional for specific sprites by CC and IC bits
+non-transparent pixel of another sprite. Whereas in MSX2 color sprite modes
+this verification can be made optional for specific sprites by CC and IC bits
 in the sprite OAM data.
 
 The IRQ flag in bit 7 gets set at the beginning of the VBlank period, if IE0
@@ -764,7 +764,7 @@ register 11h gets incremented automatically. (See VDP register 11h description
 for more details).
 
 Example for Port 9Bh: Initializing VDP registers 00h..17h
-Write 00h (index 00h, increment=on) to VDP register 11h (using the oldstyle
+Write 00h (index 00h, increment=on) to VDP register 11h (using the old-style
 method through port 99h). Now write 18h bytes of data for registers 00h..17h
 to 9Bh (The data written to Register 11h is ignored, so that it can't damage
 itself).
@@ -784,7 +784,7 @@ Register 0: Mode register 0
   3    M5    Mode M5 (Screen 6,7,8)     (MSX2 only)
   4    IE1   H-Blank Interrupt Enable   (MSX2 only) (see also VDP Reg 13h)
   5    IE2   Light pen/mouse on ???     (MSX2 ONLY not MSX2+)
-  6    DG    DiGitize mode              (MSX2 only)
+  6    DG    Digitize mode              (MSX2 only)
   7    0     Not Used
 
 Register 1: Mode register 1
@@ -827,7 +827,7 @@ multiple of 2000h. The register isn't used in screen 5-8.
 Register 5: OBJ Attr (Sprite attribute table) base address Low
   Bit     7    6    5    4    3    2    1    0
   Name   A14  A13  A12  A11  A10  A09  A08  A07
-In screen 4-8 (colored sprite mode) the bits for A8 and A7 ignored, making the
+In screen 4-8 (color sprite mode) the bits for A8 and A7 ignored, making the
 address a multiple of 200h, in these video modes the register additionally
 specifies the address of the 'sprite color table' which is always placed 200h
 bytes before the sprite attribute table. Not used in screen 0.
@@ -881,9 +881,9 @@ Register 8: Mode register 2
 (0=1*16KB,1=4*16KB,2=1*64KB,3=64KB/HighSpeed)
   4    CB    colour Bus direction         (0=Output, 1=Input)
   5    TP    Transparent from palette     (0=Normal, 1=Color 0 is solid)
-  6    LCS   Lightpen Select (active 1) connected through colourbus (not
+  6    LCS   Lightpen Select (active 1) connected through colour bus (not
 MSX2+)
-  7    MSE   Mouse select    (active 1) connected through colourbus (not
+  7    MSE   Mouse select    (active 1) connected through colour bus (not
 MSX2+)
 
 Register 9: Mode register 3
@@ -892,9 +892,9 @@ Register 9: Mode register 3
   1    NT    NTSC                         (0=NTSC/60Hz, 1=PAL/50Hz)
   2    EO    Even Odd Display             (0=Normal, 1=Two screen)
   3    IL    Interlace                    (0=Off, 1=On)
-  4-5  S#    Simultaneus mode             (0=Intern, 1=Mix, 2=Extern/Digitize)
+  4-5  S#    Simultaneous mode             (0=Intern, 1=Mix, 2=Extern/Digitize)
   6    0     Always 0
-  7    LN    Vertical heigth (pixels)     (0=192, 1=212)
+  7    LN    Vertical height (pixels)     (0=192, 1=212)
 
 Register 0Ah: colour table base address High
   Bit     7    6    5    4    3    2    1    0
@@ -907,7 +907,7 @@ Register 0Bh: Sprite attribute base address High
 Register 0Ch: Inverse/Blink text colour
   Bit  Name  Expl.
   0-3  BC0-3 Inverse/Blink text background colour
-  4-7  T20-3 Inverse/Blink text forground colour
+  4-7  T20-3 Inverse/Blink text foreground colour
 The bits 0-3 and 4-7 can hold a number in the range of 0-15.
 The corresponding colours are the same as for register 7.
 
@@ -995,7 +995,7 @@ Register 19h: 9958 ONLY -- Horizontal Scroll Control
   Bit Name  Expl.
   0   SP2   H-Scroll Screen Width   (0=One page, 1=Two pages)
   1   MSK   H-Scroll Mask 8 Pixels  (0=Normal, 1=Hide Leftmost Pixels)
-  2   WTE   VRAM Access Waitstates  (0=Normal, 1=Enable CPU Waitstate)
+  2   WTE   VRAM Access Wait states (0=Normal, 1=Enable CPU Wait state)
   3   YJK   YJK Mode Enable         (0=Normal RGB, 1=YJK System)
   4   YAE   YJK Attribute Enable    (0=No Attribute, 1=With Attribute)
   5   VDS   Pin 8 Output selection  (0=Output CPUCLK, 1=Output /VDS)
@@ -1013,7 +1013,7 @@ When SP2=0: Scrolling is done within one page and the non-displayed left side
 of the page is displayed on the right hand side of the screen (HO8 is ignored
 in this mode).
 When SP2=1: Scrolling is done within 2 pages, and when scrolled, the second
-page appears to the right habd side of the first page, and when scrolled more,
+page appears to the right hand side of the first page, and when scrolled more,
 the first page reappears to the right of the second page. Note: When SP2=1,
 the A15 bit of the Pattern Name table base address register should be set to
 "1" (VDP Register 02h, Bit 5), otherwise only the leftmost page would be
@@ -1042,7 +1042,7 @@ A group of 4 bytes defines the colors of 4 continuous dots (horizontally).
   3-7    Y1     Y2     Y3     Y4       Separate Y values for each dot
 Each of the four pixels is having its own "Y" value (5 bits), the "J" and "K"
 values (6 bits each) are shared for all four pixels. It is possible to select
-between 131072 colors (17 bits), even though each 4 pixels must have similiar
+between 131072 colors (17 bits), even though each 4 pixels must have similar
 colors.
 When YJK=1: Sprites in Screen 8 using RGB colors from Palette Registers!
 
@@ -1069,7 +1069,7 @@ WTE - Bit 2 - Wait Function Enable
 When WTE is cleared, access to VRAM works in the same way as V9938, ie. the
 programmer must take care about inserting delays between each VRAM access.
 The WAIT function is enabled when WTE is set. When the CPU accesses the VRAM,
-any following CPU access to any V9958 ports is offhold by a WAIT signal until
+any following CPU access to any V9958 ports is held by a WAIT signal until
 the VRAM access is completed. (This feature is supposed to speed up the
 writing time of data from CPU to VRAM.)
 However, WAIT function is provided after VRAM access only, not after access to
@@ -1267,8 +1267,8 @@ The interrupt handler is executed at the time when the above conditions become
 true. This might directly upon IRQ request in case that the enable flags were
 set - or directly upon enabling interrupts in case that an IRQ flag was set.
 
-Acknowleding Interrupts
-The interrupt handler MUST manually acknowlede interrupts by reading from the
+Acknowledging Interrupts
+The interrupt handler MUST manually acknowledge interrupts by reading from the
 respective VDP status register(s) which contain the IRQ flag(s). Otherwise the
 IRQ flag(s) are kept set, causing the same interrupt to be kept requested -
 which would be then executed again at the next time when interrupts are
@@ -1321,7 +1321,7 @@ The actual noise frequency in Hertz is calculated as follows:
 Envelope step frequency (tone or noise) calculated as follows:
   F = 3.579545MHz / 32 / nn     ;with nn in range 0..65535
 Depending on the envelope shape, the volume is incremented from 0 to 15, or
-decremted from 15 to 0. In either case it takes 16 steps to complete, the
+decremented from 15 to 0. In either case it takes 16 steps to complete, the
 completion time for 16 steps is therefore:
   T = nn*512 / 3.579545MHz      ;with nn in range 0..65535 (0-9.37 seconds)
 
@@ -1360,7 +1360,7 @@ completion time for 16 steps is therefore:
   6   Joystick select             (0=Connector 1, 1=Connector 2)
   7   LED       Code LED, if any  (0=On, 1=Off)
 
-Bits 4 and 5 is used by a program which uses a paddle (analog-joystick). A
+Bits 4 and 5 is used by a program which uses a paddle (analogue-joystick). A
 short positive edge pulse on bit 4 (or 5) starts a monostable timer (in the
 attached paddle) and the paddle sets one of the joystick bits in register 14
 low (FIRE A (FIRE B),L,R,D or U). When the monostable times out, the joystick
@@ -1451,7 +1451,7 @@ FDC I/O Addresses
 -----------------
 
 Disk drives have not been part of the first MSX computers, and obviously
-different companies invented their own disk adapters independendly of each
+different companies invented their own disk adapters independently of each
 other. In result there are a couple of different 'world standards'.
 
 Described below are different memory-mapped and I/O-based addresses, that are
@@ -1490,7 +1490,7 @@ These addresses are used by 'Technoahead' disk BIOS.
 Same as above 7FB8-7FBC, but using addresses 7F80-7F84 instead.
 
 I/O Ports for Brazilian Disk ROMs
-Used by various (brazilian only) distributors: Digital Design Electronica
+Used by various (Brazilian only) distributors: Digital Design Electronica
 Ltda, Conector Informatica, Microsol Tecnologia, Liftrom Informatica.
   D0h      R    Status Register
   D0h      W    Command Register
@@ -1560,7 +1560,7 @@ Interrupt Condition Flags
   i0     1 = Not ready to ready transition
 
 Type I commands (Restore, Seek, Step-Out, Step-In, Step)
-Used to move the read/write head. The stepping motor rate should be usally set
+Used to move the read/write head. The stepping motor rate should be usually set
 to 6ms (r1 and r0 bits set to zero) for a 3.5-inch floppy disk drive. An
 optional verification of head position can be performed by setting bit 2 (V=1)
 in the command word.
@@ -1693,7 +1693,7 @@ pattern of F5 thru FE in the data register, this is interpreted as data
 address marks with missing clocks or CRC generation. The CRC generator is
 initialized when an F5 data byte is about to be transferred (in MFM). An F7
 pattern will generate two CRC bytes. As a consequence, the patterns F5 thru FE
-must not appear in the gaps, data fiels, or ID fiels. Tracks may be formatted
+must not appear in the gaps, data fields, or ID fields. Tracks may be formatted
 with sector lengths of 128, 256, 512 or 1024 bytes. See "Formatting" below for
 more info and example.
 
@@ -1818,7 +1818,7 @@ Double Sided (720KB). The Sectors are logically numbered 01h..09h, and each
 sized 200h bytes.
 
 Boot-Record
-The first sector is always used as bootsector, giving information about the
+The first sector is always used as boot sector, giving information about the
 usage of the following sectors, and including the boot procedure (usually a
 short program that loads MSXDOS.SYS, or just a Z80 RET opcode (C9h) if the
 disk isn't bootable).
@@ -1827,8 +1827,8 @@ disk isn't bootable).
   0B-0C       bytes / sector
   0D          sectors / cluster
   0E-0F       sectors / boot-record
-  10          number of FAT-copys
-  11-12       entrys / root-directory
+  10          number of FAT-copies
+  11-12       entries / root-directory
   13-14       sectors / disk
   15          ID: F8=hdd, F9=3.5", FC=SS/9sec, FD=DS9, FE=SS8,FF=DS8
   16-17       sectors / FAT
@@ -1853,15 +1853,15 @@ sector.
 
 Root directory
 The following sectors are the Root directory, again, size depends on the info
-in bootsector. Each entry consists of 32 bytes:
+in boot sector. Each entry consists of 32 bytes:
   00-07       Filename (first byte: 00=free entry,2E=dir, E5=deleted entry)
   08-0A       Filename extension
-  0B          Fileattribute
+  0B          File attribute
   0C-15       reserved
   16-17       Timestamp: HHHHHMMM, MMMSSSSS
-  18-19       Datestamp: YYYYYYYM, MMMTTTTT
+  18-19       Date stamp: YYYYYYYM, MMMTTTTT
   1A-1B       Pointer to first cluster of file
-  1C-1F       Filesize in bytes
+  1C-1F       File size in bytes
 The 'cluster' entry points to the first used cluster of the file. The FAT
 entry for that cluster points to the next used cluster (if any), the FAT entry
 for that cluster points to the next cluster, and so on.
@@ -1896,7 +1896,7 @@ Port 0B5h = RTC data register (read/write)
 
 The above index register only offers to access 16 RTC data registers, however,
 beside for the time and date, the RTC chip additionally stores other data
-(like the RTC/CMOS chips in PCs) and alltogether that exceeds the number of 16
+(like the RTC/CMOS chips in PCs) and altogether that exceeds the number of 16
 4bit-registers.
 The register at index D is used to sub-class registers at index 0-C into 4
 blocks with contents as follows:
@@ -2118,10 +2118,10 @@ Port DBh   Select Class 2 Kanji Code (upper 6 bits)
 Port DBh   Read Data for Class 2 Kanji Code (32 bytes)
 
 Class 1 and Class 2 Kanji Characters
-Class 1 and Class 2 Kanji are two japanese character sets. Note that not all
-MSX computers support both Class 1 and Class 2. Most european MSX computers
+Class 1 and Class 2 Kanji are two Japanese character sets. Note that not all
+MSX computers support both Class 1 and Class 2. Most European MSX computers
 probably don't include either one at all.
-The Class 1 character set also contains various european, greek, and symbolic
+The Class 1 character set also contains various European, Greek, and symbolic
 characters. Note that different Kanji ROM versions exist, the characters may
 have slightly different appearances (and in some cases even different
 meanings).
@@ -2176,12 +2176,12 @@ Z80 CPU Specifications
 --> Z80 Instruction Format
 --> Z80 8bit Load Commands
 --> Z80 16bit Load Commands
---> Z80 Blocktransfer- and Searchcommands
+--> Z80 Block transfer and Search commands
 --> Z80 8bit Arithmetic/Logical Commands
 --> Z80 16bit Arithmetic Commands
 --> Z80 Rotate and Shift Commands
---> Z80 Singlebit Operations and CPU-Control Commands
---> Z80 Jumpcommands
+--> Z80 Single bit Operations and CPU-Control Commands
+--> Z80 Jump commands
 --> Z80 I/O Commands
 --> Z80 Interrupts
 --> Z80 Meaningless and Duplicated Opcodes
@@ -2207,7 +2207,7 @@ Interrupts
 Interrupts are supplied by the Video Display Controller (VDP) only. Note that
 these interrupts must be manually acknowledged.
 Non-maskable interrupts (NMIs) are not used. In Interrupt modes IM 0 and IM 2
-an undefined parameter byte is supplied on the databus.
+an undefined parameter byte is supplied on the data bus.
 
 Z80 Register Set
 ----------------
@@ -2230,11 +2230,11 @@ Register Summary
   -     I    R    Interrupt & Refresh
 
 Normal 8bit and 16bit Registers
-The Accumulator (A) is the allround register for 8bit operations. Registers B,
+The Accumulator (A) is the all-round register for 8bit operations. Registers B,
 C, D, E, H, L are normal 8bit registers, which can be also accessed as 16bit
 register pairs BC, DE, HL.
-The HL register pair is used as allround register for 16bit operations. B and
-BC are sometimes used as counters. DE is used as DEstination pointer in block
+The HL register pair is used as all-round register for 16bit operations. B and
+BC are sometimes used as counters. DE is used as destination pointer in block
 transfer commands.
 
 Second Register Set
@@ -2305,7 +2305,7 @@ After LDI,LDD,CPI,CPD,CPIR,CPDR: Set if BC<>0 at end of operation.
 
 BCD Flags (H,N)
 These bits are solely supposed to be used by the DAA instruction. The N flag
-signalizes if the previous operation has be an addition or substraction. The H
+signalizes if the previous operation has be an addition or subtraction. The H
 flag indicates if the lower 4 bits exceeded the range from 0-0Fh. (For 16bit
 instructions: H indicates if the lower 12 bits exceeded the range from
 0-0FFFh.)
@@ -2361,11 +2361,11 @@ the execution may take longer.
 
 Affected Flags
 The instruction tables below are including a six character wide field for the
-six flags: Sign, Zero, Halfcarry, Parity/Overflow, N-Flag, and Carry (in that
+six flags: Sign, Zero, Half carry, Parity/Overflow, N-Flag, and Carry (in that
 order). The meaning of the separate characters is:
   s    Indicates Signed result
   z    Indicates Zero
-  h    Indicates Halfcarry
+  h    Indicates Half carry
   o    Indicates Overflow
   p    Indicates Parity
   c    Indicates Carry
@@ -2423,7 +2423,7 @@ Z80 16bit Load Commands
  ex   (SP),HL   E3          19 ------ exchange (SP) <--> HL
  ex   (SP),ii   pD E3       23 ------ exchange (SP) <--> ii
 
-Z80 Blocktransfer- and Searchcommands
+Z80 Block transfer and Search commands
 -------------------------------------
  Instruction    Opcode  Cycles Flags  Notes
  ldi            ED A0       16 --0e0- (DE)=(HL), HL=HL+1, DE=DE+1, BC=BC-1
@@ -2506,7 +2506,7 @@ Whereas <cmd> may be:
  sra    shift right arithmetic (b7=b7)
  srl    shift right logical (b7=0)
 
-Z80 Singlebit Operations and CPU-Control Commands
+Z80 Single bit Operations and CPU-Control Commands
 -------------------------------------------------
  Instruction    Opcode  Cycles Flags  Notes
  bit  n,r       CB xx        8 xz1x0- test bit n  ;n=0..7
@@ -2528,11 +2528,11 @@ r,(ii+d)
  halt           76           4 ------ repeat until interrupt occurs
  di             F3           4 ------ iff=0  ;disable interrupts
  ei             FB           4 ------ iff=1  ;enable interrupts
- im   0         ED 46        8 ------ read opcode from databus on interrupt
+ im   0         ED 46        8 ------ read opcode from data bus on interrupt
  im   1         ED 56        8 ------ execute call 0038h on interrupt
- im   2         ED 5E        8 ------ execute call (i*100h+databus) on int.
+ im   2         ED 5E        8 ------ execute call (i*100h+data bus) on int.
 
-Z80 Jumpcommands
+Z80 Jump commands
 ----------------
  Instruction    Opcode  Cycles Flags  Notes
  jp   nn        C3 nn nn    10 ------ jump to nn, ie. PC=nn
@@ -2586,7 +2586,7 @@ existence of interrupts, and/or explain other details?
 
 Judging from the fragments of information the leaked out in the Z80 docs, the
 CPU supports non-maskable interrupts (NMI) and maskable interrupts (INT). MSX
-and CPC homecomputers aren't using NMIs, so information below is reverse
+and CPC home computers aren't using NMIs, so information below is reverse
 engineered guesswork for systems that use maskable interrupts only.
 
 Interrupt Flip-Flop (IFF1,IFF2)
@@ -2615,11 +2615,11 @@ The Z80 supports three interrupts modes which can be selected by IM 0, IM 1,
 and IM 2 instructions. The table below describes the respective operation and
 execution time upon interrupt execution in each mode.
   Mode  Cycles  Refresh  Operation
-  0     1+var   0+var    IFF=0, read and execute opcode from databus
+  0     1+var   0+var    IFF=0, read and execute opcode from data bus
   1     12      1        IFF=0, CALL 0038h
-  2     18      1        IFF=0, CALL (I*100h+databus)
-Mode 0 requires an opcode to be output to the databus by external hardware, in
-case that no byte is output, and provided that the 'empty' databus is free of
+  2     18      1        IFF=0, CALL (I*100h+data bus)
+Mode 0 requires an opcode to be output to the data bus by external hardware, in
+case that no byte is output, and provided that the 'empty' data bus is free of
 garbage, then the CPU might tend to read a value of FFh (opcode RST 38h) - the
 clock cycles, refresh cycles, and executed operation are then fully identical
 as in Mode 1.
@@ -2630,8 +2630,8 @@ hook the interrupt handler directly.
 Mode 2 calls to a 16bit address which is read from a table in memory, the
 table pointer is calculated from the "I" register (initialized by LD I,A
 instruction) multiplied by 100h, plus an index byte which is read from the
-databus. The following trick may be used to gain stable results in Mode 2 even
-if no index byte is supplied on the databus: For example, set I=40h the origin
+data bus. The following trick may be used to gain stable results in Mode 2 even
+if no index byte is supplied on the data bus: For example, set I=40h the origin
 of the table will be then at 4000h on memory. Now fill the entire area from
 4000h to 4100h (101h bytes, including 4100h) by the value 41h. The CPU will
 then perform a CALL 4141h upon interrupt execution - regardless of whether the
@@ -2689,7 +2689,7 @@ byte.
 Z80 Garbage in Flag Register
 ----------------------------
 
-Nocash Z80-flags description
+No cache Z80-flags description
 This chapter describes the undocumented Z80 flags (bit 3 and 5 of the Flags
 Register), these flags are affected by ALL instructions that modify one or
 more of the normal flags - all OTHER instructions do NOT affect the
@@ -2717,7 +2717,7 @@ For 16bit instructions flags are calculated as "RR AND 2800h":
 
 Slightly Special Undocumented Flags
 For 'CP OP' flags are calculated as "OP AND 28h", that is the unmodified
-operand, and NOT the internally calculated result of the comparision.
+operand, and NOT the internally calculated result of the comparison.
 For 'SCF' and 'CCF' flags are calculated as "(A OR F) AND 28h", ie. the flags
 remain set if they have been set before.
 For 'BIT N,R' flags are calculated as "OP AND 28h", additionally the P-Flag is

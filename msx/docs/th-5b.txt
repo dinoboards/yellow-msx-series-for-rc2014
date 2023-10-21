@@ -1,12 +1,12 @@
 MSX2 TECHNICAL HANDBOOK
 -----------------------
 
-Edited by:		ASCII Systems Division
-Published by:		ASCII Coprporation - JAPAN
-First edition:		March 1987
+Edited by:              ASCII Systems Division
+Published by:           ASCII Corporation - JAPAN
+First edition:          March 1987
 
-Text file typed by:	Nestor Soriano (Konami Man) - SPAIN
-			October 1997
+Text file typed by:     Nestor Soriano (Konami Man) - SPAIN
+                        October 1997
 
 Changes from the original:
 
@@ -67,41 +67,41 @@ cartridge is always a basic slot, in some cases the connector for the
 optional hardware of each machine might be connected to the expansion slot).
 
 
-   Figure 5.36	Basic slot and expansion slot
+   Figure 5.36  Basic slot and expansion slot
 
-					---------
-					|	|
-					|  CPU	|
-					|	|
-					|	|
-					---------
-					    |
-					    O
-					     \
-					       \
-						 \
-						   \
-		    O		    O		    O		    O
-		    |		    |		    |		    |
-		---------	---------	---------	---------
-		|	|	|	|	|	|	|	|
-Basic slot	|	|	|	|	|	|	|	|
-		|	|	|	|	|	|	|	|
-		|	|	|	|	|	|	|	|
-		---------	---------	---------	---------
-		 Slot #0	    O		 Slot #2	 Slot #3
-				  /
-				/
-			      /
-	       O	     O		   O		 O
-	       |	     |		   |		 |
-	   ---------	 ---------     ---------     ---------
-	   |	   |	 |	 |     |       |     |	     |
-Expansion  |	   |	 |	 |     |       |     |	     |
-slot	   |	   |	 |	 |     |       |     |	     |
-	   |	   |	 |	 |     |       |     |	     |
-	   ---------	 ---------     ---------     ---------
-	   Slot #1-0	 Slot #1-1     Slot #1-2     Slot #1-3
+                                        ---------
+                                        |       |
+                                        |  CPU  |
+                                        |       |
+                                        |       |
+                                        ---------
+                                            |
+                                            O
+                                             \
+                                               \
+                                                 \
+                                                   \
+                    O               O               O               O
+                    |               |               |               |
+                ---------       ---------       ---------       ---------
+                |       |       |       |       |       |       |       |
+Basic slot      |       |       |       |       |       |       |       |
+                |       |       |       |       |       |       |       |
+                |       |       |       |       |       |       |       |
+                ---------       ---------       ---------       ---------
+                 Slot #0            O            Slot #2         Slot #3
+                                  /
+                                /
+                              /
+               O             O             O             O
+               |             |             |             |
+           ---------     ---------     ---------     ---------
+           |       |     |       |     |       |     |       |
+Expansion  |       |     |       |     |       |     |       |
+slot       |       |     |       |     |       |     |       |
+           |       |     |       |     |       |     |       |
+           ---------     ---------     ---------     ---------
+           Slot #1-0     Slot #1-1     Slot #1-2     Slot #1-3
 
 
 Each slot has 64K bytes from 0000H to FFFFH of address space and MSX manages
@@ -112,19 +112,19 @@ given page number cannot be assigned to a page with a different page number
 (that is, page n of each slot is also page n to the CPU).
 
 
-   Figure 5.37	Example of the page selection
+   Figure 5.37  Example of the page selection
 
-	-------    -------    -------	 -------		-------
-Page 0	|  A  |    |  E  |    |  I  |	 |  M  |  <---------->	|  A  |
-	|-----|    |-----|    |-----|	 |-----|		|-----|
-Page 1	|  B  |    |  F  |    |  J  |	 |  N  |  <---------->	|  J  |
-	|-----|    |-----|    |-----|	 |-----|		|-----|
-Page 2	|  C  |    |  G  |    |  K  |	 |  O  |  <---------->	|  G  |
-	|-----|    |-----|    |-----|	 |-----|		|-----|
-Page 3	|  D  |    |  H  |    |  L  |	 |  P  |  <---------->	|  H  |
-	-------    -------    -------	 -------		-------
-	 Slot 0     Slot 1     Slot 2	  Slot 3	      CPU address
-								 space
+        -------    -------    -------    -------                -------
+Page 0  |  A  |    |  E  |    |  I  |    |  M  |  <---------->  |  A  |
+        |-----|    |-----|    |-----|    |-----|                |-----|
+Page 1  |  B  |    |  F  |    |  J  |    |  N  |  <---------->  |  J  |
+        |-----|    |-----|    |-----|    |-----|                |-----|
+Page 2  |  C  |    |  G  |    |  K  |    |  O  |  <---------->  |  G  |
+        |-----|    |-----|    |-----|    |-----|                |-----|
+Page 3  |  D  |    |  H  |    |  L  |    |  P  |  <---------->  |  H  |
+        -------    -------    -------    -------                -------
+         Slot 0     Slot 1     Slot 2     Slot 3              CPU address
+                                                                 space
 
 7.1.2 Selecting slots
 
@@ -139,33 +139,33 @@ program in another slot, use the inter-slot call described in the next
 section.
 
 
-   Figure 5.38	Selecting the basic slot
+   Figure 5.38  Selecting the basic slot
 
-	     I/O port (A8H)
+             I/O port (A8H)
 -----------------------------------------
-|    :	  |    :    |	 :    |    :	|
+|    :    |    :    |    :    |    :    |
 -----------------------------------------
-|	  |	    |	      | 	|
+|         |         |         |         |
 +---------+---------+---------+---------+
-     |	       |	 |	   |
-     |	       |	 |	   +---> Basic slot number of page 0 (0 to 3)
-     |	       |	 +-------------> Basic slot number of page 1 (0 to 3)
-     |	       +-----------------------> Basic slot number of page 2 (0 to 3)
+     |         |         |         |
+     |         |         |         +---> Basic slot number of page 0 (0 to 3)
+     |         |         +-------------> Basic slot number of page 1 (0 to 3)
+     |         +-----------------------> Basic slot number of page 2 (0 to 3)
      +---------------------------------> Basic slot number of page 3 (0 to 3)
 
 
-   Figure 5.39	Selecting the expansion slot
+   Figure 5.39  Selecting the expansion slot
 
 Expansion slot selection (FFFFH in expansion slot)
 -----------------------------------------
-|    :	  |    :    |	 :    |    :	|
+|    :    |    :    |    :    |    :    |
 -----------------------------------------
-|	  |	    |	      | 	|
+|         |         |         |         |
 +---------+---------+---------+---------+
-     |	       |	 |	   |
-     |	       |	 |	   +---> Expn. slot number of page 0 (0 to 3)
-     |	       |	 +-------------> Expn. slot number of page 1 (0 to 3)
-     |	       +-----------------------> Expn. slot number of page 2 (0 to 3)
+     |         |         |         |
+     |         |         |         +---> Expn. slot number of page 0 (0 to 3)
+     |         |         +-------------> Expn. slot number of page 1 (0 to 3)
+     |         +-----------------------> Expn. slot number of page 2 (0 to 3)
      +---------------------------------> Expn. slot number of page 3 (0 to 3)
 
 Note: to identify the kind of slot, in the case of the expansion slot, the
@@ -190,22 +190,22 @@ ROM resides can be obtained by referring to the work area described below
 (the slot information can be obtained in the format shown in Figure 5.40).
 When calling BIOS from DOS, examine the slot of MAIN-ROM in this way.
 
-* EXPTBL (FCC1H, 1)	the slot of MAIN-ROM
-* EXBRSA (FAF8H, 1)	the slot of SUB-ROM (0 for MSX1)
+* EXPTBL (FCC1H, 1)     the slot of MAIN-ROM
+* EXBRSA (FAF8H, 1)     the slot of SUB-ROM (0 for MSX1)
 
 
-   Figure 5.40	Format for the slot
+   Figure 5.40  Format for the slot
 
-MSB				      LSB
-   7	6    5	  4    3    2	 1    0
+MSB                                   LSB
+   7    6    5    4    3    2    1    0
 -----------------------------------------
-|    |	  :    :    |	 :    |    :	|
+|    |    :    :    |    :    |    :    |
 -----------------------------------------
-|    |		    |	      | 	|
+|    |              |         |         |
 +----+--------------+---------+---------+
-  |	  Unused	 |	   |
-  |			 |	   +---> Basic slot number (0 to 3)
-  |			 +-------------> Expansion slot number (0 to 3)
+  |       Unused         |         |
+  |                      |         +---> Basic slot number (0 to 3)
+  |                      +-------------> Expansion slot number (0 to 3)
   |
   +------------------------------------> "1" if expansion slot
 
@@ -224,49 +224,49 @@ List 5.11  Program to know the current slot
 ;********************************************************
 ;  List 5.11   to know where you are
 ;********************************************************
-;	Suppose your program cartridge is 32K bytes
-;	long (4000h..0BFFFH). You set the ID at 4000H
-;	and 4001H and the execution start address within
-;	page 1 (4000h..7FFFH), MSX passes control
-;	to this address so the part which resides in
-;	page 2 is not yet enabled at this point. You
-;	have to know where you are (in what primary
-;	slot, in what secondary slot) and enable the
-;	part at page 2. Below is the sample program
-;	to do this.
+;       Suppose your program cartridge is 32K bytes
+;       long (4000h..0BFFFH). You set the ID at 4000H
+;       and 4001H and the execution start address within
+;       page 1 (4000h..7FFFH), MSX passes control
+;       to this address so the part which resides in
+;       page 2 is not yet enabled at this point. You
+;       have to know where you are (in what primary
+;       slot, in what secondary slot) and enable the
+;       part at page 2. Below is the sample program
+;       to do this.
 ;
-ENASLT	EQU	0024H		;enable slot
-RSLREG	EQU	0138H		;read primary slot select register
-EXPTBL	EQU	0FCC1H		;slot is expanded or not
+ENASLT  EQU     0024H           ;enable slot
+RSLREG  EQU     0138H           ;read primary slot select register
+EXPTBL  EQU     0FCC1H          ;slot is expanded or not
 
 ;----- program start -----
 
 ENAP2:
-	CALL	RSLREG		;read primary slot #
-	RRCA			;move it to bit 0,1 of [Acc]
-	RRCA
-	AND	00000011B
-	LD	C,A
-	LD	B,0
-	LD	HL,EXPTBL	;see if this slot is expanded or not
-	ADD	HL,BC
-	LD	C,A		;save primary slot #
-	LD	A,(HL)		;See if the slot is expanded or not
-	AND	80H
-	OR	C		;set MSB if so
-	LD	C,A		;save it to [C]
-	INC	HL		;Point to SLTTBL entry
-	INC	HL
-	INC	HL
-	INC	HL
-	LD	A,(HL)		;Get what is currently output
-				;to expansion slot register
-	AND	00001100B
-	OR	C		;Finally form slot address
-	LD	H,80H
-	JP	ENASLT		;enable page 2
+        CALL    RSLREG          ;read primary slot #
+        RRCA                    ;move it to bit 0,1 of [Acc]
+        RRCA
+        AND     00000011B
+        LD      C,A
+        LD      B,0
+        LD      HL,EXPTBL       ;see if this slot is expanded or not
+        ADD     HL,BC
+        LD      C,A             ;save primary slot #
+        LD      A,(HL)          ;See if the slot is expanded or not
+        AND     80H
+        OR      C               ;set MSB if so
+        LD      C,A             ;save it to [C]
+        INC     HL              ;Point to SLTTBL entry
+        INC     HL
+        INC     HL
+        INC     HL
+        LD      A,(HL)          ;Get what is currently output
+                                ;to expansion slot register
+        AND     00001100B
+        OR      C               ;Finally form slot address
+        LD      H,80H
+        JP      ENASLT          ;enable page 2
 
-	END
+        END
 
 =================================================================
 
@@ -277,9 +277,9 @@ As described above, programs reside in different slots, so a program not in
 the current slot might be needed in some cases. The most common cases are
 listed below:
 
-	(1) calling BIOS in MAIN-ROM from MSX-DOS level
-	(2) calling BIOS in SUB-ROM from BASIC level (only the case of MSX2)
-	(3) calling BIOS in MAIN-ROM or SUB-ROM from cartridge software
+        (1) calling BIOS in MAIN-ROM from MSX-DOS level
+        (2) calling BIOS in SUB-ROM from BASIC level (only the case of MSX2)
+        (3) calling BIOS in MAIN-ROM or SUB-ROM from cartridge software
 
 In doing such calls, to switch slots easily and safely, there is a group of
 BIOS routines called the inter-slot calls, which can be called from the
@@ -301,21 +301,21 @@ described below.
     initial address.
 
 
-   Figure 5.41	Inter-slot call
+   Figure 5.41  Inter-slot call
 
 a) When using MSX-DOS
 
-	MSX-DOS   BASIC-ROM			  MSX-DOS   BASIC-ROM
-	-------    -------			  -------    -------
-Page 0	| RAM |    | ROM |		  Page 0  | RAM |    | ROM | BIOS is
-	|-----|    |-----|			  |-----|    |-----| called
-Page 1	| RAM |    | ROM |		  Page 1  | RAM |    | ROM |
-	|-----|    |-----|  <---------->	  |-----|    |-----|
-Page 2	| RAM |    | ___ |		  Page 2  | RAM |    | ___ |
-	|-----|    |-----|			  |-----|    |-----|
-Page 3	| RAM |    | ___ |		  Page 3  | RAM |    | ___ |
-	-------    -------			  -------    -------
-	 Slot 3     Slot 0			   Slot 3     Slot 0
+        MSX-DOS   BASIC-ROM                       MSX-DOS   BASIC-ROM
+        -------    -------                        -------    -------
+Page 0  | RAM |    | ROM |                Page 0  | RAM |    | ROM | BIOS is
+        |-----|    |-----|                        |-----|    |-----| called
+Page 1  | RAM |    | ROM |                Page 1  | RAM |    | ROM |
+        |-----|    |-----|  <---------->          |-----|    |-----|
+Page 2  | RAM |    | ___ |                Page 2  | RAM |    | ___ |
+        |-----|    |-----|                        |-----|    |-----|
+Page 3  | RAM |    | ___ |                Page 3  | RAM |    | ___ |
+        -------    -------                        -------    -------
+         Slot 3     Slot 0                         Slot 3     Slot 0
 
 
 This is easily done when the program resides in other than page 0, but there
@@ -336,128 +336,128 @@ so inter-slot calls can be executed under MSX-DOS.
 (1) Inter-slot call routines in BIOS
 
 * RDSLT (000CH/MAIN) .................. read value at specified address of
-					specified slot
+                                        specified slot
 
-Input:		A register <-- slot specification
-		HL register <-- address to be read at
-Output: 	A register <-- value which has been read out
-Use:		AF, BC, DE
-Function:	reads the value at the specified address of the specified
-		slot and stores it in the A register. The slot specification
-		is done using the A register in the form shown in Figure
-		5.40. At this point, when the objective slot is the basic
-		slot, set "0" to the 6 high order bits and define the slot
-		#0 to #3 using the 2 low order bits. When specifying the
-		expansion slot, specify the basic slot by bit 0 and bit 1 and
-		the expansion slot by bit 2 and bit 3 and set bit 7 to "1".
+Input:          A register <-- slot specification
+                HL register <-- address to be read at
+Output:         A register <-- value which has been read out
+Use:            AF, BC, DE
+Function:       reads the value at the specified address of the specified
+                slot and stores it in the A register. The slot specification
+                is done using the A register in the form shown in Figure
+                5.40. At this point, when the objective slot is the basic
+                slot, set "0" to the 6 high order bits and define the slot
+                #0 to #3 using the 2 low order bits. When specifying the
+                expansion slot, specify the basic slot by bit 0 and bit 1 and
+                the expansion slot by bit 2 and bit 3 and set bit 7 to "1".
 
 
 * WRSLT (0014H/MAIN) .................. write value at specified address of
-					specified slot
+                                        specified slot
 
-Input:		A register <-- slot specification (same format as in
-						   Figure 5.40)
-		HL register <-- address to be written in
-		E register <-- data to be written
-Output: 	---
-Use:		AF, BC, D
-Function:	writes E register value in the address specified by HL
-		register of the slot specified by the A register (the
-		specification format is the same as in Figure 5.40).
+Input:          A register <-- slot specification (same format as in
+                                                   Figure 5.40)
+                HL register <-- address to be written in
+                E register <-- data to be written
+Output:         ---
+Use:            AF, BC, D
+Function:       writes E register value in the address specified by HL
+                register of the slot specified by the A register (the
+                specification format is the same as in Figure 5.40).
 
 
 * CALSLT (001CH/MAIN) ................. call specified address of specified
-					slot
+                                        slot
 
-Input:		8 high order bits of IY register <-- slot
-		(same format as in Figure 5.40)
-		IX register <-- address to be called
-Output: 	depends on the result of the called program
-Use:		depends on the result of the called program
-Function:	calls the routine at the address specified by IX register
-		of the slot specified by the 8 high order bits of IY register
-		(the specification format is the same as in Figure 5.40).
+Input:          8 high order bits of IY register <-- slot
+                (same format as in Figure 5.40)
+                IX register <-- address to be called
+Output:         depends on the result of the called program
+Use:            depends on the result of the called program
+Function:       calls the routine at the address specified by IX register
+                of the slot specified by the 8 high order bits of IY register
+                (the specification format is the same as in Figure 5.40).
 
 
 * ENASLT (0024H/MAIN) ................. swicth slots
 
-Input:		A register <-- slot (same format as in Figure 5.40)
-		HL register <-- specifies the page to switch the slot by
-				2 high order bits
-Output: 	---
-Use:		all
-Function:	switches the page specified by the 2 high order bits of the
-		HL register to the slot specified by the A register.
+Input:          A register <-- slot (same format as in Figure 5.40)
+                HL register <-- specifies the page to switch the slot by
+                                2 high order bits
+Output:         ---
+Use:            all
+Function:       switches the page specified by the 2 high order bits of the
+                HL register to the slot specified by the A register.
 
 
 * CALLF (0030H/MAIN) .................. call specified address of specified
-					slot
+                                        slot
 
-Input:		specifies the slot and the address in the inline parameter
-		format
-Output: 	depends on the result of the called program
-Use:		depends on the result of the called program
-Function:	calls the specified address of the specified slot, but,
-		different from CALSLT described above, the slot and the
-		address is specified in the inline parameter format, as
-		described below. That is, parameters are passet by one byte
-		(same format as RDSLT) to specify that the slot is placed
-		just after the instruction which calls CALLF and the next
-		two bytes to specify the address are placed. "CALL 0030H"
-		may be replaced by the RST (restart) instruction, "RST 30H".
-		In this case, the inter-slot call is done in 4 bytes.
+Input:          specifies the slot and the address in the inline parameter
+                format
+Output:         depends on the result of the called program
+Use:            depends on the result of the called program
+Function:       calls the specified address of the specified slot, but,
+                different from CALSLT described above, the slot and the
+                address is specified in the inline parameter format, as
+                described below. That is, parameters are passed by one byte
+                (same format as RDSLT) to specify that the slot is placed
+                just after the instruction which calls CALLF and the next
+                two bytes to specify the address are placed. "CALL 0030H"
+                may be replaced by the RST (restart) instruction, "RST 30H".
+                In this case, the inter-slot call is done in 4 bytes.
 
 
-   Figure 5.42	Example of the inter-slot call execution
+   Figure 5.42  Example of the inter-slot call execution
 
 -----------------------------------------------------------------
-|								|
-|	RST	30H		;interslot call 		|
-|	DB	00000000B	;select slot#0			|
-|	DW	006CH		;call address = 006CH		|
-|								|
+|                                                               |
+|       RST     30H             ;interslot call                 |
+|       DB      00000000B       ;select slot#0                  |
+|       DW      006CH           ;call address = 006CH           |
+|                                                               |
 -----------------------------------------------------------------
 
 
 * RSLREG (0138H/MAIN) ................. read the basic slot selection
-					register
+                                        register
 
-Input:		---
-Output: 	A register <-- value which has been read
-Use:		---
-Function:	reads the contents of the basic slot selection register and
-		stores it in the A register.
+Input:          ---
+Output:         A register <-- value which has been read
+Use:            ---
+Function:       reads the contents of the basic slot selection register and
+                stores it in the A register.
 
 
 * WSLREG (013BH/MAIN) ................. write in the basic slot selection
-					register
+                                        register
 
-Input:		A register <-- value to be written
-Output: 	---
-Use:		---
-Function:	writes the A register value in the basic slot selection
-		register and selects the slot.
+Input:          A register <-- value to be written
+Output:         ---
+Use:            ---
+Function:       writes the A register value in the basic slot selection
+                register and selects the slot.
 
 
 * SUBROM (015CH/MAIN) ................. call specified address in SUB-ROM
 
-Input:		IX register <-- address to be called, PUSH IX
-				(see Appendix 2, SUB-ROM list)
-Output: 	depends on the result of the called program
-Use:		background register and IX, IY registers are reserved
-Function:	This is the routine to call BASIC SUB-ROM especially. The
-		slot where SUB-ROM resides is automatically examined.
-		Normally, EXTROM, described below, is used.
+Input:          IX register <-- address to be called, PUSH IX
+                                (see Appendix 2, SUB-ROM list)
+Output:         depends on the result of the called program
+Use:            background register and IX, IY registers are reserved
+Function:       This is the routine to call BASIC SUB-ROM especially. The
+                slot where SUB-ROM resides is automatically examined.
+                Normally, EXTROM, described below, is used.
 
 
 * EXTROM (015FH/MAIN) ................. call specified address in SUB-ROM
 
-Input:		IX register <-- address to be called
-Output: 	depends on the result of the called program
-Use:		background register and IY register are reserved
-Function:	This is the routine to call BASIC SUB-ROM. The difference
-		between this and SUB-ROM above is the point whether the
-		IX register value is pushed.
+Input:          IX register <-- address to be called
+Output:         depends on the result of the called program
+Use:            background register and IY register are reserved
+Function:       This is the routine to call BASIC SUB-ROM. The difference
+                between this and SUB-ROM above is the point whether the
+                IX register value is pushed.
 
 
 (2) Inter-slot call in MSX-DOS
@@ -478,37 +478,37 @@ List 5.12  Calling BIOS from MSX-DOS
 =================================================================
 
 ;********************************************************
-;  List 5.12	How to use BIOS from MSX-DOS.
+;  List 5.12    How to use BIOS from MSX-DOS.
 ;********************************************************
 ;
-CALSLT	EQU	001CH		;Inter slot call
-EXBRSA	EQU	0FAF0H		;Slot address of BIOS (main) ROM
-EXPTBL	EQU	0FCC1H		;Slot address of extended ROM
+CALSLT  EQU     001CH           ;Inter slot call
+EXBRSA  EQU     0FAF0H          ;Slot address of BIOS (main) ROM
+EXPTBL  EQU     0FCC1H          ;Slot address of extended ROM
 ;
-;	LD	IY,(EXPTBL-1)	;Load slot address of the BIOS ROM
-;				;in high byte of IY
-;	LD	IX,address of the BIOS jump table
-;	CALL	CALSLT
+;       LD      IY,(EXPTBL-1)   ;Load slot address of the BIOS ROM
+;                               ;in high byte of IY
+;       LD      IX,address of the BIOS jump table
+;       CALL    CALSLT
 ;
 ;----- Sample program to set text mode -----
 
-INITXT	EQU	006CH
-LINL40	EQU	0F3AEH
+INITXT  EQU     006CH
+LINL40  EQU     0F3AEH
 ;
-TOTEXT: LD	B,40
-	LD	A,(EXBRSA)	;slot address of SUB-ROM
-	OR	A		;0 if MSX1
-	JR	Z,TO40
-	LD	B,80
+TOTEXT: LD      B,40
+        LD      A,(EXBRSA)      ;slot address of SUB-ROM
+        OR      A               ;0 if MSX1
+        JR      Z,TO40
+        LD      B,80
 
-TO40:	LD	(LINL40),B	;set width into work area
-	LD	IX,INITXT
-	LD	IY,(EXPTBL-1)	;get expanded slot status to IYH
-	CALL	CALSLT		;perform an inter-slot call
-	EI			;because CALSLT do DI
-	RET
+TO40:   LD      (LINL40),B      ;set width into work area
+        LD      IX,INITXT
+        LD      IY,(EXPTBL-1)   ;get expanded slot status to IYH
+        CALL    CALSLT          ;perform an inter-slot call
+        EI                      ;because CALSLT do DI
+        RET
 
-	END
+        END
 
 =================================================================
 
@@ -523,16 +523,16 @@ The following addresses involve the slot work area.
 
      Figure 5.43  SUB-ROM slot
 
-MSB				      LSB
-   7	6    5	  4    3    2	 1    0
+MSB                                   LSB
+   7    6    5    4    3    2    1    0
 -----------------------------------------
-|    |	  :    :    |	 :    |    :	|
+|    |    :    :    |    :    |    :    |
 -----------------------------------------
-|    |		    |	      | 	|
+|    |              |         |         |
 +----+--------------+---------+---------+
-  |	  Unused	 |	   |
-  |			 |	   +---> Basic slot number (0 to 3)
-  |			 +-------------> Expansion slot number (0 to 3)
+  |       Unused         |         |
+  |                      |         +---> Basic slot number (0 to 3)
+  |                      +-------------> Expansion slot number (0 to 3)
   |
   +------------------------------------> "1" if expansion slot
 
@@ -540,85 +540,85 @@ MSB				      LSB
 * EXPTBL (FCC1H, 4) ........... whether the basic slot is expanded or not
 
 
-   Figure 5.44	Selecting the basic slot
+   Figure 5.44  Selecting the basic slot
 
-	 MSB				       LSB
-	    7	 6    5    4	3    2	  1    0
-	 -----------------------------------------
-[FCC1H]  |    |    :	:    |	  :    |    :	 |  MAIN-ROM slot
-	 -----------------------------------------
+         MSB                                   LSB
+            7    6    5    4    3    2    1    0
+         -----------------------------------------
+[FCC1H]  |    |    :    :    |    :    |    :    |  MAIN-ROM slot
+         -----------------------------------------
 
-	 -----------------------------------------
-[FCC2H]  |    | 	   Unused		 |  Slot #1
-	 -----------------------------------------
+         -----------------------------------------
+[FCC2H]  |    |            Unused                |  Slot #1
+         -----------------------------------------
 
-	 -----------------------------------------
-[FCC3H]  |    | 	   Unused		 |  Slot #2
-	 -----------------------------------------
+         -----------------------------------------
+[FCC3H]  |    |            Unused                |  Slot #2
+         -----------------------------------------
 
-	 -----------------------------------------
-[FCC4H]  |    | 	   Unused		 |  Slot #3
-	 -----------------------------------------
-	   |
-	   +--> 0: slot is not expanded
-		1: slot is expanded
+         -----------------------------------------
+[FCC4H]  |    |            Unused                |  Slot #3
+         -----------------------------------------
+           |
+           +--> 0: slot is not expanded
+                1: slot is expanded
 
 
 * SLTTBL (FCC5H, 4) ........... preservation area for the expansion
-				slot selection register value
+                                slot selection register value
 
 
-   Figure 5.45	Selecting the expansion slot
+   Figure 5.45  Selecting the expansion slot
 
-	 MSB				       LSB
-	    7	 6    5    4	3    2	  1    0
-	 -----------------------------------------  expansion slot selection
-[FCC5H]  |    :    |	:    |	  :    |    :	 |  register value of slot #0
-	 -----------------------------------------
+         MSB                                   LSB
+            7    6    5    4    3    2    1    0
+         -----------------------------------------  expansion slot selection
+[FCC5H]  |    :    |    :    |    :    |    :    |  register value of slot #0
+         -----------------------------------------
 
-	 -----------------------------------------  expansion slot selection
-[FCC6H]  |    :    |	:    |	  :    |    :	 |  register value of slot #1
-	 -----------------------------------------
+         -----------------------------------------  expansion slot selection
+[FCC6H]  |    :    |    :    |    :    |    :    |  register value of slot #1
+         -----------------------------------------
 
-	 -----------------------------------------  expansion slot selection
-[FCC7H]  |    :    |	:    |	  :    |    :	 |  register value of slot #2
-	 -----------------------------------------
+         -----------------------------------------  expansion slot selection
+[FCC7H]  |    :    |    :    |    :    |    :    |  register value of slot #2
+         -----------------------------------------
 
-	 -----------------------------------------  expansion slot selection
-[FCC8H]  |    :    |	:    |	  :    |    :	 |  register value of slot #3
-	 -----------------------------------------
-	 |	   |	     |	       |	 |
-	 +---------+---------+---------+---------+
-	      | 	|	  |	    |
-	      | 	|	  |	    +---->  exp. slot num. for page 0
-	      | 	|	  +-------------->  exp. slot num. for page 1
-	      | 	+------------------------>  exp. slot num. for page 2
-	      +---------------------------------->  exp. slot num. for page 3
-
-
-* SLTATR (FCC9H, 64) .......... test for existance of application in each
-				slot/page
+         -----------------------------------------  expansion slot selection
+[FCC8H]  |    :    |    :    |    :    |    :    |  register value of slot #3
+         -----------------------------------------
+         |         |         |         |         |
+         +---------+---------+---------+---------+
+              |         |         |         |
+              |         |         |         +---->  exp. slot num. for page 0
+              |         |         +-------------->  exp. slot num. for page 1
+              |         +------------------------>  exp. slot num. for page 2
+              +---------------------------------->  exp. slot num. for page 3
 
 
-   Figure 5.46	Test for existence of application
+* SLTATR (FCC9H, 64) .......... test for existence of application in each
+                                slot/page
 
-	 -----------------------------------------
-[FCC9H]  |    |    |	|	  Unused	 |  Slot #0-0, page 0
-	 |----+----+----+------------------------|
-[FCCAH]  |    |    |	|	  Unused	 |  Slot #0-0, page 1
-	 |----+----+----+------------------------|
-	 |    |    |	|			 |
-   .	   .	.    .
-   .	   .	.    .
-   .	   .	.    .
-	 |    |    |	|			 |
-	 |----+----+----+------------------------|
-[FD08H]  |    |    |	|	  Unused	 |  Slot #3-3, page 3
-	 -----------------------------------------
-	   |	|    |
-	   |	|    +-->  Routine to process expanded statements  1:yes 0:no
-	   |	+------->  Routine to process expansion device	   1:yes 0:no
-	   +------------>  BASIC text				   1:yes 0:no
+
+   Figure 5.46  Test for existence of application
+
+         -----------------------------------------
+[FCC9H]  |    |    |    |         Unused         |  Slot #0-0, page 0
+         |----+----+----+------------------------|
+[FCCAH]  |    |    |    |         Unused         |  Slot #0-0, page 1
+         |----+----+----+------------------------|
+         |    |    |    |                        |
+   .       .    .    .
+   .       .    .    .
+   .       .    .    .
+         |    |    |    |                        |
+         |----+----+----+------------------------|
+[FD08H]  |    |    |    |         Unused         |  Slot #3-3, page 3
+         -----------------------------------------
+           |    |    |
+           |    |    +-->  Routine to process expanded statements  1:yes 0:no
+           |    +------->  Routine to process expansion device     1:yes 0:no
+           +------------>  BASIC text                              1:yes 0:no
 
 
 The concrete work area for a given slot and page can be obtained with the
@@ -630,21 +630,21 @@ following expression:
 * SLTWRK (FD09H, 128) ......... work area for application
 
 
-   Figure 5.47	Work area for application
+   Figure 5.47  Work area for application
 
-	 -----------------------------------------  Work area for
+         -----------------------------------------  Work area for
 [FD09H]  |  ...................................  |  slot 0-0 page 0
-	 |---------------------------------------|
+         |---------------------------------------|
 [FD0BH]  |  ...................................  |  Work area for
-	 |---------------------------------------|  slot 0-0 page 1
-	 |					 |
-   .	 .					 .
-   .	 .					 .
-   .	 .					 .
-	 |					 |
-	 |---------------------------------------|  Work area for
+         |---------------------------------------|  slot 0-0 page 1
+         |                                       |
+   .     .                                       .
+   .     .                                       .
+   .     .                                       .
+         |                                       |
+         |---------------------------------------|  Work area for
 [FD87H]  |  ...................................  |  slot 3-3 page 3
-	 -----------------------------------------
+         -----------------------------------------
 
 
 The concrete work area for a given slot and page can be obtained with the
@@ -665,7 +665,7 @@ in ROM cartridge easily. This section describes how to develop cartridge
 software.
 
 
-7.3.1 Catridge header
+7.3.1 Cartridge header
 
 MSX cartridges have a 16-bye common header and, when the system is reset, the
 cartridge is initialised by the information written in this header. For ROM
@@ -674,25 +674,25 @@ started by using the information written in the header. Figure 5.48 shows the
 cartridge header configuration.
 
 
-   Figure 5.48	Program cartridge header
+   Figure 5.48  Program cartridge header
 
-	-------------------   4000H or 8000H
-+0000H	|	ID	  |
-	|-----------------|
-+0002H	|      INIT	  |
-	|-----------------|
-+0004H	|    STATEMENT	  |
-	|-----------------|
-+0006H	|     DEVICE	  |
-	|-----------------|
-+0008H	|      TEXT	  |
-	|-----------------|
-+000AH	|		  |
-	|		  |
-	|    Reserved	  |   Note:  Reserved area should
-	|		  |	     be filled with 00H.
-	|		  |
-+0010H	-------------------
+        -------------------   4000H or 8000H
++0000H  |       ID        |
+        |-----------------|
++0002H  |      INIT       |
+        |-----------------|
++0004H  |    STATEMENT    |
+        |-----------------|
++0006H  |     DEVICE      |
+        |-----------------|
++0008H  |      TEXT       |
+        |-----------------|
++000AH  |                 |
+        |                 |
+        |    Reserved     |   Note:  Reserved area should
+        |                 |          be filled with 00H.
+        |                 |
++0010H  -------------------
 
 
 * ID
@@ -733,47 +733,47 @@ to the text address next to the expansion statement name at this point (see
 Figure 5.49a).
 
 
-   Figure 5.49	Input-output of the operation routine of the expansion
-		statement
+   Figure 5.49  Input-output of the operation routine of the expansion
+                statement
 
     ---------------------------------------------------------------------
-    |									|
-a)  |  Input setup when the interpreter calls routines to process	|
-    |  expanded statements						|
-    |									|
-    |  CALL ABCDE(0,0,0):A=0						|
-    |		 ^							|
-    |		 |							|
-    |		 HL							|
-    |									|
-    |  CY flag = 1				 +---- End of the name	|
-    |						 |     of the expanded	|
-    |		-------------------------------------  statement	|
-    |	PROCNM	|  A  |  B  |  C  |  D	|  E  | 00H |			|
-    |		-------------------------------------			|
-    |									|
+    |                                                                   |
+a)  |  Input setup when the interpreter calls routines to process       |
+    |  expanded statements                                              |
+    |                                                                   |
+    |  CALL ABCDE(0,0,0):A=0                                            |
+    |            ^                                                      |
+    |            |                                                      |
+    |            HL                                                     |
+    |                                                                   |
+    |  CY flag = 1                               +---- End of the name  |
+    |                                            |     of the expanded  |
+    |           -------------------------------------  statement        |
+    |   PROCNM  |  A  |  B  |  C  |  D  |  E  | 00H |                   |
+    |           -------------------------------------                   |
+    |                                                                   |
     |-------------------------------------------------------------------|
-    |									|
-b)  |  Output setup when the expanded statement was not processed	|
-    |									|
-    |  CALL ABCDE(0,0,0):A=0						|
-    |		 ^							|
-    |		 |							|
-    |		 HL							|
-    |									|
-    |  CY flag = 1							|
-    |									|
+    |                                                                   |
+b)  |  Output setup when the expanded statement was not processed       |
+    |                                                                   |
+    |  CALL ABCDE(0,0,0):A=0                                            |
+    |            ^                                                      |
+    |            |                                                      |
+    |            HL                                                     |
+    |                                                                   |
+    |  CY flag = 1                                                      |
+    |                                                                   |
     |-------------------------------------------------------------------|
-    |									|
-c)  |  Output setup when the expanded statement was processed		|
-    |									|
-    |  CALL ABCDE(0,0,0):A=0						|
-    |			^						|
-    |			|						|
-    |			HL						|
-    |									|
-    |  CY flag = 0							|
-    |									|
+    |                                                                   |
+c)  |  Output setup when the expanded statement was processed           |
+    |                                                                   |
+    |  CALL ABCDE(0,0,0):A=0                                            |
+    |                   ^                                               |
+    |                   |                                               |
+    |                   HL                                              |
+    |                                                                   |
+    |  CY flag = 0                                                      |
+    |                                                                   |
     ---------------------------------------------------------------------
 
 
@@ -823,58 +823,58 @@ the A register (see Table 5.6), then calls the device expansion routine. The
 device expansion routine should refer to it to handle the request.
 
 
-   Figure 5.50	Input-output to the device expansion routine
+   Figure 5.50  Input-output to the device expansion routine
 
     ---------------------------------------------------------------------
-    |									|
-a)  |  Input setup when the interpreter calls routines to process	|
-    |  the expanded device						|
-    |									|
+    |                                                                   |
+a)  |  Input setup when the interpreter calls routines to process       |
+    |  the expanded device                                              |
+    |                                                                   |
     |  OPEN "ABC:"...                                                   |
-    |									|
-    |  A register = FFH 						|
-    |  CY flag = 1		     +---- End of the file descriptor	|
-    |				     |					|
-    |		-------------------------				|
-    |	PROCNM	|  A  |  B  |  C  | 00H |				|
-    |		-------------------------				|
-    |									|
+    |                                                                   |
+    |  A register = FFH                                                 |
+    |  CY flag = 1                   +---- End of the file descriptor   |
+    |                                |                                  |
+    |           -------------------------                               |
+    |   PROCNM  |  A  |  B  |  C  | 00H |                               |
+    |           -------------------------                               |
+    |                                                                   |
     |-------------------------------------------------------------------|
-    |									|
-b)  |  Output setup when the expanded device was not processed		|
-    |									|
-    |  CY flag = 1							|
-    |									|
+    |                                                                   |
+b)  |  Output setup when the expanded device was not processed          |
+    |                                                                   |
+    |  CY flag = 1                                                      |
+    |                                                                   |
     |-------------------------------------------------------------------|
-    |									|
-c)  |  Output setup when the expanded device was processed		|
-    |									|
-    |  A register = device ID (0 to 3)					|
-    |  CY flag = 0							|
-    |									|
+    |                                                                   |
+c)  |  Output setup when the expanded device was processed              |
+    |                                                                   |
+    |  A register = device ID (0 to 3)                                  |
+    |  CY flag = 0                                                      |
+    |                                                                   |
     ---------------------------------------------------------------------
 
 
    Table 5.6  Requests to the device
 
 --------------------------------------
-|  Register A  |       Request	     |
+|  Register A  |       Request       |
 |--------------+---------------------|
-|	0      |  OPEN		     |
+|       0      |  OPEN               |
 |--------------+---------------------|
-|	2      |  CLOSE 	     |
+|       2      |  CLOSE              |
 |--------------+---------------------|
-|	4      |  Random access      |
+|       4      |  Random access      |
 |--------------+---------------------|
-|	6      |  Sequential output  |
+|       6      |  Sequential output  |
 |--------------+---------------------|
-|	8      |  Sequential input   |
+|       8      |  Sequential input   |
 |--------------+---------------------|
-|      10      |  LOC function	     |
+|      10      |  LOC function       |
 |--------------+---------------------|
-|      12      |  LOF function	     |
+|      12      |  LOF function       |
 |--------------+---------------------|
-|      14      |  EOF function	     |
+|      14      |  EOF function       |
 |--------------+---------------------|
 |      16      |  FPOS function      |
 |--------------+---------------------|
@@ -901,23 +901,23 @@ number of statements such as GOTO is the absolute address of the objective
 text pointer.
 
 
-   Figure 5.51	Executing BASIC program cartridge
+   Figure 5.51  Executing BASIC program cartridge
 
 ---------------------
-|		    |  8000H
+|                   |  8000H
 |-------------------|
-|	TEXT	    |----+
-|-------------------|	 |
-|		    |	 |
-|		    |	 |
+|       TEXT        |----+
+|-------------------|    |
+|                   |    |
+|                   |    |
 |-------------------|<---+
-|		    |
+|                   |
 |   BASIC program   |  The first byte must be 00H
-|		    |
+|                   |
 |-------------------|
-|		    |
-|		    |
-|		    |
+|                   |
+|                   |
+|                   |
 ---------------------  BFFFH
 
 
@@ -926,26 +926,26 @@ text pointer.
 
 1. Change the starting address of BASIC text to 8021H.
 
-	POKE &HF676,&H21 : POKE &HF677,&H80 : POKE &H8020,0 : NEW
+        POKE &HF676,&H21 : POKE &HF677,&H80 : POKE &H8020,0 : NEW
 
-	Note:  these statements must be in one line
+        Note:  these statements must be in one line
 
 
 2. Load the objective BASIC program.
 
-	LOAD "PROGRAM"
+        LOAD "PROGRAM"
 
 
 3. Create ID.
 
-	AD = &H8000
-	FOR I = 0 TO 31    ----+
-	 POKE AD + I, 0        |  clears ID area
-	NEXT I		   ----+
-	POKE &H8000,ASC("A")
-	POKE &H8001,ASC("B")
-	POKE &H8008,&H20
-	POKE &H8009,&H80
+        AD = &H8000
+        FOR I = 0 TO 31    ----+
+         POKE AD + I, 0        |  clears ID area
+        NEXT I             ----+
+        POKE &H8000,ASC("A")
+        POKE &H8001,ASC("B")
+        POKE &H8008,&H20
+        POKE &H8009,&H80
 
 
 4. Put 8000H to BFFFH in ROM.
@@ -973,17 +973,17 @@ methods:
     work area (see figure 5.52).
 
 
-   Figure 5.52	Allocating the work area
+   Figure 5.52  Allocating the work area
 
-8000H	----------------- <-- (BOTTOM)	   ----------------- <-- (SLTWRK)
-	|		|		   |   Work area   |
-	|		|		   |---------------| <-- (BOTTOM)
-	|  User's area  |                  |               |
-	|		|	--->	   |  User's area  |
-	|		|		   |		   |
-F380H	|---------------|		   |---------------|
-	|  System work	|		   |  System work  |
-FFFFH	-----------------		   -----------------
+8000H   ----------------- <-- (BOTTOM)     ----------------- <-- (SLTWRK)
+        |               |                  |   Work area   |
+        |               |                  |---------------| <-- (BOTTOM)
+        |  User's area  |                  |               |
+        |               |       --->       |  User's area  |
+        |               |                  |               |
+F380H   |---------------|                  |---------------|
+        |  System work  |                  |  System work  |
+FFFFH   -----------------                  -----------------
 
 
 See the following list for the reference of (2) and (3).
@@ -994,151 +994,151 @@ List 5.13  Example of allocating the work area
 
 ;********************************************************
 ;  List 5.13  subroutines to support slot
-;	       for ROM in 1 page
+;              for ROM in 1 page
 ;********************************************************
 
-RSLGREG EQU	0138H
-EXPTBL	EQU	0FCC1H
-BOTTOM	EQU	0FC48H
-HIMEM	EQU	0FC4AH
-SLTWRK	EQU	0FD09H
+RSLGREG EQU     0138H
+EXPTBL  EQU     0FCC1H
+BOTTOM  EQU     0FC48H
+HIMEM   EQU     0FC4AH
+SLTWRK  EQU     0FD09H
 
 ;--------------------------------------------------------
 ;
-;	GTSL1	Get slot number of designated page
-;	Entry	None
-;	Return	A	Slot address as follows
-;	Modify	Flags
+;       GTSL1   Get slot number of designated page
+;       Entry   None
+;       Return  A       Slot address as follows
+;       Modify  Flags
 ;
-;	    FxxxSSPP
-;	    |	||||
-;	    |	||++-- primary slot # (0-3)
-;	    |	++---- secondary slot # (0-3)
-;	    |	       00 if not expanded
-;	    +--------- 1 if secondary slot # specified
+;           FxxxSSPP
+;           |   ||||
+;           |   ||++-- primary slot # (0-3)
+;           |   ++---- secondary slot # (0-3)
+;           |          00 if not expanded
+;           +--------- 1 if secondary slot # specified
 ;
-;	This value can later be used as an input parameter
-;	for the RDSLT, WRSLT, CALSLT, ENASLT and 'RST 10H'
+;       This value can later be used as an input parameter
+;       for the RDSLT, WRSLT, CALSLT, ENASLT and 'RST 10H'
 ;
-	PUBLIC	GTSL10
+        PUBLIC  GTSL10
 GETSL10:
-	PUSH	HL		;Save registers
-	PUSH	DE
+        PUSH    HL              ;Save registers
+        PUSH    DE
 
-	CALL	RSLREG		;read primary slot #
-	RRCA
-	RRCA
-	AND	11B		;[A]=000000PP
-	LD	E,A
-	LD	D,0		;[DE]=000000PP
-	LD	HL,EXPTBL
-	ADD	HL,DE		:[HL]=EXPTBL+000000PP
-	LD	E,A		;[E]=000000PP
-	LD	A,(HL)		;A=(EXPTBL+000000PP)
-	AND	80H		;Use only MSB
-	JR	Z,GTSL1NOEXP
-	OR	E		;[A]=F00000PP
-	LD	E,A		;save primary slot number
-	INC	HL		;point to SLTTBL entry
-	INC	HL
-	INC	HL
-	INC	HL
-	LD	A,(HL)		;get current expansion slot register
-	RRCA
-	RRCA
-	AND	11B		;[A] = 000000SS
-	RLCA
-	RLCA			;[A] = 0000SS00
-	OR	E		;[A] = F000SSPP
+        CALL    RSLREG          ;read primary slot #
+        RRCA
+        RRCA
+        AND     11B             ;[A]=000000PP
+        LD      E,A
+        LD      D,0             ;[DE]=000000PP
+        LD      HL,EXPTBL
+        ADD     HL,DE           :[HL]=EXPTBL+000000PP
+        LD      E,A             ;[E]=000000PP
+        LD      A,(HL)          ;A=(EXPTBL+000000PP)
+        AND     80H             ;Use only MSB
+        JR      Z,GTSL1NOEXP
+        OR      E               ;[A]=F00000PP
+        LD      E,A             ;save primary slot number
+        INC     HL              ;point to SLTTBL entry
+        INC     HL
+        INC     HL
+        INC     HL
+        LD      A,(HL)          ;get current expansion slot register
+        RRCA
+        RRCA
+        AND     11B             ;[A] = 000000SS
+        RLCA
+        RLCA                    ;[A] = 0000SS00
+        OR      E               ;[A] = F000SSPP
 ;
 GTSL1END:
-	POP	DE
-	POP	HL
-	RET
+        POP     DE
+        POP     HL
+        RET
 GTSL1NOEXP:
-	LD	A,E		;[A] = 000000PP
-	JR	GTSL1END
+        LD      A,E             ;[A] = 000000PP
+        JR      GTSL1END
 
 
 ;--------------------------------------------------------
 ;
-;	ASLW1	Get address of slot work
-;	Entry	None
-;	Return	HL	address of slot work
-;	Modify	None
+;       ASLW1   Get address of slot work
+;       Entry   None
+;       Return  HL      address of slot work
+;       Modify  None
 ;
-	PUBLIC	ASLW10
+        PUBLIC  ASLW10
 ASLW10:
-	PUSH	DE
-	PUSH	AF
-	CALL	GTSL10		;[A] = F000SSPP, SS = 00 if not expanded
-	AND	00001111B	;[A] = 0000SSPP
-	LD	L,A		:[A] = 0000SSPP
-	RLCA
-	RLCA
-	RLCA
-	RLCA			;[A] = SSPP0000
-	AND	00110000B	;[A] = 00PP0000
-	OR	L		;[A] = 00PPSSPP
-	AND	00111100B	;[A] = 00PPSS00
-	OR	01B		;[A] = 00PPSSBB
+        PUSH    DE
+        PUSH    AF
+        CALL    GTSL10          ;[A] = F000SSPP, SS = 00 if not expanded
+        AND     00001111B       ;[A] = 0000SSPP
+        LD      L,A             :[A] = 0000SSPP
+        RLCA
+        RLCA
+        RLCA
+        RLCA                    ;[A] = SSPP0000
+        AND     00110000B       ;[A] = 00PP0000
+        OR      L               ;[A] = 00PPSSPP
+        AND     00111100B       ;[A] = 00PPSS00
+        OR      01B             ;[A] = 00PPSSBB
 ;
-;	Now, we have the sequence number for this cartridge
-;	as follows.
+;       Now, we have the sequence number for this cartridge
+;       as follows.
 ;
-;	00PPSSBB
-;	  ||||||
-;	  ||||++-- higher 2 bits of memory address (1)
-;	  ||++---- seconday slot # (0..3)
-;	  ++------ primary slot # (0..3)
+;       00PPSSBB
+;         ||||||
+;         ||||++-- higher 2 bits of memory address (1)
+;         ||++---- secondary slot # (0..3)
+;         ++------ primary slot # (0..3)
 ;
-	RLCA			;*=2
-	LD	E,A
-	LD	D,0		;[DE] = 0PPSSBB0
-	LD	HL,SLTWRK
-	ADD	HL,DE
-	POP	AF
-	POP	DE
-	RET
+        RLCA                    ;*=2
+        LD      E,A
+        LD      D,0             ;[DE] = 0PPSSBB0
+        LD      HL,SLTWRK
+        ADD     HL,DE
+        POP     AF
+        POP     DE
+        RET
 
 
 ;--------------------------------------------------------
 ;
-;	RSLW1	Read slot work
-;	Entry	None
-;	Return	HL	Content of slot work
-;	Modify	None
+;       RSLW1   Read slot work
+;       Entry   None
+;       Return  HL      Content of slot work
+;       Modify  None
 ;
-	PUBLIC	RSLW10
+        PUBLIC  RSLW10
 RSLW10:
-	PUSH	DE
-	CALL	ASLW10		;[HL] = address of slot work
-	LD	E,(HL)
-	INC	HL
-	LD	D,(HL)		;[DE] = (slot work)
-	EX	DE,HL		;[HL] = (slot work)
-	POP	DE
-	RET
+        PUSH    DE
+        CALL    ASLW10          ;[HL] = address of slot work
+        LD      E,(HL)
+        INC     HL
+        LD      D,(HL)          ;[DE] = (slot work)
+        EX      DE,HL           ;[HL] = (slot work)
+        POP     DE
+        RET
 
 
 ;--------------------------------------------------------
 ;
-;	WSLW1	Write slot work
-;	Entry	HL	Data to write
-;	Return	None
-;	Modify	None
+;       WSLW1   Write slot work
+;       Entry   HL      Data to write
+;       Return  None
+;       Modify  None
 ;
-	PUBLIC	WSLW10
+        PUBLIC  WSLW10
 WSLW10:
-	PUSH	DE
-	EX	DE,HL		;[DE] = data to write
-	CALL	ASLW10		;[HL] = address of slot work
-	LD	(HL),E
-	INC	HL
-	LD	(HL),D
-	EX	DE,HL		;[HL] = data tow write
-	POP	DE
-	RET
+        PUSH    DE
+        EX      DE,HL           ;[DE] = data to write
+        CALL    ASLW10          ;[HL] = address of slot work
+        LD      (HL),E
+        INC     HL
+        LD      (HL),D
+        EX      DE,HL           ;[HL] = data tow write
+        POP     DE
+        RET
 
 
 ;--------------------------------------------------------
@@ -1146,49 +1146,49 @@ WSLW10:
 ; How to allocate work area for cartridges
 ; If the work area is greater than 2 bytes, make the SLTWRK point
 ; to the system variable BOTTOM (0FC48H), then update it by the
-; amount of memory required. BOTTOM is set up by the initizalization
+; amount of memory required. BOTTOM is set up by the initialization
 ; code to point to the bottom of equipped RAM.
 ;
-;	   Ex, if the program is at 4000H..7FFFH.
+;          Ex, if the program is at 4000H..7FFFH.
 ;
-;	WORKB	allocate work area from BOTTOM
-;		(my slot work) <- (old BOTTOM)
-;	Entry	HL	required memory size
-;	Return	HL	start address of my work area = old BOTTOM
-;			0 if cannot allocate
-;	Modify	None
+;       WORKB   allocate work area from BOTTOM
+;               (my slot work) <- (old BOTTOM)
+;       Entry   HL      required memory size
+;       Return  HL      start address of my work area = old BOTTOM
+;                       0 if cannot allocate
+;       Modify  None
 ;
-	PUBLIC	WORKB0
+        PUBLIC  WORKB0
 WORKB0:
-	PUSH	DE
-	PUSH	BC
-	PUSH	AF
+        PUSH    DE
+        PUSH    BC
+        PUSH    AF
 
-	EX	DE,HL		;[DE] = Size
-	LD	HL,(BOTTOM)	;Get current RAM bottom
-	CALL	WSLW10		;Save BOTTOM to slot work
-	PUSH	HL		;Save old BOTTOM
-	ADD	HL,DE		;[HL] = (BOTTOM) + SIZE
-	LD	A,H		;Beyond 0DFFFH?
-	CP	0E0H
-	JR	NC,NOROOM	;Yes, cannot allocate this much
-	LD	(BOTTOM),HL	;Updtae (BOTTOM)
-	POP	HL		;[HL] = old BOTTOM
+        EX      DE,HL           ;[DE] = Size
+        LD      HL,(BOTTOM)     ;Get current RAM bottom
+        CALL    WSLW10          ;Save BOTTOM to slot work
+        PUSH    HL              ;Save old BOTTOM
+        ADD     HL,DE           ;[HL] = (BOTTOM) + SIZE
+        LD      A,H             ;Beyond 0DFFFH?
+        CP      0E0H
+        JR      NC,NOROOM       ;Yes, cannot allocate this much
+        LD      (BOTTOM),HL     ;Update (BOTTOM)
+        POP     HL              ;[HL] = old BOTTOM
 WORKBEND:
-	POP	AF
-	POP	BC
-	POP	DE
-	RET
+        POP     AF
+        POP     BC
+        POP     DE
+        RET
 ;
-;	BOTTOM became greater than 0DFFFH, there is
-;	no RAM to be allocated.
+;       BOTTOM became greater than 0DFFFH, there is
+;       no RAM to be allocated.
 ;
 NOROOM:
-	LD	HL,0
-	CALL	WSLW10		;Clear slot work
-	JR	WORKBEND	;Return 0 in [HL]
+        LD      HL,0
+        CALL    WSLW10          ;Clear slot work
+        JR      WORKBEND        ;Return 0 in [HL]
 
-	END
+        END
 
 =================================================================
 
@@ -1207,37 +1207,37 @@ call to the program inside the cartridge by the initialization routine (INIT)
 (see Figure 5.53).
 
 List 5.14 shows an example of the program that the cartridge uses to hook
-H.KEYI for the timer interrupt ptocess.
+H.KEYI for the timer interrupt process.
 
 
-   Figure 5.53	Setting the hook
+   Figure 5.53  Setting the hook
 
-BASIC internal routine	   HOOK -----------------
-	  .		+-----> |      RET	|
-	  .		|  +--- |---------------|
-	  .		|  |	|      RET	|
-      CALL HOOK   ------+  |	|---------------|
-	  .	  <--------+	|      RET	|
-	  .			|---------------|
-	  .			|      RET	|
-				|---------------|
-				|      RET	|
-				-----------------
+BASIC internal routine     HOOK -----------------
+          .             +-----> |      RET      |
+          .             |  +--- |---------------|
+          .             |  |    |      RET      |
+      CALL HOOK   ------+  |    |---------------|
+          .       <--------+    |      RET      |
+          .                     |---------------|
+          .                     |      RET      |
+                                |---------------|
+                                |      RET      |
+                                -----------------
 
-					|
-					V
-						  Interslot call
-BASIC internal routine	   HOOK ----------------- -----> .
-	  .		+-----> |    RST 30H	|	 .
-	  .		|	|---------------|	 .
-	  .		|	|  Slot number	|  Expanded process
-      CALL HOOK   ------+	|---------------|	 .
-	  .	  <-----+	|    Branch	|	 .
-	  .		|	|-   address   -|	 .
-	  .		|	|		|	 .
-			|	|---------------|	 .
-			+------ |      RET	| <---- RET
-				-----------------
+                                        |
+                                        V
+                                                  Interslot call
+BASIC internal routine     HOOK ----------------- -----> .
+          .             +-----> |    RST 30H    |        .
+          .             |       |---------------|        .
+          .             |       |  Slot number  |  Expanded process
+      CALL HOOK   ------+       |---------------|        .
+          .       <-----+       |    Branch     |        .
+          .             |       |-   address   -|        .
+          .             |       |               |        .
+                        |       |---------------|        .
+                        +------ |      RET      | <---- RET
+                                -----------------
 
 
 List 5.14  Using the hook
@@ -1250,40 +1250,40 @@ List 5.14  Using the hook
 ; Start-up initialize entry
 ; This program will be called when system initializing.
 ;
-H.KEYI	EQU	0FD9AH		; interrupt hook
-EXPTBL	EQU	0FCC1H		; slots expanded or not
-PSLTRG	EQU	0A8H		; I/O port address of primary slot register
-EXT	MYINT
+H.KEYI  EQU     0FD9AH          ; interrupt hook
+EXPTBL  EQU     0FCC1H          ; slots expanded or not
+PSLTRG  EQU     0A8H            ; I/O port address of primary slot register
+EXT     MYINT
 
 INIT:
-;	<<< Please insert other initialization routine here, if you need. >>>
+;       <<< Please insert other initialization routine here, if you need. >>>
 
 ; Set interrupt entry
 
-	DI			; start of critical region
+        DI                      ; start of critical region
 
 ; Get old interrupt entry inter-slot call hook
 
-	LD	DE,OLDINT	; get address of old int. hook saved area
-	LD	HL,H.KEYI	; get address of interrupt entry hook
-	LD	BC,5		; lenght of hook is 5 bytes
-	LDIR			; transfer
+        LD      DE,OLDINT       ; get address of old int. hook saved area
+        LD      HL,H.KEYI       ; get address of interrupt entry hook
+        LD      BC,5            ; length of hook is 5 bytes
+        LDIR                    ; transfer
 
 ; Which slot address is this cartridge placed?
 
-	CALL	GETMSLT 	; get my slot address
+        CALL    GETMSLT         ; get my slot address
 
 ; Set new inter-slot call of interrupt entry
 
-	LD	(H.KEYI+1),A	; set slot address
-	LD	A,0F7H		; 'RST 30H' inter-slot call operation code
-	LD	(H.KEYI),A	; set new hook op-code
-	LD	HL,INTENT	; get our interrupt entry point
-	LD	(H.KEYI+2),HL	; set new interrupt entry point
-	LD	A,0C9H		; 'RET' operation code
-	LD	(H.KEYI+4),A	; set operation code of 'RET'
-	EI			; end of critical region
-	RET
+        LD      (H.KEYI+1),A    ; set slot address
+        LD      A,0F7H          ; 'RST 30H' inter-slot call operation code
+        LD      (H.KEYI),A      ; set new hook op-code
+        LD      HL,INTENT       ; get our interrupt entry point
+        LD      (H.KEYI+2),HL   ; set new interrupt entry point
+        LD      A,0C9H          ; 'RET' operation code
+        LD      (H.KEYI+4),A    ; set operation code of 'RET'
+        EI                      ; end of critical region
+        RET
 
 
 ;--------------------------------------------------------
@@ -1294,43 +1294,43 @@ INIT:
 ;  Modify: Flag
 
 GTMSLT:
-	PUSH	BC		; save environment
-	PUSH	HL
-	IN	A,(PSLTRG)	; read primary slot register
-	RRCA			; move it to bit 0,1 of A
-	RRCA
-	AND	00000011B	; get bit 1,0
-	LD	C,A		; set primary slot No.
-	LD	B,0
-	LD	HL,EXPTBL	; see if the slot is expanded or not
-	ADD	HL,BC
-	OR	(HL)		; set MSB if so
-	LD	C,A
-	INC	HL		; point to SLTTBL entry
-	INC	HL
-	INC	HL
-	INC	HL
-	LD	A,(HL)		; get what is currently output to
-				; expansion slot register
+        PUSH    BC              ; save environment
+        PUSH    HL
+        IN      A,(PSLTRG)      ; read primary slot register
+        RRCA                    ; move it to bit 0,1 of A
+        RRCA
+        AND     00000011B       ; get bit 1,0
+        LD      C,A             ; set primary slot No.
+        LD      B,0
+        LD      HL,EXPTBL       ; see if the slot is expanded or not
+        ADD     HL,BC
+        OR      (HL)            ; set MSB if so
+        LD      C,A
+        INC     HL              ; point to SLTTBL entry
+        INC     HL
+        INC     HL
+        INC     HL
+        LD      A,(HL)          ; get what is currently output to
+                                ; expansion slot register
 
-	AND	00001100B	; get bits 3,2
-	OR	C		; finally form slot address
+        AND     00001100B       ; get bits 3,2
+        OR      C               ; finally form slot address
 
-	POP	HL		; restore environment
-	POP	BC
-	RET			; return to main
+        POP     HL              ; restore environment
+        POP     BC
+        RET                     ; return to main
 
 ;----- Interrupt entry -----
 
 INTENT:
-	CALL	MYINT		; call interrupt handler
-	JP	OLDINT		; go to old interrupt handler
+        CALL    MYINT           ; call interrupt handler
+        JP      OLDINT          ; go to old interrupt handler
 
 ;----- HOOK save area -----
 
-OLDINT: DS	5
+OLDINT: DS      5
 
-	END
+        END
 
 =================================================================
 
@@ -1346,7 +1346,7 @@ stack area might be exhausted and a system crash might occur. Remember to
 initialise the stack pointer at the beginning of the program.
 
 
-* Testing the preformance of the expansion slot
+* Testing the performance of the expansion slot
 
 When general software in the market is put in the expansion slot or when RAM
 resides in the expansion slot, sometimes the application program do not work.
@@ -1372,21 +1372,21 @@ always inhibited when calling the object program (see 2 in the figure below)
 and when returning to the calling program (see 6 below).
 
 
-  Caller		Interslot call		  Called
+  Caller                Interslot call            Called
 
-LD IY,SLOT			      (3)
-			      +-----------------> CALLME:
-LD IX,CALLME		      | 		   .
-		   (1)	      |(2)		   .
-CALL CALSLT ------------------+ 		   .
-				      (4)	   .
-			      +------------------ RET
-		   (6)	      |(5)
-	    <-----------------+
+LD IY,SLOT                            (3)
+                              +-----------------> CALLME:
+LD IX,CALLME                  |                    .
+                   (1)        |(2)                 .
+CALL CALSLT ------------------+                    .
+                                      (4)          .
+                              +------------------ RET
+                   (6)        |(5)
+            <-----------------+
 
 
 In MSX2, the state of the interrupt is reserved before and after the
 inter-slot call. That is, 3 in the figure is in the same state as 1, and 6 is
 in the same state as 4. Note when the called program executes "EI" or "DI".
 
-
+

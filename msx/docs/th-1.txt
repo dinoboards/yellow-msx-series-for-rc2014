@@ -1,12 +1,12 @@
 MSX2 TECHNICAL HANDBOOK
 -----------------------
 
-Edited by:		ASCII Systems Division
-Published by:		ASCII Coprporation - JAPAN
-First edition:		March 1987
+Edited by:              ASCII Systems Division
+Published by:           ASCII Corporation - JAPAN
+First edition:          March 1987
 
-Text files typed by:	Nestor Soriano (Konami Man) - SPAIN
-			March 1997
+Text files typed by:    Nestor Soriano (Konami Man) - SPAIN
+                        March 1997
 
 Changes from the original:
 
@@ -19,7 +19,7 @@ CHAPTER 1 - MSX SYSTEM OVERVIEW
 The MSX2 was designed to be fully compatible with the MSX1, but there are
 many enhanced features in the MSX2. Chapter 1 introduces the enhanced
 features of the MSX2, and shows block figures and standard tables. This
-information is conceptual, but will be needed to understand dexcriptions in
+information is conceptual, but will be needed to understand descriptions in
 volume 2 and later.
 
 
@@ -39,7 +39,7 @@ difference from the PC series (NEC) or FM series (Fujitsu) personal
 computers, which could only execute programs using their format.
 
 Several years passed before personal computers became popular. In the early
-days only dedicated enthousiasts bought computers, which were difficult to
+days only dedicated enthusiasts bought computers, which were difficult to
 use, and, needless to say, incompatible. They were satisfied to tinker with
 the computer and study it. But now computer use has expanded to include
 several classes of users. In other words, the personal computer is becoming a
@@ -53,7 +53,7 @@ The design team for MSX considered these problems. Since a computer is most
 powerful when left flexible and easy to expand, a "final" standard format was
 not practical. There are too many matters to define and hardware in
 constantly improving. Therefore MSX started with fixing format of the most
-fundamental harware and software such as DOS and BASIC, and the hardware bus
+fundamental hardware and software such as DOS and BASIC, and the hardware bus
 which is the basis for expansion. Since the computer is used by itself and
 does not interact with other computers, the problem is small. But formats
 must be fixed if the computer is to be connected to "peripherals" and handle
@@ -80,7 +80,7 @@ available. BIOS, which is the collection of input/output routines in BASIC
 ROM, and BDOS, which resides in the disk interface ROM and has compatibility
 with CP/M system calls have both been improved. So an excellent programming
 environment is now available. Chinese Character input, light pen and mouse
-input, and the RS-232C interface have been standardised, and stantardisation
+input, and the RS-232C interface have been standardised, and standardisation
 of other peripherals is proceeding. The keyboard and character set are
 consistent with international standards, and there are minor variations to
 satisfy the needs of individual countries.
@@ -118,133 +118,133 @@ as follows:
 
    Table 1.1 MSX2/MSX1 standard comparison
 
-			     MSX2	       |	   MSX1
-		-----------------------------------------------------------
-CPU		|    Z80A or equivalent (clock 3.579545 MHz +- 1%)	  |
-		-----------------------------------------------------------
-		| 48K (MSX-BASIC version 2.0)  |  32K (MSX-BASIC ver 1.0) |
-	  ROM	|      MAIN-ROM 32K	       |       MAIN-ROM 32K	  |
-		|      SUB-ROM	16K	       |			  |
-MEMORY	  RAM	| 64K or more		       |  8K or more		  |
-	  VRAM	| 64K or 128K		       |  16K			  |
-		-----------------------------------------------------------
-LSI for VDP	| V-9938 (MSX-VIDEO)	       |  TMS9918 or equivalent   |
-		-----------------------------------------------------------
-CMT		|		  FSK  1200/2400 baud			  |
-		-----------------------------------------------------------
-PSG		|    8 octaves tri-chord output (AY-3-8910 compatible)	  |
-		-----------------------------------------------------------
-Keyboard	| Alphanumeric		       |  Alphanumeric		  |
-		| Graphic symbols	       |  Graphic symbols	  |
-		-----------------------------------------------------------
-Floppy disk (*) |		 Based on MS-DOS format 		  |
-		-----------------------------------------------------------
-Printer 	| 8-bit parallel	       |  (*)			  |
-		-----------------------------------------------------------
-ROM cartridge	|			 I/O bus			  |
-		|     with slot for game cartridge and expansion bus	  |
-		-----------------------------------------------------------
-Joystick	|	       2	       |  1 or 2 (*)		  |
-		-----------------------------------------------------------
-CLOCK-IC	| Standard		       |  (*)			  |
-		-----------------------------------------------------------
-RAM disk	| Standard		       |  Different for 	  |
-feature 	|			       |  each maker		  |
-		-----------------------------------------------------------
+                             MSX2              |           MSX1
+                -----------------------------------------------------------
+CPU             |    Z80A or equivalent (clock 3.579545 MHz +- 1%)        |
+                -----------------------------------------------------------
+                | 48K (MSX-BASIC version 2.0)  |  32K (MSX-BASIC ver 1.0) |
+          ROM   |      MAIN-ROM 32K            |       MAIN-ROM 32K       |
+                |      SUB-ROM  16K            |                          |
+MEMORY    RAM   | 64K or more                  |  8K or more              |
+          VRAM  | 64K or 128K                  |  16K                     |
+                -----------------------------------------------------------
+LSI for VDP     | V-9938 (MSX-VIDEO)           |  TMS9918 or equivalent   |
+                -----------------------------------------------------------
+CMT             |                 FSK  1200/2400 baud                     |
+                -----------------------------------------------------------
+PSG             |    8 octaves tri-chord output (AY-3-8910 compatible)    |
+                -----------------------------------------------------------
+Keyboard        | Alphanumeric                 |  Alphanumeric            |
+                | Graphic symbols              |  Graphic symbols         |
+                -----------------------------------------------------------
+Floppy disk (*) |                Based on MS-DOS format                   |
+                -----------------------------------------------------------
+Printer         | 8-bit parallel               |  (*)                     |
+                -----------------------------------------------------------
+ROM cartridge   |                        I/O bus                          |
+                |     with slot for game cartridge and expansion bus      |
+                -----------------------------------------------------------
+Joystick        |              2               |  1 or 2 (*)              |
+                -----------------------------------------------------------
+CLOCK-IC        | Standard                     |  (*)                     |
+                -----------------------------------------------------------
+RAM disk        | Standard                     |  Different for           |
+feature         |                              |  each maker              |
+                -----------------------------------------------------------
 
-		(*) Optional
+                (*) Optional
 
 
    Figure 1.1  MSX2 system configuration
 
 1. Minimum configuration
 
-Sound I/O <--+	Video I/O   Printer I/O   Cartridge Slot x 1
-	     |	   ^		 ^	      |
-	     |	   |		 |	      |
-	     |	 -----------------------------+---------
-	     |	 |			      |        |
-	     +-- | Z80A 		      V        |
-		 |			     ----      |
-		 | ROM 48K		     |	|      |
-		 |			     |	|      |
-Joystick x 2 --> | RAM 64K		     |	|      |
-		 |			     |	|      |
-		 | VDP(V9938) VRAM 64K	     ----      |
-		 |				       |
-		 | PPI	 PSG			       |
-		 |				       |
-------------	 |	----------------	       |
-| Cassette | --> |	|   Keyboard   |	       |
-------------	 ---------------------------------------
+Sound I/O <--+  Video I/O   Printer I/O   Cartridge Slot x 1
+             |     ^             ^            |
+             |     |             |            |
+             |   -----------------------------+---------
+             |   |                            |        |
+             +-- | Z80A                       V        |
+                 |                           ----      |
+                 | ROM 48K                   |  |      |
+                 |                           |  |      |
+Joystick x 2 --> | RAM 64K                   |  |      |
+                 |                           |  |      |
+                 | VDP(V9938) VRAM 64K       ----      |
+                 |                                     |
+                 | PPI   PSG                           |
+                 |                                     |
+------------     |      ----------------               |
+| Cassette | --> |      |   Keyboard   |               |
+------------     ---------------------------------------
 
 
-2. Software support range		+-- Lightpen, Superimpose, Video
-					|			   digitize
-Sound I/O <--+	Video I/O   Printer I/O | Cartridge Slot x 3
-	     |	   ^		 ^	|     |
-	     |	   |		 |	|     |
-	     |	 -----------------------------+---------
-	     |	 |			 +----+----+   |
-	     +-- | Z80A 		 V    V    V   |:::::::::::::::::::::
-		 |			---- ---- ---- +:---- ---- ---- ----:
-		 | ROM 48K		|  | |	| |  | | |  | |  | |  | |  |:
-		 |			|  | |	| |  | | |  | |  | |  | |  |:
-Joystick x 2 --> | RAM 64K		|  | |	| |  | | |  | |  | |  | |  |:
-		 |			|  | |	| |  | | |  | |  | |  | |  |:
-Trackball,	 | VDP(V9938) VRAM 128K ---- ---- ---- +:---- ---- ---- ----:
-mouse, etc	 |				       |:::::::::::::::::::::
-		 | PPI	 PSG			       |
-		 |				       | Extended Cartridge
-------------	 |	----------------	       | Slot x 4
-| Cassette | --> |	|   Keyboard   |	       |
-------------	 ---------------------------------------
+2. Software support range               +-- Lightpen, Superimpose, Video
+                                        |                          digitize
+Sound I/O <--+  Video I/O   Printer I/O | Cartridge Slot x 3
+             |     ^             ^      |     |
+             |     |             |      |     |
+             |   -----------------------------+---------
+             |   |                       +----+----+   |
+             +-- | Z80A                  V    V    V   |:::::::::::::::::::::
+                 |                      ---- ---- ---- +:---- ---- ---- ----:
+                 | ROM 48K              |  | |  | |  | | |  | |  | |  | |  |:
+                 |                      |  | |  | |  | | |  | |  | |  | |  |:
+Joystick x 2 --> | RAM 64K              |  | |  | |  | | |  | |  | |  | |  |:
+                 |                      |  | |  | |  | | |  | |  | |  | |  |:
+Trackball,       | VDP(V9938) VRAM 128K ---- ---- ---- +:---- ---- ---- ----:
+mouse, etc       |                                     |:::::::::::::::::::::
+                 | PPI   PSG                           |
+                 |                                     | Extended Cartridge
+------------     |      ----------------               | Slot x 4
+| Cassette | --> |      |   Keyboard   |               |
+------------     ---------------------------------------
 
 
    Figure 1.2  MSX1 system configuration
 
 1. Minimum configuration
 
-Sound I/O <--+	Video I/O		  Cartridge Slot x 1
-	     |	   ^			      |
-	     |	   |			      |
-	     |	 -----------------------------+---------
-	     |	 |			      |        |
-	     +-- | Z80A 		      V        |
-		 |			     ----      |
-		 | ROM 32K		     |	|      |
-		 |			     |	|      |
-Joystick x 1 --> | RAM 8K		     |	|      |
-		 |			     |	|      |
-		 | VDP(TMS9918) VRAM 16K     ----      |
-		 |				       |
-		 | PPI	 PSG			       |
-		 |				       |
-------------	 |	----------------	       |
-| Cassette | --> |	|   Keyboard   |	       |
-------------	 ---------------------------------------
+Sound I/O <--+  Video I/O                 Cartridge Slot x 1
+             |     ^                          |
+             |     |                          |
+             |   -----------------------------+---------
+             |   |                            |        |
+             +-- | Z80A                       V        |
+                 |                           ----      |
+                 | ROM 32K                   |  |      |
+                 |                           |  |      |
+Joystick x 1 --> | RAM 8K                    |  |      |
+                 |                           |  |      |
+                 | VDP(TMS9918) VRAM 16K     ----      |
+                 |                                     |
+                 | PPI   PSG                           |
+                 |                                     |
+------------     |      ----------------               |
+| Cassette | --> |      |   Keyboard   |               |
+------------     ---------------------------------------
 
 
 2. Software support range
 
-Sound I/O <--+	Video I/O   Printer I/O   Cartridge Slot x 3
-	     |	   ^		 ^	      |
-	     |	   |		 |	      |
-	     |	 -----------------------------+---------
-	     |	 |			 +----+----+   |
-	     +-- | Z80A 		 V    V    V   |:::::::::::::::::::::
-		 |			---- ---- ---- +:---- ---- ---- ----:
-		 | ROM 32K		|  | |	| |  | | |  | |  | |  | |  |:
-		 |			|  | |	| |  | | |  | |  | |  | |  |:
-Joystick x 2 --> | RAM 64K		|  | |	| |  | | |  | |  | |  | |  |:
-		 |			|  | |	| |  | | |  | |  | |  | |  |:
-Trackball,	 | VDP(TMS9918)VRAM 16K ---- ---- ---- +:---- ---- ---- ----:
-mouse, etc	 |				       |:::::::::::::::::::::
-		 | PPI	 PSG			       |
-		 |				       | Extended Cartridge
-------------	 |	----------------	       | Slot x 4
-| Cassette | --> |	|   Keyboard   |	       |
-------------	 ---------------------------------------
+Sound I/O <--+  Video I/O   Printer I/O   Cartridge Slot x 3
+             |     ^             ^            |
+             |     |             |            |
+             |   -----------------------------+---------
+             |   |                       +----+----+   |
+             +-- | Z80A                  V    V    V   |:::::::::::::::::::::
+                 |                      ---- ---- ---- +:---- ---- ---- ----:
+                 | ROM 32K              |  | |  | |  | | |  | |  | |  | |  |:
+                 |                      |  | |  | |  | | |  | |  | |  | |  |:
+Joystick x 2 --> | RAM 64K              |  | |  | |  | | |  | |  | |  | |  |:
+                 |                      |  | |  | |  | | |  | |  | |  | |  |:
+Trackball,       | VDP(TMS9918)VRAM 16K ---- ---- ---- +:---- ---- ---- ----:
+mouse, etc       |                                     |:::::::::::::::::::::
+                 | PPI   PSG                           |
+                 |                                     | Extended Cartridge
+------------     |      ----------------               | Slot x 4
+| Cassette | --> |      |   Keyboard   |               |
+------------     ---------------------------------------
 
 
 * MSX-BASIC
@@ -252,7 +252,7 @@ mouse, etc	 |				       |:::::::::::::::::::::
 BASIC has also been extended from version 1.0 to version 2.0 in order to
 support a new VDP, backup RAM, CLOCK-IC, and so on. Compatibility with MSX1
 is maintained. When using the newly extended screen mode, be careful when
-specifiyng range, since ranges are slightly different in MSX2.
+specifying range, since ranges are slightly different in MSX2.
 
 MSX2 has three types of memory, ROM, RAM, VRAM, which are described below.
 
@@ -303,48 +303,48 @@ scrolling features. Chapter 4 of this manual describes it in detail.
 
    Table 1.2  VDP specifications
 
-				    V9938	    |	    TMS9918
-			---------------------------------------------------
-Screen mode		|  10 (see table 1.3)	    |	       4	  |
-			---------------------------------------------------
-Number of dots		|  512 x 212 maximum	    |			  |
-(horizontal x		|  424 dots for vertical    |  256 x 192 maximum  |
-vertical)		|  can be achieved by	    |			  |
-			|  interlace feature	    |			  |
-			---------------------------------------------------
-	  Number of	|			    |			  |
-	  colours to	|  512 maximum		    |	16 maximum	  |
-	  specify	|			    |			  |
-Colour			---------------------------------------------------
-	  Number of	|			    |			  |
-	  colours to	|  256 maximum		    |	16 maximum	  |
-	  display at	|			    |			  |
-	  the same time |			    |			  |
-			---------------------------------------------------
-Character set		|	    alphanumeric + graphic symbols	  |
-			|	      256 characters  8 x 8 dots	  |
-			---------------------------------------------------
-Sprite colour		|  16 maximum per sprite    |	1 per sprite	  |
-			---------------------------------------------------
-Palette feature 	|  Yes			    |	No		  |
-			---------------------------------------------------
+                                    V9938           |       TMS9918
+                        ---------------------------------------------------
+Screen mode             |  10 (see table 1.3)       |          4          |
+                        ---------------------------------------------------
+Number of dots          |  512 x 212 maximum        |                     |
+(horizontal x           |  424 dots for vertical    |  256 x 192 maximum  |
+vertical)               |  can be achieved by       |                     |
+                        |  interlace feature        |                     |
+                        ---------------------------------------------------
+          Number of     |                           |                     |
+          colours to    |  512 maximum              |   16 maximum        |
+          specify       |                           |                     |
+Colour                  ---------------------------------------------------
+          Number of     |                           |                     |
+          colours to    |  256 maximum              |   16 maximum        |
+          display at    |                           |                     |
+          the same time |                           |                     |
+                        ---------------------------------------------------
+Character set           |           alphanumeric + graphic symbols        |
+                        |             256 characters  8 x 8 dots          |
+                        ---------------------------------------------------
+Sprite colour           |  16 maximum per sprite    |   1 per sprite      |
+                        ---------------------------------------------------
+Palette feature         |  Yes                      |   No                |
+                        ---------------------------------------------------
 
 
    Table 1.3  V9938 screen mode
 
-Mode		Number of	Dots	   Colours	Palette   Sprite
-		characters
+Mode            Number of       Dots       Colours      Palette   Sprite
+                characters
 ---------------------------------------------------------------------------
-* Text 1      |  40 x 24   |	       |   2 from 512 |   Yes	|   No
-  Text 2      |  80 x 24   |	       |   4 from 512 |   Yes	|   No
-* Multi-colour| 	   |  64 x  48 |  16 from 512 |   Yes	|  Mode 1
-* Graphic 1   |  32 x 24   |	       |  16 from 512 |   Yes	|  Mode 1
-* Graphic 2   | 	   | 256 x 192 |  16 from 512 |   Yes	|  Mode 1
-  Graphic 3   | 	   | 256 x 192 |  16 from 512 |   Yes	|  Mode 2
-  Graphic 4   | 	   | 256 x 212 |  16 from 512 |   Yes	|  Mode 2
-  Graphic 5   | 	   | 512 x 212 |   4 from 512 |   Yes	|  Mode 2
-  Graphic 6   | 	   | 512 x 212 |  16 from 512 |   Yes	|  Mode 2
-  Graphic 7   | 	   | 256 x 212 | 256 from 256 |   No	|  Mode 2
+* Text 1      |  40 x 24   |           |   2 from 512 |   Yes   |   No
+  Text 2      |  80 x 24   |           |   4 from 512 |   Yes   |   No
+* Multi-colour|            |  64 x  48 |  16 from 512 |   Yes   |  Mode 1
+* Graphic 1   |  32 x 24   |           |  16 from 512 |   Yes   |  Mode 1
+* Graphic 2   |            | 256 x 192 |  16 from 512 |   Yes   |  Mode 1
+  Graphic 3   |            | 256 x 192 |  16 from 512 |   Yes   |  Mode 2
+  Graphic 4   |            | 256 x 212 |  16 from 512 |   Yes   |  Mode 2
+  Graphic 5   |            | 512 x 212 |   4 from 512 |   Yes   |  Mode 2
+  Graphic 6   |            | 512 x 212 |  16 from 512 |   Yes   |  Mode 2
+  Graphic 7   |            | 256 x 212 | 256 from 256 |   No    |  Mode 2
 ---------------------------------------------------------------------------
 
 (*) Feature modes available from TMS9918 (however, palette feature only from
@@ -375,7 +375,7 @@ when loading or saving BASIC programs temporarily.
 
 This section gives a simple overview of the MSX2 software and hardware
 systems. To help you understand the concepts, diagrams which would be useful
-when developping softwarem, such as VRAM map, the I/O map, and the interface
+when developing software, such as VRAM map, the I/O map, and the interface
 standard, are found in the APPENDIX of this manual.
 
 
@@ -391,62 +391,62 @@ hardware configuration of the MSX2 as a whole.
 | CPU Z80A |
 ------------
      |
-     |	-----  -------------------------------
+     |  -----  -------------------------------
      +--|   |--| ROM 48K (MSX-BASIC ver 2.0) |
-     |	|   |  -------------------------------
-     |	| S |  ----------------
-     |	|   |--| MAIN RAM 64K |
-     |	| L |  ----------------
-     |	|   |  :::::::::::::::::  :::::::::::::::::
-     |	| O |::: MEMORY MAPPER :::: RAM 64K to 4M :
-     |	|   |  :::::::::::::::::  :::::::::::::::::
-     |	| T |  :::::::::::::
-     |	|   |::: CARTRIDGE :  I/O Cartridge (Disk, RS-232C)
-     |	|   |  :::::::::::::  RAM Cartridge
-     |	-----		      ROM Cartridge (Game, Application)
-     |			      Slot Expansion Box, Etc.
+     |  |   |  -------------------------------
+     |  | S |  ----------------
+     |  |   |--| MAIN RAM 64K |
+     |  | L |  ----------------
+     |  |   |  :::::::::::::::::  :::::::::::::::::
+     |  | O |::: MEMORY MAPPER :::: RAM 64K to 4M :
+     |  |   |  :::::::::::::::::  :::::::::::::::::
+     |  | T |  :::::::::::::
+     |  |   |::: CARTRIDGE :  I/O Cartridge (Disk, RS-232C)
+     |  |   |  :::::::::::::  RAM Cartridge
+     |  -----                 ROM Cartridge (Game, Application)
+     |                        Slot Expansion Box, Etc.
      |
-     |	-----------------   --- Joystick Input
+     |  -----------------   --- Joystick Input
      +--| PSG AY-3 8910 |---|
-     |	-----------------   --- Audio Output
+     |  -----------------   --- Audio Output
      |
-     |	::::::::::::::::::::::::  ::::::::::::::::::::::::::::::::
+     |  ::::::::::::::::::::::::  ::::::::::::::::::::::::::::::::
      |::: MSX-AUDIO (FM sound) :::: Audio Memory Maximum of 256K :
-     |	::::::::::::::::::::::::  ::::::::::::::::::::::::::::::::
+     |  ::::::::::::::::::::::::  ::::::::::::::::::::::::::::::::
      |
-     |	----------------------
+     |  ----------------------
      +--| CASSETTE INTERFACE |::::: Cassette
-     |	----------------------
+     |  ----------------------
      |
-     |	---------------------
+     |  ---------------------
      +--| PRINTER INTERFACE |:::::: Printer
-     |	---------------------
+     |  ---------------------
      |
-     |	---------------------------------
+     |  ---------------------------------
      +--| BATTERY BACKUP RAM + CLOCK IC |
-     |	---------------------------------
+     |  ---------------------------------
      |
-     |	-------------		   ------------
+     |  -------------              ------------
      +--| PPI 8255A |--------+-----| Keyboard |
-     |	-------------	     |	   ------------
-     |			     |	   ---------------
-     |			     +-----| Slot Holder |
-     |				   ---------------
+     |  -------------        |     ------------
+     |                       |     ---------------
+     |                       +-----| Slot Holder |
+     |                             ---------------
 -------------
 | MSX-VIDEO |----------------------- RGB/Video/RF Output
 -------------
      |
-     |	------------:::::::::::::::::::::::::::
+     |  ------------:::::::::::::::::::::::::::
      +--| VRAM 64K | VRAM 64K : Expansion RAM :
-     |	------------:::::::::::::::::::::::::::
+     |  ------------:::::::::::::::::::::::::::
      |
-     |	::::::::::::::::
+     |  ::::::::::::::::
      |--: SUMPERIMPOSE :--------+--- Video Input
-     |	::::::::::::::::	|
-     |				|
-     |	::::::::::::		|
+     |  ::::::::::::::::        |
+     |                          |
+     |  ::::::::::::            |
      +--: DIGITISE :------------+
-	::::::::::::
+        ::::::::::::
 
 Note: The dotted lines represent optional features.
 
@@ -471,133 +471,133 @@ They are found in the APPENDIX.
 
 (1) Physical allocation of standard memories
 
-	     (a)	    (b) 	   (c)
-0000H	-------------  -------------  -------------
-Page 0	|    (1)    |  |    (3)    |  |    (4)	  |
-	| MAIN-ROM  |  |  SUB-ROM  |  |    RAM	  |
-4000H	- - - - - - -  -------------  - - - - - - -
-Page 1	|    (2)    |  |   not	   |  |    (5)	  |
-	| MAIN-ROM  |  |   used    |  |    RAM	  |
-8000H	-------------  - - - - - - -  - - - - - - -
-Page 2	|   not     |  |   not	   |  |    (6)	  |
-	|   used    |  |   used    |  |    RAM	  |
-C000H	- - - - - - -  - - - - - - -  - - - - - - -
-Page 3	|   not     |  |   not	   |  |    (7)	  |
-	|   used    |  |   used    |  |    RAM	  |
-	-------------  -------------  -------------
-	  MAIN-ROM	  SUB-ROM	 64K-RAM
-	    SLOT	   SLOT 	  SLOT
+             (a)            (b)            (c)
+0000H   -------------  -------------  -------------
+Page 0  |    (1)    |  |    (3)    |  |    (4)    |
+        | MAIN-ROM  |  |  SUB-ROM  |  |    RAM    |
+4000H   - - - - - - -  -------------  - - - - - - -
+Page 1  |    (2)    |  |   not     |  |    (5)    |
+        | MAIN-ROM  |  |   used    |  |    RAM    |
+8000H   -------------  - - - - - - -  - - - - - - -
+Page 2  |   not     |  |   not     |  |    (6)    |
+        |   used    |  |   used    |  |    RAM    |
+C000H   - - - - - - -  - - - - - - -  - - - - - - -
+Page 3  |   not     |  |   not     |  |    (7)    |
+        |   used    |  |   used    |  |    RAM    |
+        -------------  -------------  -------------
+          MAIN-ROM        SUB-ROM        64K-RAM
+            SLOT           SLOT           SLOT
 
-(2) CPU memory space when using BASIC		(3) CPU memory space
-						    when using MSX-DOS
-0000H	-------------  -------------		    -------------
-Page 0	|    (1)    |  |    (3)    |		    |	 (4)	|
-	| MAIN-ROM  |  |  SUB-ROM  |		    |	 RAM	|
-4000H	- - - - - - -  -------------		    - - - - - - -
-Page 1	|    (2)    |	1 and 3 are		    |	 (5)	|
-	| MAIN-ROM  |	switched		    |	 RAM	|
-8000H	-------------	under certain		    - - - - - - -
-Page 2	|    (6)    |	circumstances		    |	 (6)	|
-	|    RAM    |				    |	 RAM	|
-C000H	- - - - - - -				    - - - - - - -
-Page 3	|    (6)    |				    |	 (7)	|
-	|    RAM    |				    |	 RAM	|
-	-------------				    -------------
+(2) CPU memory space when using BASIC           (3) CPU memory space
+                                                    when using MSX-DOS
+0000H   -------------  -------------                -------------
+Page 0  |    (1)    |  |    (3)    |                |    (4)    |
+        | MAIN-ROM  |  |  SUB-ROM  |                |    RAM    |
+4000H   - - - - - - -  -------------                - - - - - - -
+Page 1  |    (2)    |   1 and 3 are                 |    (5)    |
+        | MAIN-ROM  |   switched                    |    RAM    |
+8000H   -------------   under certain               - - - - - - -
+Page 2  |    (6)    |   circumstances               |    (6)    |
+        |    RAM    |                               |    RAM    |
+C000H   - - - - - - -                               - - - - - - -
+Page 3  |    (6)    |                               |    (7)    |
+        |    RAM    |                               |    RAM    |
+        -------------                               -------------
 
 Note: Four pages (4 to 7) of 64K RAM are not always in the same slot.
 
 
    Figure 1.5  MAIN-ROM memory map
 
-0000H	--------------
-	|    BIOS    |
-	|    Entry   |
-015CH	--------------
-	| Additional |
-	| BIOS Entry |
-017AH	--------------
-	|   Empty    |
-01B6H	--------------
-	|   BASIC    |
-	| Interpreter|
-7FFDH	--------------
-	|    BDOS    |
-7FFFH	|    Entry   |
-8000H	--------------
-	|	     |
+0000H   --------------
+        |    BIOS    |
+        |    Entry   |
+015CH   --------------
+        | Additional |
+        | BIOS Entry |
+017AH   --------------
+        |   Empty    |
+01B6H   --------------
+        |   BASIC    |
+        | Interpreter|
+7FFDH   --------------
+        |    BDOS    |
+7FFFH   |    Entry   |
+8000H   --------------
+        |            |
 
 
    Figure 1.6  SUB-ROM memory map
 
-0000h	--------------
-	|    BIOS    |
-	|    Entry   |
-01FDH	--------------
-	|    SLOT    |
-	| Management |
-	|   Control  |
-0336H	--------------
-	|    BASIC   |
-	| Interpreter|
-3FFFH	|  and BIOS  |
-	--------------
+0000h   --------------
+        |    BIOS    |
+        |    Entry   |
+01FDH   --------------
+        |    SLOT    |
+        | Management |
+        |   Control  |
+0336H   --------------
+        |    BASIC   |
+        | Interpreter|
+3FFFH   |  and BIOS  |
+        --------------
 
 
    Figure 1.7  MAIN-RAM memory map
 
-0000H	 -------------
-	 |	     |
-	 |  RAM Disk |
-	 |	     |
-	 |   Area    |
-	 |	     |
-8000H	 -------------
-	 |	     |
-	 |   User    |
-	 |   Area    |
-	 |	     |
-F380H	 -------------
-	 |  System   |
-	 | Work Area |
-FD9AH	 -------------
-	 |  RAM Hook |
-	 |   Area    |
-FFCAH	 -------------
-	 | Expanded  |
-	 | BIOS call |
-	 |  Entry    |
-FFCFH	 -------------
-	 | Interrupt |
-	 |  Control  |--> Note: Used for the disk
-	 | Hook Area |		and RS-232 interface
-FFD9H	 -------------
-	 | Interrupt |
-	 |  Control  |--> Note: Used for the RS-232
-	 |  Program  |		interface
-	 |   Area    |
-FFE7H	 -------------
-	 |  New VDP  |
-	 |  Register |
-	 | Subroutine|
-	 |   Area    |
-FFF7H	 -------------
-	 |  Main ROM |
-	 |    Slot   |
-	 |  Address  |
-FFF8H	 -------------
-	 | Reserved  |
-FFFCH	 -------------
-	 |   Slot    |
-	 | Selection |
-FFFFH	 | Register  |
-	 -------------
+0000H    -------------
+         |           |
+         |  RAM Disk |
+         |           |
+         |   Area    |
+         |           |
+8000H    -------------
+         |           |
+         |   User    |
+         |   Area    |
+         |           |
+F380H    -------------
+         |  System   |
+         | Work Area |
+FD9AH    -------------
+         |  RAM Hook |
+         |   Area    |
+FFCAH    -------------
+         | Expanded  |
+         | BIOS call |
+         |  Entry    |
+FFCFH    -------------
+         | Interrupt |
+         |  Control  |--> Note: Used for the disk
+         | Hook Area |          and RS-232 interface
+FFD9H    -------------
+         | Interrupt |
+         |  Control  |--> Note: Used for the RS-232
+         |  Program  |          interface
+         |   Area    |
+FFE7H    -------------
+         |  New VDP  |
+         |  Register |
+         | Subroutine|
+         |   Area    |
+FFF7H    -------------
+         |  Main ROM |
+         |    Slot   |
+         |  Address  |
+FFF8H    -------------
+         | Reserved  |
+FFFCH    -------------
+         |   Slot    |
+         | Selection |
+FFFFH    | Register  |
+         -------------
 
 
 2.1.2 Interfacing with peripherals
 
-MSX2 interfacing with peripherals is standarised in detail.
+MSX2 interfacing with peripherals is standardised in detail.
 
-The following is a list of standarised interfaces:
+The following is a list of standardised interfaces:
 
 - Display interface
 - Audio interface
@@ -641,16 +641,16 @@ programming environment to BASIC and DOS through common BDOS and BIOS.
    Figure 1.8  Software hierarchy of MSX1 and MSX2
 
 -------------------------+----------
-|	 o		 |	   |
-|	 |		 |	   |
-| BASIC  |  DISK-BASIC	 | MSX-DOS |----+
-|	 |		 |	   |	|
-|	 |		 |	   |	|
-|	 |	 --------+----------	| Interslot Call
-|	 |	 |	BDOS	   |	|
-+--------+-------+------------------	|
-|		BIOS		   |<---+
+|        o               |         |
+|        |               |         |
+| BASIC  |  DISK-BASIC   | MSX-DOS |----+
+|        |               |         |    |
+|        |               |         |    |
+|        |       --------+----------    | Interslot Call
+|        |       |      BDOS       |    |
++--------+-------+------------------    |
+|               BIOS               |<---+
 |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|
-|	      Hardware		   |
+|             Hardware             |
 ------------------------------------
-
+

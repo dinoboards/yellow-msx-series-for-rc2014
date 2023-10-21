@@ -1,12 +1,12 @@
 MSX2 TECHNICAL HANDBOOK
 -----------------------
 
-Edited by:		ASCII Systems Division
-Published by:		ASCII Coprporation - JAPAN
-First edition:		March 1987
+Edited by:              ASCII Systems Division
+Published by:           ASCII Corporation - JAPAN
+First edition:          March 1987
 
-Text file typed by:	Nestor Soriano (Konami Man) - SPAIN
-			October 1997
+Text file typed by:     Nestor Soriano (Konami Man) - SPAIN
+                        October 1997
 
 Changes from the original:
 
@@ -24,7 +24,7 @@ been corrected.
 - In description of BIOS routines PINLIN and INLIN, "BUF" address has been
 corrected from F55DH to F55EH.
 
-- In Figure 5.22 (B), "Arabaic mode display" has been changed to "Arabic or
+- In Figure 5.22 (B), "Arabic mode display" has been changed to "Arabic or
 kana mode display".
 
 - In description of BIOS routine GTTRIG, the input needed for reading B
@@ -69,14 +69,14 @@ This section describes functions (1) and (2).
 (2)  Sound output by 1 bit I/O port
 
 (3)  Sound output by MSX-AUDIO (FM sound generator) ........ not described
-							     in this manual
+                                                             in this manual
 
 
 1.1. PSG functions
 
 An AY-3-8910 compatible LSI is used for the MSX music play function and for
 BEEP tone generation. This LSI is referred to as the PSG (Programmable Sound
-Generator), and can generate complex music and varios tones. It has the
+Generator), and can generate complex music and various tones. It has the
 following features:
 
 * There are three tone generators, each of which can independently specify
@@ -92,31 +92,31 @@ channel can generate the noise.
 
 * Any necessary frequency, such as the tone or the envelope, is obtained by
 dividing the input clock (in MSX, it is defined that fc = 1.7897725 MHz). So
-there is no unsteady pitch or rythm.
+there is no unsteady pitch or rhythm.
 
 
    Figure 5.1  PSG block diagram
 
- R0, R1 		    R7			R8
---------------------	 -------------	       ------------------------------
-| Tone generator A | --> |	     | ------> | Volume control amplifier A |
---------------------	 |	     |	  +--> ---------------------------+--
-			 |	     |	  |	      Channel A output <--+
- R2, R3 		 |  Three    |	  |	R9
---------------------	 |	     |	  |    ------------------------------
+ R0, R1                     R7                  R8
+--------------------     -------------         ------------------------------
+| Tone generator A | --> |           | ------> | Volume control amplifier A |
+--------------------     |           |    +--> ---------------------------+--
+                         |           |    |           Channel A output <--+
+ R2, R3                  |  Three    |    |     R9
+--------------------     |           |    |    ------------------------------
 | Tone generator B | --> |  Channel  | ---:--> | Volume control amplifier B |
---------------------	 |	     |	  +--> ---------------------------+--
-			 |  Mixer    |	  |	      Channel B output <--+
- R4, R5 		 |	     |	  |	R9
---------------------	 |	     |	  |    ------------------------------
-| Tone generator C | --> |	     | ---:--> | Volume control amplifier C |
---------------------	 -------------	  +--> ---------------------------+--
-				 ^	  |	      Channel C output <--+
-				 |	  |
-		    R6		 |	  |  R11, R12, R13
-		 ---------------------	 ------------------------
-		 |  Noise generator  |	 |  Envelope generator	|
-		 ---------------------	 ------------------------
+--------------------     |           |    +--> ---------------------------+--
+                         |  Mixer    |    |           Channel B output <--+
+ R4, R5                  |           |    |     R9
+--------------------     |           |    |    ------------------------------
+| Tone generator C | --> |           | ---:--> | Volume control amplifier C |
+--------------------     -------------    +--> ---------------------------+--
+                                 ^        |           Channel C output <--+
+                                 |        |
+                    R6           |        |  R11, R12, R13
+                 ---------------------   ------------------------
+                 |  Noise generator  |   |  Envelope generator  |
+                 ---------------------   ------------------------
 
 The PSG has two additional I/O (input/output) ports used for other than tone
 generating functions, which are omitted in the block diagram above. MSX uses
@@ -143,9 +143,9 @@ data assigned for each, and the objective pitch is obtained. The following
 relation exists between 12-bit data (TP) and the tone frequency to be
 generated (ft).
 
-	ft = fc/(16 * TP)
-	   = 0.11186078125/TP [MHz]
-	   = 111860.78125/TP [Hz]
+        ft = fc/(16 * TP)
+           = 0.11186078125/TP [MHz]
+           = 111860.78125/TP [Hz]
 
 A 12-bit data TP is specified for each channel by 4 high order bit coarse
 tune CT and 8 low order bit fine tune value FT, as shown in Figure 5.3. Table
@@ -155,102 +155,102 @@ tune CT and 8 low order bit fine tune value FT, as shown in Figure 5.3. Table
    Figure 5.2  PSG register structure
 
 -----------------------------------------------------------------------------
-|			Bit |	  |	|     |     |	  |	|     |     |
-|			    | B7  | B6	| B5  | B4  | B3  | B2	| B1  | B0  |
-| Register		    |	  |	|     |     |	  |	|     |     |
+|                       Bit |     |     |     |     |     |     |     |     |
+|                           | B7  | B6  | B5  | B4  | B3  | B2  | B1  | B0  |
+| Register                  |     |     |     |     |     |     |     |     |
 |---------------------------+-----------------------------------------------|
-|    R0    | Channel A note |		     8 low order bits		    |
-|----------|		    |-----------------------------------------------|
-|    R1    | Dividing rate  |  x     x	   x	 x  |	4 high order bits   |
+|    R0    | Channel A note |                8 low order bits               |
+|----------|                |-----------------------------------------------|
+|    R1    | Dividing rate  |  x     x     x     x  |   4 high order bits   |
 |----------+----------------+-----------------------------------------------|
-|    R2    | Channel B note |		     8 low order bits		    |
-|----------|		    |-----------------------------------------------|
-|    R3    | Dividing rate  |  x     x	   x	 x  |	4 high order bits   |
+|    R2    | Channel B note |                8 low order bits               |
+|----------|                |-----------------------------------------------|
+|    R3    | Dividing rate  |  x     x     x     x  |   4 high order bits   |
 |----------+----------------+-----------------------------------------------|
-|    R4    | Channel C note |		     8 low order bits		    |
-|----------|		    |-----------------------------------------------|
-|    R5    | Dividing rate  |  x     x	   x	 x  |	4 high order bits   |
+|    R4    | Channel C note |                8 low order bits               |
+|----------|                |-----------------------------------------------|
+|    R5    | Dividing rate  |  x     x     x     x  |   4 high order bits   |
 |----------+----------------+-----------------------------------------------|
-|    R6    | Noise div. rate|  x     x	   x  | 			    |
+|    R6    | Noise div. rate|  x     x     x  |                             |
 |----------+----------------+-----------------------------------------------|
-|	   |		    |  IN*/OUT	|      NOISE*	  |	 TONE*	    |
-|    R7    | Enable*	    |-----------+-----------------+-----------------|
-|	   |		    | IOB | IOA |  C  |  B  |  A  |  C	|  B  |  A  |
+|          |                |  IN*/OUT  |      NOISE*     |      TONE*      |
+|    R7    | Enable*        |-----------+-----------------+-----------------|
+|          |                | IOB | IOA |  C  |  B  |  A  |  C  |  B  |  A  |
 |----------+----------------+-----------------+-----+-----------------------|
-|    R8    | Chan. A volume |  x     x	   x  |  M  |			    |
+|    R8    | Chan. A volume |  x     x     x  |  M  |                       |
 |----------+----------------+-----------------+-----+-----------------------|
-|    R9    | Chan. B volume |  x     x	   x  |  M  |			    |
+|    R9    | Chan. B volume |  x     x     x  |  M  |                       |
 |----------+----------------+-----------------+-----+-----------------------|
-|    R10   | Chan. C volume |  x     x	   x  |  M  |			    |
+|    R10   | Chan. C volume |  x     x     x  |  M  |                       |
 |----------+----------------+-----------------------------------------------|
-|    R11   |		    |		     8 low order bits		    |
+|    R11   |                |                8 low order bits               |
 |----------| Envelope Cycle |-----------------------------------------------|
-|    R12   |		    |		     8 high order bits		    |
+|    R12   |                |                8 high order bits              |
 |----------+----------------+-----------------------------------------------|
-|    R13   | Env. wave shape|  x     x	   x	 x  |			    |
+|    R13   | Env. wave shape|  x     x     x     x  |                       |
 |----------+----------------+-----------------------------------------------|
-|    R14   | I/O port A     |						    |
+|    R14   | I/O port A     |                                               |
 |----------+----------------+-----------------------------------------------|
-|    R15   | I/O port B     |						    |
+|    R15   | I/O port B     |                                               |
 -----------------------------------------------------------------------------
 
-NOTE:	x = unused bit
-	* = inverted signal
+NOTE:   x = unused bit
+        * = inverted signal
 
 
    Figure 5.3  Setting the pitch
 
-		-------------------------------------------------
-R0, R2, R4	|		     8	bits			| --+
-		-------------------------------------------------   |
-		-------------------------------------------------   |
-R0, R2, R4	|  x	 x     x     x	|	 4 bits 	|   |
-		-------------------------------------------------   |
-						    |		    |
-	    ----------------------------------------+		    |
-	    |							    |
-	    V							    V
+                -------------------------------------------------
+R0, R2, R4      |                    8  bits                    | --+
+                -------------------------------------------------   |
+                -------------------------------------------------   |
+R0, R2, R4      |  x     x     x     x  |        4 bits         |   |
+                -------------------------------------------------   |
+                                                    |               |
+            ----------------------------------------+               |
+            |                                                       |
+            V                                                       V
 -----------------------------------------------------------------------
-|   Coarse Tune (CT)	|		 Fine Tune (FT) 	      |
+|   Coarse Tune (CT)    |                Fine Tune (FT)               |
 -----------------------------------------------------------------------
-|								      |
+|                                                                     |
 +-------------------------------- TP ---------------------------------+
 
-						   [ Channel A - R0, R1 ]
-						   [ Channel B - R2, R3 ]
-						   [ Channel C - R4, R5 ]
+                                                   [ Channel A - R0, R1 ]
+                                                   [ Channel B - R2, R3 ]
+                                                   [ Channel C - R4, R5 ]
 
 
    Table 5.1  Setting the tone frequency (scale data)
 
 ----------------------------------------------------------------
-|	Octave |     |	   |	 |     |     |	   |	 |     |
-|	       |  1  |	2  |  3  |  4  |  5  |	6  |  7  |  8  |
-| Note	       |     |	   |	 |     |     |	   |	 |     |
+|       Octave |     |     |     |     |     |     |     |     |
+|              |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |
+| Note         |     |     |     |     |     |     |     |     |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      C       | D5D | 6AF | 357 | 1AC |  D6 |	6B |  35 |  1B |
+|      C       | D5D | 6AF | 357 | 1AC |  D6 |  6B |  35 |  1B |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      C#      | C9C | 64E | 327 | 194 |  CA |	65 |  32 |  19 |
+|      C#      | C9C | 64E | 327 | 194 |  CA |  65 |  32 |  19 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      D       | BE7 | 5F4 | 2FA | 17D |  BE |	5F |  30 |  18 |
+|      D       | BE7 | 5F4 | 2FA | 17D |  BE |  5F |  30 |  18 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      D#      | B3C | 59E | 2CF | 168 |  84 |	5A |  2D |  16 |
+|      D#      | B3C | 59E | 2CF | 168 |  84 |  5A |  2D |  16 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      E       | A9B | 54E | 2A7 | 153 |  AA |	55 |  2A |  15 |
+|      E       | A9B | 54E | 2A7 | 153 |  AA |  55 |  2A |  15 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      F       | A02 | 501 | 281 | 140 |  A0 |	50 |  28 |  14 |
+|      F       | A02 | 501 | 281 | 140 |  A0 |  50 |  28 |  14 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      F#      | 973 | 4BA | 25D | 12E |  97 |	4C |  26 |  13 |
+|      F#      | 973 | 4BA | 25D | 12E |  97 |  4C |  26 |  13 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      G       | 8EB | 476 | 23B | 11D |  8F |	47 |  24 |  12 |
+|      G       | 8EB | 476 | 23B | 11D |  8F |  47 |  24 |  12 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      G#      | 88B | 436 | 21B | 10D |  87 |	43 |  22 |  11 |
+|      G#      | 88B | 436 | 21B | 10D |  87 |  43 |  22 |  11 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      A       | 7F2 | 3F9 | 1FD |  FE |  7F |	40 |  20 |  10 |
+|      A       | 7F2 | 3F9 | 1FD |  FE |  7F |  40 |  20 |  10 |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      A#      | 780 | 3C0 | 1E0 |  F0 |  78 |	3C |  1E |   F |
+|      A#      | 780 | 3C0 | 1E0 |  F0 |  78 |  3C |  1E |   F |
 |--------------+-----+-----+-----+-----+-----+-----+-----+-----|
-|      B       | 714 | 38A | 1C5 |  E3 |  71 |	39 |  1C |   E |
+|      B       | 714 | 38A | 1C5 |  E3 |  71 |  39 |  1C |   E |
 ----------------------------------------------------------------
 
 
@@ -268,16 +268,16 @@ determines the average frequency of the noise (fn).
    Figure 5.4  Setting the noise frequency
 
       -------------------------------------------------
-R6    |  x     x     x	|			      |
+R6    |  x     x     x  |                             |
       -------------------------------------------------
-			|			      |
-			+------------- NP ------------+
+                        |                             |
+                        +------------- NP ------------+
 
 The following relation exists between NP and fn.
 
-	fn = fc/(16 * NP)
-	   = 0.11186078125/NP [MHz]
-	   = 111860.78125/NP [Hz]
+        fn = fc/(16 * NP)
+           = 0.11186078125/NP [MHz]
+           = 111860.78125/NP [Hz]
 
 Since the value of NP is from 1 to 31, the average frequency of the noise can
 be set from 3.6kHz to 111.9kHz.
@@ -295,21 +295,21 @@ when 1, it is OFF.
    Figure 5.5  Output selection for each channel
 
       -------------------------------------------------
-R7    | B7  | B6  | B5	| B4  | B3  | B2  | B1	| B0  |
+R7    | B7  | B6  | B5  | B4  | B3  | B2  | B1  | B0  |
       -------------------------------------------------
-			      |
-			      |
-			      V
+                              |
+                              |
+                              V
 
-    B7	   B6		  B5	  B4	  B3		B2	B1	B0
+    B7     B6             B5      B4      B3            B2      B1      B0
 -----------------     -------------------------     -------------------------
-| Input enable* |     |     Noise enable*     |     |	  Tone enable*	    |
+| Input enable* |     |     Noise enable*     |     |     Tone enable*      |
 |---------------|     |-----------------------|     |-----------------------|
-|   B	|   A	|     |   C   |   B   |   A   |     |	C   |	B   |	A   |
+|   B   |   A   |     |   C   |   B   |   A   |     |   C   |   B   |   A   |
 -----------------     -------------------------     -------------------------
- I/O port	       Noise output		     Tone output
-   Input - 0		 ON - 0 		       ON - 0
-   Output - 1		 OFF - 1		       OFF - 1
+ I/O port              Noise output                  Tone output
+   Input - 0             ON - 0                        ON - 0
+   Output - 1            OFF - 1                       OFF - 1
 
 
 The 2 high order bits of R7 do not affect sound output. These are used to
@@ -329,16 +329,16 @@ envelope.
 
    Figure 5.6  Setting the volume
 
-	       -------------------------------------------------
-R8, R9, R10    |  x	x     x  | B4  | B3  | B2  | B1  | B0  |
-	       -------------------------------------------------
-				    |  |		       |
-				    |  +---------- L ----------+
-				    |
-				    V
-				  Use envelope:
-				    No	- 0 (set volume by the value of L)
-				    Yes - 1 (ignore the value of L)
+               -------------------------------------------------
+R8, R9, R10    |  x     x     x  | B4  | B3  | B2  | B1  | B0  |
+               -------------------------------------------------
+                                    |  |                       |
+                                    |  +---------- L ----------+
+                                    |
+                                    V
+                                  Use envelope:
+                                    No  - 0 (set volume by the value of L)
+                                    Yes - 1 (ignore the value of L)
 
 
 When bit 4 of these registers is "0", the envelope is not used and the 4 low
@@ -355,29 +355,29 @@ are set in R12 and the 8 low order bits are set in R11.
 
    Figure 5.7  Setting the envelope cycle
 
-	   -------------------------------------------------
-R11	   |						   | --+
-	   -------------------------------------------------   |
-	   -------------------------------------------------   |
-R12	   |						   |   |
-	   -------------------------------------------------   |
-					       |	       |
-	      ---------------------------------+	       |
-	      | 					       |
-	      V 					       V
+           -------------------------------------------------
+R11        |                                               | --+
+           -------------------------------------------------   |
+           -------------------------------------------------   |
+R12        |                                               |   |
+           -------------------------------------------------   |
+                                               |               |
+              ---------------------------------+               |
+              |                                                |
+              V                                                V
 -----------------------------------------------------------------------------
-|	   Coarse Tune (CT)	     |		  Fine Tune (FT)	    |
+|          Coarse Tune (CT)          |            Fine Tune (FT)            |
 -----------------------------------------------------------------------------
-|									    |
+|                                                                           |
 +----------------------------------- EP ------------------------------------+
 
 
 The following relation exists between the envelope cycle T and 16-bit data
 EP.
 
-	T = (256 * EP) / fc
-	  = (256 * EP) / 1.787725 [MHz]
-	  = 143.03493  * EP [micro second]
+        T = (256 * EP) / fc
+          = (256 * EP) / 1.787725 [MHz]
+          = 143.03493  * EP [micro second]
 
 
 * Setting the envelope pattern (R13)
@@ -389,48 +389,48 @@ cycle specified by R11 and R12.
 
    Figure 5.8  Setting the wave forms of the envelopes
 
-	    -------------------------------------------------
-R13	    |  x     x	   x	 x  | B3  | B2	| B1  | B0  |
-	    -------------------------------------------------
-						|
-	    ------------------------------------+
-	    |
-	    V
+            -------------------------------------------------
+R13         |  x     x     x     x  | B3  | B2  | B1  | B0  |
+            -------------------------------------------------
+                                                |
+            ------------------------------------+
+            |
+            V
 ---------------------------------------------------------
-|		       |    :\				|
-|   0	 0    x    x   |  __:  \______________________	|
-|		       |				|
-|		       |      /:			|
-|   0	 1    x    x   |  __/  :______________________	|
-|		       |				|
-|		       |    :\	:\  :\	:\  :\	:\  :\	|
-|   1	 0    0    0   |  __:  \:  \:  \:  \:  \:  \:_	|
-|		       |				|
-|		       |    :\				|
-|   1	 0    0    1   |  __:  \______________________	|
-|		       |				|
-|		       |    :\	   / \	   / \	   / \	|
-|   1	 0    1    0   |  __:  \ /     \ /     \ /	|
-|		       |	 _____________________	|
-|		       |    :\	:			|
-|   1	 0    1    1   |  __:  \:			|
-|		       |				|
-|		       |      /:  /:  /:  /:  /:  /:	|
-|   1	 1    0    0   |  __/  :/  :/  :/  :/  :/  :/	|
-|		       |	______________________	|
-|		       |      / 			|
-|   1	 1    0    1   |  __/				|
-|		       |				|
-|		       |      / \     / \     / \	|
-|   1	 1    1    0   |  __/	  \ /	  \ /	  \ /	|
-|		       |				|
-|		       |      /:			|
-|   1	 1    1    1   |  __/  :______________________	|
-|		       |				|
+|                      |    :\                          |
+|   0    0    x    x   |  __:  \______________________  |
+|                      |                                |
+|                      |      /:                        |
+|   0    1    x    x   |  __/  :______________________  |
+|                      |                                |
+|                      |    :\  :\  :\  :\  :\  :\  :\  |
+|   1    0    0    0   |  __:  \:  \:  \:  \:  \:  \:_  |
+|                      |                                |
+|                      |    :\                          |
+|   1    0    0    1   |  __:  \______________________  |
+|                      |                                |
+|                      |    :\     / \     / \     / \  |
+|   1    0    1    0   |  __:  \ /     \ /     \ /      |
+|                      |         _____________________  |
+|                      |    :\  :                       |
+|   1    0    1    1   |  __:  \:                       |
+|                      |                                |
+|                      |      /:  /:  /:  /:  /:  /:    |
+|   1    1    0    0   |  __/  :/  :/  :/  :/  :/  :/   |
+|                      |        ______________________  |
+|                      |      /                         |
+|   1    1    0    1   |  __/                           |
+|                      |                                |
+|                      |      / \     / \     / \       |
+|   1    1    1    0   |  __/     \ /     \ /     \ /   |
+|                      |                                |
+|                      |      /:                        |
+|   1    1    1    1   |  __/  :______________________  |
+|                      |                                |
 ---------------------------------------------------------
-			   |   |
-			   +---+
-			     T
+                           |   |
+                           +---+
+                             T
 
 
 * I/O port (R14, R15)
@@ -448,80 +448,80 @@ described below are available.
 
 * GICINI (0090H/MAIN) .................. PSG initialization
 
-Input:		---
-Output: 	---
-Function:	initializes PSG registers and does the initial settings of
-		the work area in which PLAY statement of BASIC is executed.
-		Each register of PSG is set to the value as shown in
-		Figure 5.9.
+Input:          ---
+Output:         ---
+Function:       initializes PSG registers and does the initial settings of
+                the work area in which PLAY statement of BASIC is executed.
+                Each register of PSG is set to the value as shown in
+                Figure 5.9.
 
 
    Figure 5.9  Initial values of PSG registers
 
 -----------------------------------------------------------------------------
-|			Bit |	  |	|     |     |	  |	|     |     |
-|			    |  7  |  6	|  5  |  4  |  3  |  2	|  1  |  0  |
-| Register		    |	  |	|     |     |	  |	|     |     |
+|                       Bit |     |     |     |     |     |     |     |     |
+|                           |  7  |  6  |  5  |  4  |  3  |  2  |  1  |  0  |
+| Register                  |     |     |     |     |     |     |     |     |
 |---------------------------+-----------------------------------------------|
-|    R0    | Channel A	    |  0     1	   0	 1     0     1	   0	 1  |
-|----------|		    |-----------------------------------------------|
-|    R1    | frequency	    |  0     0	   0	 0     0     0	   0	 0  |
+|    R0    | Channel A      |  0     1     0     1     0     1     0     1  |
+|----------|                |-----------------------------------------------|
+|    R1    | frequency      |  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R2    | Channel B	    |  0     0	   0	 0     0     0	   0	 0  |
-|----------|		    |-----------------------------------------------|
-|    R3    | frequency	    |  0     0	   0	 0     0     0	   0	 0  |
+|    R2    | Channel B      |  0     0     0     0     0     0     0     0  |
+|----------|                |-----------------------------------------------|
+|    R3    | frequency      |  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R4    | Channel C	    |  0     0	   0	 0     0     0	   0	 0  |
-|----------|		    |-----------------------------------------------|
-|    R5    | frequency	    |  0     0	   0	 0     0     0	   0	 0  |
+|    R4    | Channel C      |  0     0     0     0     0     0     0     0  |
+|----------|                |-----------------------------------------------|
+|    R5    | frequency      |  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R6    | Noise frequency|  0     0	   0	 0     0     0	   0	 0  |
+|    R6    | Noise frequency|  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R7    | Channel setting|  1     0	   1	 1     1     0	   0	 0  |
+|    R7    | Channel setting|  1     0     1     1     1     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R8    | Chan. A volume |  0     0	   0	 0     0     0	   0	 0  |
+|    R8    | Chan. A volume |  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R9    | Chan. B volume |  0     0	   0	 0     0     0	   0	 0  |
+|    R9    | Chan. B volume |  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R10   | Chan. C volume |  0     0	   0	 0     0     0	   0	 0  |
+|    R10   | Chan. C volume |  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R11   |		    |  0     0	   0	 0     1     0	   1	 1  |
+|    R11   |                |  0     0     0     0     1     0     1     1  |
 |----------| Envelope Cycle |-----------------------------------------------|
-|    R12   |		    |  0     0	   0	 0     0     0	   0	 0  |
+|    R12   |                |  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R13   | Env. pattern   |  0     0	   0	 0     0     0	   0	 0  |
+|    R13   | Env. pattern   |  0     0     0     0     0     0     0     0  |
 |----------+----------------+-----------------------------------------------|
-|    R14   | I/O port A     |						    |
+|    R14   | I/O port A     |                                               |
 |----------+----------------+-----------------------------------------------|
-|    R15   | I/O port B     |						    |
+|    R15   | I/O port B     |                                               |
 -----------------------------------------------------------------------------
 
 
 * WRTPSG (0093H/MAIN) ................. writing data in PSG registers
 
-Input:		A <-- PSG register number
-		E <-- data to be written
-Output: 	---
-Function:	writes the contents of the E register in the PSG register
-		whose number is specified by the A register.
+Input:          A <-- PSG register number
+                E <-- data to be written
+Output:         ---
+Function:       writes the contents of the E register in the PSG register
+                whose number is specified by the A register.
 
 
 * RDPSG (0096H/MAIN) .................. reading PSG register data
 
-Input:		A <-- PSG register number
-Output: 	A <-- contents of the specified register
-Function:	reads the contents of PSG register whose number is specified
-		by the A register and stores the value in the A register.
+Input:          A <-- PSG register number
+Output:         A <-- contents of the specified register
+Function:       reads the contents of PSG register whose number is specified
+                by the A register and stores the value in the A register.
 
 
 * STRTMS (0099H/MAIN) ................. starting the music
 
-Input:		(QUEUE) <-- MML which is translated into the intermediate
-			    language
-Output: 	---
-Function:	examines whether the music is played as the background task,
-		and plays the music which is set in the queue, if the music
-		has not yet been played.
+Input:          (QUEUE) <-- MML which is translated into the intermediate
+                            language
+Output:         ---
+Function:       examines whether the music is played as the background task,
+                and plays the music which is set in the queue, if the music
+                has not yet been played.
 
 
 List 5.1  Single tone generation
@@ -533,31 +533,31 @@ List 5.1  Single tone generation
 ;
 ;************************************************
 ;
-WRTPSG	EQU	0093H
+WRTPSG  EQU     0093H
 
-	ORG	0B000H
+        ORG     0B000H
 
 ;----- program start -----
 
-	LD	A,7		;Select Channel
-	LD	E,00111110B	;Channel A Tone := On
-	CALL	WRTPSG
+        LD      A,7             ;Select Channel
+        LD      E,00111110B     ;Channel A Tone := On
+        CALL    WRTPSG
 
-	LD	A,8		;Set Volume
-	LD	E,10
-	CALL	WRTPSG
+        LD      A,8             ;Set Volume
+        LD      E,10
+        CALL    WRTPSG
 
-	LD	A,0		;Set Fine Tune Channel A
-	LD	E,0FEH		;Data 0FEH
-	CALL	WRTPSG
+        LD      A,0             ;Set Fine Tune Channel A
+        LD      E,0FEH          ;Data 0FEH
+        CALL    WRTPSG
 
-	LD	A,1		;Set Coarse Tune Channel A
-	LD	E,0		;Data 0H
-	CALL	WRTPSG
+        LD      A,1             ;Set Coarse Tune Channel A
+        LD      E,0             ;Data 0H
+        CALL    WRTPSG
 
-	RET
+        RET
 
-	END
+        END
 
 =================================================================
 
@@ -569,25 +569,25 @@ that generates sound by turning ON/OFF the 1-bit I/O port output repeatedly
 using software.
 
 
-   Figure 5.10	1-bit sound port
+   Figure 5.10  1-bit sound port
 
-		bit    7    6	 5    4    3	2    1	  0
-		     -----------------------------------------
-		     | .  |    |    |	 |    |    |	|    |
-		     --+--------------------------------------
-		       |    PPI port C (I/O address 0AAH)
-		       |
-		       |
-::::::::::::	       V
-:   PSG    :	   ---------
+                bit    7    6    5    4    3    2    1    0
+                     -----------------------------------------
+                     | .  |    |    |    |    |    |    |    |
+                     --+--------------------------------------
+                       |    PPI port C (I/O address 0AAH)
+                       |
+                       |
+::::::::::::           V
+:   PSG    :       ---------
 :  output  :::::::>|  MIX  |
-::::::::::::	   ---------
-		       |
-		       V
-		     -----
-		    /	  \   Speaker
-		   ---------
-		     / : \
+::::::::::::       ---------
+                       |
+                       V
+                     -----
+                    /     \   Speaker
+                   ---------
+                     / : \
 
 
 1.4 Access to 1-bit Sound Port
@@ -597,11 +597,11 @@ To access to the 1-bit sound port, the following BIOS routine is offered.
 
 * CHGSND (0135H/MAIN)
 
-Input:		A <-- specification of ON/OFF (0 = OFF, others = ON)
+Input:          A <-- specification of ON/OFF (0 = OFF, others = ON)
 Output:
-Function:	calling this routine with setting 0 in the A register turns
-		the bit of the sound port OFF; calling it with another value
-		turns it ON.
+Function:       calling this routine with setting 0 in the A register turns
+                the bit of the sound port OFF; calling it with another value
+                turns it ON.
 
 
 List 5.2  Reading from cassette tape
@@ -611,38 +611,38 @@ List 5.2  Reading from cassette tape
 ;
 ;  List 5.2   Read from cassette tape
 ;
-;	     Set music tape into tape-recorder
-;	     and run this program.
-;	     Then your MSX will replay it.
+;            Set music tape into tape-recorder
+;            and run this program.
+;            Then your MSX will replay it.
 ;
 ;********************************************************
 ;
-CHGSNG	EQU	0135H
-STMOTR	EQU	00F3H
-RDPSG	EQU	0096H
-BREAKX	EQU	00B7H
+CHGSNG  EQU     0135H
+STMOTR  EQU     00F3H
+RDPSG   EQU     0096H
+BREAKX  EQU     00B7H
 
-	ORG	0B000H
+        ORG     0B000H
 
-;----- program start -----	Note:  Play tape using 1-bit sound port.
+;----- program start -----      Note:  Play tape using 1-bit sound port.
 
-START:	LD	A,1		;motor on
-	CALL	STMOTR
+START:  LD      A,1             ;motor on
+        CALL    STMOTR
 
-LBL01:	LD	A,14		;register 14
-	CALL	RDPSG		;read PSG
+LBL01:  LD      A,14            ;register 14
+        CALL    RDPSG           ;read PSG
 
-	AND	80H		;check CSAR
-	CALL	CHGSNG		;change SOUND PORT
+        AND     80H             ;check CSAR
+        CALL    CHGSNG          ;change SOUND PORT
 
-	CALL	BREAKX		;check Ctrl-STOP
-	JR	NC,LBL01
+        CALL    BREAKX          ;check Ctrl-STOP
+        JR      NC,LBL01
 
-	XOR	A		;stop cassette motor
-	CALL	STMOTR
-	RET
+        XOR     A               ;stop cassette motor
+        CALL    STMOTR
+        RET
 
-	END
+        END
 
 =================================================================
 
@@ -664,7 +664,7 @@ Table 5.2). When BASIC is invoked, 1200bps is set by default.
    Table 5.2  MSX baud rate
 
 ------------------------------------------------
-|  Baud rate  |        Characteristics	       |
+|  Baud rate  |        Characteristics         |
 |-------------+--------------------------------|
 |  1200 bps   |  Low speed / high reliability  |
 |-------------+--------------------------------|
@@ -676,9 +676,9 @@ The baud rate is specified by the fourth parameter of the SCREEN instruction
 or the second parameter of the CSAVE instruction. Once the baud rate is set,
 it stays at that value.
 
-SCREEN		,,,<baud rate>
-CSAVE		"filename",<baud rate>
-		(<baud rate> is 1 for 1200bps, 2 for 2400 bps)
+SCREEN          ,,,<baud rate>
+CSAVE           "filename",<baud rate>
+                (<baud rate> is 1 for 1200bps, 2 for 2400 bps)
 
 
 2.2 One bit composition
@@ -692,35 +692,35 @@ of the general-purpose I/O interface (register 15 of the PSG). This function
 was used in the program example of List 5.3, section 1 of chapter 5.
 
 
-   Figure 5.11	One bit composition
+   Figure 5.11  One bit composition
 
 --------------------------------------------------------------
-| Baud rate |  Bit  |		     Wave form		     |
+| Baud rate |  Bit  |                Wave form               |
 |-----------+-------+----------------------------------------|
-|	    |	    |  :	 -----------		     |
-|	    |	0   |  :	 |	   |   (1200Hz x 1)  |
-|    1200   |	    |  :_________|	   |		     |
-|	    |-------+--:-------------------------------------|
-|    baud   |	    |  :    ------    ------		     |
-|	    |	1   |  :    |	 |    |    |   (2400Hz x 2)  |
-|	    |	    |  :____|	 |____|    |		     |
+|           |       |  :         -----------                 |
+|           |   0   |  :         |         |   (1200Hz x 1)  |
+|    1200   |       |  :_________|         |                 |
+|           |-------+--:-------------------------------------|
+|    baud   |       |  :    ------    ------                 |
+|           |   1   |  :    |    |    |    |   (2400Hz x 2)  |
+|           |       |  :____|    |____|    |                 |
 |-----------+-------+--:-------------------------------------|
-|	    |	    |  :    ------	   :		     |
-|	    |	0   |  :    |	 |	   :   (2400Hz x 1)  |
-|    2400   |	    |  :____|	 |	   :		     |
-|	    |-------+--:-------------------:-----------------|
-|    baud   |	    |  :  ---  ---	   :		     |
-|	    |	1   |  :  | |  | |	   :   (4800Hz x 2)  |
-|	    |	    |  :__| |__| |	   :		     |
+|           |       |  :    ------         :                 |
+|           |   0   |  :    |    |         :   (2400Hz x 1)  |
+|    2400   |       |  :____|    |         :                 |
+|           |-------+--:-------------------:-----------------|
+|    baud   |       |  :  ---  ---         :                 |
+|           |   1   |  :  | |  | |         :   (4800Hz x 2)  |
+|           |       |  :__| |__| |         :                 |
 -----------------------:--:-:----:---------:------------------
-		       |  : :	 :	   |  2963 T-states (833 micro-sec)
-		       +--:-:----:---------+
-		       |  : :	 |  1491 T-states (417 micro-sec)
-		       +--:-:----+
-		       |  : |  746 T-states (208 micro-sec)
-		       +--:-+
-		       |  |  373 T-states (104 micro-sec)
-		       +--+
+                       |  : :    :         |  2963 T-states (833 micro-sec)
+                       +--:-:----:---------+
+                       |  : :    |  1491 T-states (417 micro-sec)
+                       +--:-:----+
+                       |  : |  746 T-states (208 micro-sec)
+                       +--:-+
+                       |  |  373 T-states (104 micro-sec)
+                       +--+
 
 
 2.3 One byte composition
@@ -730,15 +730,15 @@ is one "0" bit as the start bit, followed by the 8-bit data body from LSB to
 MSX and by two "1" bit as the stop bits, so 11 bits are used.
 
 
-   Figure 5.12	One byte composition
+   Figure 5.12  One byte composition
 
-	     LSB				       MSB
+             LSB                                       MSB
   -------------------------------------------------------------------------
-     |	0  |  X  |  X  |  X  |	X  |  X  |  X  |  X  |	X  |  1  :  1  |
+     |  0  |  X  |  X  |  X  |  X  |  X  |  X  |  X  |  X  |  1  :  1  |
   -------------------------------------------------------------------------
-     |	   |						   |	       |
+     |     |                                               |           |
      +-----+-----------------------------------------------+-----------+
-    Start bit			  Data			      Stop bit
+    Start bit                     Data                        Stop bit
 
 
 2.4 Header Composition
@@ -755,15 +755,15 @@ Table 5.3 shows the compositions of both.
    Table 5.3  Header composition
 
 ------------------------------------------------------------------
-|  Baud rate  |    Header    |	      Header composition	 |
+|  Baud rate  |    Header    |        Header composition         |
 |-------------+--------------+-----------------------------------|
-|	      | Long header  |	2400 Hz x 16000 (about 6.7 sec)  |
+|             | Long header  |  2400 Hz x 16000 (about 6.7 sec)  |
 |  1200 baud  |--------------+-----------------------------------|
-|	      | Short header |	2400 Hz x  4000 (about 1.7 sec)  |
+|             | Short header |  2400 Hz x  4000 (about 1.7 sec)  |
 |-------------+--------------+-----------------------------------|
-|	      | Long header  |	4800 Hz x 32000 (about 6.7 sec)  |
+|             | Long header  |  4800 Hz x 32000 (about 6.7 sec)  |
 |  2400 baud  |--------------+-----------------------------------|
-|	      | Short header |	4800 Hz x  8000 (about 1.7 sec)  |
+|             | Short header |  4800 Hz x  8000 (about 1.7 sec)  |
 ------------------------------------------------------------------
 
 
@@ -778,29 +778,29 @@ BASIC programs saved with the CSAVE command are recorded in this format. The
 file is divided into the preceding file header and the succeeding the body.
 
 
-   Figure 5.13	Binary file format
+   Figure 5.13  Binary file format
 
-	  6.7 sec		 10 bytes		  6 bytes
+          6.7 sec                10 bytes                 6 bytes
   -------------------------------------------------------------------------
-     |		     |				    |		       |
-     |	Long header  |		0D3H x 10	    |	 File name     |
-     |		     |				    |		       |
+     |               |                              |                  |
+     |  Long header  |          0D3H x 10           |    File name     |
+     |               |                              |                  |
   -------------------------------------------------------------------------
-     |								       |
-     +----------+		  +------------------------------------+
-		|		  |
+     |                                                                 |
+     +----------+                 +------------------------------------+
+                |                 |
 -----------------------------------------------------------------------------
-|		|   File header   |  |	      File body 	|	    |
+|               |   File header   |  |        File body         |           |
 -----------------------------------------------------------------------------
-				     |				|
-     +-------------------------------+				+------+
-     |								       |
+                                     |                          |
+     +-------------------------------+                          +------+
+     |                                                                 |
   -------------------------------------\  \--------------------------------
-     |	Short	|		       /  /	 |		       |
-     |	header	|     BASIC program    \  \	 |	 00H x 7       |
-     |		|		       /  /	 |		       |
+     |  Short   |                      /  /      |                     |
+     |  header  |     BASIC program    \  \      |       00H x 7       |
+     |          |                      /  /      |                     |
   -------------------------------------\  \--------------------------------
-       1.7 sec		   Any length			 7 bytes
+       1.7 sec             Any length                    7 bytes
 
 
 In the file header, ten bytes each of the value 0D3H follow after the long
@@ -815,37 +815,37 @@ BASIC programs saved in ASCII format by the SAVE command and data files
 created by the OPEN command are recorded in this format.
 
 
-   Figure 5.14	ASCII file format
+   Figure 5.14  ASCII file format
 
-	  6.7 sec		 10 bytes		  6 bytes
+          6.7 sec                10 bytes                 6 bytes
   -------------------------------------------------------------------------
-     |		     |				    |		       |
-     |	Long header  |		0EAH x 10	    |	 File name     |
-     |		     |				    |		       |
+     |               |                              |                  |
+     |  Long header  |          0EAH x 10           |    File name     |
+     |               |                              |                  |
   -------------------------------------------------------------------------
-     |								       |
-     +----------+		  +------------------------------------+
-		|		  |
+     |                                                                 |
+     +----------+                 +------------------------------------+
+                |                 |
 -----------------------------------------------------------------------------
-|		|   File header   |  |	      File body 	|	    |
+|               |   File header   |  |        File body         |           |
 -----------------------------------------------------------------------------
-				     |				|
-     +-------------------------------+				+------+
-     |								       |
+                                     |                          |
+     +-------------------------------+                          +------+
+     |                                                                 |
   -----------------------------------------------\  \----------------------
-     |		 |	     |		 |	 /  /	   |   Last    |
-     |	Block 1  |  Block 2  |	Block 3  | ..... \  \ .... |   block   |
-     |		 |	     |		 |	 /  /	   |	 .     |
+     |           |           |           |       /  /      |   Last    |
+     |  Block 1  |  Block 2  |  Block 3  | ..... \  \ .... |   block   |
+     |           |           |           |       /  /      |     .     |
   -----------------------------------------------\  \------------+---------
-		 |	     |					 |
-     +-----------+	     +-----------+		    CTRL+Z (EOF)
-     |					 |		is included in data
+                 |           |                                   |
+     +-----------+           +-----------+                  CTRL+Z (EOF)
+     |                                   |              is included in data
   ------------------------------------------------
-     |	Short	|			 |
-     |	header	|	   Data 	 | .....
-     |		|			 |
+     |  Short   |                        |
+     |  header  |          Data          | .....
+     |          |                        |
   ------------------------------------------------
-	1.7 sec 	256 bytes
+        1.7 sec         256 bytes
 
 
 (3) Machine code file
@@ -862,29 +862,29 @@ file. The entry address is the address where the program is executed when the
 R option of the BLOAD command is used.
 
 
-   Figure 5.15	Machine code file format
+   Figure 5.15  Machine code file format
 
-	  6.7 sec		 10 bytes		  6 bytes
+          6.7 sec                10 bytes                 6 bytes
   -------------------------------------------------------------------------
-     |		     |				    |		       |
-     |	Long header  |		0D0H x 10	    |	 File name     |
-     |		     |				    |		       |
+     |               |                              |                  |
+     |  Long header  |          0D0H x 10           |    File name     |
+     |               |                              |                  |
   -------------------------------------------------------------------------
-     |								       |
-     +----------+		  +------------------------------------+
-		|		  |
+     |                                                                 |
+     +----------+                 +------------------------------------+
+                |                 |
 -----------------------------------------------------------------------------
-|		|   File header   |  |	      File body 	|	    |
+|               |   File header   |  |        File body         |           |
 -----------------------------------------------------------------------------
-				     |				|
-     +-------------------------------+				+------+
-     |								       |
+                                     |                          |
+     +-------------------------------+                          +------+
+     |                                                                 |
   -------------------------------------------------------------------------
-     |	Short	|   Top    |   End    | Starting |		       |
-     |	header	| address  | address  | address  |    Program body     |
-     |		|	   |	      | 	 |		       |
+     |  Short   |   Top    |   End    | Starting |                     |
+     |  header  | address  | address  | address  |    Program body     |
+     |          |          |          |          |                     |
   -------------------------------------------------------------------------
-       1.7 sec	  2 bytes    2 bytes	2 bytes
+       1.7 sec    2 bytes    2 bytes    2 bytes
 
 
 2.6 Access to cassette files
@@ -894,61 +894,61 @@ The following BIOS routines are offered to access cassette files.
 
 * TAPION (00E1H/MAIN) ................. OPEN for read
 
-Input:		---
-Output: 	CY flag = ON at abnormal terminations
-Function:	starts the motor of the tape recorder and reads the long
-		header or the short headet. At the same time, the baud rate
-		in which the file is recorded is detected and the work area
-		is set according to it. Interrupts are inhibited.
+Input:          ---
+Output:         CY flag = ON at abnormal terminations
+Function:       starts the motor of the tape recorder and reads the long
+                header or the short header. At the same time, the baud rate
+                in which the file is recorded is detected and the work area
+                is set according to it. Interrupts are inhibited.
 
 
 * TAPIN (00E4H/MAIN) .................. read one byte
 
-Input:		---
-Output: 	A <-- data which has been read
-		CY flag = ON at abnormal terminations
-Function:	reads one byte of data from the tape and stores it in the A
-		register.
+Input:          ---
+Output:         A <-- data which has been read
+                CY flag = ON at abnormal terminations
+Function:       reads one byte of data from the tape and stores it in the A
+                register.
 
 
 * TAPIOF (00E7H/MAIN) ................. CLOSE for read
 
-Input:		---
-Output: 	---
-Function:	ends reading from the tape. At this point, interrupts are
-		allowed.
+Input:          ---
+Output:         ---
+Function:       ends reading from the tape. At this point, interrupts are
+                allowed.
 
 
 * TAPOON (00EAH/MAIN) ................. OPEN for write
 
-Input:		A <-- type of header (0 = short header, others = long header)
-Output: 	CY flag = ON at abnormal terminations
-Function:	starts the motor of the tape recorder and writes the header
-		of the type specified in the A register to the tape.
-		Interrupts are inhibited.
+Input:          A <-- type of header (0 = short header, others = long header)
+Output:         CY flag = ON at abnormal terminations
+Function:       starts the motor of the tape recorder and writes the header
+                of the type specified in the A register to the tape.
+                Interrupts are inhibited.
 
 
 * TAPOUT (00EDH/MAIN) ................. write one byte
 
-Input:		A <-- data to be written
-Output: 	CY flag = ON at abnormal terminations
-Function:	writes the contents of the A register to the tape.
+Input:          A <-- data to be written
+Output:         CY flag = ON at abnormal terminations
+Function:       writes the contents of the A register to the tape.
 
 
 * TAPOOF (00F0H/MAIN) ................. CLOSE writing
 
-Input:		---
-Output: 	---
-Function:	ends writing the tape. At this point, interrupts are allowed.
+Input:          ---
+Output:         ---
+Function:       ends writing the tape. At this point, interrupts are allowed.
 
 
 * STMOTR (00F3/MAIN) .................. specify the actions of the motor
 
-Input:		A <-- action (0 = stop, 1 = start, 255 = reverse the current
-							 status)
-Output: 	---
-Function:	sets the status of the motor according to the value specified
-		in the A register.
+Input:          A <-- action (0 = stop, 1 = start, 255 = reverse the current
+                                                         status)
+Output:         ---
+Function:       sets the status of the motor according to the value specified
+                in the A register.
 
 
 When READ/WRITE routines for the cassette files are created using these BIOS
@@ -964,104 +964,104 @@ List 5.3  Listing names of files saved in the cassette
 
 ;************************************************************
 ;
-;  List 5.3	 Cassette files
+;  List 5.3      Cassette files
 ;
-;	Set cassette tape into recorder and run this program.
-;	Then all the names and attributes of the programs
-;	in that tape will be listed.
+;       Set cassette tape into recorder and run this program.
+;       Then all the names and attributes of the programs
+;       in that tape will be listed.
 ;
 ;************************************************************
 ;
-CHPUT	EQU	00A2H
-TAPION	EQU	00E1H
-TAPIN	EQU	00E4H
-TAPIOF	EQU	00E7H
+CHPUT   EQU     00A2H
+TAPION  EQU     00E1H
+TAPIN   EQU     00E4H
+TAPIOF  EQU     00E7H
 
-	ORG	0C000H
+        ORG     0C000H
 
-;----- program start -----	Note:  View program names on cassette tape.
+;----- program start -----      Note:  View program names on cassette tape.
 
-START:	CALL	TAPION		;motor on and read header
+START:  CALL    TAPION          ;motor on and read header
 
-	LD	B,16
-	LD	HL,WORK 	;work area address
-LBL01:	PUSH	HL
-	PUSH	BC
-	CALL	TAPIN		;read a byte of data from tape
-	POP	BC
-	POP	HL
-	JR	C,ERROR 	;set carry flag if read error
-	LD	(HL),A
-	INC	HL
-	DJNZ	LBL01
+        LD      B,16
+        LD      HL,WORK         ;work area address
+LBL01:  PUSH    HL
+        PUSH    BC
+        CALL    TAPIN           ;read a byte of data from tape
+        POP     BC
+        POP     HL
+        JR      C,ERROR         ;set carry flag if read error
+        LD      (HL),A
+        INC     HL
+        DJNZ    LBL01
 
-	LD	HL,FILNAM	;write file name
-	CALL	PUTSTR
-	LD	HL,WORK+10
-	CALL	PUTSTR
-	CALL	CRLF
+        LD      HL,FILNAM       ;write file name
+        CALL    PUTSTR
+        LD      HL,WORK+10
+        CALL    PUTSTR
+        CALL    CRLF
 
-	LD	A,(WORK)	;check file attributes
+        LD      A,(WORK)        ;check file attributes
 
-	LD	HL,BINFIL
-	CP	0D3H		;check binary file
-	JR	Z,LBL03
+        LD      HL,BINFIL
+        CP      0D3H            ;check binary file
+        JR      Z,LBL03
 
-	LD	HL,ASCFIL
-	CP	0EAH		;check ascii file
-	JR	Z,LBL03
+        LD      HL,ASCFIL
+        CP      0EAH            ;check ascii file
+        JR      Z,LBL03
 
-	LD	HL,MACFIL
-	CP	0D0H		;check machine code file
-	JR	Z,LBL03
+        LD      HL,MACFIL
+        CP      0D0H            ;check machine code file
+        JR      Z,LBL03
 
-ERROR:	LD	HL,ERRSTR
+ERROR:  LD      HL,ERRSTR
 
-LBL03:	CALL	PUTSTR
-	CALL	TAPIOF
-	RET
+LBL03:  CALL    PUTSTR
+        CALL    TAPIOF
+        RET
 
 ;----- put CRLF -----
 
-CRLF:	LD	HL,STCRLF
-	CALL	PUTSTR
-	RET
+CRLF:   LD      HL,STCRLF
+        CALL    PUTSTR
+        RET
 
 ;----- put string -----
 
-PUTSTR: LD	A,(HL)		;get a character from strings
-	CP	'$'             ;check end of strings
-	RET	Z
-	CALL	CHPUT		;write a character to CRT
-	INC	HL
-	JR	PUTSTR
+PUTSTR: LD      A,(HL)          ;get a character from strings
+        CP      '$'             ;check end of strings
+        RET     Z
+        CALL    CHPUT           ;write a character to CRT
+        INC     HL
+        JR      PUTSTR
 
 ;----- strings data -----
 
-FILNAM: DB	'FILE NAME :$'
-ASCFIL: DB	'ASCII FILE',0DH,0AH,'$'
-BINFIL: DB	'BINARY FILE',0DH,0Ah,'$'
-MACFIL: DB	'BSAVE FILE',0DH,0AH,'$'
-ERRSTR: DB	'TAPE READ ERROR',0DH,0AH,'$'
-STCRLF: DB	0DH,0AH,'$'
+FILNAM: DB      'FILE NAME :$'
+ASCFIL: DB      'ASCII FILE',0DH,0AH,'$'
+BINFIL: DB      'BINARY FILE',0DH,0Ah,'$'
+MACFIL: DB      'BSAVE FILE',0DH,0AH,'$'
+ERRSTR: DB      'TAPE READ ERROR',0DH,0AH,'$'
+STCRLF: DB      0DH,0AH,'$'
 
 ;----- WORK AREA -----
 
-WORK:	DS	16,0
-	DB	'$'             ;end of strings
+WORK:   DS      16,0
+        DB      '$'             ;end of strings
 
-	END
+        END
 
 =========================================================================
 
 
 3. KEYBOARD INTERFACE
 
-Altough the MSX2 keyboard has the same design as that of the MSX1, it is more
-convenient to use because of the Romand-to-kana translation available for
+Although the MSX2 keyboard has the same design as that of the MSX1, it is more
+convenient to use because of the Roman-to-kana translation available for
 kana input. This chapter describes the keyboard interface of the MSX2.
 
-Descriptions of the key aarangement are based on the Japanese keyboard
+Descriptions of the key arrangement are based on the Japanese keyboard
 standard; note that data is slightly different for the international MSX
 versions.
 
@@ -1076,110 +1076,110 @@ Scanning the key matrix is done by the following BIOS routine.
 
 
 * SNSMAT (0141H/MAIN) ................. reads the specified line of the
-					key matrix
+                                        key matrix
 
-Input:		A <-- key matrix line to be read (0 to 10)
-Output: 	A <-- status of the specified line of the key matrix
-		      (when pressed, the bit of the key is 0)
-Function:	specifies a line of the key matrix shown in Figure 5.16,
-		Figure 5.17 or Figure 5.17B and stores its status in the
-		A register. The bit corresponding with the key being pressed
-		is "0", and "1" for the key not being pressed.
+Input:          A <-- key matrix line to be read (0 to 10)
+Output:         A <-- status of the specified line of the key matrix
+                      (when pressed, the bit of the key is 0)
+Function:       specifies a line of the key matrix shown in Figure 5.16,
+                Figure 5.17 or Figure 5.17B and stores its status in the
+                A register. The bit corresponding with the key being pressed
+                is "0", and "1" for the key not being pressed.
 
 
-   Figure 5.16	MSX USA version key matrix
+   Figure 5.16  MSX USA version key matrix
 
-MSB								       LSB
-	7	6	5	4	3	2	1	0
+MSB                                                                    LSB
+        7       6       5       4       3       2       1       0
     -----------------------------------------------------------------
- 0  |	B   |	L   |	    |	/   |	1   |	S   |	X   |	,   |
+ 0  |   B   |   L   |       |   /   |   1   |   S   |   X   |   ,   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 1  |	V   |	J   |	=   |	`   |	Q   |	A   |	C   |	N   |
+ 1  |   V   |   J   |   =   |   `   |   Q   |   A   |   C   |   N   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 2  |	G   |	8   |	0   |	]   |	W   |	F   |	Z   |	M   |
+ 2  |   G   |   8   |   0   |   ]   |   W   |   F   |   Z   |   M   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 3  |	T   |	I   |	~   |	;   |	2   |	D   |	U   |	\   |
+ 3  |   T   |   I   |   ~   |   ;   |   2   |   D   |   U   |   \   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 4  |	6   |	K   |	P   |	'   |   3   |   R   |   7   |   H   |
+ 4  |   6   |   K   |   P   |   '   |   3   |   R   |   7   |   H   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 5  |	5   |	0   |	9   |	[   |	4   |	E   |	Y   |	.   |
+ 5  |   5   |   0   |   9   |   [   |   4   |   E   |   Y   |   .   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 6  |	F3  |	F2  |	F1  | CODE  | CAPS  | GRAPH | CTRL  | SHIFT |
+ 6  |   F3  |   F2  |   F1  | CODE  | CAPS  | GRAPH | CTRL  | SHIFT |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 7  | RETURN| SELECT|	BS  | STOP  |  TAB  |  ESC  |	F5  |	F4  |
+ 7  | RETURN| SELECT|   BS  | STOP  |  TAB  |  ESC  |   F5  |   F4  |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 8  | RIGHT | DOWN  |	UP  | LEFT  |  DEL  |  INS  | HOME  | SPACE |
-    -----------------------------------------------------------------
-
-    [TEN KEY]
-    -----------------------------------------------------------------
- 9  |	4   |	3   |	2   |	1   |	0   | option| option| option|
-    |-------+-------+-------+-------+-------+-------+-------+-------|
-10  |	.   |	,   |	-   |	9   |	8   |	7   |	6   |	5   |
-    -----------------------------------------------------------------
-
-
-   Figure 5.17	MSX International version key matrix
-
-MSB								       LSB
-	7	6	5	4	3	2	1	0
-    -----------------------------------------------------------------
- 0  |	B   |	L   |deadkey|	/   |	1   |	S   |	X   |	,   |
-    |-------+-------+-------+-------+-------+-------+-------+-------|
- 1  |	V   |	J   |	^   |	]   |	Q   |	A   |	C   |	N   |
-    |-------+-------+-------+-------+-------+-------+-------+-------|
- 2  |	G   |	8   |	0   |	[   |	W   |	F   |	Z   |	M   |
-    |-------+-------+-------+-------+-------+-------+-------+-------|
- 3  |	T   |	I   |	~   |	;   |	2   |	D   |	U   |	\   |
-    |-------+-------+-------+-------+-------+-------+-------+-------|
- 4  |	6   |	K   |	P   |	:   |	3   |	R   |	7   |	H   |
-    |-------+-------+-------+-------+-------+-------+-------+-------|
- 5  |	5   |	0   |	9   |	@   |	4   |	E   |	Y   |	.   |
-    |-------+-------+-------+-------+-------+-------+-------+-------|
- 6  |	F3  |	F2  |	F1  | CODE  | CAPS  | GRAPH | CTRL  | SHIFT |
-    |-------+-------+-------+-------+-------+-------+-------+-------|
- 7  | RETURN| SELECT|	BS  | STOP  |  TAB  |  ESC  |	F5  |	F4  |
-    |-------+-------+-------+-------+-------+-------+-------+-------|
- 8  | RIGHT | DOWN  |	UP  | LEFT  |  DEL  |  INS  | HOME  | SPACE |
+ 8  | RIGHT | DOWN  |   UP  | LEFT  |  DEL  |  INS  | HOME  | SPACE |
     -----------------------------------------------------------------
 
     [TEN KEY]
     -----------------------------------------------------------------
- 9  |	4   |	3   |	2   |	1   |	0   | option| option| option|
+ 9  |   4   |   3   |   2   |   1   |   0   | option| option| option|
     |-------+-------+-------+-------+-------+-------+-------+-------|
-10  |	.   |	,   |	-   |	9   |	8   |	7   |	6   |	5   |
+10  |   .   |   ,   |   -   |   9   |   8   |   7   |   6   |   5   |
+    -----------------------------------------------------------------
+
+
+   Figure 5.17  MSX International version key matrix
+
+MSB                                                                    LSB
+        7       6       5       4       3       2       1       0
+    -----------------------------------------------------------------
+ 0  |   B   |   L   |deadkey|   /   |   1   |   S   |   X   |   ,   |
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+ 1  |   V   |   J   |   ^   |   ]   |   Q   |   A   |   C   |   N   |
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+ 2  |   G   |   8   |   0   |   [   |   W   |   F   |   Z   |   M   |
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+ 3  |   T   |   I   |   ~   |   ;   |   2   |   D   |   U   |   \   |
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+ 4  |   6   |   K   |   P   |   :   |   3   |   R   |   7   |   H   |
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+ 5  |   5   |   0   |   9   |   @   |   4   |   E   |   Y   |   .   |
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+ 6  |   F3  |   F2  |   F1  | CODE  | CAPS  | GRAPH | CTRL  | SHIFT |
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+ 7  | RETURN| SELECT|   BS  | STOP  |  TAB  |  ESC  |   F5  |   F4  |
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+ 8  | RIGHT | DOWN  |   UP  | LEFT  |  DEL  |  INS  | HOME  | SPACE |
+    -----------------------------------------------------------------
+
+    [TEN KEY]
+    -----------------------------------------------------------------
+ 9  |   4   |   3   |   2   |   1   |   0   | option| option| option|
+    |-------+-------+-------+-------+-------+-------+-------+-------|
+10  |   .   |   ,   |   -   |   9   |   8   |   7   |   6   |   5   |
     -----------------------------------------------------------------
 
 
    Figure 5.17B  MSX European version key matrix
 
-MSB								       LSB
-	7	6	5	4	3	2	1	0
+MSB                                                                    LSB
+        7       6       5       4       3       2       1       0
     -----------------------------------------------------------------
- 0  |	7   |	6   |	5   |	4   |	3   |	2   |	1   |	0   |
+ 0  |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 1  |	;   |	]   |	[   |	\   |	=   |	-   |	9   |	8   |
+ 1  |   ;   |   ]   |   [   |   \   |   =   |   -   |   9   |   8   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 2  |	B   |	A   | accent|	/   |	.   |	,   |	`   |	'   |
+ 2  |   B   |   A   | accent|   /   |   .   |   ,   |   `   |   '   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 3  |	J   |	I   |	H   |	G   |	F   |	E   |	D   |	C   |
+ 3  |   J   |   I   |   H   |   G   |   F   |   E   |   D   |   C   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 4  |	R   |	Q   |	P   |	O   |	N   |	M   |	L   |	K   |
+ 4  |   R   |   Q   |   P   |   O   |   N   |   M   |   L   |   K   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 5  |	Z   |	Y   |	X   |	W   |	V   |	U   |	T   |	S   |
+ 5  |   Z   |   Y   |   X   |   W   |   V   |   U   |   T   |   S   |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 6  |	F3  |	F2  |	F1  | CODE  | CAPS  | GRAPH | CTRL  | SHIFT |
+ 6  |   F3  |   F2  |   F1  | CODE  | CAPS  | GRAPH | CTRL  | SHIFT |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 7  | RETURN| SELECT|	BS  | STOP  |  TAB  |  ESC  |	F5  |	F4  |
+ 7  | RETURN| SELECT|   BS  | STOP  |  TAB  |  ESC  |   F5  |   F4  |
     |-------+-------+-------+-------+-------+-------+-------+-------|
- 8  | RIGHT | DOWN  |	UP  | LEFT  |  DEL  |  INS  | HOME  | SPACE |
+ 8  | RIGHT | DOWN  |   UP  | LEFT  |  DEL  |  INS  | HOME  | SPACE |
     -----------------------------------------------------------------
 
     [TEN KEY]
     -----------------------------------------------------------------
- 9  |	4   |	3   |	2   |	1   |	0   | option| option| option|
+ 9  |   4   |   3   |   2   |   1   |   0   | option| option| option|
     |-------+-------+-------+-------+-------+-------+-------+-------|
-10  |	.   |	,   |	-   |	9   |	8   |	7   |	6   |	5   |
+10  |   .   |   ,   |   -   |   9   |   8   |   7   |   6   |   5   |
     -----------------------------------------------------------------
 
 
@@ -1192,58 +1192,58 @@ List 5.4  Use of the key scanning routine
 ;
 ;********************************************************
 ;
-CHPUT	EQU	00A2H
-BREAKX	EQU	00B7H
-POSIT	EQU	00C6H
-SNSMAT	EQU	0141H
+CHPUT   EQU     00A2H
+BREAKX  EQU     00B7H
+POSIT   EQU     00C6H
+SNSMAT  EQU     0141H
 
-	ORG	0B000H
+        ORG     0B000H
 
-;----- program start -----	Note:  read key matrix and display key
-				       pattern.
+;----- program start -----      Note:  read key matrix and display key
+                                       pattern.
 
-SCAN:	LD	C,0		;C := line of key matrix
+SCAN:   LD      C,0             ;C := line of key matrix
 
-SC1:	LD	A,C
-	CALL	SNSMAT		;Read key matrix
+SC1:    LD      A,C
+        CALL    SNSMAT          ;Read key matrix
 
-	LD	B,8
-	LD	HL,BUF		;HL : = buffer address
-SC2:	LD	D,'.'
-	RLA			;Check bit
-	JR	C,SC3
-	LD	D,'#'
+        LD      B,8
+        LD      HL,BUF          ;HL : = buffer address
+SC2:    LD      D,'.'
+        RLA                     ;Check bit
+        JR      C,SC3
+        LD      D,'#'
 
-SC3:	LD	(HL),D		;store '.' or '#' to buffer
-	INC	HL
-	DJNZ	SC2
+SC3:    LD      (HL),D          ;store '.' or '#' to buffer
+        INC     HL
+        DJNZ    SC2
 
-	LD	H,05H		;x := 5
-	LD	L,C		;y := C+1
-	INC	L
-	CALL	POSIT		;set cursor position
+        LD      H,05H           ;x := 5
+        LD      L,C             ;y := C+1
+        INC     L
+        CALL    POSIT           ;set cursor position
 
-	LD	B,8		;put out bit patterns to CRT
-	LD	HL,BUF
-SC4:	LD	A,(HL)
-	CALL	CHPUT
-	INC	HL
-	DJNZ	SC4
+        LD      B,8             ;put out bit patterns to CRT
+        LD      HL,BUF
+SC4:    LD      A,(HL)
+        CALL    CHPUT
+        INC     HL
+        DJNZ    SC4
 
-	CALL	BREAKX		;check Ctrl-STOP
-	RET	C
+        CALL    BREAKX          ;check Ctrl-STOP
+        RET     C
 
-	INC	C		;line No. increment
-	LD	A,C
-	CP	09
-	JR	NZ,SC1
-	JR	SCAN
+        INC     C               ;line No. increment
+        LD      A,C
+        CP      09
+        JR      NZ,SC1
+        JR      SCAN
 
 ;----- work area -----
 
-BUF:	DS	8
+BUF:    DS      8
 
-	END
+        END
 
 =================================================================
 
@@ -1256,16 +1256,16 @@ shown in Figure 5.18. Key input to MSX is generally done by reading this
 keyboard buffer.
 
 
-   Figure 5.18	Keyboard ring buffer
+   Figure 5.18  Keyboard ring buffer
 
 +----------------------------------<----------------------------------------+
-|			      KEYBUF (FBF0H, 40)			    |
+|                             KEYBUF (FBF0H, 40)                            |
 | --------------------------------------/ /-------------------------------- |
-+>|  D	|  E  |  F  |  G  |	|     | \ \ |	  |	|  A  |  B  |  C  |-+
++>|  D  |  E  |  F  |  G  |     |     | \ \ |     |     |  A  |  B  |  C  |-+
   --------------------------------------/ /--------------------------------
-			     ^				   ^
-			     |				   |
-			  [PUTPNT]			[GETPNT]
+                             ^                             ^
+                             |                             |
+                          [PUTPNT]                      [GETPNT]
 
 GETPNT (F3FAH, 2) points to the next character to be obtained in CHGET
 routine.
@@ -1281,47 +1281,47 @@ renders them useless, of course.
 
 * CHSNS (009CH/MAIN) .................. checks the keyboard buffer
 
-Input:		---
-Output: 	Z flag = ON when the buffer is empty
-Function:	examines whether any characters remain in the keyboard buffer
-		and sets the Z flag when the buffer is empty.
+Input:          ---
+Output:         Z flag = ON when the buffer is empty
+Function:       examines whether any characters remain in the keyboard buffer
+                and sets the Z flag when the buffer is empty.
 
 
 * CHGET (009FH/MAIN) .................. one character input from the keyboard
-					buffer
+                                        buffer
 
-Input:		---
-Output: 	A <-- character code
-Function:	reads one character from the keyboard buffer and stores it in
-		the A register. When the buffer is empty, it displays the
-		cursor and waits for a key input. While a key input is waited
-		for, the CAP lock, KANA lock, and Roman-to-kana translation
-		lock are valid. The related work area is listed below. In the
-		list, since SCNCNT and REPCNT are initialised after the
-		execution of CHGET routine, this area should be set at each
-		CHGET call to change the interval of the auto-repeat.
+Input:          ---
+Output:         A <-- character code
+Function:       reads one character from the keyboard buffer and stores it in
+                the A register. When the buffer is empty, it displays the
+                cursor and waits for a key input. While a key input is waited
+                for, the CAP lock, KANA lock, and Roman-to-kana translation
+                lock are valid. The related work area is listed below. In the
+                list, since SCNCNT and REPCNT are initialised after the
+                execution of CHGET routine, this area should be set at each
+                CHGET call to change the interval of the auto-repeat.
 
 Work area
-	CLIKSW (F3DBH, 1)	key click sound (0 = OFF, others = ON)
-	SCNCNT (F3F6H, 1)	key scanning interval (1, normally)
-	REPCNT (F3F7H, 1)	delay until beginning auto-repeat
-				(50, normally)
-	CSTYLE (FCAAH, 1)	figure of the cursor
-				(0 = block, others = underline)
-	CAPST  (FCABH, 1)	CAPS lock (0 = OFF, others = ON)
-	DEADST (FCACH, 1)	dead key lock
-					0 = on preceding dead key
-					1 = dead key
-					2 = shifted dead key
-					3 = code dead key
-					4 = code shift dead key
+        CLIKSW (F3DBH, 1)       key click sound (0 = OFF, others = ON)
+        SCNCNT (F3F6H, 1)       key scanning interval (1, normally)
+        REPCNT (F3F7H, 1)       delay until beginning auto-repeat
+                                (50, normally)
+        CSTYLE (FCAAH, 1)       figure of the cursor
+                                (0 = block, others = underline)
+        CAPST  (FCABH, 1)       CAPS lock (0 = OFF, others = ON)
+        DEADST (FCACH, 1)       dead key lock
+                                        0 = on preceding dead key
+                                        1 = dead key
+                                        2 = shifted dead key
+                                        3 = code dead key
+                                        4 = code shift dead key
 
 
 * KILBUF (0156H/MAIN) ................. empty the keyboard buffer
 
-Input:		---
-Output: 	---
-Function:	empties the keyboard buffer.
+Input:          ---
+Output:         ---
+Function:       empties the keyboard buffer.
 
 
 List 5.5  Use of one character input routine
@@ -1329,70 +1329,70 @@ List 5.5  Use of one character input routine
 
 ;********************************************************
 ;
-;   List 5.5	get key code
+;   List 5.5    get key code
 ;
-;		this routine doesn't wait for key hit
+;               this routine doesn't wait for key hit
 ;
 ;********************************************************
 ;
-CHSNS	EQU	009CH		;check keyboard buffer
-CHGET	EQU	009FH		;get a character from buffer
-CHPUT	EQU	00A2H		;put a character to screen
-BREAKX	EQU	00B7H		;check Ctrl-STOP
-KILBUF	EQU	0156H		;clear keyboard buffer
-REPCNT	EQU	0F3F7H		;time interval until key-repeat
-KEYBUF	EQU	0FBF0H		;keyboard buffer address
+CHSNS   EQU     009CH           ;check keyboard buffer
+CHGET   EQU     009FH           ;get a character from buffer
+CHPUT   EQU     00A2H           ;put a character to screen
+BREAKX  EQU     00B7H           ;check Ctrl-STOP
+KILBUF  EQU     0156H           ;clear keyboard buffer
+REPCNT  EQU     0F3F7H          ;time interval until key-repeat
+KEYBUF  EQU     0FBF0H          ;keyboard buffer address
 
-	ORG	0B000H
+        ORG     0B000H
 
-;----- prgram start -----	Note:  Real-time input using CHGET
+;----- program start -----       Note:  Real-time input using CHGET
 
-KEY:	CALL	CHSNS		;check keyboard buffer
-	JR	C,KEY1
+KEY:    CALL    CHSNS           ;check keyboard buffer
+        JR      C,KEY1
 
-	LD	A,1
-	LD	(REPCNT),A	;not to wait until repeat
-	CALL	CHGET		;get a character (if exists)
-	JR	KEY2
+        LD      A,1
+        LD      (REPCNT),A      ;not to wait until repeat
+        CALL    CHGET           ;get a character (if exists)
+        JR      KEY2
 
-KEY1:	LD	A,'-'           ;A := '-'
+KEY1:   LD      A,'-'           ;A := '-'
 
-KEY2:	CALL	CHPUT		;put the character
-	CALL	KILBUF		;clear keyboard buffer
-	CALL	BREAKX		;check Ctrl-STOP
-	JR	NC,KEY
+KEY2:   CALL    CHPUT           ;put the character
+        CALL    KILBUF          ;clear keyboard buffer
+        CALL    BREAKX          ;check Ctrl-STOP
+        JR      NC,KEY
 
-	END
+        END
 
 =================================================================
 
 
 * CNVRCHR (00AB/MAIN) ................. graphic character operation
 
-Input:		A <-- character code
-Output: 	A <-- translated graphic character
-		      (normal characters are not translated)
-		CY flag = OFF (input was the graphic header byte 01H)
-		CY flag = ON, Z flag = ON  (input was the graphic character
-					    and was translated)
-		CY flag = ON, Z flag = OFF (input was the normal character
-					    and was not translated)
-Function:	executing CNVCHR after CHGET causes the graphic character
-		to be translated to one byte code as shown in Figure 5.19
-		and causes other character not to be translated and to be
-		returned. Since the graphic character is represented by
-		irregular 2-byte code with the graphic header byte (01H),
-		annoying procedures are required for the character
-		operations; this routine makes it somewhat easy.
+Input:          A <-- character code
+Output:         A <-- translated graphic character
+                      (normal characters are not translated)
+                CY flag = OFF (input was the graphic header byte 01H)
+                CY flag = ON, Z flag = ON  (input was the graphic character
+                                            and was translated)
+                CY flag = ON, Z flag = OFF (input was the normal character
+                                            and was not translated)
+Function:       executing CNVCHR after CHGET causes the graphic character
+                to be translated to one byte code as shown in Figure 5.19
+                and causes other character not to be translated and to be
+                returned. Since the graphic character is represented by
+                irregular 2-byte code with the graphic header byte (01H),
+                annoying procedures are required for the character
+                operations; this routine makes it somewhat easy.
 
 
-   Figure 5.19	Graphic character translation chart
+   Figure 5.19  Graphic character translation chart
 
 -------------------------------------------------------------
-|    Before    |    After     |    Before    |	  After     |
-|  conversion  |  conversion  |  conversion  |	conversion  |
+|    Before    |    After     |    Before    |    After     |
+|  conversion  |  conversion  |  conversion  |  conversion  |
 |-----------------------------+-----------------------------|
-|			      |    0150H    -->     50H     |
+|                             |    0150H    -->     50H     |
 |    0141H    -->     41H     |    0151H    -->     51H     |
 |    0142H    -->     42H     |    0152H    -->     52H     |
 |    0143H    -->     43H     |    0153H    -->     53H     |
@@ -1413,31 +1413,31 @@ Function:	executing CNVCHR after CHGET causes the graphic character
 
 * PINLIN (00AEH/MAIN) ................. one line input
 
-Input:		---
-Output: 	HL <-- F55DH
-		[F55EH] <-- input string (the end of te line is represented
-					  by 00H)
-		CY flag <-- terminated by STOP=ON, terminated by RETURN=OFF
-function:	stores input string in the line buffer BUF (F55EH). All
-		functions of the screen editing are available at the string
-		input. Pressing RETURN or STOP causes the input to be
-		finished. The work area is listed below.
+Input:          ---
+Output:         HL <-- F55DH
+                [F55EH] <-- input string (the end of te line is represented
+                                          by 00H)
+                CY flag <-- terminated by STOP=ON, terminated by RETURN=OFF
+function:       stores input string in the line buffer BUF (F55EH). All
+                functions of the screen editing are available at the string
+                input. Pressing RETURN or STOP causes the input to be
+                finished. The work area is listed below.
 
 Work area
-	BUF    (F55EH, 258)	the line buffer where the string is stored
-	LINTTB (FBB2H, 24)	00H when the one physiscal line is the
-				succession of the line above
+        BUF    (F55EH, 258)     the line buffer where the string is stored
+        LINTTB (FBB2H, 24)      00H when the one physical line is the
+                                succession of the line above
 
 
 * INLIN (00B1H/MAIN) .................. one line input (prompt available)
 
-Input:		---
-Output: 	same as PINLIN
-Function:	stores input string in the line buffer BUF (F55EH), as
-		PINLIN routine. Note that the portion before the cursor
-		location at the time when the routine begins to execute is
-		not received. List 5.6 shows the difference between PINLIN
-		and INLIN.
+Input:          ---
+Output:         same as PINLIN
+Function:       stores input string in the line buffer BUF (F55EH), as
+                PINLIN routine. Note that the portion before the cursor
+                location at the time when the routine begins to execute is
+                not received. List 5.6 shows the difference between PINLIN
+                and INLIN.
 
 
 List 5.6  Difference between INLIN and PINLIN
@@ -1449,46 +1449,46 @@ List 5.6  Difference between INLIN and PINLIN
 ;
 ;************************************************
 ;
-CHPUT	EQU	00A2H
-INLIN	EQU	00B1H
-PINLIN	EQU	00AEH
-KILBUF	EQU	0156H
+CHPUT   EQU     00A2H
+INLIN   EQU     00B1H
+PINLIN  EQU     00AEH
+KILBUF  EQU     0156H
 
-BUF	EQU	F55EH
+BUF     EQU     F55EH
 
-	ORG	0B000H
+        ORG     0B000H
 
 ;----- program start -----
 
-	LD	HL,PRMPT1
-	CALL	PUTMSG		;put prompt message
-	CALL	INLIN		;use INLIN routine
-	LD	HL,BUF
-	CALL	PUTMSG
+        LD      HL,PRMPT1
+        CALL    PUTMSG          ;put prompt message
+        CALL    INLIN           ;use INLIN routine
+        LD      HL,BUF
+        CALL    PUTMSG
 
-	LD	HL,PRMPT2
-	CALL	PUTMSG		;put prompt message
-	CALL	PINLIN		;use PINLIN routine
-	LD	HL,BUF
-	CALL	PUTMSG
+        LD      HL,PRMPT2
+        CALL    PUTMSG          ;put prompt message
+        CALL    PINLIN          ;use PINLIN routine
+        LD      HL,BUF
+        CALL    PUTMSG
 
-	RET
+        RET
 
 ;----- put a string -----
 
-PUTMSG: LD	A,(HL)
-	CP	'$'
-	RET	Z
-	CALL	CHPUT
-	INC	HL
-	JR	PUTMSG
+PUTMSG: LD      A,(HL)
+        CP      '$'
+        RET     Z
+        CALL    CHPUT
+        INC     HL
+        JR      PUTMSG
 
 ;----- string data -----
 
-PRMPT1: DB	0DH,0AH,'INLIN:$'
-PRMPT2: DB	0DH,0AH,'PINLIN:$'
+PRMPT1: DB      0DH,0AH,'INLIN:$'
+PRMPT2: DB      0DH,0AH,'PINLIN:$'
 
-	END
+        END
 
 =================================================================
 
@@ -1499,16 +1499,16 @@ MSX has ten function keys, which can be defined by the user at will. A 16
 byte work area is allocated for the definition of each key. The following
 list shows their addresses.
 
-	FNKSTR (F87FH, 16) ............ F1 key definition address
-	+ 10H  (F88FH, 16) ............ F2 key definition address
-	+ 20H  (F89FH, 16) ............ F3 key definition address
-	+ 30H  (F8AFH, 16) ............ F4 key definition address
-	+ 40H  (F8BFH, 16) ............ F5 key definition address
-	+ 50H  (F8CFH, 16) ............ F6 key definition address
-	+ 60H  (F8DFH, 16) ............ F7 key definition address
-	+ 70H  (F8EFH, 16) ............ F8 key definition address
-	+ 80H  (F8FFH, 16) ............ F9 key definition address
-	+ 90H  (F90FH, 16) ............ F10 key definition address
+        FNKSTR (F87FH, 16) ............ F1 key definition address
+        + 10H  (F88FH, 16) ............ F2 key definition address
+        + 20H  (F89FH, 16) ............ F3 key definition address
+        + 30H  (F8AFH, 16) ............ F4 key definition address
+        + 40H  (F8BFH, 16) ............ F5 key definition address
+        + 50H  (F8CFH, 16) ............ F6 key definition address
+        + 60H  (F8DFH, 16) ............ F7 key definition address
+        + 70H  (F8EFH, 16) ............ F8 key definition address
+        + 80H  (F8FFH, 16) ............ F9 key definition address
+        + 90H  (F90FH, 16) ............ F10 key definition address
 
 Pressing a function key causes the string defined in that key to be stored in
 [KEYBUF]. The end of the string is indicated by 00H and a maximum of 15
@@ -1520,10 +1520,10 @@ routine.
 
 * INIFNK (003EH/MAIN) ................. initialize function keys
 
-Input:		---
-Output: 	---
-Function:	restores the function key definition to the setting when
-		BASIC starts.
+Input:          ---
+Output:         ---
+Function:       restores the function key definition to the setting when
+                BASIC starts.
 
 
 3.4 STOP Key During Interrupts
@@ -1537,13 +1537,13 @@ combination can be detected even when interrupts are inhibited.
 
 * BREAKX (00B7H/MAIN) ................. CTRL + STOP detection
 
-Input:		---
-Output: 	CY flag = ON, when CTRL + STOP is pressed
-Function:	scans keys and decides whether CTRL key and STOP key are
-		pressed at the same time. When both are pressed, this routine
-		sets "1" to the CY flag and returns. Otherwise, it resets "0"
-		to the CY flag and returns. This routine is available while
-		interrupts are inhibited.
+Input:          ---
+Output:         CY flag = ON, when CTRL + STOP is pressed
+Function:       scans keys and decides whether CTRL key and STOP key are
+                pressed at the same time. When both are pressed, this routine
+                sets "1" to the CY flag and returns. Otherwise, it resets "0"
+                to the CY flag and returns. This routine is available while
+                interrupts are inhibited.
 
 
 4. PRINTER INTERFACE
@@ -1561,44 +1561,44 @@ and STROBE signals. The standard connector is also defined (Amphenol 14-pin,
 female side to the machine). Figure 5.20 shows the signal lines.
 
 
-   Figure 5.20	Printer interface
+   Figure 5.20  Printer interface
 
-		 Printer interface pin connections
+                 Printer interface pin connections
 
 -------------------------------------------------------------------
- \	    ------------------------------------------- 	 /
-  \	    | (7) | (6) | (5) | (4) | (3) | (2) | (1) | 	/
-   \	---------------------------------------------------    /
-    \	|						  |   /
-     \	---------------------------------------------------  /
+ \          -------------------------------------------          /
+  \         | (7) | (6) | (5) | (4) | (3) | (2) | (1) |         /
+   \    ---------------------------------------------------    /
+    \   |                                                 |   /
+     \  ---------------------------------------------------  /
       \     | (14)| (13)| (12)| (11)| (11)| (10)| (9) |     /
        \    -------------------------------------------    /
-	---------------------------------------------------
+        ---------------------------------------------------
 
 (1) ........... STROBE*
 (2) to (9) .... Data (b0 to b7)
 (11) .......... BUSY
 (14) .......... BGND
 
-			    -------------------------------------------------
-I/O port (91H)		    |  X  |  X	|  X  |  X  |  X  |  X	|  X  |  X  |
-			    -------------------------------------------------
-						   Data
+                            -------------------------------------------------
+I/O port (91H)              |  X  |  X  |  X  |  X  |  X  |  X  |  X  |  X  |
+                            -------------------------------------------------
+                                                   Data
 
-			    -------------------------------------------------
-I/O port (90H; at WRITE)    |  .  |  .	|  .  |  .  |  .  |  .	|  .  |  X  |
-			    -------------------------------------------------
-									 ^
-									 |
-					STROBE* (send data when "0") ----+
+                            -------------------------------------------------
+I/O port (90H; at WRITE)    |  .  |  .  |  .  |  .  |  .  |  .  |  .  |  X  |
+                            -------------------------------------------------
+                                                                         ^
+                                                                         |
+                                        STROBE* (send data when "0") ----+
 
-			    -------------------------------------------------
-I/O port (90H; at READ)     |  .  |  .	|  .  |  .  |  .  |  .	|  X  |  .  |
-			    -------------------------------------------------
-								   ^
-					       0: Printer READY    |
-								---+
-					       1: Printer BUSY
+                            -------------------------------------------------
+I/O port (90H; at READ)     |  .  |  .  |  .  |  .  |  .  |  .  |  X  |  .  |
+                            -------------------------------------------------
+                                                                   ^
+                                               0: Printer READY    |
+                                                                ---+
+                                               1: Printer BUSY
 
 
 4.2 Output to the MSX Standard Printer
@@ -1626,22 +1626,22 @@ change the following work area.
 
 
 * RAWPRT (F418H, 1) ................... replaces a tab by spaces when the
-					contents are 00H, othereise not.
+                                        contents are 00H, otherwise not.
 
 
    Table 5.4  Control codes of the printer
 
 -----------------------------------------------------------------------------
-|      code	  |			   function			    |
+|      code       |                        function                         |
 |-----------------+---------------------------------------------------------|
-| 0AH		  |  line feed						    |
+| 0AH             |  line feed                                              |
 |-----------------+---------------------------------------------------------|
-| 0CH		  |  form feed						    |
+| 0CH             |  form feed                                              |
 |-----------------+---------------------------------------------------------|
-| 0DH		  |  carriage return					    |
+| 0DH             |  carriage return                                        |
 |-----------------+---------------------------------------------------------|
 | ESC + "A"       |  normal line spacing                                    |
-|		  |  (spaces between lines; characters are read easily)     |
+|                 |  (spaces between lines; characters are read easily)     |
 |-----------------+---------------------------------------------------------|
 | ESC + "B"       |  line spacing for graphics (no space between lines)     |
 |-----------------+---------------------------------------------------------|
@@ -1656,32 +1656,32 @@ To send output to the printer, the following BIOS routines are offered.
 
 * LPTOUT (00A5H/MAIN)
 
-Input:		A register <-- character code
-Output: 	CY flag = ON at abnormal termination
-Function:	sends a character specified by the A register to the printer.
+Input:          A register <-- character code
+Output:         CY flag = ON at abnormal termination
+Function:       sends a character specified by the A register to the printer.
 
 
 * LPTSTT (00A8/MAIN)
 
-Input:		---
-Output: 	A register <-- printer status
-Function:	examines the current printer status. After calling this
-		routine, the printer can be used when the A register is 255
-		and the Z flag is 0; when the A register is 0 and the Z flag
-		is 1, the printer cannot be used.
+Input:          ---
+Output:         A register <-- printer status
+Function:       examines the current printer status. After calling this
+                routine, the printer can be used when the A register is 255
+                and the Z flag is 0; when the A register is 0 and the Z flag
+                is 1, the printer cannot be used.
 
 
 * OUTDLP (014DH,MAIN)
 
-Input:		A register <-- character code
-Output: 	CY flag = ON at abnormal termination
-Function:	sends a character specified by the A register to the printer.
-		Differences between this routine and LPTOUT routine is as
-		following:
-		* prints corresponding number of spaces for TAB code
-		* transforms hiragana to katakana for printers other than
-		  MSX standard
-		* returns Device I/O error at abnormal termination
+Input:          A register <-- character code
+Output:         CY flag = ON at abnormal termination
+Function:       sends a character specified by the A register to the printer.
+                Differences between this routine and LPTOUT routine is as
+                following:
+                * prints corresponding number of spaces for TAB code
+                * transforms hiragana to katakana for printers other than
+                  MSX standard
+                * returns Device I/O error at abnormal termination
 
 
 5. UNIVERSAL I/O INTERFACE
@@ -1691,36 +1691,36 @@ A and port B, in addition to the sound output function. In MSX, these two
 ports are connected to the universal I/O interface (joystick port) and are
 used to exchange data with the joystick or the paddle (see Figure 5.21).
 Various devices to be connected to this universal I/O interface have the
-necessary BIOS routine in ROM, so they are easily accessbile.
+necessary BIOS routine in ROM, so they are easily accessible.
 
-In this section, the funtion of each I/O device and the method for accessing
+In this section, the function of each I/O device and the method for accessing
 with BIOS routines are described.
 
 
-   Figure 5.21	Universal I/O interface
+   Figure 5.21  Universal I/O interface
 
    Universal input/output interface -1
 -----------------------------------------
-|					|
-|  (1)	   (2)	   (3)	   (4)	   (5) -+- +5V	       Switching signal <---+
-|   |  (6)  |  (7)  |  (8)  |  (9) -----+- GND		(to port B:b6)	    |
-|   |	|   |	|   |	|   |		|				    |
-----:---:---:---:---:---:---:------------				    |
-    |	|   |	|   |	|   |						    |
-    |	|   |	|   |	+---:--> To port B:b4	 -------------------------  |
-    |	|   |	|   |	    |			 |			 |  |
-    +---+---+---+---+-------+--------------------|			 |  |
-						 |	 Switcher	 |--+
-    +---+---+---+---+-------+--------------------|			 |
-    |	|   |	|   |	    |			 |			 |
-    |	|   |	|   |	+---:--> To port B:b5	 -------------------------
-    |	|   |	|   |	|   |			   |   |   |   |   |   |
-----:---:---:---:---:---:---:------------	  (1) (2) (3) (4) (6) (7)
-|   |	|   |	|   |	|   |		|	|  |   |   |   |   |   |  |
-|  (1)	   (2)	   (3)	   (4)	   (5) -+- +5V	+-------------------------+
-|      (6)     (7)     (8)     (9) -----+- GND		     |
-|					|		     V
------------------------------------------	     To port A:b0 to b5
+|                                       |
+|  (1)     (2)     (3)     (4)     (5) -+- +5V         Switching signal <---+
+|   |  (6)  |  (7)  |  (8)  |  (9) -----+- GND          (to port B:b6)      |
+|   |   |   |   |   |   |   |           |                                   |
+----:---:---:---:---:---:---:------------                                   |
+    |   |   |   |   |   |   |                                               |
+    |   |   |   |   |   +---:--> To port B:b4    -------------------------  |
+    |   |   |   |   |       |                    |                       |  |
+    +---+---+---+---+-------+--------------------|                       |  |
+                                                 |       Switcher        |--+
+    +---+---+---+---+-------+--------------------|                       |
+    |   |   |   |   |       |                    |                       |
+    |   |   |   |   |   +---:--> To port B:b5    -------------------------
+    |   |   |   |   |   |   |                      |   |   |   |   |   |
+----:---:---:---:---:---:---:------------         (1) (2) (3) (4) (6) (7)
+|   |   |   |   |   |   |   |           |       |  |   |   |   |   |   |  |
+|  (1)     (2)     (3)     (4)     (5) -+- +5V  +-------------------------+
+|      (6)     (7)     (8)     (9) -----+- GND               |
+|                                       |                    V
+-----------------------------------------            To port A:b0 to b5
    Universal input/output interface -2
 
 
@@ -1733,16 +1733,16 @@ Two I/O ports of PSG are used as shown in Figure 5.22.
 
 Port A (PSG#14)
 -------------------------------------------------
-| b7  |  .  | b5  : b4	: b3  : b2  : b1  : b0	|
+| b7  |  .  | b5  : b4  : b3  : b2  : b1  : b0  |
 -------------------------------------------------
-   |	       |     |	   |	 |     |     |		       --+
-   |	       |     |	   |	 |     |     +--> 1st terminal	 | connected
-   |	       |     |	   |	 |     +--------> 2nd terminal	 |    to
-   |	       |     |	   |	 +--------------> 3rd terminal	 | universal
-   |	       |     |	   +--------------------> 4th terminal	 |    I/O
-   |	       |     +--------------------------> 6th terminal	 | interface
-   |	       +--------------------------------> 7th terminal	 |
-   |							       --+
+   |           |     |     |     |     |     |                 --+
+   |           |     |     |     |     |     +--> 1st terminal   | connected
+   |           |     |     |     |     +--------> 2nd terminal   |    to
+   |           |     |     |     +--------------> 3rd terminal   | universal
+   |           |     |     +--------------------> 4th terminal   |    I/O
+   |           |     +--------------------------> 6th terminal   | interface
+   |           +--------------------------------> 7th terminal   |
+   |                                                           --+
    +-----------------------------------> Data input from the cassette tape
 
 
@@ -1750,19 +1750,19 @@ Port A (PSG#14)
 
 Port B (PSG#15)
 -------------------------------------------------
-| b7  | b6  | b5  | b4	| b3  | b2  | b1  | b0	|
+| b7  | b6  | b5  | b4  | b3  | b2  | b1  | b0  |
 -------------------------------------------------
-   |	 |     |     |	   |	 |     |     |
-   |	 |     |     |	   +-----+-----+-----+--> Unused
-   |	 |     |     |
-   |	 |     |     +---> Connected to 8th terminal of univ. I/O interface 1
-   |	 |     +---------> Connected to 8th terminal of univ. I/O interface 2
-   |	 |
-   |	 +---> 0: b0-b5 of port A to be connected to univ. I/O interface 1
-   |	       1: b0-b5 of port A to be connected to univ. I/O interface 2
+   |     |     |     |     |     |     |     |
+   |     |     |     |     +-----+-----+-----+--> Unused
+   |     |     |     |
+   |     |     |     +---> Connected to 8th terminal of univ. I/O interface 1
+   |     |     +---------> Connected to 8th terminal of univ. I/O interface 2
+   |     |
+   |     +---> 0: b0-b5 of port A to be connected to univ. I/O interface 1
+   |           1: b0-b5 of port A to be connected to univ. I/O interface 2
    |
    +---------> 0: Arabic or kana mode display lamp on
-	       1: Arabic or kana mode display lamp off
+               1: Arabic or kana mode display lamp off
 
 
 5.2 Joystick Use
@@ -1774,29 +1774,29 @@ it is advisable to use BIOS for accessing the joystick, in order to give
 portability to the program.
 
 
-   figure 5.23	Joystick circuit
+   figure 5.23  Joystick circuit
 
-			  \
-(1)	O---------------o  o------------+ ............. Front
-					|
-			  \		|
-(2)	O---------------o  o------------+ ............. Back
-					|
-			  \		|
-(3)	O---------------o  o------------+ ............. Left
-					|
-			  \		|
-(4)	O---------------o  o------------+ ............. Right
-					|
-					|
-			  \		|
-(6)	O---------------o  o------------+ ............. Trigger A
-					|
-			  \		|
-(7)	O---------------o  o------------+ ............. Trigger B
-					|
-					|
-(8)	O-------------------------------+
+                          \
+(1)     O---------------o  o------------+ ............. Front
+                                        |
+                          \             |
+(2)     O---------------o  o------------+ ............. Back
+                                        |
+                          \             |
+(3)     O---------------o  o------------+ ............. Left
+                                        |
+                          \             |
+(4)     O---------------o  o------------+ ............. Right
+                                        |
+                                        |
+                          \             |
+(6)     O---------------o  o------------+ ............. Trigger A
+                                        |
+                          \             |
+(7)     O---------------o  o------------+ ............. Trigger B
+                                        |
+                                        |
+(8)     O-------------------------------+
 
 
 The following BIOS routines are offered for accessing the joystick. These
@@ -1807,22 +1807,22 @@ joystick, can be read in real time.
 
 * GTSTCK (00D5H/MAIN) ................. read joystick
 
-Input:		A <-- joystick number (0 = cursor key, 1 and 2 = joystick)
-Output: 	A <-- direction of joystick or cursor key
-Function:	returns the current status of the joystick or the cursor keys
-		in the A register. The value is the same as the STICK
-		function in BASIC.
+Input:          A <-- joystick number (0 = cursor key, 1 and 2 = joystick)
+Output:         A <-- direction of joystick or cursor key
+Function:       returns the current status of the joystick or the cursor keys
+                in the A register. The value is the same as the STICK
+                function in BASIC.
 
 
 * GTTRIG (00D8H/MAIN) ................. read trigger button
 
-Input:		A <-- trigger button number (0 = space bar,
-		      1 and 2 = trigger button A, 3 and 4 = trigger button B)
-Output: 	A <-- status of trigger button or space bar
-		      (0FFH = pressed, 00H = released)
-Function:	returns the current status of the trigger buttons or the
-		space bar in the A register. The value is 0FFH when the
-		trigger is pressed, otherwise it is 0.
+Input:          A <-- trigger button number (0 = space bar,
+                      1 and 2 = trigger button A, 3 and 4 = trigger button B)
+Output:         A <-- status of trigger button or space bar
+                      (0FFH = pressed, 00H = released)
+Function:       returns the current status of the trigger buttons or the
+                space bar in the A register. The value is 0FFH when the
+                trigger is pressed, otherwise it is 0.
 
 
 List 5.7  Joystick use
@@ -1834,77 +1834,77 @@ List 5.7  Joystick use
 ;
 ;************************************************
 ;
-CHPUT	EQU	00A2H
-BREAKX	EQU	00B7H
-GTSTCK	EQU	00D5H
-GTTRIG	EQU	00D8H
+CHPUT   EQU     00A2H
+BREAKX  EQU     00B7H
+GTSTCK  EQU     00D5H
+GTTRIG  EQU     00D8H
 
-	ORG	0D00H
+        ORG     0D00H
 
-;----- program start -----	Note: display joystick status
+;----- program start -----      Note: display joystick status
 
-STICK:	LD	A,1		;choose joystick 1
-	CALL	GTSTCK		;read joystick status
-	LD	(WK1),A
-	LD	A,1		;choose joystick 1
-	CALL	GTTRIG		;read trigger status
+STICK:  LD      A,1             ;choose joystick 1
+        CALL    GTSTCK          ;read joystick status
+        LD      (WK1),A
+        LD      A,1             ;choose joystick 1
+        CALL    GTTRIG          ;read trigger status
 
-	OR	A
-	JR	Z,STCK1
-	LD	HL,WDON 	;trigger ON
-	JR	STCK2
-STCK1:	LD	HL,WDOFF	;trigger OFF
-STCK2:	CALL	PUTSTR
-	LD	A,(WK1)
-	OR	A
-	JR	Z,BRKCH0	;do not use joystick
-	LD	C,0
-STCK3:	DEC	A
-	JR	NZ,STCK4
-	INC	C
-	JR	STCK3
+        OR      A
+        JR      Z,STCK1
+        LD      HL,WDON         ;trigger ON
+        JR      STCK2
+STCK1:  LD      HL,WDOFF        ;trigger OFF
+STCK2:  CALL    PUTSTR
+        LD      A,(WK1)
+        OR      A
+        JR      Z,BRKCH0        ;do not use joystick
+        LD      C,0
+STCK3:  DEC     A
+        JR      NZ,STCK4
+        INC     C
+        JR      STCK3
 
-STCK4:	SLA	C		;C := C*16
-	SLA	C
-	SLA	C
-	SLA	C
-	LD	B,0		;Accounting Strings data address
-	LD	HL,WDSTK
-	ADD	HL,BC
-	CALL	PUTSTR
+STCK4:  SLA     C               ;C := C*16
+        SLA     C
+        SLA     C
+        SLA     C
+        LD      B,0             ;Accounting Strings data address
+        LD      HL,WDSTK
+        ADD     HL,BC
+        CALL    PUTSTR
 
-BRKCH0: LD	A,0DH		;put carriage return
-	CALL	CHPUT		;code := 0DH
+BRKCH0: LD      A,0DH           ;put carriage return
+        CALL    CHPUT           ;code := 0DH
 
-BRKCHK: CALL	BREAKX		;break check
-	RET	C
-	JR	STICK
+BRKCHK: CALL    BREAKX          ;break check
+        RET     C
+        JR      STICK
 
 ;----- put strings to screen -----
 
-PUTSTR: LD	A,(HL)
-	CP	'$'
-	RET	Z
-	INC	HL
-	CALL	CHPUT
-	JR	PUTSTR
+PUTSTR: LD      A,(HL)
+        CP      '$'
+        RET     Z
+        INC     HL
+        CALL    CHPUT
+        JR      PUTSTR
 
 ;----- string area -----
 
-WDON:	DB	'Trigger ON:  $'
-WDOFF:	DB	'Trigger OFF: $'
-WDSTK:	DB	'UP only      ',0DH,0AH,'$'
-	DB	'Up and Right ',0DH,0AH,'$'
-	DB	'Right only   ',0DH,0AH,'$'
-	DB	'Right & Down ',0DH,0AH,'$'
-	DB	'Down only    ',0DH,0AH,'$'
-	DB	'Down and Left',0DH,0AH,'$'
-	DB	'Left only    ',0DH,0AH,'$'
-	DB	'Left and Up  ',0DH,0AH,'$'
+WDON:   DB      'Trigger ON:  $'
+WDOFF:  DB      'Trigger OFF: $'
+WDSTK:  DB      'UP only      ',0DH,0AH,'$'
+        DB      'Up and Right ',0DH,0AH,'$'
+        DB      'Right only   ',0DH,0AH,'$'
+        DB      'Right & Down ',0DH,0AH,'$'
+        DB      'Down only    ',0DH,0AH,'$'
+        DB      'Down and Left',0DH,0AH,'$'
+        DB      'Left only    ',0DH,0AH,'$'
+        DB      'Left and Up  ',0DH,0AH,'$'
 
-WK1:	DW	0
+WK1:    DW      0
 
-	END
+        END
 
 =================================================================
 
@@ -1919,43 +1919,43 @@ length enables the value in the variable register and the turning angle to be
 obtained.
 
 
-   Figure 5.24	Paddle circuit
+   Figure 5.24  Paddle circuit
 
-			      --+--
-				|
-			       <_
-				_>  150KOhm Variable Resistor
-			       <
-				|
-		      0.04 uF	|
-		       +--| |---+
-		       |	|
-		    ---+--------+---
-		    |		   |
-	 |\	    |		   |
-	 |  \	    |		   |
-(8) -----|   >O----O| A 	 Q |------------- (1)  (For 2, 3, 4, 6, or 7,
-	 |  /	    |		   |			a similar circuit
-	 |/	    |		   |			would apply)
-		    |		   |
-		    |		   |
-	 +----------| B 	   |
-	 |	    |		   |
-	 |	    |		   | (One-shot trigger IC, LS123 compatible)
-	 |	    |		   |
- +5V	 |	    ----------------
- --+--	 |		   O
-   |	 |		   |
+                              --+--
+                                |
+                               <_
+                                _>  150KOhm Variable Resistor
+                               <
+                                |
+                      0.04 uF   |
+                       +--| |---+
+                       |        |
+                    ---+--------+---
+                    |              |
+         |\         |              |
+         |  \       |              |
+(8) -----|   >O----O| A          Q |------------- (1)  (For 2, 3, 4, 6, or 7,
+         |  /       |              |                    a similar circuit
+         |/         |              |                    would apply)
+                    |              |
+                    |              |
+         +----------| B            |
+         |          |              |
+         |          |              | (One-shot trigger IC, LS123 compatible)
+         |          |              |
+ +5V     |          ----------------
+ --+--   |                 O
+   |     |                 |
    +-----+-----------------+
 
-			____
-			:  :
-Input to 8	________:  :_____________________________________
+                        ____
+                        :  :
+Input to 8      ________:  :_____________________________________
 
-			_________________________________
-			:				:
-Output to 1	________:				:________
-			|<------- 10 us to 3 ms ------->|
+                        _________________________________
+                        :                               :
+Output to 1     ________:                               :________
+                        |<------- 10 us to 3 ms ------->|
 
 
 BIOS routines for accessing the paddle are described below.
@@ -1963,10 +1963,10 @@ BIOS routines for accessing the paddle are described below.
 
 * GTPDL (00DEH/MAIN) .................. read paddle information
 
-Input:		A <-- paddle number (1 to 12)
-Output: 	A <-- turning angle (0 to 255)
-Function:	examines the status of the paddle specified in the A register
-		and returns the result in the A register.
+Input:          A <-- paddle number (1 to 12)
+Output:         A <-- turning angle (0 to 255)
+Function:       examines the status of the paddle specified in the A register
+                and returns the result in the A register.
 
 
 5.4 Use of Touch Panel, Light Pen, Mouse, and Track Ball
@@ -1977,84 +1977,84 @@ the same BIOS routine. This routine is described below.
 
 * GTPAD (00DBH/MAIN) .................. access to various I/O devices
 
-Input:		A <-- device ID (0 to 19)
-Output: 	A <-- objective information
-Function:	obtains various information as shown in Table 5.5 according
-		to the value specified in the A register. This is the same
-		as the PAD function of BASIC. "XXX1" in the table means the
-		"XXX" device connected to the universal I/O interface 1;
-		"XXX2" means the one connected to the universal I/O interface
-		#2.
+Input:          A <-- device ID (0 to 19)
+Output:         A <-- objective information
+Function:       obtains various information as shown in Table 5.5 according
+                to the value specified in the A register. This is the same
+                as the PAD function of BASIC. "XXX1" in the table means the
+                "XXX" device connected to the universal I/O interface 1;
+                "XXX2" means the one connected to the universal I/O interface
+                #2.
 
 
    Table 5.5  GTPAD BIOS Function
 
 --------------------------------------------------------------------------
-|  Device ID  |  Device specified  |	     Information returned	 |
+|  Device ID  |  Device specified  |         Information returned        |
 --------------+--------------------+-------------------------------------|
-|      0      | 		   |  0FFH when touching panel surface,  |
-|	      | 		   |  00H when not			 |
-|-------------| 		   |-------------------------------------|
-|      1      | 		   |  X-coordinate (0 to 255)		 |
+|      0      |                    |  0FFH when touching panel surface,  |
+|             |                    |  00H when not                       |
+|-------------|                    |-------------------------------------|
+|      1      |                    |  X-coordinate (0 to 255)            |
 |-------------|   Touch panel 1    |-------------------------------------|
-|      2      | 		   |  Y-coordinate (0 to 255)		 |
-|-------------| 		   |-------------------------------------|
-|      3      | 		   |  0FFH when button is pressed,	 |
-|	      | 		   |  00H when not			 |
+|      2      |                    |  Y-coordinate (0 to 255)            |
+|-------------|                    |-------------------------------------|
+|      3      |                    |  0FFH when button is pressed,       |
+|             |                    |  00H when not                       |
 |-------------+--------------------+-------------------------------------|
-|      4      | 		   |					 |
-|-------------| 		   |					 |
-|      5      | 		   |					 |
-|-------------|   Touch panel 2    |  Same as above			 |
-|      6      | 		   |					 |
-|-------------| 		   |					 |
-|      7      | 		   |					 |
+|      4      |                    |                                     |
+|-------------|                    |                                     |
+|      5      |                    |                                     |
+|-------------|   Touch panel 2    |  Same as above                      |
+|      6      |                    |                                     |
+|-------------|                    |                                     |
+|      7      |                    |                                     |
 |-------------+--------------------+-------------------------------------|
-|      8      | 		   |  0FFH: valid data, 		 |
-|	      | 		   |  00H: invalid data 		 |
-|-------------| 		   |-------------------------------------|
-|      9      | 		   |  X-coordinate (0 to 255)		 |
-|-------------|   Light pen	   |-------------------------------------|
-|     10      | 		   |  Y-coordinate (0 to 255)		 |
-|-------------| 		   |-------------------------------------|
-|     11      | 		   |  0FFH when switch is pressed,	 |
-|	      | 		   |  00H when not			 |
+|      8      |                    |  0FFH: valid data,                  |
+|             |                    |  00H: invalid data                  |
+|-------------|                    |-------------------------------------|
+|      9      |                    |  X-coordinate (0 to 255)            |
+|-------------|   Light pen        |-------------------------------------|
+|     10      |                    |  Y-coordinate (0 to 255)            |
+|-------------|                    |-------------------------------------|
+|     11      |                    |  0FFH when switch is pressed,       |
+|             |                    |  00H when not                       |
 |-------------+--------------------+-------------------------------------|
-|     12      | 		   |  Always 0FFH			 |
-|	      | 		   |  (used to request for input)	 |
-|-------------| 		   |-------------------------------------|
-|     13      |   Mouse 1 or	   |  X-coordinate (0 to 255)		 |
-|-------------|   track ball 1	   |-------------------------------------|
-|     14      | 		   |  Y-coordinate (0 to 255)		 |
-|-------------| 		   |-------------------------------------|
-|     15      | 		   |  Always 00H			 |
-|	      | 		   |  (no meaning)			 |
+|     12      |                    |  Always 0FFH                        |
+|             |                    |  (used to request for input)        |
+|-------------|                    |-------------------------------------|
+|     13      |   Mouse 1 or       |  X-coordinate (0 to 255)            |
+|-------------|   track ball 1     |-------------------------------------|
+|     14      |                    |  Y-coordinate (0 to 255)            |
+|-------------|                    |-------------------------------------|
+|     15      |                    |  Always 00H                         |
+|             |                    |  (no meaning)                       |
 |-------------+--------------------+-------------------------------------|
-|     16      | 		   |					 |
-|-------------| 		   |					 |
-|     17      |   Mouse 2 or	   |					 |
-|-------------|   track ball 2	   |  Same as above			 |
-|     18      | 		   |					 |
-|-------------| 		   |					 |
-|     19      | 		   |					 |
+|     16      |                    |                                     |
+|-------------|                    |                                     |
+|     17      |   Mouse 2 or       |                                     |
+|-------------|   track ball 2     |  Same as above                      |
+|     18      |                    |                                     |
+|-------------|                    |                                     |
+|     19      |                    |                                     |
 --------------------------------------------------------------------------
 
 Note 1: Though information of the coordinate of the light pen (A = 9, 10) and
-	the switch (A = 11) are read at the same time when BIOS is called
-	with A = 8, other values are valid only when the result is 0FFH.
-	In the case that the result of BIOS which is called with A = 8 is
-	00H, the coordinate values and the status of the switch contained
-	after that are meaningless.
+        the switch (A = 11) are read at the same time when BIOS is called
+        with A = 8, other values are valid only when the result is 0FFH.
+        In the case that the result of BIOS which is called with A = 8 is
+        00H, the coordinate values and the status of the switch contained
+        after that are meaningless.
 Note 2: Mouse and track ball are automatically distinguished.
 Note 3: To obtain the coordinate value of the mouse or the track ball, do the
-	input request call (A = 12 or A = 16), then execute the call to
-	obtain the coordinate value actually. In this case, the interval of
-	these two calls must be minimized as possible. Too much interval
-	between the input request and the coordinate input causes the
-	obtained data to be unreliable.
+        input request call (A = 12 or A = 16), then execute the call to
+        obtain the coordinate value actually. In this case, the interval of
+        these two calls must be minimized as possible. Too much interval
+        between the input request and the coordinate input causes the
+        obtained data to be unreliable.
 Note 4: To obtain the status of the trigger button of the mouse or the
-	trigger button of the track ball, use GTTRIG (00D8H/MAIN), not GTPAD
-	routine.
+        trigger button of the track ball, use GTTRIG (00D8H/MAIN), not GTPAD
+        routine.
 
 
 List 5.8  Touch panel use
@@ -2066,60 +2066,60 @@ List 5.8  Touch panel use
 ;
 ;************************************************
 ;
-BREAKX	EQU	00B7H
-GTPAD	EQU	00D8H
-WRTVRM	EQU	004DH
+BREAKX  EQU     00B7H
+GTPAD   EQU     00D8H
+WRTVRM  EQU     004DH
 
-	ORG	0B000H
+        ORG     0B000H
 
-;----- program start -----	Note:  Displays "*" at position specified
-				       by touch pad.
+;----- program start -----      Note:  Displays "*" at position specified
+                                       by touch pad.
 
-PAD:	XOR	A		;check sense
-	CALL	GTPAD
-	OR	A
-	JR	NZ,PAD1
-	LD	A,3
-	CALL	GTPAD		;break check
-	OR	A
-	RET	NZ
-	JR	PAD
+PAD:    XOR     A               ;check sense
+        CALL    GTPAD
+        OR      A
+        JR      NZ,PAD1
+        LD      A,3
+        CALL    GTPAD           ;break check
+        OR      A
+        RET     NZ
+        JR      PAD
 
-PAD1:	LD	A,1		;get X axis
-	CALL	GTPAD
-	SRL	A		;A := A/8
-	SRL	A
-	SRL	A
-	LD	(WORK),A	;reserve X axis
-	LD	A,2		;get Y axis
-	CALL	GTPAD
-	LD	L,A		;HL := Y data (0-255)
-	LD	H,0
-	LD	C,A
-	LD	B,0
-	ADD	HL,BC		;HL := HL*3 (HL := 0-767)
-	ADD	HL,BC
-	LD	A,L
-	AND	11100000B
-	LD	L,A
-	LD	A,(WORK)
-	ADD	A,L
-	LD	L,A
-	LD	BC,1800H	;VRAM start address
-	ADD	HL,BC
-	LD	A,2AH
-	CALL	WRTVRM		;write VRAM
-	LD	A,3
-	CALL	GTPAD		;break check
-	OR	A
-	RET	NZ
-	JR	PAD
+PAD1:   LD      A,1             ;get X axis
+        CALL    GTPAD
+        SRL     A               ;A := A/8
+        SRL     A
+        SRL     A
+        LD      (WORK),A        ;reserve X axis
+        LD      A,2             ;get Y axis
+        CALL    GTPAD
+        LD      L,A             ;HL := Y data (0-255)
+        LD      H,0
+        LD      C,A
+        LD      B,0
+        ADD     HL,BC           ;HL := HL*3 (HL := 0-767)
+        ADD     HL,BC
+        LD      A,L
+        AND     11100000B
+        LD      L,A
+        LD      A,(WORK)
+        ADD     A,L
+        LD      L,A
+        LD      BC,1800H        ;VRAM start address
+        ADD     HL,BC
+        LD      A,2AH
+        CALL    WRTVRM          ;write VRAM
+        LD      A,3
+        CALL    GTPAD           ;break check
+        OR      A
+        RET     NZ
+        JR      PAD
 
 ;----- work area -----
 
-WORK:	DW	0		;work
+WORK:   DW      0               ;work
 
-	END
+        END
 
 =================================================================
 
@@ -2133,106 +2133,106 @@ List 5.9  Mouse and track ball use
 ;
 ;************************************************
 ;
-GTPAD	EQU	00DBH
-WRTVRM	EQU	004DH
-RDVRM	EQU	004AH
-BREAKX	EQU	00B7H
+GTPAD   EQU     00DBH
+WRTVRM  EQU     004DH
+RDVRM   EQU     004AH
+BREAKX  EQU     00B7H
 
-	ORG	0D000H
+        ORG     0D000H
 
-;----- program start -----	Note:  Displays "*" at position specified
-				       by mouse or track ball.
+;----- program start -----      Note:  Displays "*" at position specified
+                                       by mouse or track ball.
 
-TEST:	CALL	VADR		;Put old data
-	LD	A,(WKOLD)
-	CALL	WRTVRM
-	LD	A,12
-	CALL	GTPAD		;Request mouse/track ball data
-	LD	A,13
-	CALL	GTPAD		;Read X val.
-	LD	(WKXVAL),A
-	LD	A,14
-	CALL	GTPAD		;Read Y val.
-	LD	(WKYVAL),A
+TEST:   CALL    VADR            ;Put old data
+        LD      A,(WKOLD)
+        CALL    WRTVRM
+        LD      A,12
+        CALL    GTPAD           ;Request mouse/track ball data
+        LD      A,13
+        CALL    GTPAD           ;Read X val.
+        LD      (WKXVAL),A
+        LD      A,14
+        CALL    GTPAD           ;Read Y val.
+        LD      (WKYVAL),A
 
-	LD	A,(WKX)
-	LD	B,A
-	LD	A,(WKXVAL)
-	ADD	A,B
-	CP	245		;X<0?
-	JR	C,TEST01
-	XOR	A		;X=0
-	JR	TEST02
+        LD      A,(WKX)
+        LD      B,A
+        LD      A,(WKXVAL)
+        ADD     A,B
+        CP      245             ;X<0?
+        JR      C,TEST01
+        XOR     A               ;X=0
+        JR      TEST02
 
-TEST01: CP	32		;X>31?
-	JR	C,TEST02
-	LD	A,31
+TEST01: CP      32              ;X>31?
+        JR      C,TEST02
+        LD      A,31
 
-TEST02: LD	(WKX),A
+TEST02: LD      (WKX),A
 
-	LD	A,(WKY)
-	LD	B,A
-	LD	A,(WKYVAL)
-	ADD	A,B
-	CP	245		;Y<0?
-	JR	C,TEST03
-	XOR	A		;Y=0
-	JR	TEST04
+        LD      A,(WKY)
+        LD      B,A
+        LD      A,(WKYVAL)
+        ADD     A,B
+        CP      245             ;Y<0?
+        JR      C,TEST03
+        XOR     A               ;Y=0
+        JR      TEST04
 
-TEST03: CP	24		;Y>23?
-	JR	C,TEST04
-	LD	A,23
+TEST03: CP      24              ;Y>23?
+        JR      C,TEST04
+        LD      A,23
 
-TEST04: LD	(WKY),A
+TEST04: LD      (WKY),A
 
-	CALL	VADR
-	CALL	RDVRM		;Read old data
-	LD	(WKOLD),A
+        CALL    VADR
+        CALL    RDVRM           ;Read old data
+        LD      (WKOLD),A
 
-	CALL	VADR
-	LD	A,2AH
-	CALL	WRTVRM		;Put cursor ("*").
+        CALL    VADR
+        LD      A,2AH
+        CALL    WRTVRM          ;Put cursor ("*").
 
-	CALL	BREAKX		;Break check
-	RET	C
+        CALL    BREAKX          ;Break check
+        RET     C
 
-	CALL	WAIT
+        CALL    WAIT
 
-	JR	TEST
+        JR      TEST
 
-VADR:	LD	A,(WKY) 	;Make SCREEN Address:
-	LD	H,A		;  From X,Y axis on WORK AREA
-	LD	L,0		;  To Hl reg.
-	SRL	H
-	RR	L
-	SRL	H
-	RR	L
-	SRL	H
-	RR	L
-	LD	A,(WKX)
-	ADD	A,L		;  Y=32+X
-	LD	L,A
-	LD	BC,1800H	;  VRAM start address
-	ADD	HL,BC
-	RET
+VADR:   LD      A,(WKY)         ;Make SCREEN Address:
+        LD      H,A             ;  From X,Y axis on WORK AREA
+        LD      L,0             ;  To Hl reg.
+        SRL     H
+        RR      L
+        SRL     H
+        RR      L
+        SRL     H
+        RR      L
+        LD      A,(WKX)
+        ADD     A,L             ;  Y=32+X
+        LD      L,A
+        LD      BC,1800H        ;  VRAM start address
+        ADD     HL,BC
+        RET
 
-WAIT:	LD	A,0		;WAIT routine
-WLP1:	INC	A
-	LD	B,(IX+0)
-	LD	B,(IX+0)
-	LD	B,(IX+0)
-	JR	NZ,WLP1
-	RET
+WAIT:   LD      A,0             ;WAIT routine
+WLP1:   INC     A
+        LD      B,(IX+0)
+        LD      B,(IX+0)
+        LD      B,(IX+0)
+        JR      NZ,WLP1
+        RET
 
 ;----- data -----
 
-WKX:	DB	10		;X axis
-WKY:	DB	10		;Y axis
-WKOLD:	DB	0		;Character code on (X,Y)
-WKXVAL: DB	0		;X variable
-WKYVAL: DB	0		;Y variable
+WKX:    DB      10              ;X axis
+WKY:    DB      10              ;Y axis
+WKOLD:  DB      0               ;Character code on (X,Y)
+WKXVAL: DB      0               ;X variable
+WKYVAL: DB      0               ;Y variable
 
-	END
+        END
 
 =================================================================
 
@@ -2252,33 +2252,33 @@ This IC has the following three functions:
 
 * CLOCK function
 
-	- set/read the settings of "year, month, day, day of week, hour,
-	  minute, second"
-	- for the expression of time, 24-hour clock/12-hour clock available
-	- for months, months of 31 days and of 30 days are distinguished
-	  (leap years are also recognised)
+        - set/read the settings of "year, month, day, day of week, hour,
+          minute, second"
+        - for the expression of time, 24-hour clock/12-hour clock available
+        - for months, months of 31 days and of 30 days are distinguished
+          (leap years are also recognised)
 
 
 * Alarm function
 
-	- when the time for alarm is set, CLOCK generates signals
-	  at that time.
-	- the time for alarm is set as "XXday XXhour XXminute".
+        - when the time for alarm is set, CLOCK generates signals
+          at that time.
+        - the time for alarm is set as "XXday XXhour XXminute".
 
 
 * Battery-powered memory function
 
-	- has 26 sets of 4-bit memory, and can be battery-powered.
-	- MSX2 stores the following data in this memory:
+        - has 26 sets of 4-bit memory, and can be battery-powered.
+        - MSX2 stores the following data in this memory:
 
-		1. adjustment value of CRT display width and height
-		2. initial values of SCREEN, WIDTH, colour
-		3. BEEP tone and volume
-		4. title screen colour
-		5. country code
-		6. password	      --+
-		7. BASIC prompt 	| (one of 6 to 8)
-		8. title caption      --+
+                1. adjustment value of CRT display width and height
+                2. initial values of SCREEN, WIDTH, colour
+                3. BEEP tone and volume
+                4. title screen colour
+                5. country code
+                6. password           --+
+                7. BASIC prompt         | (one of 6 to 8)
+                8. title caption      --+
 
 
 6.2 Structure of the CLOCK-IC
@@ -2293,38 +2293,38 @@ read from and written to. The TEST register (#14) and RESET register (#15)
 can only be written to.
 
 
-   Figure 5.25	Clock IC structure
+   Figure 5.25  Clock IC structure
 
-       BLOCK 0		  BLOCK 1	     BLOCK 2		BLOCK 2
-       (CLOCK)		  (ALARM)	     (RAM-1)		(RAM-2)
-   ----------------   ----------------	 ----------------   ----------------
-   | Seconds (the |   | 	     |	 |		|   |		   |
- 0 | 1st decimal  |   |   ________   |	 |		|   |		   |
-   | place)	  |   | 	     |	 |		|   |		   |
-   |--------------|   |--------------|	 |-	       -|   |-		  -|
-   | Seconds (the |   | 	     |	 |		|   |		   |
- 1 | 2nd decimal  |   |   ________   |	 |		|   |		   |
-   | place)	  |   | 	     |	 |		|   |		   |
-   |--------------|   |--------------|	 |-	       -|   |-		  -|
- . |	  .	  |   |      .	     |	 |   Any data	|   |	Any data   |
- . |	  .	  |   |      .	     |	 |		|   |		   |
- . |	  .	  |   |      .	     |	 |		|   |		   |
- . |	  .	  |   |      .	     |	 |		|   |		   |
- . |	  .	  |   |      .	     |	 |		|   |		   |
-   |--------------|   |--------------|	 |-	       -|   |-		  -|
-   | Year (the	  |   | 	     |	 |		|   |		   |
- 12| 2nd decimal  |   |   ________   |	 |		|   |		   |
-   | place)	  |   | 	     |	 |		|   |		   |
-   ----------------   ----------------	 ----------------   ----------------
-   :<-- 4 bits -->:   :<-- 4 bits -->:	 :<-- 4 bits -->:   :<-- 4 bits -->:
+       BLOCK 0            BLOCK 1            BLOCK 2            BLOCK 2
+       (CLOCK)            (ALARM)            (RAM-1)            (RAM-2)
+   ----------------   ----------------   ----------------   ----------------
+   | Seconds (the |   |              |   |              |   |              |
+ 0 | 1st decimal  |   |   ________   |   |              |   |              |
+   | place)       |   |              |   |              |   |              |
+   |--------------|   |--------------|   |-            -|   |-            -|
+   | Seconds (the |   |              |   |              |   |              |
+ 1 | 2nd decimal  |   |   ________   |   |              |   |              |
+   | place)       |   |              |   |              |   |              |
+   |--------------|   |--------------|   |-            -|   |-            -|
+ . |      .       |   |      .       |   |   Any data   |   |   Any data   |
+ . |      .       |   |      .       |   |              |   |              |
+ . |      .       |   |      .       |   |              |   |              |
+ . |      .       |   |      .       |   |              |   |              |
+ . |      .       |   |      .       |   |              |   |              |
+   |--------------|   |--------------|   |-            -|   |-            -|
+   | Year (the    |   |              |   |              |   |              |
+ 12| 2nd decimal  |   |   ________   |   |              |   |              |
+   | place)       |   |              |   |              |   |              |
+   ----------------   ----------------   ----------------   ----------------
+   :<-- 4 bits -->:   :<-- 4 bits -->:   :<-- 4 bits -->:   :<-- 4 bits -->:
 
 
    ----------------
-13 |	 MODE	  |
+13 |     MODE     |
    |--------------| --+
-14 |	 TEST	  |   |
+14 |     TEST     |   |
    |--------------|   |-- Write only
-15 |	 RESET	  |   |
+15 |     RESET    |   |
    ---------------- --+
    :<-- 4 bits -->:
 
@@ -2357,22 +2357,22 @@ By writing "0" in bit 3 of the MODE register, the count in seconds is stopped
 terminated. By writing "1" in bit 3, the count is resumed.
 
 
-   Figure 5.26	MODE register functions
+   Figure 5.26  MODE register functions
 
-  B3   B2   B1	 B0
+  B3   B2   B1   B0
 ---------------------
 | TE | AE | M1 : M0 |  MODE register (#13)
 ---------------------
   |    |       |       00: select block 0
   |    |       |       01: select block 1
   |    |       +---->  10: select block 2
-  |    |	       11: select block 3
+  |    |               11: select block 3
   |    |
   |    +------------>  0:  alarm output OFF
-  |		       1:  alarm output ON
+  |                    1:  alarm output ON
   |
   +----------------->  0:  CLOCK count stop (in seconds)
-		       1:  CLOCK count start
+                       1:  CLOCK count start
 
 
 6.4 TEST Register functions
@@ -2383,15 +2383,15 @@ bit of the register, the pulse of 2^14 (=16384)[Hz] is directly set in day,
 hour, minute, and second counters.
 
 
-   Figure 5.27	TEST register functions
+   Figure 5.27  TEST register functions
 
-  B3   B2   B1	 B0
+  B3   B2   B1   B0
 ---------------------
 | T3 | T2 | T1 | T0 |  TEST register (#14)
 ---------------------
-  |    |    |	 |
+  |    |    |    |
   |  Hours  |  Seconds ........ the location for the pulse to be placed
- Day	  Minutes
+ Day      Minutes
 
 
 6.5 RESET Register Functions
@@ -2417,14 +2417,14 @@ bit 3 turns the 1Hz clock pulse output ON. Note that both are not supported
 by the MSX2 standard.
 
 
-   Figure 5.28	RESET register function
+   Figure 5.28  RESET register function
 
-  B3   B2   B1	 B0
+  B3   B2   B1   B0
 ---------------------
 | C1 | C16| CR | AR |  RESET register (#15)
 ---------------------
-  |    |    |	 |
-  |    |    |	 +-->  When "1", all alarm registers are reset
+  |    |    |    |
+  |    |    |    +-->  When "1", all alarm registers are reset
   |    |    +------->  When "1", fractions smaller than a second are reset
   |    +------------>  When "0", 16[Hz] clock pulse is ON
   +----------------->  When "0", 1[Hz] clock pulse is ON
@@ -2450,98 +2450,98 @@ register #12 to 0, the year would be 80, as "80/XX/XX", when the date is read
 by using the GET DATE instruction of BASIC.
 
 The day of the week is represented by 0 to 6. This is only a mod 7 counter
-which is renewed alomg with the date, and the correspondence between the
+which is renewed along with the date, and the correspondence between the
 actual day of the week and the number value 0 to 6 is not defined.
 
 
-   Figure 5.29	Setting the CLOCK and ALARM
+   Figure 5.29  Setting the CLOCK and ALARM
 
-		       block 0 : CLOCK
+                       block 0 : CLOCK
    ---------------------------------------------------------
-   |			       |  B3  |  B2  |	B1  |  B0  |
+   |                           |  B3  |  B2  |  B1  |  B0  |
    |---------------------------+---------------------------|
- 0 |  Seconds		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+ 0 |  Seconds                  |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
- 1 |  Seconds		       |			   |
-   |  (the 2nd decimal place)  |  .	 X	X      X   |
+ 1 |  Seconds                  |                           |
+   |  (the 2nd decimal place)  |  .      X      X      X   |
    |---------------------------+---------------------------|
- 2 |  Minutes		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+ 2 |  Minutes                  |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
- 3 |  Minutes		       |			   |
-   |  (the 2nd decimal place)  |  .	 X	X      X   |
+ 3 |  Minutes                  |                           |
+   |  (the 2nd decimal place)  |  .      X      X      X   |
    |---------------------------+---------------------------|
- 4 |  Hours		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+ 4 |  Hours                    |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
- 5 |  Hours		       |			   |
-   |  (the 2nd decimal place)  |  .	 .	X      X   |
+ 5 |  Hours                    |                           |
+   |  (the 2nd decimal place)  |  .      .      X      X   |
    |---------------------------+---------------------------|
- 6 |  Day of		       |			   |
-   |  the week		       |  .	 X	X      X   |
+ 6 |  Day of                   |                           |
+   |  the week                 |  .      X      X      X   |
    |---------------------------+---------------------------|
- 7 |  Day		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+ 7 |  Day                      |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
- 8 |  Day		       |			   |
-   |  (the 2nd decimal place)  |  .	 .	X      X   |
+ 8 |  Day                      |                           |
+   |  (the 2nd decimal place)  |  .      .      X      X   |
    |---------------------------+---------------------------|
- 9 |  Month		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+ 9 |  Month                    |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
-10 |  Month		       |			   |
-   |  (the 2nd decimal place)  |  .	 .	.      X   |
+10 |  Month                    |                           |
+   |  (the 2nd decimal place)  |  .      .      .      X   |
    |---------------------------+---------------------------|
-11 |  Year		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+11 |  Year                     |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
-12 |  Year		       |			   |
-   |  (the 2nd decimal place)  |  X	 X	X      X   |
+12 |  Year                     |                           |
+   |  (the 2nd decimal place)  |  X      X      X      X   |
    ---------------------------------------------------------
 
-		       block 1 : ALARM
+                       block 1 : ALARM
    ---------------------------------------------------------
-   |			       |  B3  |  B2  |	B1  |  B0  |
+   |                           |  B3  |  B2  |  B1  |  B0  |
    |---------------------------+---------------------------|
- 0 |	 _________________     |			   |
-   |			       |  .	 .	.      .   |
+ 0 |     _________________     |                           |
+   |                           |  .      .      .      .   |
    |---------------------------+---------------------------|
- 1 |	 _________________     |			   |
-   |			       |  .	 .	.      .   |
+ 1 |     _________________     |                           |
+   |                           |  .      .      .      .   |
    |---------------------------+---------------------------|
- 2 |  Minutes		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+ 2 |  Minutes                  |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
- 3 |  Minutes		       |			   |
-   |  (the 2nd decimal place)  |  .	 X	X      X   |
+ 3 |  Minutes                  |                           |
+   |  (the 2nd decimal place)  |  .      X      X      X   |
    |---------------------------+---------------------------|
- 4 |  Hours		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+ 4 |  Hours                    |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
- 5 |  Hours		       |			   |
-   |  (the 2nd decimal place)  |  .	 .	X      X   |
+ 5 |  Hours                    |                           |
+   |  (the 2nd decimal place)  |  .      .      X      X   |
    |---------------------------+---------------------------|
- 6 |  Day of		       |			   |
-   |  the week		       |  .	 X	X      X   |
+ 6 |  Day of                   |                           |
+   |  the week                 |  .      X      X      X   |
    |---------------------------+---------------------------|
- 7 |  Day		       |			   |
-   |  (the 1st decimal place)  |  X	 X	X      X   |
+ 7 |  Day                      |                           |
+   |  (the 1st decimal place)  |  X      X      X      X   |
    |---------------------------+---------------------------|
- 8 |  Day		       |			   |
-   |  (the 2nd decimal place)  |  .	 .	X      X   |
+ 8 |  Day                      |                           |
+   |  (the 2nd decimal place)  |  .      .      X      X   |
    |---------------------------+---------------------------|
- 9 |	 _________________     |			   |
-   |			       |  .	 .	.      .   |
+ 9 |     _________________     |                           |
+   |                           |  .      .      .      .   |
    |---------------------------+---------------------------|
-10 |  12 or		       |			   |
-   |  24 hours		       |  .	 .	.      X   |
+10 |  12 or                    |                           |
+   |  24 hours                 |  .      .      .      X   |
    |---------------------------+---------------------------|
-11 |  Leap year 	       |			   |
-   |  counter		       |  .	 .	X      X   |
+11 |  Leap year                |                           |
+   |  counter                  |  .      .      X      X   |
    |---------------------------+---------------------------|
-12 |	 _________________     |			   |
-   |			       |  .	 .	.      .   |
+12 |     _________________     |                           |
+   |                           |  .      .      .      .   |
    ---------------------------------------------------------
 
     Bits indicated by an "." are always 0 and cannot be modified.
@@ -2556,26 +2556,26 @@ shown in Figure 5.30, the 12-hour clock is selected when B0 is "0" and the
 24-hour clock when B0 is "1".
 
 
-   Figure 5.30	Selecting 12-hour clock/24-hour clock
+   Figure 5.30  Selecting 12-hour clock/24-hour clock
 
-  B3   B2   B1	 B0
+  B3   B2   B1   B0
 ---------------------
-|  . |	. |  . | B0 |  Register #10 (block 1)
+|  . |  . |  . | B0 |  Register #10 (block 1)
 ---------------------
-		 |
-		 +-->  0: 12-hour clock
-		       1: 24-hour clock
+                 |
+                 +-->  0: 12-hour clock
+                       1: 24-hour clock
 
 
-   Figure 5.31	Morning/afternoon flag for 12-hour clock
+   Figure 5.31  Morning/afternoon flag for 12-hour clock
 
-  B3   B2   B1	 B0
+  B3   B2   B1   B0
 ---------------------
-|  . |	. | B1 |  X |  register #5 (block 0)
+|  . |  . | B1 |  X |  register #5 (block 0)
 ---------------------
-	    |
-	    +------->  0: before noon
-		       1: after noon
+            |
+            +------->  0: before noon
+                       1: after noon
 
 
 * Leap year counter
@@ -2585,14 +2585,14 @@ count of the year. When the 2 low order bits of this register are 00H, that
 is considered as a leap year and 29 days are counted in February.
 
 
-   Figure 5.32	Leap year determination
+   Figure 5.32  Leap year determination
 
-  B3   B2   B1	 B0
+  B3   B2   B1   B0
 ---------------------
-|  . |	. | B1 | B0 |  Register #11 (block 1)
+|  . |  . | B1 | B0 |  Register #11 (block 1)
 ---------------------
-	    |	 |
-	    +----+-->  Both bits 0 represents leap year.
+            |    |
+            +----+-->  Both bits 0 represents leap year.
 
 
 6.7 Contents of the Battery-powered Memory
@@ -2604,35 +2604,35 @@ memory blocks. MSX2 uses this area as shown below.
 * Contents of block 2
 
 
-   Figure 5.33	Contents of block 2
+   Figure 5.33  Contents of block 2
 
-   |	   B3	    |	    B2	     |	     B1       |       B0       |
+   |       B3       |       B2       |       B1       |       B0       |
    |-------------------------------------------------------------------|
- 0 |				     ID 			       |
+ 0 |                                 ID                                |
    |-------------------------------------------------------------------|
- 1 |			    Adjust X (-8 to +7) 		       |
+ 1 |                        Adjust X (-8 to +7)                        |
    |-------------------------------------------------------------------|
- 2 |			    Adjust Y (-8 to +7) 		       |
+ 2 |                        Adjust Y (-8 to +7)                        |
    |-------------------------------------------------------------------|
- 3 |   __________   |	__________   | Interlace mode |  Screen mode   |
+ 3 |   __________   |   __________   | Interlace mode |  Screen mode   |
    |-------------------------------------------------------------------|
- 4 |			     WIDTH value (Lo)			       |
+ 4 |                         WIDTH value (Lo)                          |
    |-------------------------------------------------------------------|
- 5 |			     WIDTH value (Hi)			       |
+ 5 |                         WIDTH value (Hi)                          |
    |-------------------------------------------------------------------|
- 6 |			     Foreground color			       |
+ 6 |                         Foreground color                          |
    |-------------------------------------------------------------------|
- 7 |			     Background color			       |
+ 7 |                         Background color                          |
    |-------------------------------------------------------------------|
- 8 |			       Border color			       |
+ 8 |                           Border color                            |
    |-------------------------------------------------------------------|
- 9 | Cassette speed |  Printer mode  |	 Key click    |   Key ON/OFF   |
+ 9 | Cassette speed |  Printer mode  |   Key click    |   Key ON/OFF   |
    |---------------------------------+---------------------------------|
-10 |		BEEP tone	     |		 BEEP volume	       |
+10 |            BEEP tone            |           BEEP volume           |
    |---------------------------------+---------------------------------|
-11 |   __________   |	__________   |		 Title colour	       |
+11 |   __________   |   __________   |           Title colour          |
    |-------------------------------------------------------------------|
-12 |				Native code			       |
+12 |                            Native code                            |
    ---------------------------------------------------------------------
 
 
@@ -2642,69 +2642,69 @@ Block 3 has three functions, depending on the contents of the ID value
 (register #0). Figure 5.34 shows the functions.
 
 
-   Figure 5.34	Contents of block 3
+   Figure 5.34  Contents of block 3
 
 ID=0: displays the title (within 6 characters) on the initial screen
    ------------------------------------------------------
- 0 |  0 						|
+ 0 |  0                                                 |
    |----------------------------------------------------| --+
- 1 |  Lo 1 --+--- 1st character of the title		|   |
-   |	     |						|   |
- 2 |  Hi 1 --+						|   |
+ 1 |  Lo 1 --+--- 1st character of the title            |   |
+   |         |                                          |   |
+ 2 |  Hi 1 --+                                          |   |
    |----------------------------------------------------|   |
- . |	   .						|   |
- . |	   .						|   | 6 characters
- . |	   .						|   |
+ . |       .                                            |   |
+ . |       .                                            |   | 6 characters
+ . |       .                                            |   |
    |----------------------------------------------------|   |
-11 |  Lo 6 --+--- 6th character of the title		|   |
-   |	     |						|   |
-12 |  Hi 6 --+						|   |
+11 |  Lo 6 --+--- 6th character of the title            |   |
+   |         |                                          |   |
+12 |  Hi 6 --+                                          |   |
    ------------------------------------------------------ --+
 
 ID=1: sets the password
    ------------------------------------------------------
- 0 |  1 						|
+ 0 |  1                                                 |
    |----------------------------------------------------|
- 1 |  Usage ID=1					|
-   |							|
- 2 |  Usage ID=2					|
-   |							|
- 3 |  Usage ID=3					|
+ 1 |  Usage ID=1                                        |
+   |                                                    |
+ 2 |  Usage ID=2                                        |
+   |                                                    |
+ 3 |  Usage ID=3                                        |
    |----------------------------------------------------|
- 4 |  Password	--+					|
-   |		  |					|
- 5 |  Password	  |   Password data is stored		|
-   |		  |-- compressed in 4bits x 4 bits	|
- 6 |  Password	  |					|
-   |		  |					|
- 7 |  Password	--+					|
+ 4 |  Password  --+                                     |
+   |              |                                     |
+ 5 |  Password    |   Password data is stored           |
+   |              |-- compressed in 4bits x 4 bits      |
+ 6 |  Password    |                                     |
+   |              |                                     |
+ 7 |  Password  --+                                     |
    |----------------------------------------------------|
- 8 |  Key cartridge flag				|
+ 8 |  Key cartridge flag                                |
    |----------------------------------------------------|
- 9 |  Key cartridge value				|
-   |							|
-10 |  Key cartridge value				|
-   |							|
-11 |  Key cartridge value				|
-   |							|
-12 |  Key cartridge value				|
+ 9 |  Key cartridge value                               |
+   |                                                    |
+10 |  Key cartridge value                               |
+   |                                                    |
+11 |  Key cartridge value                               |
+   |                                                    |
+12 |  Key cartridge value                               |
    ------------------------------------------------------
 
 ID=2: sets the prompt on BASIC
    ------------------------------------------------------
- 0 |  2 						|
+ 0 |  2                                                 |
    |----------------------------------------------------| --+
- 1 |  Lo 1 --+--- 1st character of the prompt		|   |
-   |	     |						|   |
- 2 |  Hi 1 --+						|   |
+ 1 |  Lo 1 --+--- 1st character of the prompt           |   |
+   |         |                                          |   |
+ 2 |  Hi 1 --+                                          |   |
    |----------------------------------------------------|   |
- . |	   .						|   |
- . |	   .						|   | 6 characters
- . |	   .						|   |
+ . |       .                                            |   |
+ . |       .                                            |   | 6 characters
+ . |       .                                            |   |
    |----------------------------------------------------|   |
-11 |  Lo 6 --+--- 6th character of the prompt		|   |
-   |	     |						|   |
-12 |  Hi 6 --+						|   |
+11 |  Lo 6 --+--- 6th character of the prompt           |   |
+   |         |                                          |   |
+12 |  Hi 6 --+                                          |   |
    ------------------------------------------------------ --+
 
 
@@ -2717,34 +2717,34 @@ called by using the inter-slot call.
 
 * REDCLK (015FH/SUB) .................. read CLOCK-IC data
 
-Input:		C <-- CLOCK-IC address (see Figure 5.35)
-Output: 	A <-- data obtained (only 4 low order bits valid)
-Function:	reads CLOCK-IC register in the address specified by the
-		C register and stores in the A register. Since the address
-		specification includes the block selection information as
-		shown in Figure 5.35, it is not necessary to set the MODE
-		register and then read the objective register.
+Input:          C <-- CLOCK-IC address (see Figure 5.35)
+Output:         A <-- data obtained (only 4 low order bits valid)
+Function:       reads CLOCK-IC register in the address specified by the
+                C register and stores in the A register. Since the address
+                specification includes the block selection information as
+                shown in Figure 5.35, it is not necessary to set the MODE
+                register and then read the objective register.
 
 
-   Figure 5.35	CLOCK-IC register specification method
+   Figure 5.35  CLOCK-IC register specification method
 
-		-----------------------------------------
-C register	|  . |	. | M1 : M0 | A3 : A2 : A1 : A0 |
-		-----------------------------------------
-			  |	    |			|
-			  +---------+-------------------+
-			  Block to be	    Register
-			  selected	    address
+                -----------------------------------------
+C register      |  . |  . | M1 : M0 | A3 : A2 : A1 : A0 |
+                -----------------------------------------
+                          |         |                   |
+                          +---------+-------------------+
+                          Block to be       Register
+                          selected          address
 
 
 * WRTCLK (01F9H/SUB) .................. write CLOCK-IC data
 
-Input:		C <-- CLOCK-IC address (see Figure 5.35)
-		A <-- data to be written (4 low order bits)
-Output: 	---
-Function:	write the contents of the A register in the CLOCK-IC at the
-		address specified by the C register. The address is specified
-		in the format shown in Figure 5.35 as REDCLK.
+Input:          C <-- CLOCK-IC address (see Figure 5.35)
+                A <-- data to be written (4 low order bits)
+Output:         ---
+Function:       write the contents of the A register in the CLOCK-IC at the
+                address specified by the C register. The address is specified
+                in the format shown in Figure 5.35 as REDCLK.
 
 
 List 5.10 shows an example of this BIOS routine.
@@ -2759,51 +2759,50 @@ List 5.10  Setting the prompt
 ;
 ;************************************************
 ;
-WRTCLK: EQU	01F9H
-EXTROM: EQU	015FH
+WRTCLK: EQU     01F9H
+EXTROM: EQU     015FH
 
-	ORG	0B000H
+        ORG     0B000H
 
-;----- program start -----	;Note:	Set prompt message for BASIC.
+;----- program start -----      ;Note:  Set prompt message for BASIC.
 
-START:	LD	C,00110000B	;address data
-	LD	A,2		;ID := prompt mode
-	CALL	WRTRAM		;write to back-up RAM
+START:  LD      C,00110000B     ;address data
+        LD      A,2             ;ID := prompt mode
+        CALL    WRTRAM          ;write to back-up RAM
 
-	LD	B,6		;loop counter
-	LD	HL,STRING	;prompt data
-L01:	LD	A,(HL)		;read string data
-	AND	0FH		;A := hi 4 bit
-	INC	C		;increment address
-	CALL	WRTRAM		;write data to back-up RAM
-	LD	A,(HL)
-	RRCA
-	RRCA
-	RRCA
-	RRCA
-	AND	0FH
-	INC	C		;increment address
-	CALL	WRTRAM		;write low 4 bits
-	INC	HL
-	DJNZ	L01
-	RET
+        LD      B,6             ;loop counter
+        LD      HL,STRING       ;prompt data
+L01:    LD      A,(HL)          ;read string data
+        AND     0FH             ;A := hi 4 bit
+        INC     C               ;increment address
+        CALL    WRTRAM          ;write data to back-up RAM
+        LD      A,(HL)
+        RRCA
+        RRCA
+        RRCA
+        RRCA
+        AND     0FH
+        INC     C               ;increment address
+        CALL    WRTRAM          ;write low 4 bits
+        INC     HL
+        DJNZ    L01
+        RET
 
 ;----- write data to back-up RAM -----
 
-WRTRAM: PUSH	HL
-	PUSH	BC
-	LD	IX,WRTCLK
-	CALL	EXTROM		;use interslot call
-	POP	BC
-	POP	HL
-	RET
+WRTRAM: PUSH    HL
+        PUSH    BC
+        LD      IX,WRTCLK
+        CALL    EXTROM          ;use interslot call
+        POP     BC
+        POP     HL
+        RET
 
 ;----- string data -----
 
-STRING: DB	'Ready?'
+STRING: DB      'Ready?'
 
-	END
+        END
 
 =================================================================
 
-

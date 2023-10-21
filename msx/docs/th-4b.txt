@@ -1,12 +1,12 @@
 MSX2 TECHNICAL HANDBOOK
 -----------------------
 
-Edited by:		ASCII Systems Division
-Published by:		ASCII Coprporation - JAPAN
-First edition:		March 1987
+Edited by:              ASCII Systems Division
+Published by:           ASCII Corporation - JAPAN
+First edition:          March 1987
 
-Text file typed by:	Nestor Soriano (Konami Man) - SPAIN
-			March 1997
+Text file typed by:     Nestor Soriano (Konami Man) - SPAIN
+                        March 1997
 
 Changes from the original:
 
@@ -25,7 +25,7 @@ has been corrected to 11100000.
 
 - In Figure 4.84, "*" mark removed from the explanation of NX.
 
-- In Figure 4.85, in R#45 explanation,	"select source memory" text has been
+- In Figure 4.85, in R#45 explanation,  "select source memory" text has been
 corrected to "select destination memory".
 
 - In List 4.13, labels beginning with "LMMC" have been corrected to "LMCM".
@@ -34,7 +34,7 @@ corrected to "select destination memory".
 instruction has been corrected to "OUT (C),L".
 
 - In section 6.5.9, the explanation of usage of the LINE command were mixed
-wih other text. It has been corrected.
+with other text. It has been corrected.
 
 - In Figure 4.94, a line explaining the meaning of R#44 has been added.
 
@@ -53,7 +53,7 @@ CHAPTER 4 - VDP AND DISPLAY SCREEN (Part 6)
 6. VDP COMMAND USAGE
 
 MSX-VIDEO can execute basic graphic operations, which are called VDP
-commands. These are done by accessing special harware and are available in
+commands. These are done by accessing special hardware and are available in
 the GRAPHIC 4 to GRAPHIC 7 modes. These graphic commands have been made easy
 to implement, requiring only that the necessary parameters be set in the
 proper registers before invoking them. This section describes these VDP
@@ -68,37 +68,37 @@ commands are executed, there is no page division and the entire 128K bytes
 VRAM is placed in a large coordinate system.
 
 
-   Figure 4.72	Coordinate system of VRAM
+   Figure 4.72  Coordinate system of VRAM
 
-    GRAPHIC 4  (SCREEN 5)			GRAPHIC 5  (SCREEN 6)
-------------------------------	  00000H    ------------------------------
-| (0,0) 	     (255,0) |	    |	    | (0,0)		 (511,0) |
-|	    Page 0	     |	    |	    |		Page 0		 |
-| (0,255)	   (255,255) |	    |	    | (0,255)	       (511,255) |
-------------------------------	  08000H    ------------------------------
-| (0,256)	   (255,256) |	    |	    | (0,256)	       (511,256) |
-|	    Page 1	     |	    |	    |		Page 1		 |
-| (0,511)	   (255,511) |	    |	    | (0,511)	       (511,511) |
-------------------------------	  10000H    ------------------------------
-| (0,512)	   (255,512) |	    |	    | (0,512)	       (511,512) |
-|	    Page 2	     |	    |	    |		Page 2		 |
-| (0,767)	   (255,767) |	    |	    | (0,767)	       (511,767) |
-------------------------------	  18000H    ------------------------------
-| (0,768)	   (255,768) |	    |	    | (0,768)	       (511,768) |
-|	    Page 3	     |	    |	    |		Page 3		 |
-| (0,1023)	  (255,1023) |	    |	    | (0,1023)	      (511,1023) |
-------------------------------	  1FFFFH    ------------------------------
+    GRAPHIC 4  (SCREEN 5)                       GRAPHIC 5  (SCREEN 6)
+------------------------------    00000H    ------------------------------
+| (0,0)              (255,0) |      |       | (0,0)              (511,0) |
+|           Page 0           |      |       |           Page 0           |
+| (0,255)          (255,255) |      |       | (0,255)          (511,255) |
+------------------------------    08000H    ------------------------------
+| (0,256)          (255,256) |      |       | (0,256)          (511,256) |
+|           Page 1           |      |       |           Page 1           |
+| (0,511)          (255,511) |      |       | (0,511)          (511,511) |
+------------------------------    10000H    ------------------------------
+| (0,512)          (255,512) |      |       | (0,512)          (511,512) |
+|           Page 2           |      |       |           Page 2           |
+| (0,767)          (255,767) |      |       | (0,767)          (511,767) |
+------------------------------    18000H    ------------------------------
+| (0,768)          (255,768) |      |       | (0,768)          (511,768) |
+|           Page 3           |      |       |           Page 3           |
+| (0,1023)        (255,1023) |      |       | (0,1023)        (511,1023) |
+------------------------------    1FFFFH    ------------------------------
 
-    GRAPHIC 7  (SCREEN 8)			GRAPHIC 6  (SCREEN 7)
-------------------------------	  00000H    ------------------------------
-| (0,0) 	     (255,0) |	    |	    | (0,0)		 (511,0) |
-|	    Page 0	     |	    |	    |		Page 0		 |
-| (0,255)	   (255,255) |	    |	    | (0,255)	       (511,255) |
-------------------------------	  10000H    ------------------------------
-| (0,256)	   (255,256) |	    |	    | (0,256)	       (511,256) |
-|	    Page 1	     |	    |	    |		Page 1		 |
-| (0,511)	   (255,511) |	    |	    | (0,511)	       (511,511) |
-------------------------------	  1FFFFH    ------------------------------
+    GRAPHIC 7  (SCREEN 8)                       GRAPHIC 6  (SCREEN 7)
+------------------------------    00000H    ------------------------------
+| (0,0)              (255,0) |      |       | (0,0)              (511,0) |
+|           Page 0           |      |       |           Page 0           |
+| (0,255)          (255,255) |      |       | (0,255)          (511,255) |
+------------------------------    10000H    ------------------------------
+| (0,256)          (255,256) |      |       | (0,256)          (511,256) |
+|           Page 1           |      |       |           Page 1           |
+| (0,511)          (255,511) |      |       | (0,511)          (511,511) |
+------------------------------    1FFFFH    ------------------------------
 
 
 6.2 VDP Commands
@@ -112,29 +112,29 @@ are shown in Table 4.5.
 ----------------------------------------------------------------------------
 | Command name | Destination | Source | Units | Mnemonic | R#46 (4 hi ord) |
 ----------------------------------------------------------------------------
-|	       |    VRAM     |	CPU   | bytes |   HMMC	 |  1	1   1	1  |
-| High speed   |    VRAM     |	VRAM  | bytes |   YMMM	 |  1	1   1	0  |
-| move	       |    VRAM     |	VRAM  | bytes |   HMMM	 |  1	1   0	1  |
-|	       |    VRAM     |	VDP   | bytes |   HMMV	 |  1	1   0	0  |
+|              |    VRAM     |  CPU   | bytes |   HMMC   |  1   1   1   1  |
+| High speed   |    VRAM     |  VRAM  | bytes |   YMMM   |  1   1   1   0  |
+| move         |    VRAM     |  VRAM  | bytes |   HMMM   |  1   1   0   1  |
+|              |    VRAM     |  VDP   | bytes |   HMMV   |  1   1   0   0  |
 ----------------------------------------------------------------------------
-|	       |    VRAM     |	CPU   | dots  |   LMMC	 |  1	0   1	1  |
-| Logical      |    CPU      |	VRAM  | dots  |   LMCM	 |  1	0   1	0  |
-| move	       |    VRAM     |	VRAM  | dots  |   LMMM	 |  1	0   0	1  |
-|	       |    VRAM     |	VDP   | dots  |   LMMV	 |  1	0   0	0  |
+|              |    VRAM     |  CPU   | dots  |   LMMC   |  1   0   1   1  |
+| Logical      |    CPU      |  VRAM  | dots  |   LMCM   |  1   0   1   0  |
+| move         |    VRAM     |  VRAM  | dots  |   LMMM   |  1   0   0   1  |
+|              |    VRAM     |  VDP   | dots  |   LMMV   |  1   0   0   0  |
 ----------------------------------------------------------------------------
-| Line	       |    VRAM     |	VDP   | dots  |   LINE	 |  0	1   1	1  |
+| Line         |    VRAM     |  VDP   | dots  |   LINE   |  0   1   1   1  |
 ----------------------------------------------------------------------------
-| Search       |    VRAM     |	VDP   | dots  |   SRCH	 |  0	1   1	0  |
+| Search       |    VRAM     |  VDP   | dots  |   SRCH   |  0   1   1   0  |
 ----------------------------------------------------------------------------
-| Pset	       |    VRAM     |	VDP   | dots  |   PSET	 |  0	1   0	1  |
+| Pset         |    VRAM     |  VDP   | dots  |   PSET   |  0   1   0   1  |
 ----------------------------------------------------------------------------
-| Point        |    VDP      |	VRAM  | dots  |   POINT  |  0	1   0	0  |
+| Point        |    VDP      |  VRAM  | dots  |   POINT  |  0   1   0   0  |
 ----------------------------------------------------------------------------
-|	       |    ----     |	----  | ----- |   ----	 |  0	0   1	1  |
-| Reserved     |    ----     |	----  | ----- |   ----	 |  0	0   1	0  |
-|	       |    ----     |	----  | ----- |   ----	 |  0	0   0	1  |
+|              |    ----     |  ----  | ----- |   ----   |  0   0   1   1  |
+| Reserved     |    ----     |  ----  | ----- |   ----   |  0   0   1   0  |
+|              |    ----     |  ----  | ----- |   ----   |  0   0   0   1  |
 ----------------------------------------------------------------------------
-| Stop	       |    ----     |	----  | ----- |   ----	 |  0	0   0	0  |
+| Stop         |    ----     |  ----  | ----- |   ----   |  0   0   0   0  |
 ----------------------------------------------------------------------------
 
 * When data is written in R#46 (Command register), MSX-VIDEO begins to
@@ -169,43 +169,43 @@ List 4.7 shows an example of these operations.
    Table 4.6  List of logical operations
 
 -------------------------------------------------------------------------
-| Logical name |					|L03 L02 L01 L00|
+| Logical name |                                        |L03 L02 L01 L00|
 -------------------------------------------------------------------------
-|	       |					|		|
-|     IMP      | DC=SC					| 0   0   0   0 |
-|	       |					|		|
-|     AND      | DC=SCxDC				| 0   0   0   1 |
-|	       |					|		|
-|     OR       | DC=SC+DC				| 0   0   1   0 |
-|	       |    __	     __ 			|		|
-|     EOR      | DC=SCxDC+SCxDC 			| 0   0   1   1 |
-|	       |    __					|		|
-|     NOT      | DC=SC					| 0   1   0   0 |
-|	       |					|		|
-|     ----     |					| 0   1   0   1 |
-|	       |					|		|
-|     ----     |					| 0   1   1   0 |
-|	       |					|		|
-|     ----     |					| 0   1   1   1 |
-|	       |					|		|
+|              |                                        |               |
+|     IMP      | DC=SC                                  | 0   0   0   0 |
+|              |                                        |               |
+|     AND      | DC=SCxDC                               | 0   0   0   1 |
+|              |                                        |               |
+|     OR       | DC=SC+DC                               | 0   0   1   0 |
+|              |    __       __                         |               |
+|     EOR      | DC=SCxDC+SCxDC                         | 0   0   1   1 |
+|              |    __                                  |               |
+|     NOT      | DC=SC                                  | 0   1   0   0 |
+|              |                                        |               |
+|     ----     |                                        | 0   1   0   1 |
+|              |                                        |               |
+|     ----     |                                        | 0   1   1   0 |
+|              |                                        |               |
+|     ----     |                                        | 0   1   1   1 |
+|              |                                        |               |
 -------------------------------------------------------------------------
-|	       |					|		|
-|     TIMP     | if SC=0 then DC=DC else DC=SC		| 1   0   0   0 |
-|	       |					|		|
-|     TAND     | if SC=0 then DC=DC else DC=SCxDC	| 1   0   0   1 |
-|	       |					|		|
-|     TOR      | if SC=0 then DC=DC else DC=SC+DC	| 1   0   1   0 |
-|	       |			    __	     __ |		|
+|              |                                        |               |
+|     TIMP     | if SC=0 then DC=DC else DC=SC          | 1   0   0   0 |
+|              |                                        |               |
+|     TAND     | if SC=0 then DC=DC else DC=SCxDC       | 1   0   0   1 |
+|              |                                        |               |
+|     TOR      | if SC=0 then DC=DC else DC=SC+DC       | 1   0   1   0 |
+|              |                            __       __ |               |
 |     TEOR     | if SC=0 then DC=DC else DC=SCxDC+SCxDC | 1   0   1   1 |
-|	       |			    __		|		|
-|     TNOT     | if SC=0 then DC=DC else DC=SC		| 1   1   0   0 |
-|	       |					|		|
-|     ----     |					| 1   1   0   1 |
-|	       |					|		|
-|     ----     |					| 1   1   1   0 |
-|	       |					|		|
-|     ----     |					| 1   1   1   1 |
-|	       |					|		|
+|              |                            __          |               |
+|     TNOT     | if SC=0 then DC=DC else DC=SC          | 1   1   0   0 |
+|              |                                        |               |
+|     ----     |                                        | 1   1   0   1 |
+|              |                                        |               |
+|     ----     |                                        | 1   1   1   0 |
+|              |                                        |               |
+|     ----     |                                        | 1   1   1   1 |
+|              |                                        |               |
 -------------------------------------------------------------------------
 
 * SC  = Source colour code
@@ -245,39 +245,39 @@ AREA-MOVE commands are for transferring screen data inside areas surrounded
 by a rectangle. The area to be transferred is specified by one vertex and the
 length of each side of the rectangle as shown in Figure 4.73. SX and SY
 represent the basic point of the rectangle to be transferred and NX and NY
-represent the lengt of each side in dots. The two bits, DIX and DIY, are for
+represent the length of each side in dots. The two bits, DIX and DIY, are for
 the direction of transferring data (the meaning of DIX and DIY depends on the
 type of command). The point where the area is to be transferred is specified
 in DX and DY.
 
 
-   Figure 4.73	Area specification
+   Figure 4.73  Area specification
 
 ----------------------------------------------------------------
-|							       |
-|     (SX,SY)						       |
-|	x----------------- -->				       |
-|	|		 | DIX				       |
-|	|		 |				       |
-|	|		 |				       |
-|	|		 |				       |
-|	------------------  --+ 			       |
-|	| DIY		      | 			       |
-|	V		      | 			       |
-|			      |      (DX,DY)		       |
-|			      +->  x-----------------	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   ------------------	       |
-|							       |
+|                                                              |
+|     (SX,SY)                                                  |
+|       x----------------- -->                                 |
+|       |                | DIX                                 |
+|       |                |                                     |
+|       |                |                                     |
+|       |                |                                     |
+|       ------------------  --+                                |
+|       | DIY                 |                                |
+|       V                     |                                |
+|                             |      (DX,DY)                   |
+|                             +->  x-----------------          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  ------------------          |
+|                                                              |
 ----------------------------------------------------------------
 
 
 6.5 Use of Each Command
 
-Commands are clasified into three types, high-speed transfer commands,
+Commands are classified into three types, high-speed transfer commands,
 logical transfer commands, and drawing commands. This section describes the
 commands and their use.
 
@@ -303,31 +303,31 @@ that all data has been transferred (see figure 4.77). List 4.8 shows an
 example of using HMMC.
 
 
-   Figure 4.74	Action of HMMC command
+   Figure 4.74  Action of HMMC command
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |   MSX-VIDEO      CPU
-|						  |    -------	   -------
-|    (DX,DY)					  |    |     |	   |	 |
-|	x------------------------ --> DIX	  |    |     |	   |	 |
-|	|	   NX		|		  |    |     |	   |	 |
-|	| NY			|<----------------+----|     |-----|	 |
-|	|			|		  |    |     |	   |	 |
-|	-------------------------		  |    |     |	   |	 |
-|	| DIY					  |    |     |	   |	 |
-|	V					  |    |     |	   |	 |
-|						  |    -------	   -------
-|						  |
+|                                                 |   MSX-VIDEO      CPU
+|                                                 |    -------     -------
+|    (DX,DY)                                      |    |     |     |     |
+|       x------------------------ --> DIX         |    |     |     |     |
+|       |          NX           |                 |    |     |     |     |
+|       | NY                    |<----------------+----|     |-----|     |
+|       |                       |                 |    |     |     |     |
+|       -------------------------                 |    |     |     |     |
+|       | DIY                                     |    |     |     |     |
+|       V                                         |    |     |     |     |
+|                                                 |    -------     -------
+|                                                 |
 ---------------------------------------------------
 
-MXD: select the destination memory	0 = VRAM, 1 = expansion RAM
+MXD: select the destination memory      0 = VRAM, 1 = expansion RAM
 
 NX:  number of dots to be transferred in X direction (0 to 511)*
 NY:  number of dots to be transferred in Y direction (0 to 1023)
 
-DIX: direction of NX from the origin	0 = right, 1 = left
-DIY: direction of NY from the origin	0 = below, 1 = above
+DIX: direction of NX from the origin    0 = right, 1 = left
+DIY: direction of NY from the origin    0 = below, 1 = above
 
 DX:  destination origin  X-coordinate (0 to 511)*
 DY:  destination origin  Y-coordinate (0 to 1023)
@@ -338,138 +338,138 @@ CLR (R#44:Colour register):  1st byte of data to be transferred
 GRAPHIC 5 mode of the DX and NX registers are ignored.
 
 
-   Figure 4.75	Dots not to be referred to
+   Figure 4.75  Dots not to be referred to
 
-       MSB   7	  6    5    4	 3    2    1	0    LSB
-	   -----------------------------------------
-GRAPHIC 4  |	:    :	  :    |    :	 :    :    |
-	   -----------------------------------------
-		    (1) 		(2)
+       MSB   7    6    5    4    3    2    1    0    LSB
+           -----------------------------------------
+GRAPHIC 4  |    :    :    :    |    :    :    :    |
+           -----------------------------------------
+                    (1)                 (2)
 Since 1 VRAM byte represents 2 dots, 1 low order bit of X-coordinate is not
 referred to.
 
-       MSB   7	  6    5    4	 3    2    1	0    LSB
-	   -----------------------------------------
-GRAPHIC 5  |	:    |	  :    |    :	 |    :    |
-	   -----------------------------------------
-	       (1)	 (2)	   (3)	     (4)
+       MSB   7    6    5    4    3    2    1    0    LSB
+           -----------------------------------------
+GRAPHIC 5  |    :    |    :    |    :    |    :    |
+           -----------------------------------------
+               (1)       (2)       (3)       (4)
 Since 1 VRAM byte represents 4 dots, 2 low order bits of X-coordinate are not
 referred to.
 
-       MSB   7	  6    5    4	 3    2    1	0    LSB
-	   -----------------------------------------
-GRAPHIC 6  |	:    :	  :    |    :	 :    :    |
-	   -----------------------------------------
-		    (1) 		(2)
+       MSB   7    6    5    4    3    2    1    0    LSB
+           -----------------------------------------
+GRAPHIC 6  |    :    :    :    |    :    :    :    |
+           -----------------------------------------
+                    (1)                 (2)
 Since 1 VRAM byte represents 2 dots, 1 low order bit of X-coordinate is not
 referred to.
 
 
-   Figure 4.76	Register settings of HMMC command
+   Figure 4.76  Register settings of HMMC command
 
 > HMMC register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX ---+
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	|
-	-----------------------------------------	|
-							| destination origin
-	-----------------------------------------	|
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|	|
-	----------------------------------------- DY ---+
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX ---+
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|       |
+        -----------------------------------------       |
+                                                        | destination origin
+        -----------------------------------------       |
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|       |
+        ----------------------------------------- DY ---+
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#40	| NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|	  Number of dots in
-	----------------------------------------- NX ---> X direction to be
-R#41	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#40    | NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|         Number of dots in
+        ----------------------------------------- NX ---> X direction to be
+R#41    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	  Number of dots in
-	----------------------------------------- NY ---> Y direction to be
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|         Number of dots in
+        ----------------------------------------- NY ---> Y direction to be
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------		      --+d
-R#44	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)	|a
-	-----------------------------------------			|t
-	|		    |			|			|a
-	+-------------------+-------------------+			|
-		X=2N		   X=2N+1	  (N=0, 1, ..., 127)	|t
-									|o
-	-----------------------------------------			|
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 5)	|b
-	-----------------------------------------			|e
-	|	  |	    |	      | 	|			|
-	+---------+---------+---------+---------+			|t
-	   X=4N     X=4N+1    X=4N+2	X=4N+3	  (N=0, 1, ..., 127)	|r
-									|a
-	-----------------------------------------			|n
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)	|s
-	-----------------------------------------		      --+f.
-		      1 byte per dot
+        -----------------------------------------                     --+d
+R#44    | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)     |a
+        -----------------------------------------                       |t
+        |                   |                   |                       |a
+        +-------------------+-------------------+                       |
+                X=2N               X=2N+1         (N=0, 1, ..., 127)    |t
+                                                                        |o
+        -----------------------------------------                       |
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 5)       |b
+        -----------------------------------------                       |e
+        |         |         |         |         |                       |
+        +---------+---------+---------+---------+                       |t
+           X=4N     X=4N+1    X=4N+2    X=4N+3    (N=0, 1, ..., 127)    |r
+                                                                        |a
+        -----------------------------------------                       |n
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)       |s
+        -----------------------------------------                     --+f.
+                      1 byte per dot
 
-	-----------------------------------------
-R#45	|  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
-	-----------------------------------------
-		     |	       |   direction (X)
-		     |	       |
-		     |	       +-> direction (Y)
-		     |
-		     +-----------> select destination memory
+        -----------------------------------------
+R#45    |  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
+        -----------------------------------------
+                     |         |   direction (X)
+                     |         |
+                     |         +-> direction (Y)
+                     |
+                     +-----------> select destination memory
 
 > HMMC command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 1  | 1  | 1  | 1  | -- | -- | -- | -- | CMR
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 1  | 1  | 1  | 1  | -- | -- | -- | -- | CMR
+        -----------------------------------------
 
 
-   Figure 4.77	HMMC command execution flow chart
+   Figure 4.77  HMMC command execution flow chart
 
-	/-------------------\
-	|     HMMC start    |
-	\-------------------/
-		  |
-	---------------------
-	|   register setup  |
-	---------------------
-		  |
-	---------------------
-	| command execution |
-	---------------------
-		  |
+        /-------------------\
+        |     HMMC start    |
+        \-------------------/
+                  |
+        ---------------------
+        |   register setup  |
+        ---------------------
+                  |
+        ---------------------
+        | command execution |
+        ---------------------
+                  |
 +---------------->|
-|		  |
+|                 |
 |    ---------------------------
 |    | Read status register #2 |
 |    ---------------------------
-|		  |
-|	//////////+\\\\\\\\\\ Yes (CE bit = 0)
-|	|   command end?    |-------------------+
-|	\\\\\\\\\\+//////////			|
-|		  | No (CE bit = 1)		|
-|	//////////+\\\\\\\\\\			|
-|<------|     transfer?     |			|
-| No	\\\\\\\\\\+//////////			|
-| (TR bit=0)	  | Yes (TR bit = 1)		|
-|	---------------------			|
-|	|   transfer data   |			|
-|	---------------------			|
-|		  |				|
-+-----------------+				|
-						|
-		  +-----------------------------+
-		  |
-		  V
-	/--------------------\
-	|      HMMC end      |
-	\--------------------/
+|                 |
+|       //////////+\\\\\\\\\\ Yes (CE bit = 0)
+|       |   command end?    |-------------------+
+|       \\\\\\\\\\+//////////                   |
+|                 | No (CE bit = 1)             |
+|       //////////+\\\\\\\\\\                   |
+|<------|     transfer?     |                   |
+| No    \\\\\\\\\\+//////////                   |
+| (TR bit=0)      | Yes (TR bit = 1)            |
+|       ---------------------                   |
+|       |   transfer data   |                   |
+|       ---------------------                   |
+|                 |                             |
++-----------------+                             |
+                                                |
+                  +-----------------------------+
+                  |
+                  V
+        /--------------------\
+        |      HMMC end      |
+        \--------------------/
 
 
 List 4.8  Example of HMMC command execution
@@ -477,112 +477,112 @@ List 4.8  Example of HMMC command execution
 
 ;****************************************************************
 ;  List 4.8   HMMC sample
-;		to use, set H, L, D, E, IX and go
-;		RAM (IX) ---> VRAM (H,L)-(D,E)
+;               to use, set H, L, D, E, IX and go
+;               RAM (IX) ---> VRAM (H,L)-(D,E)
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-HMMC:	DI				;disable interrupt
-	CALL	WAIT.VDP		;wait end of command
+HMMC:   DI                              ;disable interrupt
+        CALL    WAIT.VDP                ;wait end of command
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,36
-	OUT	(C),A
-	LD	A,17+80H
-	OUT	(C),A			;R#17 := 36
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,36
+        OUT     (C),A
+        LD      A,17+80H
+        OUT     (C),A                   ;R#17 := 36
 
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),H			;DX
-	OUT	(C),A
-	OUT	(C),L			;DY
-	OUT	(C),A
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),H                   ;DX
+        OUT     (C),A
+        OUT     (C),L                   ;DY
+        OUT     (C),A
 
-	LD	A,H			;make NX and DIX
-	SUB	A
-	LD	D,00000100B
-	JR	NC,HMMC1
-	LD	D,00000000B
-	NEG
-HMMC1:	LD	H,A			;H := NX , D := DIX
+        LD      A,H                     ;make NX and DIX
+        SUB     A
+        LD      D,00000100B
+        JR      NC,HMMC1
+        LD      D,00000000B
+        NEG
+HMMC1:  LD      H,A                     ;H := NX , D := DIX
 
-	LD	A,L
-	SUB	A
-	LD	E,00001000B
-	JR	NC,HMMC2
-	LD	E,00000000B
-	NEG
-HMMC2:	LD	L,A			;L := NY , E := DIY
+        LD      A,L
+        SUB     A
+        LD      E,00001000B
+        JR      NC,HMMC2
+        LD      E,00000000B
+        NEG
+HMMC2:  LD      L,A                     ;L := NY , E := DIY
 
-	XOR	A
-	OUT	(C),H			;NX
-	OUT	(C),A
-	OUT	(C),L			;NY
-	OUT	(C),A
-	LD	H,(IX+0)
-	OUT	(C),H			;first DATA
-	LD	A,D
-	OR	E
-	OUT	(C),A			;DIX and DIY
-	LD	A,0F0H
-	OUT	(C),A			;HMMC command
+        XOR     A
+        OUT     (C),H                   ;NX
+        OUT     (C),A
+        OUT     (C),L                   ;NY
+        OUT     (C),A
+        LD      H,(IX+0)
+        OUT     (C),H                   ;first DATA
+        LD      A,D
+        OR      E
+        OUT     (C),A                   ;DIX and DIY
+        LD      A,0F0H
+        OUT     (C),A                   ;HMMC command
 
-	LD	A,(WRVDP)
-	LD	C,A			;C := PORT#1's address
-	INC	C
-	LD	A,44+80H
-	OUT	(C),A
-	LD	A,17+80H
-	OUT	(C),A
-	INC	C
-	INC	C
+        LD      A,(WRVDP)
+        LD      C,A                     ;C := PORT#1's address
+        INC     C
+        LD      A,44+80H
+        OUT     (C),A
+        LD      A,17+80H
+        OUT     (C),A
+        INC     C
+        INC     C
 
-LOOP:	LD	A,2
-	CALL	GET.STATUS
-	BIT	0,A			;check CE bit
-	JR	Z,EXIT
-	BIT	7,A			;check TR bit
-	JR	Z,LOOP
-	INC	IX
-	LD	A,(IX+0)
-	OUT	(C),A
-	JR	LOOP
+LOOP:   LD      A,2
+        CALL    GET.STATUS
+        BIT     0,A                     ;check CE bit
+        JR      Z,EXIT
+        BIT     7,A                     ;check TR bit
+        JR      Z,LOOP
+        INC     IX
+        LD      A,(IX+0)
+        OUT     (C),A
+        JR      LOOP
 
-EXIT:	LD	A,0
-	CALL	GET.STATUS		;when exit, you must select S#0
-	EI
-	RET
+EXIT:   LD      A,0
+        CALL    GET.STATUS              ;when exit, you must select S#0
+        EI
+        RET
 
-GET.STATUS:				;read status register specified by A
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+GET.STATUS:                             ;read status register specified by A
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
-WAIT.VDP:				;wait VDP ready
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JR	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+WAIT.VDP:                               ;wait VDP ready
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JR      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -599,40 +599,40 @@ CE bit of S#2 is "1", it indicates that the command is currently being
 executed. List 4.9 shows an example of using YMMM.
 
 
-   Figure 4.78	Actions of YMMM command
+   Figure 4.78  Actions of YMMM command
 
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |
-|		 (DX,DY)			  |
-|			 x------------------------|
-|			 |			  |
-|			 |			  |
-|			 |			  |
-|			 -------------------------|
-|				     ^		  |
-|				     |		  |
-|				     |		  |
-|		 (DX,SY)			  |
-|			 x------------------------| --> DIX
-|			 |			  |
-|			 | NY			  |
-|			 |			  |
-|			 -------------------------|
-|			 | DIY			  |
-|			 V			  |
+|                                                 |
+|                (DX,DY)                          |
+|                        x------------------------|
+|                        |                        |
+|                        |                        |
+|                        |                        |
+|                        -------------------------|
+|                                    ^            |
+|                                    |            |
+|                                    |            |
+|                (DX,SY)                          |
+|                        x------------------------| --> DIX
+|                        |                        |
+|                        | NY                     |
+|                        |                        |
+|                        -------------------------|
+|                        | DIY                    |
+|                        V                        |
 ---------------------------------------------------
 
-MXD: select the destination memory	0 = VRAM, 1 = expansion RAM
+MXD: select the destination memory      0 = VRAM, 1 = expansion RAM
 
 SY:  source origin Y-coordinate (0 to 1023)
 
 NY:  number of dots to be transferred in Y direction (0 to 1023)
 
 DIX: set which to be transferred, to te right end or to the left end of the
-     screen from the source origin	0 = right, 1 = left
-DIY: direction of NY from the origin	0 = below, 1 = above
+     screen from the source origin      0 = right, 1 = left
+DIY: direction of NY from the origin    0 = below, 1 = above
 
 DX:  destination origin  X-coordinate (0 to 511)*
 DY:  destination origin  Y-coordinate (0 to 1023)
@@ -641,50 +641,50 @@ DY:  destination origin  Y-coordinate (0 to 1023)
 GRAPHIC 5 mode of the DX register are ignored.
 
 
-   Figure 4.79	Register settings of YMMM command
+   Figure 4.79  Register settings of YMMM command
 
 > YMMM register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#34	| SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|
-	----------------------------------------- SY --> source origin
-R#35	| 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#34    | SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|
+        ----------------------------------------- SY --> source origin
+R#35    | 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX --> destination and
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	 source origin
-	-----------------------------------------
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX --> destination and
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|        source origin
+        -----------------------------------------
 
-	-----------------------------------------
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|
-	----------------------------------------- DY --> destination origin
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+        -----------------------------------------
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|
+        ----------------------------------------- DY --> destination origin
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	  number of dots to
-	----------------------------------------- NY ---> be transferred in
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	  Y direction
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|         number of dots to
+        ----------------------------------------- NY ---> be transferred in
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|         Y direction
+        -----------------------------------------
 
-	-----------------------------------------
-R#45	|  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
-	-----------------------------------------
-		     |	       |   direction (X)
-		     |	       |
-		     |	       +-> direction (Y)
-		     |
-		     +-----------> select destination memory
+        -----------------------------------------
+R#45    |  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
+        -----------------------------------------
+                     |         |   direction (X)
+                     |         |
+                     |         +-> direction (Y)
+                     |
+                     +-----------> select destination memory
 
 > YMMM command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 1  | 1  | 1  | 0  | -- | -- | -- | -- | CMR
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 1  | 1  | 1  | 0  | -- | -- | -- | -- | CMR
+        -----------------------------------------
 
 
 List 4.9  Example of YMMM command execution
@@ -692,88 +692,88 @@ List 4.9  Example of YMMM command execution
 
 ;****************************************************************
 ;  List 4.9   YMMM sample
-;		to use, set L, E, B, C, D(bit 2) and go
-;		VRAM (B,L)-(*,E) ---> VRAM (B,C)
-;		DIX must be set in D(bit 2)
+;               to use, set L, E, B, C, D(bit 2) and go
+;               VRAM (B,L)-(*,E) ---> VRAM (B,C)
+;               DIX must be set in D(bit 2)
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-YMMM:	DI				;disable interrupt
-	PUSH	BC			;save destination
-	CALL	WAIT.VDP		;wait end of command
+YMMM:   DI                              ;disable interrupt
+        PUSH    BC                      ;save destination
+        CALL    WAIT.VDP                ;wait end of command
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,34
-	OUT	(C),A
-	LD	A,17+80H
-	OUT	(C),A			;R#17 := 34
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,34
+        OUT     (C),A
+        LD      A,17+80H
+        OUT     (C),A                   ;R#17 := 34
 
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),L			;SY
-	OUT	(C),A
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),L                   ;SY
+        OUT     (C),A
 
-	LD	A,L			;make NY and DIY
-	SUB	A
-	LD	E,00001000B
-	JP	NC,YMMM1
-	LD	E,00000000B
-	NEG
-YMMM1:	LD	L,A			;L := NY , D := DIY
+        LD      A,L                     ;make NY and DIY
+        SUB     A
+        LD      E,00001000B
+        JP      NC,YMMM1
+        LD      E,00000000B
+        NEG
+YMMM1:  LD      L,A                     ;L := NY , D := DIY
 
-	LD	A,D
-	OR	E
+        LD      A,D
+        OR      E
 
-	POP	DE			;restore DX,DY
-	PUSH	AF			;save DIX,DIY
-	XOR	A
-	OUT	(C),D			;DX
-	OUT	(C),A
-	OUT	(C),E			;DY
-	OUT	(C),A
-	OUT	(C),A			;dummy
-	OUT	(C),A			;dummy
-	OUT	(C),L			;NY
-	OUT	(C),A
-	OUT	(C),A			;dummy
-	POP	AF
-	OUT	(C),A			;DIX and DIY
-	LD	A,11100000B		;YMMM command
-	OUT	(C),A
+        POP     DE                      ;restore DX,DY
+        PUSH    AF                      ;save DIX,DIY
+        XOR     A
+        OUT     (C),D                   ;DX
+        OUT     (C),A
+        OUT     (C),E                   ;DY
+        OUT     (C),A
+        OUT     (C),A                   ;dummy
+        OUT     (C),A                   ;dummy
+        OUT     (C),L                   ;NY
+        OUT     (C),A
+        OUT     (C),A                   ;dummy
+        POP     AF
+        OUT     (C),A                   ;DIX and DIY
+        LD      A,11100000B             ;YMMM command
+        OUT     (C),A
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -788,32 +788,32 @@ causes the command to be executed. While the command is being executed, CE
 bit of S#2 is "1". List 4.10 shows an example of using HMMM.
 
 
-   Figure 4.80	Actions of HMMM command
+   Figure 4.80  Actions of HMMM command
 
-		    VRAM or expansion RAM
+                    VRAM or expansion RAM
 ----------------------------------------------------------------
-|							       |
-|     (SX,SY)						       |
-|	------------------ -->				       |
-|	|	NX	 | DIX				       |
-|	|		 |				       |
-|	| NY		 |				       |
-|	|		 |				       |
-|	------------------  --+ 			       |
-|	| DIY		      | 			       |
-|	V		      | 			       |
-|			      |      (DX,DY)		       |
-|			      +->  ------------------	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   ------------------	       |
-|							       |
+|                                                              |
+|     (SX,SY)                                                  |
+|       ------------------ -->                                 |
+|       |       NX       | DIX                                 |
+|       |                |                                     |
+|       | NY             |                                     |
+|       |                |                                     |
+|       ------------------  --+                                |
+|       | DIY                 |                                |
+|       V                     |                                |
+|                             |      (DX,DY)                   |
+|                             +->  ------------------          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  ------------------          |
+|                                                              |
 ----------------------------------------------------------------
 
-MXS: select the source memory		0 = VRAM, 1 = expansion RAM
-MXD: select the destination memory	0 = VRAM, 1 = expansion RAM
+MXS: select the source memory           0 = VRAM, 1 = expansion RAM
+MXD: select the destination memory      0 = VRAM, 1 = expansion RAM
 
 SX:  source origin X-coordinate (0 to 511)*
 SY:  source origin Y-coordinate (0 to 1023)
@@ -821,8 +821,8 @@ SY:  source origin Y-coordinate (0 to 1023)
 NX:  number of dots to be transferred in X direction (0 to 511)*
 NY:  number of dots to be transferred in Y direction (0 to 1023)
 
-DIX: direction of NX from the origin	0 = right, 1 = left
-DIY: direction of NY from the origin	0 = below, 1 = above
+DIX: direction of NX from the origin    0 = right, 1 = left
+DIY: direction of NY from the origin    0 = below, 1 = above
 
 DX:  destination origin  X-coordinate (0 to 511)*
 DY:  destination origin  Y-coordinate (0 to 1023)
@@ -831,64 +831,64 @@ DY:  destination origin  Y-coordinate (0 to 1023)
 GRAPHIC 5 mode of the SX, DX, and NX register are ignored.
 
 
-   Figure 4.81	Register settings of HMMM command
+   Figure 4.81  Register settings of HMMM command
 
 > HMMM register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#32	| SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
-	----------------------------------------- SX ---+
-R#33	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|	|
-	-----------------------------------------	|
-							| source origin
-	-----------------------------------------	|
-R#34	| SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|	|
-	----------------------------------------- SY ---+
-R#35	| 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#32    | SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
+        ----------------------------------------- SX ---+
+R#33    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|       |
+        -----------------------------------------       |
+                                                        | source origin
+        -----------------------------------------       |
+R#34    | SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|       |
+        ----------------------------------------- SY ---+
+R#35    | 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX ---+
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	|
-	-----------------------------------------	|
-							| destination origin
-	-----------------------------------------	|
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|	|
-	----------------------------------------- DY ---+
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX ---+
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|       |
+        -----------------------------------------       |
+                                                        | destination origin
+        -----------------------------------------       |
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|       |
+        ----------------------------------------- DY ---+
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#40	| NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|	  Number of dots in
-	----------------------------------------- NX ---> X direction to be
-R#41	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#40    | NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|         Number of dots in
+        ----------------------------------------- NX ---> X direction to be
+R#41    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	  Number of dots in
-	----------------------------------------- NY ---> Y direction to be
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|         Number of dots in
+        ----------------------------------------- NY ---> Y direction to be
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------
-R#45	|  0 | -- | MXD| MXS| DIY| DIX| -- | -- | ARG (Argument register)
-	-----------------------------------------
-		     |	  |    |   direction (X)
-		     |	  |    |
-		     |	  |    +-> direction (Y)
-		     |	  |
-		     |	  +------> select source memory
-		     |
-		     +-----------> select destination memory
+        -----------------------------------------
+R#45    |  0 | -- | MXD| MXS| DIY| DIX| -- | -- | ARG (Argument register)
+        -----------------------------------------
+                     |    |    |   direction (X)
+                     |    |    |
+                     |    |    +-> direction (Y)
+                     |    |
+                     |    +------> select source memory
+                     |
+                     +-----------> select destination memory
 
 > HMMM command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 1  | 1  | 0  | 1  | -- | -- | -- | -- | CMR
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 1  | 1  | 0  | 1  | -- | -- | -- | -- | CMR
+        -----------------------------------------
 
 
 List 4.10  Example of HMMM command execution
@@ -896,98 +896,98 @@ List 4.10  Example of HMMM command execution
 
 ;****************************************************************
 ;  List 4.10   HMMM sample
-;		 to use, set H, L, D, E, B, C and go
-;		 VRAM (H,L)-(D,E) ---> VRAM (B,C)
-;		 DIX must be set in D(bit 2)
+;                to use, set H, L, D, E, B, C and go
+;                VRAM (H,L)-(D,E) ---> VRAM (B,C)
+;                DIX must be set in D(bit 2)
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-HMMM:	DI				;disable interrupt
-	PUSH	BC			;save destination
-	CALL	WAIT.VDP		;wait end of command
+HMMM:   DI                              ;disable interrupt
+        PUSH    BC                      ;save destination
+        CALL    WAIT.VDP                ;wait end of command
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,32
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A			;R#17 := 32
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,32
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A                   ;R#17 := 32
 
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),H			;SX
-	OUT	(C),A
-	OUT	(C),L			;SY
-	OUT	(C),A
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),H                   ;SX
+        OUT     (C),A
+        OUT     (C),L                   ;SY
+        OUT     (C),A
 
-	LD	A,H			;make NX and DIX
-	SUB	A
-	LD	D,00000100B
-	JP	NC,HMMM1
-	LD	D,00000000B
-	NEG
-HMMM1:	LD	H,A			;H := NX , D := DIX
+        LD      A,H                     ;make NX and DIX
+        SUB     A
+        LD      D,00000100B
+        JP      NC,HMMM1
+        LD      D,00000000B
+        NEG
+HMMM1:  LD      H,A                     ;H := NX , D := DIX
 
-	LD	A,L			;make NY and DIY
-	SUB	A
-	LD	E,00001000B
-	JP	NC,HMMM2
-	LD	E,00000000B
-	NEG
-HMMM2:	LD	L,A			;L := NY , E := DIY
+        LD      A,L                     ;make NY and DIY
+        SUB     A
+        LD      E,00001000B
+        JP      NC,HMMM2
+        LD      E,00000000B
+        NEG
+HMMM2:  LD      L,A                     ;L := NY , E := DIY
 
-	LD	A,D
-	OR	E
-	POP	DE			;restore DX,DY
-	PUSH	AF			;save DIX,DIY
-	XOR	A
-	OUT	(C),D			;DX
-	OUT	(C),A
-	OUT	(C),E			;DY
-	OUT	(C),A
-	OUT	(C),H			;NX
-	OUT	(C),A
-	OUT	(C),L			;NY
-	OUT	(C),A
-	OUT	(C),A			;dummy
-	POP	AF
-	OUT	(C),A			;DIX and DIY
+        LD      A,D
+        OR      E
+        POP     DE                      ;restore DX,DY
+        PUSH    AF                      ;save DIX,DIY
+        XOR     A
+        OUT     (C),D                   ;DX
+        OUT     (C),A
+        OUT     (C),E                   ;DY
+        OUT     (C),A
+        OUT     (C),H                   ;NX
+        OUT     (C),A
+        OUT     (C),L                   ;NY
+        OUT     (C),A
+        OUT     (C),A                   ;dummy
+        POP     AF
+        OUT     (C),A                   ;DIX and DIY
 
-	LD	A,11010000B		;HMMM command
-	OUT	(C),A
+        LD      A,11010000B             ;HMMM command
+        OUT     (C),A
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -1002,32 +1002,32 @@ causes the command to be executed. While the command is being executed, the
 CE bit of S#2 is 1. List 4.11 shows an example of using HMMV.
 
 
-   Figure 4.82	Actions of HMMC command
+   Figure 4.82  Actions of HMMC command
 
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |   MSX-VIDEO
-|						  |    -------
-|    (DX,DY)					  |    |     |
-|	x------------------------ --> DIX	  |    |     |
-|	|	   NX		|		  |    |     |
-|	| NY			|<----------------+----|     |
-|	|			|		  |    |     |
-|	-------------------------		  |    |     |
-|	| DIY					  |    |     |
-|	V					  |    |     |
-|						  |    -------
-|						  |
+|                                                 |   MSX-VIDEO
+|                                                 |    -------
+|    (DX,DY)                                      |    |     |
+|       x------------------------ --> DIX         |    |     |
+|       |          NX           |                 |    |     |
+|       | NY                    |<----------------+----|     |
+|       |                       |                 |    |     |
+|       -------------------------                 |    |     |
+|       | DIY                                     |    |     |
+|       V                                         |    |     |
+|                                                 |    -------
+|                                                 |
 ---------------------------------------------------
 
-MXD: select memory			0 = VRAM, 1 = expansion RAM
+MXD: select memory                      0 = VRAM, 1 = expansion RAM
 
 NX:  number of dots to be painted in X direction (0 to 511)*
 NY:  number of dots to be painted in Y direction (0 to 1023)
 
-DIX: direction of NX from the origin	0 = right, 1 = left
-DIY: direction of NY from the origin	0 = below, 1 = above
+DIX: direction of NX from the origin    0 = right, 1 = left
+DIY: direction of NY from the origin    0 = below, 1 = above
 
 DX:  origin  X-coordinate (0 to 511)*
 DY:  origin  Y-coordinate (0 to 1023)
@@ -1038,69 +1038,69 @@ CLR (R#44:Colour register):  Painted data
 GRAPHIC 5 mode of the DX and NX registers are ignored.
 
 
-   Figure 4.83	Register settings of HMMV command
+   Figure 4.83  Register settings of HMMV command
 
 > HMMV register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX ---+
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	|
-	-----------------------------------------	|
-							| origin
-	-----------------------------------------	|
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|	|
-	----------------------------------------- DY ---+
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX ---+
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|       |
+        -----------------------------------------       |
+                                                        | origin
+        -----------------------------------------       |
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|       |
+        ----------------------------------------- DY ---+
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#40	| NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|	  number of dots in
-	----------------------------------------- NX ---> X direction to
-R#41	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|	  be painted
-	-----------------------------------------
+        -----------------------------------------
+R#40    | NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|         number of dots in
+        ----------------------------------------- NX ---> X direction to
+R#41    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|         be painted
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	  number of dots in
-	----------------------------------------- NY ---> Y direction to
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	  be painted
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|         number of dots in
+        ----------------------------------------- NY ---> Y direction to
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|         be painted
+        -----------------------------------------
 
-	-----------------------------------------		      --+d
-R#44	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)	|a
-	-----------------------------------------			|t
-	|		    |			|			|a
-	+-------------------+-------------------+			|
-		X=2N		   X=2N+1	  (N=0, 1, ..., 127)	|t
-									|o
-	-----------------------------------------			|
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 5)	|b
-	-----------------------------------------			|e
-	|	  |	    |	      | 	|			|
-	+---------+---------+---------+---------+			|p
-	   X=4N     X=4N+1    X=4N+2	X=4N+3	  (N=0, 1, ..., 127)	|a
-									|i
-	-----------------------------------------			|n
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)	|t
-	-----------------------------------------		      --+e
-		      1 byte / dot					 d
+        -----------------------------------------                     --+d
+R#44    | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)     |a
+        -----------------------------------------                       |t
+        |                   |                   |                       |a
+        +-------------------+-------------------+                       |
+                X=2N               X=2N+1         (N=0, 1, ..., 127)    |t
+                                                                        |o
+        -----------------------------------------                       |
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 5)       |b
+        -----------------------------------------                       |e
+        |         |         |         |         |                       |
+        +---------+---------+---------+---------+                       |p
+           X=4N     X=4N+1    X=4N+2    X=4N+3    (N=0, 1, ..., 127)    |a
+                                                                        |i
+        -----------------------------------------                       |n
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)       |t
+        -----------------------------------------                     --+e
+                      1 byte / dot                                       d
 
-	-----------------------------------------
-R#45	|  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
-	-----------------------------------------
-		     |	       |   painting direction (X)
-		     |	       |
-		     |	       +-> painting direction (Y)
-		     |
-		     +-----------> memory selection
+        -----------------------------------------
+R#45    |  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
+        -----------------------------------------
+                     |         |   painting direction (X)
+                     |         |
+                     |         +-> painting direction (Y)
+                     |
+                     +-----------> memory selection
 
 > HMMV command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 1  | 1  | 0  | 0  | -- | -- | -- | -- | CMR
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 1  | 1  | 0  | 0  | -- | -- | -- | -- | CMR
+        -----------------------------------------
 
 
 List 4.11  Example of HMMV command execution
@@ -1108,99 +1108,99 @@ List 4.11  Example of HMMV command execution
 
 ;****************************************************************
 ;  List 4.11   HMMV sample
-;		 to use, set H, L, D, E, B and go
-;		 B ---> VRAM (H,L)-(D,E) fill
+;                to use, set H, L, D, E, B and go
+;                B ---> VRAM (H,L)-(D,E) fill
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-HMMV:	DI				;disable interrupt
-	CALL	WAIT.VDP		;wait end of command
+HMMV:   DI                              ;disable interrupt
+        CALL    WAIT.VDP                ;wait end of command
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,36
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A			;R#17 := 36
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,36
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A                   ;R#17 := 36
 
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),H			;DX
-	OUT	(C),A
-	OUT	(C),L			;DY
-	OUT	(C),A
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),H                   ;DX
+        OUT     (C),A
+        OUT     (C),L                   ;DY
+        OUT     (C),A
 
-	LD	A,H			;make NX and DIX
-	SUB	A
-	LD	D,00000100B
-	JP	NC,HMMV1
-	LD	D,00000000B
-	NEG
-HMMV1:	LD	H,A			;H := NX
+        LD      A,H                     ;make NX and DIX
+        SUB     A
+        LD      D,00000100B
+        JP      NC,HMMV1
+        LD      D,00000000B
+        NEG
+HMMV1:  LD      H,A                     ;H := NX
 
-	LD	A,L			;make NY and DIY
-	SUB	A
-	LD	E,00001000B
-	JP	NC,HMMV2
-	LD	E,00000000B
-	NEG
-HMMV2:	OUT	(C),H
-	LD	H,A			;H := NY
+        LD      A,L                     ;make NY and DIY
+        SUB     A
+        LD      E,00001000B
+        JP      NC,HMMV2
+        LD      E,00000000B
+        NEG
+HMMV2:  OUT     (C),H
+        LD      H,A                     ;H := NY
 
-	XOR	A
-	OUT	(C),A
-	OUT	(C),H
-	OUT	(C),A
-	OUT	(C),B			;fill data
-	XOR	A
-	OR	D
-	OR	E
-	OUT	(C),A			;DIX and DIY
+        XOR     A
+        OUT     (C),A
+        OUT     (C),H
+        OUT     (C),A
+        OUT     (C),B                   ;fill data
+        XOR     A
+        OR      D
+        OR      E
+        OUT     (C),A                   ;DIX and DIY
 
-	LD	A,11000000B		;HMMV command
-	OUT	(C),A
+        LD      A,11000000B             ;HMMV command
+        OUT     (C),A
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
 
 6.5.5 LMMC (CPU -> VRAM logical transfer)
 
-Data is transferred from the CPU to thespecified VRAM area in dots (see
+Data is transferred from the CPU to the specified VRAM area in dots (see
 Figure 4.84). Logical operations with the source can be specified. In the
-logical transfer commands, such as LMMC, data is transfered in dots and one
+logical transfer commands, such as LMMC, data is transferred in dots and one
 byte is required for the information of one pixel in all screen modes.
 
 After setting the data as shown in Figure 4.85, write command code B0H in
@@ -1210,31 +1210,31 @@ TR and CE bit of S#2, as in HMMC (see Figure 4.86). List 4.12 shows an
 example of using LMMC.
 
 
-   Figure 4.84	Action of LMMC command
+   Figure 4.84  Action of LMMC command
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |   MSX-VIDEO      CPU
-|						  |    -------	   -------
-|    (DX,DY)					  |    |     |	   |	 |
-|	x------------------------ --> DIX	  |    |     |	   |	 |
-|	|	   NX		|		  |    |     |	   |	 |
-|	| NY			|<----------------+----|     |-----|	 |
-|	|			|		  |    |     |	   |	 |
-|	-------------------------		  |    |     |	   |	 |
-|	| DIY					  |    |     |	   |	 |
-|	V					  |    |     |	   |	 |
-|						  |    -------	   -------
-|						  |
+|                                                 |   MSX-VIDEO      CPU
+|                                                 |    -------     -------
+|    (DX,DY)                                      |    |     |     |     |
+|       x------------------------ --> DIX         |    |     |     |     |
+|       |          NX           |                 |    |     |     |     |
+|       | NY                    |<----------------+----|     |-----|     |
+|       |                       |                 |    |     |     |     |
+|       -------------------------                 |    |     |     |     |
+|       | DIY                                     |    |     |     |     |
+|       V                                         |    |     |     |     |
+|                                                 |    -------     -------
+|                                                 |
 ---------------------------------------------------
 
-MXD: select destination memory		0 = VRAM, 1 = expansion RAM
+MXD: select destination memory          0 = VRAM, 1 = expansion RAM
 
 NX:  number of dots to be transferred in X direction (0 to 511)
 NY:  number of dots to be transferred in Y direction (0 to 1023)
 
-DIX: direction of NX from the origin	0 = right, 1 = left
-DIY: direction of NY from the origin	0 = below, 1 = above
+DIX: direction of NX from the origin    0 = right, 1 = left
+DIY: direction of NY from the origin    0 = below, 1 = above
 
 DX:  destination origin  X-coordinate (0 to 511)
 DY:  destination origin  Y-coordinate (0 to 1023)
@@ -1242,217 +1242,217 @@ DY:  destination origin  Y-coordinate (0 to 1023)
 CLR (R#44:Colour register):  1st byte of data to be transferred
 
 
-   Figure 4.85	Register settings of LMMC command
+   Figure 4.85  Register settings of LMMC command
 
 > LMMC register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX ---+
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	|
-	-----------------------------------------	|
-							| destination origin
-	-----------------------------------------	|
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|	|
-	----------------------------------------- DY ---+
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX ---+
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|       |
+        -----------------------------------------       |
+                                                        | destination origin
+        -----------------------------------------       |
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|       |
+        ----------------------------------------- DY ---+
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#40	| NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|	  Number of dots in
-	----------------------------------------- NX ---> X direction to be
-R#41	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#40    | NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|         Number of dots in
+        ----------------------------------------- NX ---> X direction to be
+R#41    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	  Number of dots in
-	----------------------------------------- NY ---> Y direction to be
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|         Number of dots in
+        ----------------------------------------- NY ---> Y direction to be
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------		   --+
-R#44	| -- | -- | -- | -- | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)  |
-	-----------------------------------------		     |
-								     | data
-	-----------------------------------------		     | to be
-	| -- | -- | -- | -- | -- | -- | CR1| CR0| CLR (GRAPHIC 5)    | trans-
-	-----------------------------------------		     | ferred
-								     |
-	-----------------------------------------		     |
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)    |
-	-----------------------------------------		   --+
+        -----------------------------------------                  --+
+R#44    | -- | -- | -- | -- | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)  |
+        -----------------------------------------                    |
+                                                                     | data
+        -----------------------------------------                    | to be
+        | -- | -- | -- | -- | -- | -- | CR1| CR0| CLR (GRAPHIC 5)    | trans-
+        -----------------------------------------                    | ferred
+                                                                     |
+        -----------------------------------------                    |
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)    |
+        -----------------------------------------                  --+
 
-	-----------------------------------------
-R#45	|  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
-	-----------------------------------------
-		     |	       |   direction (X)
-		     |	       |
-		     |	       +-> direction (Y)
-		     |
-		     +-----------> select destination memory
+        -----------------------------------------
+R#45    |  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
+        -----------------------------------------
+                     |         |   direction (X)
+                     |         |
+                     |         +-> direction (Y)
+                     |
+                     +-----------> select destination memory
 
 > LMMC command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 1  | 0  | 1  | 1  | L03| L02| L01| L00| CMR
-	-----------------------------------------
-			    |			|
-			    +-------------------+
-			      Logical operation
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 1  | 0  | 1  | 1  | L03| L02| L01| L00| CMR
+        -----------------------------------------
+                            |                   |
+                            +-------------------+
+                              Logical operation
 
 
-   Figure 4.86	LMMC command execution flow chart
+   Figure 4.86  LMMC command execution flow chart
 
-	/-------------------\
-	|     LMMC start    |
-	\-------------------/
-		  |
-	---------------------
-	|   register setup  |
-	---------------------
-		  |
-	---------------------
-	| command execution |
-	---------------------
-		  |
+        /-------------------\
+        |     LMMC start    |
+        \-------------------/
+                  |
+        ---------------------
+        |   register setup  |
+        ---------------------
+                  |
+        ---------------------
+        | command execution |
+        ---------------------
+                  |
 +---------------->|
-|		  |
+|                 |
 |    ---------------------------
 |    | read status register #2 |
 |    ---------------------------
-|		  |
-|	//////////+\\\\\\\\\\ Yes (CE bit = 0)
-|	|   command end?    |-------------------+
-|	\\\\\\\\\\+//////////			|
-|		  | No (CE bit = 1)		|
-|	//////////+\\\\\\\\\\			|
-|<------|     transfer?     |			|
-| No	\\\\\\\\\\+//////////			|
-| (TR bit=0)	  | Yes (TR bit = 1)		|
-|	---------------------			|
-|	|   transfer data   |			|
-|	---------------------			|
-|		  |				|
-+-----------------+				|
-						|
-		  +-----------------------------+
-		  |
-		  V
-	/--------------------\
-	|      LMMC end      |
-	\--------------------/
+|                 |
+|       //////////+\\\\\\\\\\ Yes (CE bit = 0)
+|       |   command end?    |-------------------+
+|       \\\\\\\\\\+//////////                   |
+|                 | No (CE bit = 1)             |
+|       //////////+\\\\\\\\\\                   |
+|<------|     transfer?     |                   |
+| No    \\\\\\\\\\+//////////                   |
+| (TR bit=0)      | Yes (TR bit = 1)            |
+|       ---------------------                   |
+|       |   transfer data   |                   |
+|       ---------------------                   |
+|                 |                             |
++-----------------+                             |
+                                                |
+                  +-----------------------------+
+                  |
+                  V
+        /--------------------\
+        |      LMMC end      |
+        \--------------------/
 
 
 List 4.12  Example of LMMC command execution
 =========================================================================
 
 ;****************************************************************
-;  List 4.12	LMMC sample
-;		  to use, set H, L, D, E, IX, A and go
-;		  RAM (IX) ---> VRAM (H,L)-(D,E) (logi-OP : A)
+;  List 4.12    LMMC sample
+;                 to use, set H, L, D, E, IX, A and go
+;                 RAM (IX) ---> VRAM (H,L)-(D,E) (logi-OP : A)
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-LMMC:	DI				;disable interrupt
-	LD	B,A			;B := LOGICAL OPERATION
-	CALL	WAIT.VDP		;wait end of command
+LMMC:   DI                              ;disable interrupt
+        LD      B,A                     ;B := LOGICAL OPERATION
+        CALL    WAIT.VDP                ;wait end of command
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,36
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A			;R#17 := 36
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,36
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A                   ;R#17 := 36
 
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),H			;DX
-	OUT	(C),A
-	OUT	(C),L			;DY
-	OUT	(C),A
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),H                   ;DX
+        OUT     (C),A
+        OUT     (C),L                   ;DY
+        OUT     (C),A
 
-	LD	A,H			;make NX and DIX
-	SUB	A
-	LD	D,00000100B
-	JR	NC,LMMC1
-	LD	D,00000000B
-	NEG
-LMMC1:	LD	H,A			;H := NX , D := DIX
+        LD      A,H                     ;make NX and DIX
+        SUB     A
+        LD      D,00000100B
+        JR      NC,LMMC1
+        LD      D,00000000B
+        NEG
+LMMC1:  LD      H,A                     ;H := NX , D := DIX
 
-	LD	A,L
-	SUB	A
-	LD	E,00001000B
-	JR	NC,LMMC2
-	LD	E,00000000B
-	NEG
-LMMC2:	LD	L,A			;L := NY , E := DIY
+        LD      A,L
+        SUB     A
+        LD      E,00001000B
+        JR      NC,LMMC2
+        LD      E,00000000B
+        NEG
+LMMC2:  LD      L,A                     ;L := NY , E := DIY
 
-	XOR	A
-	OUT	(C),H			;NX
-	OUT	(C),A
-	OUT	(C),L			;NY
-	OUT	(C),A
-	LD	A,(IX+0)
-	OUT	(C),A			;first DATA
-	LD	A,D
-	OR	E
-	OUT	(C),A			;DIX and DIY
+        XOR     A
+        OUT     (C),H                   ;NX
+        OUT     (C),A
+        OUT     (C),L                   ;NY
+        OUT     (C),A
+        LD      A,(IX+0)
+        OUT     (C),A                   ;first DATA
+        LD      A,D
+        OR      E
+        OUT     (C),A                   ;DIX and DIY
 
-	LD	A,B			;A := LOGICAL OPERATION
-	OR	10110000B		;LMMC command
-	OUT	(C),A
+        LD      A,B                     ;A := LOGICAL OPERATION
+        OR      10110000B               ;LMMC command
+        OUT     (C),A
 
-	DEC	C
-	DEC	C
+        DEC     C
+        DEC     C
 
-LOOP:	LD	A,2
-	CALL	GET.STATUS
-	BIT	0,A			;check CE bit
-	JP	Z,EXIT
-	BIT	7,A			;check TR bit
-	JP	Z,LOOP
-	INC	IX
-	LD	A,(IX+0)
-	OUT	(C),A
-	JR	LOOP
+LOOP:   LD      A,2
+        CALL    GET.STATUS
+        BIT     0,A                     ;check CE bit
+        JP      Z,EXIT
+        BIT     7,A                     ;check TR bit
+        JP      Z,LOOP
+        INC     IX
+        LD      A,(IX+0)
+        OUT     (C),A
+        JR      LOOP
 
-EXIT:	LD	A,0
-	CALL	GET.STATUS
+EXIT:   LD      A,0
+        CALL    GET.STATUS
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JR	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JR      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -1470,25 +1470,25 @@ bit of S#2 is "0", data comes to the end (see Figure 4.89). List 4.13 shows
 an example of using LMCM.
 
 
-   Figure 4.87	Action of LMCM command
+   Figure 4.87  Action of LMCM command
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |   MSX-VIDEO      CPU
-|						  |    -------	   -------
-|    (SX,SY)					  |    |     |	   |	 |
-|	x------------------------ --> DIX	  |    |     |	   |	 |
-|	|	   NX		|		  |    |     |	   |	 |
-|	| NY			|-----------------+--->|     |---->|	 |
-|	|			|		  |    |     |	   |	 |
-|	-------------------------		  |    |     |	   |	 |
-|	| DIY					  |    |     |	   |	 |
-|	V					  |    |     |	   |	 |
-|						  |    -------	   -------
-|						  |
+|                                                 |   MSX-VIDEO      CPU
+|                                                 |    -------     -------
+|    (SX,SY)                                      |    |     |     |     |
+|       x------------------------ --> DIX         |    |     |     |     |
+|       |          NX           |                 |    |     |     |     |
+|       | NY                    |-----------------+--->|     |---->|     |
+|       |                       |                 |    |     |     |     |
+|       -------------------------                 |    |     |     |     |
+|       | DIY                                     |    |     |     |     |
+|       V                                         |    |     |     |     |
+|                                                 |    -------     -------
+|                                                 |
 ---------------------------------------------------
 
-MXS: select source memory		0 = VRAM, 1 = expansion RAM
+MXS: select source memory               0 = VRAM, 1 = expansion RAM
 
 SX:  source origin  X-coordinate (0 to 511)
 SY:  source origin  Y-coordinate (0 to 1023)
@@ -1496,108 +1496,108 @@ SY:  source origin  Y-coordinate (0 to 1023)
 NX:  number of dots to be transferred in X direction (0 to 511)
 NY:  number of dots to be transferred in Y direction (0 to 1023)
 
-DIX: direction of NX from the origin	0 = right, 1 = left
-DIY: direction of NY from the origin	0 = below, 1 = above
+DIX: direction of NX from the origin    0 = right, 1 = left
+DIY: direction of NY from the origin    0 = below, 1 = above
 
 
-   Figure 4.88	Register settings of LMCM command
+   Figure 4.88  Register settings of LMCM command
 
 > LMCM register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#32	| SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
-	----------------------------------------- SX ---+
-R#33	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|	|
-	-----------------------------------------	|
-							| source origin
-	-----------------------------------------	|
-R#34	| SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|	|
-	----------------------------------------- SY ---+
-R#35	| 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#32    | SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
+        ----------------------------------------- SX ---+
+R#33    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|       |
+        -----------------------------------------       |
+                                                        | source origin
+        -----------------------------------------       |
+R#34    | SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|       |
+        ----------------------------------------- SY ---+
+R#35    | 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#40	| NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|	  Number of dots in
-	----------------------------------------- NX ---> X direction to be
-R#41	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#40    | NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|         Number of dots in
+        ----------------------------------------- NX ---> X direction to be
+R#41    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	  Number of dots in
-	----------------------------------------- NY ---> Y direction to be
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|         Number of dots in
+        ----------------------------------------- NY ---> Y direction to be
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------
-R#45	|  0 | -- | -- | MXS| DIY| DIX| -- | -- | ARG (Argument register)
-	-----------------------------------------
-			  |    |   direction (X)
-			  |    |
-			  |    +-> direction (Y)
-			  |
-			  +------> select source memory
+        -----------------------------------------
+R#45    |  0 | -- | -- | MXS| DIY| DIX| -- | -- | ARG (Argument register)
+        -----------------------------------------
+                          |    |   direction (X)
+                          |    |
+                          |    +-> direction (Y)
+                          |
+                          +------> select source memory
 
 > LMCM command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 1  | 0  | 1  | 0  | -- | -- | -- | -- | CMR
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 1  | 0  | 1  | 0  | -- | -- | -- | -- | CMR
+        -----------------------------------------
 
-	-----------------------------------------
-S#7	| 0  | 0  | 0  | 0  | C3 | C2 | C1 | C0 | status register(GRAPHIC4,6)
-	-----------------------------------------
+        -----------------------------------------
+S#7     | 0  | 0  | 0  | 0  | C3 | C2 | C1 | C0 | status register(GRAPHIC4,6)
+        -----------------------------------------
 
-	-----------------------------------------
-S#7	| 0  | 0  | 0  | 0  | 0  | 0  | C1 | C0 | status register (GRAPHIC 5)
-	-----------------------------------------
+        -----------------------------------------
+S#7     | 0  | 0  | 0  | 0  | 0  | 0  | C1 | C0 | status register (GRAPHIC 5)
+        -----------------------------------------
 
-	-----------------------------------------
-S#7	| C7 | C6 | C5 | C4 | C3 | C2 | C1 | C0 | status register (GRAPHIC 7)
-	-----------------------------------------
+        -----------------------------------------
+S#7     | C7 | C6 | C5 | C4 | C3 | C2 | C1 | C0 | status register (GRAPHIC 7)
+        -----------------------------------------
 
 
-   Figure 4.89	LMCM command execution flow chart
+   Figure 4.89  LMCM command execution flow chart
 
-	/-------------------\
-	|     LMCM start    |
-	\-------------------/
-		  |
-	---------------------
-	|   register setup  |
-	---------------------
-		  |
-	---------------------
-	| command execution |
-	---------------------
-		  |
+        /-------------------\
+        |     LMCM start    |
+        \-------------------/
+                  |
+        ---------------------
+        |   register setup  |
+        ---------------------
+                  |
+        ---------------------
+        | command execution |
+        ---------------------
+                  |
 +---------------->|
-|		  |
+|                 |
 |    ---------------------------
 |    | read status register #2 |
 |    ---------------------------
-|		  |
-|	//////////+\\\\\\\\\\ No (TR bit = 0)
-|	|  data prepared?   |-------------------+
-|	\\\\\\\\\\+//////////			|
-|		  | Yes (TR bit = 1)		|
-|		  |				|
-|    ---------------------------		|
-|    | read status register #7 |		|
-|    ---------------------------		|
-|		  |				|
-|		  |<----------------------------+
-|		  |
-|	//////////+\\\\\\\\\\
+|                 |
+|       //////////+\\\\\\\\\\ No (TR bit = 0)
+|       |  data prepared?   |-------------------+
+|       \\\\\\\\\\+//////////                   |
+|                 | Yes (TR bit = 1)            |
+|                 |                             |
+|    ---------------------------                |
+|    | read status register #7 |                |
+|    ---------------------------                |
+|                 |                             |
+|                 |<----------------------------+
+|                 |
+|       //////////+\\\\\\\\\\
 +-------|   command end?    |
-  No	\\\\\\\\\\+//////////
-  (CE bit=1)	  | Yes (CE bit = 0)
-		  |
-		  V
-	/--------------------\
-	|      LMCM end      |
-	\--------------------/
+  No    \\\\\\\\\\+//////////
+  (CE bit=1)      | Yes (CE bit = 0)
+                  |
+                  V
+        /--------------------\
+        |      LMCM end      |
+        \--------------------/
 
 * Note 1: Read status register #7 in "register setup", since TR bit should be
 reset before the command execution.
@@ -1610,111 +1610,111 @@ List 4.13  Example of LMCM command execution
 =========================================================================
 
 ;****************************************************************
-;  List 4.13	LMCM sample
-;		  to use, set H, L, D, E, IX, A and go
-;		  VRAM (H,L)-(D,E) ---> RAM (IX)
+;  List 4.13    LMCM sample
+;                 to use, set H, L, D, E, IX, A and go
+;                 VRAM (H,L)-(D,E) ---> RAM (IX)
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-LMCM:	DI				;disable interrupt
-	LD	B,A			;B := LOGICAL OPERATION
-	CALL	WAIT.VDP		;wait end of command
+LMCM:   DI                              ;disable interrupt
+        LD      B,A                     ;B := LOGICAL OPERATION
+        CALL    WAIT.VDP                ;wait end of command
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,32
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A			;R#17 := 32
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),H			;SX
-	OUT	(C),A
-	OUT	(C),L			;SY
-	OUT	(C),A
-	OUT	(C),A			;dummy
-	OUT	(C),A			;dummy
-	OUT	(C),A			;dummy
-	OUT	(C),A			;dummy
-	LD	A,H			;make NX and DIX
-	SUB	A
-	LD	D,00000100B
-	JR	NC,LMCM1
-	LD	D,00000000B
-	NEG
-LMCM1:	LD	H,A			;H := NX , D := DIX
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,32
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A                   ;R#17 := 32
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),H                   ;SX
+        OUT     (C),A
+        OUT     (C),L                   ;SY
+        OUT     (C),A
+        OUT     (C),A                   ;dummy
+        OUT     (C),A                   ;dummy
+        OUT     (C),A                   ;dummy
+        OUT     (C),A                   ;dummy
+        LD      A,H                     ;make NX and DIX
+        SUB     A
+        LD      D,00000100B
+        JR      NC,LMCM1
+        LD      D,00000000B
+        NEG
+LMCM1:  LD      H,A                     ;H := NX , D := DIX
 
-	LD	A,L
-	SUB	A
-	LD	E,00001000B
-	JR	NC,LMCM2
-	LD	E,00000000B
-	NEG
-LMCM2:	LD	L,A			;L := NY , E := DIY
+        LD      A,L
+        SUB     A
+        LD      E,00001000B
+        JR      NC,LMCM2
+        LD      E,00000000B
+        NEG
+LMCM2:  LD      L,A                     ;L := NY , E := DIY
 
-	XOR	A
-	OUT	(C),H			;NX
-	OUT	(C),A
-	OUT	(C),L			;NY
-	OUT	(C),A
-	LD	A,(IX+0)
-	OUT	(C),A			;dummy
-	LD	A,D
-	OR	E
-	OUT	(C),A			;DIX and DIY
-	LD	A,7
-	CALL	GET.STATUS
-	LD	A,B			;A := LOGICAL OPERATION
-	OR	10100000B		;LMCM command
-	OUT	(C),A
-	LD	A,(RDVDP)
-	LD	C,A			;C := PORT#1's address
-LOOP:	LD	A,2
-	CALL	GET.STATUS
-	BIT	0,A			;check CE bit
-	JP	Z,EXIT
-	BIT	7,A			;check TR bit
-	JP	Z,LOOP
-	LD	A,7
-	CALL	GET.STATUS
-	LD	(IX+0),A
-	INC	IX
-	JR	LOOP
+        XOR     A
+        OUT     (C),H                   ;NX
+        OUT     (C),A
+        OUT     (C),L                   ;NY
+        OUT     (C),A
+        LD      A,(IX+0)
+        OUT     (C),A                   ;dummy
+        LD      A,D
+        OR      E
+        OUT     (C),A                   ;DIX and DIY
+        LD      A,7
+        CALL    GET.STATUS
+        LD      A,B                     ;A := LOGICAL OPERATION
+        OR      10100000B               ;LMCM command
+        OUT     (C),A
+        LD      A,(RDVDP)
+        LD      C,A                     ;C := PORT#1's address
+LOOP:   LD      A,2
+        CALL    GET.STATUS
+        BIT     0,A                     ;check CE bit
+        JP      Z,EXIT
+        BIT     7,A                     ;check TR bit
+        JP      Z,LOOP
+        LD      A,7
+        CALL    GET.STATUS
+        LD      (IX+0),A
+        INC     IX
+        JR      LOOP
 
-EXIT:	LD	A,0
-	CALL	GET.STATUS
-	EI
-	RET
+EXIT:   LD      A,0
+        CALL    GET.STATUS
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JR	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JR      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -1730,32 +1730,32 @@ While the CE bit of S#2 is "1", the command is being executed. List 4.14
 shows an example of using LMMM.
 
 
-   Figure 4.90	Actions of LMMM command
+   Figure 4.90  Actions of LMMM command
 
-		    VRAM or expansion RAM
+                    VRAM or expansion RAM
 ----------------------------------------------------------------
-|							       |
-|     (SX,SY)						       |
-|	------------------ -->				       |
-|	|	NX	 | DIX				       |
-|	|		 |				       |
-|	| NY		 |				       |
-|	|		 |				       |
-|	------------------  --+ 			       |
-|	| DIY		      | 			       |
-|	V		      | 			       |
-|			      |      (DX,DY)		       |
-|			      +->  ------------------	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   |		    |	       |
-|				   ------------------	       |
-|							       |
+|                                                              |
+|     (SX,SY)                                                  |
+|       ------------------ -->                                 |
+|       |       NX       | DIX                                 |
+|       |                |                                     |
+|       | NY             |                                     |
+|       |                |                                     |
+|       ------------------  --+                                |
+|       | DIY                 |                                |
+|       V                     |                                |
+|                             |      (DX,DY)                   |
+|                             +->  ------------------          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  |                |          |
+|                                  ------------------          |
+|                                                              |
 ----------------------------------------------------------------
 
-MXS: select the source memory		0 = VRAM, 1 = expansion RAM
-MXD: select the destination memory	0 = VRAM, 1 = expansion RAM
+MXS: select the source memory           0 = VRAM, 1 = expansion RAM
+MXD: select the destination memory      0 = VRAM, 1 = expansion RAM
 
 SX:  source origin X-coordinate (0 to 511)
 SY:  source origin Y-coordinate (0 to 1023)
@@ -1763,74 +1763,74 @@ SY:  source origin Y-coordinate (0 to 1023)
 NX:  number of dots to be transferred in X direction (0 to 511)
 NY:  number of dots to be transferred in Y direction (0 to 1023)
 
-DIX: direction of NX from the origin	0 = right, 1 = left
-DIY: direction of NY from the origin	0 = below, 1 = above
+DIX: direction of NX from the origin    0 = right, 1 = left
+DIY: direction of NY from the origin    0 = below, 1 = above
 
 DX:  destination origin  X-coordinate (0 to 511)
 DY:  destination origin  Y-coordinate (0 to 1023)
 
 
-   Figure 4.91	Register settings of LMMM command
+   Figure 4.91  Register settings of LMMM command
 
 > LMMM register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#32	| SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
-	----------------------------------------- SX ---+
-R#33	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|	|
-	-----------------------------------------	|
-							| source origin
-	-----------------------------------------	|
-R#34	| SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|	|
-	----------------------------------------- SY ---+
-R#35	| 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#32    | SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
+        ----------------------------------------- SX ---+
+R#33    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|       |
+        -----------------------------------------       |
+                                                        | source origin
+        -----------------------------------------       |
+R#34    | SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|       |
+        ----------------------------------------- SY ---+
+R#35    | 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX ---+
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	|
-	-----------------------------------------	|
-							| destination origin
-	-----------------------------------------	|
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|	|
-	----------------------------------------- DY ---+
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX ---+
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|       |
+        -----------------------------------------       |
+                                                        | destination origin
+        -----------------------------------------       |
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|       |
+        ----------------------------------------- DY ---+
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#40	| NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|	  Number of dots in
-	----------------------------------------- NX ---> X direction to be
-R#41	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#40    | NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|         Number of dots in
+        ----------------------------------------- NX ---> X direction to be
+R#41    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	  Number of dots in
-	----------------------------------------- NY ---> Y direction to be
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	  transferred
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|         Number of dots in
+        ----------------------------------------- NY ---> Y direction to be
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|         transferred
+        -----------------------------------------
 
-	-----------------------------------------
-R#45	|  0 | -- | MXD| MXS| DIY| DIX| -- | -- | ARG (Argument register)
-	-----------------------------------------
-		     |	  |    |   direction (X)
-		     |	  |    |
-		     |	  |    +-> direction (Y)
-		     |	  |
-		     |	  +------> select source memory
-		     |
-		     +-----------> select destination memory
+        -----------------------------------------
+R#45    |  0 | -- | MXD| MXS| DIY| DIX| -- | -- | ARG (Argument register)
+        -----------------------------------------
+                     |    |    |   direction (X)
+                     |    |    |
+                     |    |    +-> direction (Y)
+                     |    |
+                     |    +------> select source memory
+                     |
+                     +-----------> select destination memory
 
 > LMMM command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 1  | 0  | 0  | 1  | L03| L02| L01| L00| CMR
-	-----------------------------------------
-			    |			|
-			    +-------------------+
-			      Logical operation
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 1  | 0  | 0  | 1  | L03| L02| L01| L00| CMR
+        -----------------------------------------
+                            |                   |
+                            +-------------------+
+                              Logical operation
 
 
 List 4.14  Example of LMMM command execution
@@ -1838,99 +1838,99 @@ List 4.14  Example of LMMM command execution
 
 ;****************************************************************
 ;  List 4.14   LMMM sample
-;		 to use, set H, L, D, E, B, C, A and go
-;		 VRAM (H,L)-(D,E) ---> VRAM (B,C) (logi-OP : A)
+;                to use, set H, L, D, E, B, C, A and go
+;                VRAM (H,L)-(D,E) ---> VRAM (B,C) (logi-OP : A)
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-LMMM:	DI				;disable interrupt
-	PUSH	AF			]save LOGICAL OPERATION
-	PUSH	BC			;save DESTINATION
-	CALL	WAIT.VDP		;wait end of command
+LMMM:   DI                              ;disable interrupt
+        PUSH    AF                      ]save LOGICAL OPERATION
+        PUSH    BC                      ;save DESTINATION
+        CALL    WAIT.VDP                ;wait end of command
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,32
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A			;R#17 := 32
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,32
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A                   ;R#17 := 32
 
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),H			;SX
-	OUT	(C),A
-	OUT	(C),L			;SY
-	OUT	(C),A
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),H                   ;SX
+        OUT     (C),A
+        OUT     (C),L                   ;SY
+        OUT     (C),A
 
-	LD	A,H			;make NX and DIX
-	SUB	A
-	LD	D,00000100B
-	JP	NC,LMMM1
-	LD	D,00000000B
-	NEG
-LMMM1:	LD	H,A			;H := NX , D := DIX
+        LD      A,H                     ;make NX and DIX
+        SUB     A
+        LD      D,00000100B
+        JP      NC,LMMM1
+        LD      D,00000000B
+        NEG
+LMMM1:  LD      H,A                     ;H := NX , D := DIX
 
-	LD	A,L			;make NY and DIY
-	SUB	A
-	LD	E,00001000B
-	JP	NC,LMMM2
-	LD	E,00000000B
-	NEG
-LMMM2:	LD	L,A			;L := NY , E := DIY
+        LD      A,L                     ;make NY and DIY
+        SUB     A
+        LD      E,00001000B
+        JP      NC,LMMM2
+        LD      E,00000000B
+        NEG
+LMMM2:  LD      L,A                     ;L := NY , E := DIY
 
-	LD	A,D
-	OR	E
-	POP	DE			;restore DX,DY
-	PUSH	AF			;save DIX,DIY
-	XOR	A
-	OUT	(C),D			;DX
-	OUT	(C),A
-	OUT	(C),E			;DY
-	OUT	(C),A
-	OUT	(C),H			;NX
-	OUT	(C),A
-	OUT	(C),L			;NY
-	OUT	(C),A
-	OUT	(C),A			;dummy
-	POP	AF
-	OUT	(C),A			;DIX and DIY
+        LD      A,D
+        OR      E
+        POP     DE                      ;restore DX,DY
+        PUSH    AF                      ;save DIX,DIY
+        XOR     A
+        OUT     (C),D                   ;DX
+        OUT     (C),A
+        OUT     (C),E                   ;DY
+        OUT     (C),A
+        OUT     (C),H                   ;NX
+        OUT     (C),A
+        OUT     (C),L                   ;NY
+        OUT     (C),A
+        OUT     (C),A                   ;dummy
+        POP     AF
+        OUT     (C),A                   ;DIX and DIY
 
-	POP	AF			;A := LOGICAL OPERATION
-	OR	10010000B		;LMMM command
-	OUT	(C),A
+        POP     AF                      ;A := LOGICAL OPERATION
+        OR      10010000B               ;LMMM command
+        OUT     (C),A
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-.	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+.       PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -1947,32 +1947,32 @@ While the CE bit of S#2 is "1", the command is being executed. List 4.15
 shows an example of using LMMV.
 
 
-   Figure 4.92	Actions of LMMV command
+   Figure 4.92  Actions of LMMV command
 
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |   MSX-VIDEO
-|						  |    -------
-|    (DX,DY)					  |    |     |
-|	x------------------------ --> DIX	  |    |     |
-|	|	   NX		|		  |    |     |
-|	| NY			|<----------------+----|     |
-|	|			|		  |    |     |
-|	-------------------------		  |    |     |
-|	| DIY					  |    |     |
-|	V					  |    |     |
-|						  |    -------
-|						  |
+|                                                 |   MSX-VIDEO
+|                                                 |    -------
+|    (DX,DY)                                      |    |     |
+|       x------------------------ --> DIX         |    |     |
+|       |          NX           |                 |    |     |
+|       | NY                    |<----------------+----|     |
+|       |                       |                 |    |     |
+|       -------------------------                 |    |     |
+|       | DIY                                     |    |     |
+|       V                                         |    |     |
+|                                                 |    -------
+|                                                 |
 ---------------------------------------------------
 
-MXD: select memory			0 = VRAM, 1 = expansion RAM
+MXD: select memory                      0 = VRAM, 1 = expansion RAM
 
 NX:  number of dots to be painted in X direction (0 to 511)
 NY:  number of dots to be painted in Y direction (0 to 1023)
 
-DIX: direction of NX from the origin	0 = right, 1 = left
-DIY: direction of NY from the origin	0 = below, 1 = above
+DIX: direction of NX from the origin    0 = right, 1 = left
+DIY: direction of NY from the origin    0 = below, 1 = above
 
 DX:  origin  X-coordinate (0 to 511)
 DY:  origin  Y-coordinate (0 to 1023)
@@ -1980,65 +1980,65 @@ DY:  origin  Y-coordinate (0 to 1023)
 CLR (R#44:Colour register):  Painted data
 
 
-   Figure 4.93	Register settings of LMMV command
+   Figure 4.93  Register settings of LMMV command
 
 > LMMV register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX ---+
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	|
-	-----------------------------------------	|
-							| origin
-	-----------------------------------------	|
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|	|
-	----------------------------------------- DY ---+
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX ---+
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|       |
+        -----------------------------------------       |
+                                                        | origin
+        -----------------------------------------       |
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|       |
+        ----------------------------------------- DY ---+
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#40	| NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|	  number of dots in
-	----------------------------------------- NX ---> X direction to
-R#41	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|	  be painted
-	-----------------------------------------
+        -----------------------------------------
+R#40    | NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|         number of dots in
+        ----------------------------------------- NX ---> X direction to
+R#41    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|         be painted
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	  number of dots in
-	----------------------------------------- NY ---> Y direction to
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	  be painted
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|         number of dots in
+        ----------------------------------------- NY ---> Y direction to
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|         be painted
+        -----------------------------------------
 
-	-----------------------------------------		      --+
-R#44	| 0  | 0  | 0  | 0  | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)	|data
-	-----------------------------------------			|
-									|to
-	-----------------------------------------			|
-	| 0  | 0  | 0  | 0  | 0  | 0  | CR1| CR0| CLR (GRAPHIC 5)	|be
-	-----------------------------------------			|
-									|tran
-	-----------------------------------------			|sfe
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)	|rred
-	-----------------------------------------		      --+
+        -----------------------------------------                     --+
+R#44    | 0  | 0  | 0  | 0  | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)     |data
+        -----------------------------------------                       |
+                                                                        |to
+        -----------------------------------------                       |
+        | 0  | 0  | 0  | 0  | 0  | 0  | CR1| CR0| CLR (GRAPHIC 5)       |be
+        -----------------------------------------                       |
+                                                                        |tran
+        -----------------------------------------                       |sfe
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)       |rred
+        -----------------------------------------                     --+
 
-	-----------------------------------------
-R#45	|  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
-	-----------------------------------------
-		     |	       |   painting direction (X)
-		     |	       |
-		     |	       +-> painting direction (Y)
-		     |
-		     +-----------> memory selection
+        -----------------------------------------
+R#45    |  0 | -- | MXD| -- | DIY| DIX| -- | -- | ARG (Argument register)
+        -----------------------------------------
+                     |         |   painting direction (X)
+                     |         |
+                     |         +-> painting direction (Y)
+                     |
+                     +-----------> memory selection
 
 > LMMV command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 1  | 0  | 0  | 0  | L03| L03| L01| L00| CMR
-	-----------------------------------------
-			    |			|
-			    +-------------------+
-			      Logical operation
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 1  | 0  | 0  | 0  | L03| L03| L01| L00| CMR
+        -----------------------------------------
+                            |                   |
+                            +-------------------+
+                              Logical operation
 
 
 List 4.15  Example of LMMV command execution
@@ -2046,93 +2046,93 @@ List 4.15  Example of LMMV command execution
 
 ;****************************************************************
 ;  List 4.15   LMMV sample
-;		 to use, set H, L, D, E, B, A and go
-;		 data B ---> fill VRAM (H,L)-(D,E) (logi-op : A)
+;                to use, set H, L, D, E, B, A and go
+;                data B ---> fill VRAM (H,L)-(D,E) (logi-op : A)
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-LMMV:	DI				;disable interrupt
-	PUSH	AF			;save LOGICAL OPERATION
-	PUSH	BC			;save FILL DATA
-	CALL	WAIT.VDP		;wait end of command
+LMMV:   DI                              ;disable interrupt
+        PUSH    AF                      ;save LOGICAL OPERATION
+        PUSH    BC                      ;save FILL DATA
+        CALL    WAIT.VDP                ;wait end of command
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,36
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A			;R#17 := 36
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,36
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A                   ;R#17 := 36
 
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),H			;DX
-	OUT	(C),A
-	OUT	(C),L			;DY
-	OUT	(C),A
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),H                   ;DX
+        OUT     (C),A
+        OUT     (C),L                   ;DY
+        OUT     (C),A
 
-	LD	A,H			;make NX and DIX
-	SUB	A
-	LD	D,00000100B
-	JP	NC,LMMV1
-	LD	D,00000000B
-	NEG
-LMMV1:	LD	H,A			;H := NX , D := DIX
+        LD      A,H                     ;make NX and DIX
+        SUB     A
+        LD      D,00000100B
+        JP      NC,LMMV1
+        LD      D,00000000B
+        NEG
+LMMV1:  LD      H,A                     ;H := NX , D := DIX
 
-	LD	A,L			;make NY and DIY
-	SUB	A
-	LD	E,00001000B
-	JP	NC,LMMV2
-	LD	E,00000000B
-	NEG
-LMMV2:	LD	L,A			;L := NY , E := DIY
+        LD      A,L                     ;make NY and DIY
+        SUB     A
+        LD      E,00001000B
+        JP      NC,LMMV2
+        LD      E,00000000B
+        NEG
+LMMV2:  LD      L,A                     ;L := NY , E := DIY
 
-	XOR	A
-	OUT	(C),H			;NX
-	OUT	(C),A
-	OUT	(C),L			;NY
-	OUT	(C),A
-	POP	AF
-	OUT	(C),A			;FILL DATA
-	LD	A,D
-	OR	E
-	OUT	(C),A			;DIX and DIY
+        XOR     A
+        OUT     (C),H                   ;NX
+        OUT     (C),A
+        OUT     (C),L                   ;NY
+        OUT     (C),A
+        POP     AF
+        OUT     (C),A                   ;FILL DATA
+        LD      A,D
+        OR      E
+        OUT     (C),A                   ;DIX and DIY
 
-	POP	AF			;restore LOGICAL OPERATION
-	OR	A,10000000B		;LMMV command
-	OUT	(C),A
+        POP     AF                      ;restore LOGICAL OPERATION
+        OR      A,10000000B             ;LMMV command
+        OUT     (C),A
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -2150,33 +2150,33 @@ While the CE bit of S#2 is "1", the command is being executed. List 4.16
 shows an example of using LINE.
 
 
-   Figure 4.94	Actions of LINE command
+   Figure 4.94  Actions of LINE command
 
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |
-|			    / :  ^		  |
-|			  /   :  |		  |
-|			/     : DIY		  |
-|		      /       : 		  |
-|		    /	  Min : 		  |
-|		  /	      : 		  |
-|		/	      : 		  |
-|	      /     Maj       : 		  |
-|	     x................. -> DIX		  |
-|	  (DX,DY)				  |
-|						  |
+|                                                 |
+|                           / :  ^                |
+|                         /   :  |                |
+|                       /     : DIY               |
+|                     /       :                   |
+|                   /     Min :                   |
+|                 /           :                   |
+|               /             :                   |
+|             /     Maj       :                   |
+|            x................. -> DIX            |
+|         (DX,DY)                                 |
+|                                                 |
 ---------------------------------------------------
 
-MXD: select memory			0 = VRAM, 1 = expansion RAM
+MXD: select memory                      0 = VRAM, 1 = expansion RAM
 
 Maj: number of dots of major side (0 to 1023)
 Maj: number of dots of minor side (0 to 512)
 
 MAJ: 0 = The major side is parallel to X axis
 MAJ: 1 = The major side is parallel to Y axis,
-	 or the major side = the minor side
+         or the major side = the minor side
 
 DIX: direction of the end from the origin    0 = right, 1 = left
 DIY: direction of the end from the origin    0 = below, 1 = above
@@ -2187,67 +2187,67 @@ DY:  origin  Y-coordinate (0 to 1023)
 CLR (R#44:Colour register):  Line colour data
 
 
-   Figure 4.95	Register settings of LINE command
+   Figure 4.95  Register settings of LINE command
 
 > LINE register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX ---+
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	|
-	-----------------------------------------	|
-							| origin
-	-----------------------------------------	|
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|	|
-	----------------------------------------- DY ---+
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX ---+
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|       |
+        -----------------------------------------       |
+                                                        | origin
+        -----------------------------------------       |
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|       |
+        ----------------------------------------- DY ---+
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#40	| NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|	      number of dots
-	----------------------------------------- Maj (NX) -> of the major
-R#41	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|	      side
-	-----------------------------------------
+        -----------------------------------------
+R#40    | NX7| NX6| NX5| NX4| NX3| NX2| NX1| NX0|             number of dots
+        ----------------------------------------- Maj (NX) -> of the major
+R#41    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | NX8|             side
+        -----------------------------------------
 
-	-----------------------------------------
-R#42	| NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|	      number of dots
-	----------------------------------------- Min (NY) -> of the minor
-R#43	| 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|	      side
-	-----------------------------------------
+        -----------------------------------------
+R#42    | NY7| NY6| NY5| NY4| NY3| NY2| NY1| NY0|             number of dots
+        ----------------------------------------- Min (NY) -> of the minor
+R#43    | 0  | 0  | 0  | 0  | 0  | 0  | NY9| NY8|             side
+        -----------------------------------------
 
-	-----------------------------------------		      --+
-R#44	| 0  | 0  | 0  | 0  | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)	|
-	-----------------------------------------			|co-
-									|lour
-	-----------------------------------------			|
-	| 0  | 0  | 0  | 0  | 0  | 0  | CR1| CR0| CLR (GRAPHIC 5)	|code
-	-----------------------------------------			|
-									|data
-	-----------------------------------------			|
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)	|
-	-----------------------------------------		      --+
+        -----------------------------------------                     --+
+R#44    | 0  | 0  | 0  | 0  | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)     |
+        -----------------------------------------                       |co-
+                                                                        |lour
+        -----------------------------------------                       |
+        | 0  | 0  | 0  | 0  | 0  | 0  | CR1| CR0| CLR (GRAPHIC 5)       |code
+        -----------------------------------------                       |
+                                                                        |data
+        -----------------------------------------                       |
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)       |
+        -----------------------------------------                     --+
 
-	-----------------------------------------
-R#45	|  0 | -- | MXD| -- | DIY| DIX| -- | MAJ| ARG (Argument register)
-	-----------------------------------------
-		     |	       |    |	     major side selection
-		     |	       |    V
-		     |	       |   direction to the end (X)
-		     |	       |
-		     |	       +-> direction to the end (Y)
-		     |
-		     +-----------> memory selection
+        -----------------------------------------
+R#45    |  0 | -- | MXD| -- | DIY| DIX| -- | MAJ| ARG (Argument register)
+        -----------------------------------------
+                     |         |    |        major side selection
+                     |         |    V
+                     |         |   direction to the end (X)
+                     |         |
+                     |         +-> direction to the end (Y)
+                     |
+                     +-----------> memory selection
 
 > LINE command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 0  | 1  | 1  | 1  | L03| L03| L01| L00| CMR
-	-----------------------------------------
-			    |			|
-			    +-------------------+
-			      Logical operation
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 0  | 1  | 1  | 1  | L03| L03| L01| L00| CMR
+        -----------------------------------------
+                            |                   |
+                            +-------------------+
+                              Logical operation
 
 
 List 4.16  Example of LINE command execution
@@ -2255,104 +2255,104 @@ List 4.16  Example of LINE command execution
 
 ;****************************************************************
 ;  List 4.16   LINE sample
-;		 to use, set H, L, D, E, B, A and go
-;		 draw LINE (H,L)-(D,E) with color B, log-op A
+;                to use, set H, L, D, E, B, A and go
+;                draw LINE (H,L)-(D,E) with color B, log-op A
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-LINE:	DI				;disable interrupt
-	PUSH	AF			;save LOGICAL OPERATION
-	PUSH	BC			;save COLOR
-	CALL	WAIT.VDP		;wait end of command
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
-	LD	A,36
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A			;R#17 := 36
+LINE:   DI                              ;disable interrupt
+        PUSH    AF                      ;save LOGICAL OPERATION
+        PUSH    BC                      ;save COLOR
+        CALL    WAIT.VDP                ;wait end of command
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
+        LD      A,36
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A                   ;R#17 := 36
 
-	INC	C
-	INC	C			;C := PORT#3's address
-	XOR	A
-	OUT	(C),H			;DX
-	OUT	(C),A
-	OUT	(C),L			;DY
-	OUT	(C),A
+        INC     C
+        INC     C                       ;C := PORT#3's address
+        XOR     A
+        OUT     (C),H                   ;DX
+        OUT     (C),A
+        OUT     (C),L                   ;DY
+        OUT     (C),A
 
-	LD	A,H			;make DX and DIX
-	SUB	D
-	LD	D,00000100B
-	JP	NC,LINE1
-	LD	D,00000000B
-	NEG
-LINE1:	LD	H,A			;H := DX , D := DIX
+        LD      A,H                     ;make DX and DIX
+        SUB     D
+        LD      D,00000100B
+        JP      NC,LINE1
+        LD      D,00000000B
+        NEG
+LINE1:  LD      H,A                     ;H := DX , D := DIX
 
-	LD	A,L			;make DY and DIY
-	SUB	E
-	LD	E,00001000B
-	JP	NC,LINE2
-	LD	E,00000000B
-	NEG
-LINE2:	LD	L,A			;L := DY , E := DIY
+        LD      A,L                     ;make DY and DIY
+        SUB     E
+        LD      E,00001000B
+        JP      NC,LINE2
+        LD      E,00000000B
+        NEG
+LINE2:  LD      L,A                     ;L := DY , E := DIY
 
-	CP	H			;make Maj and Min
-	JP	C,LINE3
-	XOR	A
-	OUT	(C),L			;long side
-	OUT	(C),A
-	OUT	(C),H			;short side
-	OUT	(C),A
-	LD	A,00000001B		;MAJ := 1
-	JP	LINE4
+        CP      H                       ;make Maj and Min
+        JP      C,LINE3
+        XOR     A
+        OUT     (C),L                   ;long side
+        OUT     (C),A
+        OUT     (C),H                   ;short side
+        OUT     (C),A
+        LD      A,00000001B             ;MAJ := 1
+        JP      LINE4
 
-LINE3:	XOR	A
-	OUT	(C),H			;NX
-	OUT	(C),A
-	OUT	(C),L			;NY
-	OUT	(C),A
-	LD	A,00000000B		;MAJ := 0
+LINE3:  XOR     A
+        OUT     (C),H                   ;NX
+        OUT     (C),A
+        OUT     (C),L                   ;NY
+        OUT     (C),A
+        LD      A,00000000B             ;MAJ := 0
 
-LINE4:	OR	D
-	OR	E			;A := DIX , DIY , MAJ
-	POP	HL			;H := COLOR
-	OUT	(C),H
-	OUT	(C),A
-	POP	AF			;A := LOGICAL OPERATION
-	OR	01110000B
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	EI
-	RET
+LINE4:  OR      D
+        OR      E                       ;A := DIX , DIY , MAJ
+        POP     HL                      ;H := COLOR
+        OUT     (C),H
+        OUT     (C),A
+        POP     AF                      ;A := LOGICAL OPERATION
+        OR      01110000B
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -2373,145 +2373,145 @@ After the command ends, the objective colour code is stored in S#8 and S#9.
 List 4.17 shows an example of using SRCH.
 
 
-   Figure 4.96	Actions of SRCH command
+   Figure 4.96  Actions of SRCH command
 
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |
-|						  |
-|						  |
-|						  |
-|	    (SX,SY)	 DIX			  |
-|	       x......................>x	  |
-|				    Border	  |
-|				    colour	  |
-|				    point	  |
-|						  |
-|						  |
-|						  |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|           (SX,SY)      DIX                      |
+|              x......................>x          |
+|                                   Border        |
+|                                   colour        |
+|                                   point         |
+|                                                 |
+|                                                 |
+|                                                 |
 ---------------------------------------------------
 
-MXD: memory selection for the seacrh	0 = VRAM, 1 = expansion RAM
+MXD: memory selection for the search    0 = VRAM, 1 = expansion RAM
 
 SX: search origin X-coordinate (0 to 511)
 SY: search origin Y-coordinate (0 to 1023)
 
-DIX: direction for the search from the origin	 0 = right, 1 = left
+DIX: direction for the search from the origin    0 = right, 1 = left
 
 EQ:  0 = ends the execution when the border colour is found
      1 = ends the execution when the colour is found other than the
-	 border colour
+         border colour
 
 CLR (R#44:Colour register):  border colour
 
 
-   Figure 4.97	Register settings of SRCH command
+   Figure 4.97  Register settings of SRCH command
 
 > SRCH register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#32	| SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
-	----------------------------------------- SX ---+
-R#33	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|	|
-	-----------------------------------------	|
-							| search origin
-	-----------------------------------------	|
-R#34	| SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|	|
-	----------------------------------------- SY ---+
-R#35	| 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
-	-----------------------------------------
-									 b
-	-----------------------------------------		      --+o
-R#44	| 0  | 0  | 0  | 0  | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)	|r
-	-----------------------------------------			|d
-									|e
-	-----------------------------------------			|r
-	| 0  | 0  | 0  | 0  | 0  | 0  | CR1| CR0| CLR (GRAPHIC 5)	|
-	-----------------------------------------			|c
-									|o
-	-----------------------------------------			|l
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)	|o
-	-----------------------------------------		      --+u
-									 r
-	-----------------------------------------
-R#45	| -- | -- | MXD| -- | -- | DIX| EQ | -- | ARG (Argument register)
-	-----------------------------------------
-		     |		    |	the condition for terminating
-		     |		    |	the execution
-		     |		    V
-		     |		   search direction (X)
-		     |
-		     +-----------> memory selection for the search
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#32    | SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
+        ----------------------------------------- SX ---+
+R#33    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|       |
+        -----------------------------------------       |
+                                                        | search origin
+        -----------------------------------------       |
+R#34    | SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|       |
+        ----------------------------------------- SY ---+
+R#35    | 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
+        -----------------------------------------
+                                                                         b
+        -----------------------------------------                     --+o
+R#44    | 0  | 0  | 0  | 0  | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)     |r
+        -----------------------------------------                       |d
+                                                                        |e
+        -----------------------------------------                       |r
+        | 0  | 0  | 0  | 0  | 0  | 0  | CR1| CR0| CLR (GRAPHIC 5)       |
+        -----------------------------------------                       |c
+                                                                        |o
+        -----------------------------------------                       |l
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)       |o
+        -----------------------------------------                     --+u
+                                                                         r
+        -----------------------------------------
+R#45    | -- | -- | MXD| -- | -- | DIX| EQ | -- | ARG (Argument register)
+        -----------------------------------------
+                     |              |   the condition for terminating
+                     |              |   the execution
+                     |              V
+                     |             search direction (X)
+                     |
+                     +-----------> memory selection for the search
 
 > SRCH command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 0  | 1  | 1  | 0  | -- | -- | -- | -- | CMR
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 0  | 1  | 1  | 0  | -- | -- | -- | -- | CMR
+        -----------------------------------------
 
-	-----------------------------------------
-S#2	| -- | -- | -- | BO | -- | -- | -- | CE | CMR
-	-----------------------------------------
-			 |		     when the command ends : 0
-			 |
-			 +-------> when the border colour is found : 1
+        -----------------------------------------
+S#2     | -- | -- | -- | BO | -- | -- | -- | CE | CMR
+        -----------------------------------------
+                         |                   when the command ends : 0
+                         |
+                         +-------> when the border colour is found : 1
 
-	-----------------------------------------
-S#8	| BX7| BX6| BX5| BX4| BX3| BX2| BX1| BX0| X-coordinate when the
-	----------------------------------------- border colour is found
-S#9	| 1  | 1  | 1  | 1  | 1  | 1  | 1  | BX8|
-	-----------------------------------------
+        -----------------------------------------
+S#8     | BX7| BX6| BX5| BX4| BX3| BX2| BX1| BX0| X-coordinate when the
+        ----------------------------------------- border colour is found
+S#9     | 1  | 1  | 1  | 1  | 1  | 1  | 1  | BX8|
+        -----------------------------------------
 
 
-   Figure 4.98	SRCH command execution flowchart
+   Figure 4.98  SRCH command execution flowchart
 
-	/-------------------\
-	|     SRCH start    |
-	\-------------------/
-		  |
-	---------------------
-	|   register setup  |
-	---------------------
-		  |
-	---------------------
-	| command execution |
-	---------------------
-		  |
+        /-------------------\
+        |     SRCH start    |
+        \-------------------/
+                  |
+        ---------------------
+        |   register setup  |
+        ---------------------
+                  |
+        ---------------------
+        | command execution |
+        ---------------------
+                  |
 +---------------->|
-|		  |
+|                 |
 |    ---------------------------
 |    | Read status register #2 |
 |    ---------------------------
-|		  |
-|	//////////+\\\\\\\\\\
+|                 |
+|       //////////+\\\\\\\\\\
 +-------|   command end?    |
-   No	\\\\\\\\\\+//////////
-(CE bit = 1)	  |
-		  | Yes (CE bit = 0)
-		  |
+   No   \\\\\\\\\\+//////////
+(CE bit = 1)      |
+                  | Yes (CE bit = 0)
+                  |
      /////////////+\\\\\\\\\\\\\
 +----| Is border colour found? |
 |    \\\\\\\\\\\\\+/////////////
-| No		  |
-| (BO bit = 0)	  | Yes (BO bit = 1)
-|		  |
+| No              |
+| (BO bit = 0)    | Yes (BO bit = 1)
+|                 |
 |    ---------------------------
 |    | Read status register #8 |
 |    ---------------------------
-|		  |
+|                 |
 |    ---------------------------
 |    | Read status register #2 |
 |    ---------------------------
-|		  |
+|                 |
 +---------------->|
-		  |
-		  V
-	/--------------------\
-	|      SRCH end      |
-	\--------------------/
+                  |
+                  V
+        /--------------------\
+        |      SRCH end      |
+        \--------------------/
 
 
 List 4.17  Example of SRCH command execution
@@ -2519,91 +2519,91 @@ List 4.17  Example of SRCH command execution
 
 ;****************************************************************
 ;  List 4.17   SRCH sample
-;		 to use, set H, L, E, A as follows
-;		 srch (x:H, y:L, color:E, arg(reg#45) : A)
-;		 returns: Z  (not found)
-;			  NZ (A := X)
+;                to use, set H, L, E, A as follows
+;                srch (x:H, y:L, color:E, arg(reg#45) : A)
+;                returns: Z  (not found)
+;                         NZ (A := X)
 ;****************************************************************
 ;
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-SRCH:	DI				;disable interrupt
-	PUSH	AF			;save arg
-	CALL	WAIT.VDP
+SRCH:   DI                              ;disable interrupt
+        PUSH    AF                      ;save arg
+        CALL    WAIT.VDP
 
-	LD	A,(WRVDP)
-	LD	C,A
-	INC	C			;C := PORT#1's address
+        LD      A,(WRVDP)
+        LD      C,A
+        INC     C                       ;C := PORT#1's address
 
-	LD	D,0
-	LD	A,32+80H
-	OUT	(C),H
-	OUT	(C),A			;R#32 := H
-	INC	A
-	OUT	(C),D
-	OUT	(C),A			;R#33 := 0
-	INC	A
-	OUT	(C),L
-	OUT	(C),A			;R#34 := L
-	INC	A
-	OUT	(C),D
-	OUT	(C),A			;R#35 := 0
-	LD	A,44+80H
-	OUT	(C),E
-	OUT	(C),A			;R#44 := E
-	INC	A
-	LD	E,A
-	POP	AF			;A := ARG
-	OUT	(C),A
-	OUT	(C),E			;R#45 := A
+        LD      D,0
+        LD      A,32+80H
+        OUT     (C),H
+        OUT     (C),A                   ;R#32 := H
+        INC     A
+        OUT     (C),D
+        OUT     (C),A                   ;R#33 := 0
+        INC     A
+        OUT     (C),L
+        OUT     (C),A                   ;R#34 := L
+        INC     A
+        OUT     (C),D
+        OUT     (C),A                   ;R#35 := 0
+        LD      A,44+80H
+        OUT     (C),E
+        OUT     (C),A                   ;R#44 := E
+        INC     A
+        LD      E,A
+        POP     AF                      ;A := ARG
+        OUT     (C),A
+        OUT     (C),E                   ;R#45 := A
 
-	LD	A,01100000B
-	OUT	(C),A
-	INC	E
-	OUT	(C),E			;R#46 := SRCH command
+        LD      A,01100000B
+        OUT     (C),A
+        INC     E
+        OUT     (C),E                   ;R#46 := SRCH command
 
-LOOP:	LD	A,2
-	CALL	GET.STATUS
-	BIT	0,A
-	JP	NZ,LOOP
-	LD	E,A
-	LD	A,8
-	CALL	GET.STATUS
-	LD	D,A
-	LD	A,9
-	CALL	GET.STATUS
-	LD	A,D
-	BIT	4,E
+LOOP:   LD      A,2
+        CALL    GET.STATUS
+        BIT     0,A
+        JP      NZ,LOOP
+        LD      E,A
+        LD      A,8
+        CALL    GET.STATUS
+        LD      D,A
+        LD      A,9
+        CALL    GET.STATUS
+        LD      A,D
+        BIT     4,E
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -2613,65 +2613,65 @@ List 4.18  Simple PAINT routine using SRCH and LINE
 
 ;****************************************************************
 ;  List 4.18   SRCH and LINE sample
-;		 search color to right and left,
-;		 then draw line between the two points
+;                search color to right and left,
+;                then draw line between the two points
 ;****************************************************************
 ;
-	EXTRN	SRCH
-	EXTRN	LINE
+        EXTRN   SRCH
+        EXTRN   LINE
 
-Y	EQU	0A800H
-X	EQU	0A801H
-COL	EQU	0A802H
-ARG	EQU	0A803H
-PCOL	EQU	0A804H
+Y       EQU     0A800H
+X       EQU     0A801H
+COL     EQU     0A802H
+ARG     EQU     0A803H
+PCOL    EQU     0A804H
 
 ;----- program start -----
 
-MAIN:	LD	(STK),SP
-	LD	SP,AREA
-	LD	HL,(Y)
-	LD	A,(COL)
-	LD	E,A
-	LD	A,(ARG)
-	PUSH	HL
-	PUSH	DE
-	SET	2,A
-	CALL	SRCH
-	POP	DE
-	POP	HL
-	JP	NZ,S1
-	LD	A,(X)
-	DEC	A
-S1:	INC	A
-	PUSH	AF
-	LD	A,(ARG)
-	RES	2,A
-	CALL	SRCH
-	JP	NZ,S2
-	LD	A,(X)
-	INC	A
-S2:	DEC	A
-	LD	D,A
-	POP	AF
-	LD	H,A
-	LD	A,(Y)
-	LD	L,A
-	LD	E,A
-	LD	A,(PCOL)
-	LD	B,A
-	LD	A,0			;PSET
-	CALL	LINE
-	LD	SP,(STK)
-	RET
+MAIN:   LD      (STK),SP
+        LD      SP,AREA
+        LD      HL,(Y)
+        LD      A,(COL)
+        LD      E,A
+        LD      A,(ARG)
+        PUSH    HL
+        PUSH    DE
+        SET     2,A
+        CALL    SRCH
+        POP     DE
+        POP     HL
+        JP      NZ,S1
+        LD      A,(X)
+        DEC     A
+S1:     INC     A
+        PUSH    AF
+        LD      A,(ARG)
+        RES     2,A
+        CALL    SRCH
+        JP      NZ,S2
+        LD      A,(X)
+        INC     A
+S2:     DEC     A
+        LD      D,A
+        POP     AF
+        LD      H,A
+        LD      A,(Y)
+        LD      L,A
+        LD      E,A
+        LD      A,(PCOL)
+        LD      B,A
+        LD      A,0                     ;PSET
+        CALL    LINE
+        LD      SP,(STK)
+        RET
 
 ;----- work area -----
 
-STK:	DS	2
-	DS	200
-AREA:	$
+STK:    DS      2
+        DS      200
+AREA:   $
 
-	END
+        END
 
 =========================================================================
 
@@ -2757,26 +2757,26 @@ bit of S#2 is "1", the command is being executed. List 4.20 shows an example
 of using PSET.
 
 
-   Figure 4.99	Actions of PSET command
+   Figure 4.99  Actions of PSET command
 
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |
-|						  |
-|						  |
-|						  |
-|	       (DX,DY)				  |
-|		  x				  |
-|						  |
-|						  |
-|						  |
-|						  |
-|						  |
-|						  |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|              (DX,DY)                            |
+|                 x                               |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
 ---------------------------------------------------
 
-MXD: memory selection			0 = VRAM, 1 = expansion RAM
+MXD: memory selection                   0 = VRAM, 1 = expansion RAM
 
 DX: origin X-coordinate (0 to 511)
 DY: origin Y-coordinate (0 to 1023)
@@ -2788,46 +2788,46 @@ CLR (R#44:Colour register):  point colour
 
 > PSET register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#36	| DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
-	----------------------------------------- DX ---+
-R#37	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|	|
-	-----------------------------------------	|
-							| origin
-	-----------------------------------------	|
-R#38	| DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|	|
-	----------------------------------------- DY ---+
-R#39	| 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#36    | DX7| DX6| DX5| DX4| DX3| DX2| DX1| DX0|
+        ----------------------------------------- DX ---+
+R#37    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | DX8|       |
+        -----------------------------------------       |
+                                                        | origin
+        -----------------------------------------       |
+R#38    | DY7| DY6| DY5| DY4| DY3| DY2| DY1| DY0|       |
+        ----------------------------------------- DY ---+
+R#39    | 0  | 0  | 0  | 0  | 0  | 0  | DY9| DY8|
+        -----------------------------------------
 
-	-----------------------------------------		      --+
-R#44	| 0  | 0  | 0  | 0  | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)	|
-	-----------------------------------------			|co-
-									|lour
-	-----------------------------------------			|
-	| 0  | 0  | 0  | 0  | 0  | 0  | CR1| CR0| CLR (GRAPHIC 5)	|code
-	-----------------------------------------			|
-									|data
-	-----------------------------------------			|
-	| CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)	|
-	-----------------------------------------		      --+
+        -----------------------------------------                     --+
+R#44    | 0  | 0  | 0  | 0  | CR3| CR2| CR1| CR0| CLR (GRAPHIC 4,6)     |
+        -----------------------------------------                       |co-
+                                                                        |lour
+        -----------------------------------------                       |
+        | 0  | 0  | 0  | 0  | 0  | 0  | CR1| CR0| CLR (GRAPHIC 5)       |code
+        -----------------------------------------                       |
+                                                                        |data
+        -----------------------------------------                       |
+        | CR7| CR6| CR5| CR4| CR3| CR2| CR1| CR0| CLR (GRAPHIC 7)       |
+        -----------------------------------------                     --+
 
-	-----------------------------------------
-R#45	| 0  | -- | MXD| -- | -- | -- | -- | -- | ARG (Argument register)
-	-----------------------------------------
-		     |
-		     +-----------> memory selection
+        -----------------------------------------
+R#45    | 0  | -- | MXD| -- | -- | -- | -- | -- | ARG (Argument register)
+        -----------------------------------------
+                     |
+                     +-----------> memory selection
 
 > PSET command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 0  | 1  | 0  | 1  | L03| L02| L01| L00| CMR
-	-----------------------------------------
-			    |			|
-			    +-------------------+
-			      Logical operation
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 0  | 1  | 0  | 1  | L03| L02| L01| L00| CMR
+        -----------------------------------------
+                            |                   |
+                            +-------------------+
+                              Logical operation
 
 
 List 4.20  Example of PSET command execution
@@ -2835,80 +2835,80 @@ List 4.20  Example of PSET command execution
 
 ;****************************************************************
 ;  List 4.20   PSET sample
-;		 to use, set H, L, E, A as follows
-;		 pset (x:H, y:L), color:E, logi-OP:A
+;                to use, set H, L, E, A as follows
+;                pset (x:H, y:L), color:E, logi-OP:A
 ;****************************************************************
 ;
-	PUBLIC	PSET
+        PUBLIC  PSET
 
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-PSET:	DI
-	PUSH	AF
-	CALL	WAIT.VDP
-	LD	BC,(WRVDP)
+PSET:   DI
+        PUSH    AF
+        CALL    WAIT.VDP
+        LD      BC,(WRVDP)
 
-	INC	C
-	LD	A,36
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A
+        INC     C
+        LD      A,36
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A
 
-	PUSH	BC
-	INC	C
-	INC	C
-	XOR	A
-	OUT	(C),H
-	OUT	(C),A
-	OUT	(C),L
-	OUT	(C),A
-	POP	BC
+        PUSH    BC
+        INC     C
+        INC     C
+        XOR     A
+        OUT     (C),H
+        OUT     (C),A
+        OUT     (C),L
+        OUT     (C),A
+        POP     BC
 
-	LD	A,44
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A
+        LD      A,44
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A
 
-	INC	C
-	INC	C
-	OUT	(C),E
-	XOR	A
-	OUT	(C),A
+        INC     C
+        INC     C
+        OUT     (C),E
+        XOR     A
+        OUT     (C),A
 
-	LD	E,01010000B
-	POP	AF
-	OR	E
-	OUT	(C),A
+        LD      E,01010000B
+        POP     AF
+        OR      E
+        OUT     (C),A
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -2927,23 +2927,23 @@ POINT.
    Figure 4.101  Actions of POINT command
 
 
-	      VRAM or expansion RAM
+              VRAM or expansion RAM
 ---------------------------------------------------
-|						  |
-|						  |
-|						  |
-|						  |
-|	       (SX,SY)				  |
-|		  x				  |
-|						  |
-|						  |
-|						  |
-|						  |
-|						  |
-|						  |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|              (SX,SY)                            |
+|                 x                               |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
+|                                                 |
 ---------------------------------------------------
 
-MXD: memory selection			0 = VRAM, 1 = expansion RAM
+MXD: memory selection                   0 = VRAM, 1 = expansion RAM
 
 SX:  origin X-coordinate (0 to 511)
 SY:  origin Y-coordinate (0 to 1023)
@@ -2953,48 +2953,48 @@ SY:  origin Y-coordinate (0 to 1023)
 
 > POINT register setup
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#32	| SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
-	----------------------------------------- SX ---+
-R#33	| 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|	|
-	-----------------------------------------	|
-							| origin
-	-----------------------------------------	|
-R#34	| SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|	|
-	----------------------------------------- SY ---+
-R#35	| 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#32    | SX7| SX6| SX5| SX4| SX3| SX2| SX1| SX0|
+        ----------------------------------------- SX ---+
+R#33    | 0  | 0  | 0  | 0  | 0  | 0  | 0  | SX8|       |
+        -----------------------------------------       |
+                                                        | origin
+        -----------------------------------------       |
+R#34    | SY7| SY6| SY5| SY4| SY3| SY2| SY1| SY0|       |
+        ----------------------------------------- SY ---+
+R#35    | 0  | 0  | 0  | 0  | 0  | 0  | SY9| SY8|
+        -----------------------------------------
 
-	-----------------------------------------
-R#45	| -- | -- | -- | MXS| -- | -- | -- | -- | ARG (Argument register)
-	-----------------------------------------
-			  |
-			  +-----------> memory selection
+        -----------------------------------------
+R#45    | -- | -- | -- | MXS| -- | -- | -- | -- | ARG (Argument register)
+        -----------------------------------------
+                          |
+                          +-----------> memory selection
 
 > POINT command execution
 
-    MSB   7    6    5	 4    3    2	1    0	  LSB
-	-----------------------------------------
-R#46	| 0  | 1  | 0  | 0  | -- | -- | -- | -- | CMR
-	-----------------------------------------
+    MSB   7    6    5    4    3    2    1    0    LSB
+        -----------------------------------------
+R#46    | 0  | 1  | 0  | 0  | -- | -- | -- | -- | CMR
+        -----------------------------------------
 
-	-----------------------------------------
-S#2	| -- | -- | -- | -- | -- | -- | -- | CE | CMR
-	-----------------------------------------
-					     when the command ends : 0
+        -----------------------------------------
+S#2     | -- | -- | -- | -- | -- | -- | -- | CE | CMR
+        -----------------------------------------
+                                             when the command ends : 0
 
-	-----------------------------------------		     --+
-S#7	| 0  | 0  | 0  | 0  | C3 | C2 | C1 | C0 | CL (GRAPHIC 4,6)     |
-	-----------------------------------------		       |co-
-								       |lour
-	-----------------------------------------		       |
-	| 0  | 0  | 0  | 0  | 0  | 0  | C1 | C0 | CL (GRAPHIC 5)       |code
-	-----------------------------------------		       |
-								       |data
-	-----------------------------------------		       |
-	| C7 | C6 | C5 | C4 | C3 | C2 | C1 | C0 | CL (GRAPHIC 7)       |
-	-----------------------------------------		     --+
+        -----------------------------------------                    --+
+S#7     | 0  | 0  | 0  | 0  | C3 | C2 | C1 | C0 | CL (GRAPHIC 4,6)     |
+        -----------------------------------------                      |co-
+                                                                       |lour
+        -----------------------------------------                      |
+        | 0  | 0  | 0  | 0  | 0  | 0  | C1 | C0 | CL (GRAPHIC 5)       |code
+        -----------------------------------------                      |
+                                                                       |data
+        -----------------------------------------                      |
+        | C7 | C6 | C5 | C4 | C3 | C2 | C1 | C0 | CL (GRAPHIC 7)       |
+        -----------------------------------------                    --+
 
 
 List 4.21  Example of POINT command execution
@@ -3002,81 +3002,81 @@ List 4.21  Example of POINT command execution
 
 ;****************************************************************
 ;  List 4.21   POINT sample
-;		 to use, set H, L as follows
-;		 POINT ( x:H, y:L )
-;		 returns:   A := COLOR CODE
+;                to use, set H, L as follows
+;                POINT ( x:H, y:L )
+;                returns:   A := COLOR CODE
 ;****************************************************************
 ;
-	PUBLIC	POINT
+        PUBLIC  POINT
 
-RDVDP:	EQU	0006H
-WRVDP:	EQU	0007H
+RDVDP:  EQU     0006H
+WRVDP:  EQU     0007H
 
 ;----- program start -----
 
-POINT:	DI
-	CALL	WAIT.VDP
+POINT:  DI
+        CALL    WAIT.VDP
 
-	LD	A,(WRVDP)
-	LD	C,A
+        LD      A,(WRVDP)
+        LD      C,A
 
-	INC	C
-	LD	A,32
-	OUT	(C),A
-	LD	A,80H+17
-	OUT	(C),A
+        INC     C
+        LD      A,32
+        OUT     (C),A
+        LD      A,80H+17
+        OUT     (C),A
 
-	INC	C
-	INC	C
-	XOR	A
-	OUT	(C),H
-	OUT	(C),A
-	OUT	(C),L
-	OUT	(C),A
+        INC     C
+        INC     C
+        XOR     A
+        OUT     (C),H
+        OUT     (C),A
+        OUT     (C),L
+        OUT     (C),A
 
-	DEC	C
-	DEC	C
-	OUT	(C),A
-	LD	A,80H+45
-	OUT	(C),A
-	LD	A,01000000B
-	OUT	(C),A
-	LD	A,80H+46
-	OUT	(C),A
-	CALL	WAIT.VDP
-	LD	A,7
-	CALL	GET.STATUS
-	PUSH	AF
-	XOR	A
-	CALL	GET.STATUS
-	POP	AF
+        DEC     C
+        DEC     C
+        OUT     (C),A
+        LD      A,80H+45
+        OUT     (C),A
+        LD      A,01000000B
+        OUT     (C),A
+        LD      A,80H+46
+        OUT     (C),A
+        CALL    WAIT.VDP
+        LD      A,7
+        CALL    GET.STATUS
+        PUSH    AF
+        XOR     A
+        CALL    GET.STATUS
+        POP     AF
 
-	EI
-	RET
+        EI
+        RET
 
 GET.STATUS:
-	PUSH	BC
-	LD	BC,(WRVDP)
-	INC	C
-	OUT	(C),A
-	LD	A,8FH
-	OUT	(C),A
-	LD	BC,(RDVDP)
-	INC	C
-	IN	A,(C)
-	POP	BC
-	RET
+        PUSH    BC
+        LD      BC,(WRVDP)
+        INC     C
+        OUT     (C),A
+        LD      A,8FH
+        OUT     (C),A
+        LD      BC,(RDVDP)
+        INC     C
+        IN      A,(C)
+        POP     BC
+        RET
 
 WAIT.VDP:
-	LD	A,2
-	CALL	GET.STATUS
-	AND	1
-	JP	NZ,WAIT.VDP
-	XOR	A
-	CALL	GET.STATUS
-	RET
+        LD      A,2
+        CALL    GET.STATUS
+        AND     1
+        JP      NZ,WAIT.VDP
+        XOR     A
+        CALL    GET.STATUS
+        RET
 
-	END
+        END
 
 =========================================================================
 
@@ -3086,133 +3086,133 @@ List 4.22  PAINT routine using PSET and POINT
 
 ;****************************************************************
 ;  List 4.22  paint routine using PSET and POINT
-;	ENTRY:	X:H, Y:L, BORDER COLOR:D, PAINT COLOR:E
+;       ENTRY:  X:H, Y:L, BORDER COLOR:D, PAINT COLOR:E
 ;****************************************************************
 ;
-	EXTRN	PSET
-	EXTRN	POINT
+        EXTRN   PSET
+        EXTRN   POINT
 
-Q.LENGTH	EQU	256*2*2
-MAX.Y		EQU	211
+Q.LENGTH        EQU     256*2*2
+MAX.Y           EQU     211
 
 ;----- paint main routine -----
 
-PAINT:	CALL	POINT
-	CP	D
-	RET	Z
-	CALL	INIT.Q
-	LD	(COL),DE
-	CALL	PUT.Q
-	LD	A,(COL)
-	LD	E,A
-	XOR	A			;logi-OP : PSET
-	CALL	PSET
-PAINT0: CALL	GET.Q
-	RET	C
-	INC	H
-	CALL	NZ,PAINT.SUB
-	DEC	H
-	JP	Z,PAINT1
-	DEC	H
-	CALL	PAINT.SUB
-	INC	H
-PAINT1: DEC	L
-	LD	A,-1
-	CP	L
-	CALL	NZ,PAINT.SUB
-	INC	L
-	INC	L
-	LD	A,MAX.Y
-	CP	L
-	CALL	NC,PAINT.SUB
-	JP	PAINT0
+PAINT:  CALL    POINT
+        CP      D
+        RET     Z
+        CALL    INIT.Q
+        LD      (COL),DE
+        CALL    PUT.Q
+        LD      A,(COL)
+        LD      E,A
+        XOR     A                       ;logi-OP : PSET
+        CALL    PSET
+PAINT0: CALL    GET.Q
+        RET     C
+        INC     H
+        CALL    NZ,PAINT.SUB
+        DEC     H
+        JP      Z,PAINT1
+        DEC     H
+        CALL    PAINT.SUB
+        INC     H
+PAINT1: DEC     L
+        LD      A,-1
+        CP      L
+        CALL    NZ,PAINT.SUB
+        INC     L
+        INC     L
+        LD      A,MAX.Y
+        CP      L
+        CALL    NC,PAINT.SUB
+        JP      PAINT0
 
 ;----- check point and pset -----
 
 PAINT.SUB:
-	CALL	POINT
-	LD	D,A
-	LD	A,(BORD)
-	CP	D
-	RET	Z
-	LD	A,(COL)
-	CP	D
-	RET	Z
-	LD	E,A
-	XOR	A
-	CALL	PSET
-	CALL	PUT.Q
-	RET
+        CALL    POINT
+        LD      D,A
+        LD      A,(BORD)
+        CP      D
+        RET     Z
+        LD      A,(COL)
+        CP      D
+        RET     Z
+        LD      E,A
+        XOR     A
+        CALL    PSET
+        CALL    PUT.Q
+        RET
 
 ;----- init Q.BUFFER pointer -----
 
 INIT.Q:
-	PUSH	HL
-	LD	HL,Q.BUF
-	LD	(Q.TOP),HL
-	LD	(Q.BTM),HL
-	POP	HL
-	RET
+        PUSH    HL
+        LD      HL,Q.BUF
+        LD      (Q.TOP),HL
+        LD      (Q.BTM),HL
+        POP     HL
+        RET
 
 ;----- put point to Q.BUF (X:H , Y:L) -----
 
 PUT.Q:
-	EX	DE,HL
-	LD	HL,(Q.TOP)
-	LD	BC,Q.BUF+Q.LENGTH+1
-	OR	A			;clear CARRY
-	PUSH	HL
-	SBC	HL,BC
-	POP	HL
-	JP	C,PUT.Q1
-	LD	HL,Q.BUF
+        EX      DE,HL
+        LD      HL,(Q.TOP)
+        LD      BC,Q.BUF+Q.LENGTH+1
+        OR      A                       ;clear CARRY
+        PUSH    HL
+        SBC     HL,BC
+        POP     HL
+        JP      C,PUT.Q1
+        LD      HL,Q.BUF
 PUT.Q1:
-	LD	(HL),D
-	INC	HL
-	LD	(HL),E
-	INC	HL
-	LD	(Q.TOP),HL
-	EX	DE,HL
-	RET
+        LD      (HL),D
+        INC     HL
+        LD      (HL),E
+        INC     HL
+        LD      (Q.TOP),HL
+        EX      DE,HL
+        RET
 
 ;----- take point data to D, E -----
 ;      returns:   NC   H:x, L:y
-;		  C    buffer empty
+;                 C    buffer empty
 
-GET.Q:	LD	HL,(Q.BTM)
-	LD	BC,(Q.TOP)
-	OR	A
-	SBC	HL,BC
-	JP	NZ,GET.Q0
-	SCF
-	RET
+GET.Q:  LD      HL,(Q.BTM)
+        LD      BC,(Q.TOP)
+        OR      A
+        SBC     HL,BC
+        JP      NZ,GET.Q0
+        SCF
+        RET
 
-GET.Q0: LD	HL,(Q.BTM)
-	LD	BC,Q.BUF+Q.LENGTH+1
-	OR	A
-	PUSH	HL
-	SBC	HL,BC
-	POP	HL
-	JP	C,GET.Q1
-	LD	HL,Q.BUF
-GET.Q1: LD	D,(HL)
-	INC	HL
-	LD	E,(HL)
-	INC	HL
-	LD	(Q.BTM),HL
-	OR	A
-	EX	DE,HL
-	RET
+GET.Q0: LD      HL,(Q.BTM)
+        LD      BC,Q.BUF+Q.LENGTH+1
+        OR      A
+        PUSH    HL
+        SBC     HL,BC
+        POP     HL
+        JP      C,GET.Q1
+        LD      HL,Q.BUF
+GET.Q1: LD      D,(HL)
+        INC     HL
+        LD      E,(HL)
+        INC     HL
+        LD      (Q.BTM),HL
+        OR      A
+        EX      DE,HL
+        RET
 
 ;----- work area -----
 
-COL	DS	1
-BORD	DS	1
-Q.TOP	DS	2
-Q.BTM	DS	2
-Q.BUF	DS	Q.LENGTH
+COL     DS      1
+BORD    DS      1
+Q.TOP   DS      2
+Q.BTM   DS      2
+Q.BUF   DS      Q.LENGTH
 
-	END
+        END
 
 =========================================================================
 
@@ -3313,11 +3313,11 @@ command.
 When the number of dots to be executed in Y direction assumes N, the values
 of SY*, DY*, and NYB can be calculated as follows:
 
-	SY*=SY+N, DY*=DY+N .................... when DIY bit is 0
-	SY*=SY-N, DY*=DY-N .................... when DIY bit is 1
-	NYB=NY-N
+        SY*=SY+N, DY*=DY+N .................... when DIY bit is 0
+        SY*=SY-N, DY*=DY-N .................... when DIY bit is 1
+        NYB=NY-N
 
-	Note: when MAJ bit is 0 in LINE, N = N - 1.
+        Note: when MAJ bit is 0 in LINE, N = N - 1.
 
 
    Table 4.7  Register status at command termination
@@ -3325,22 +3325,22 @@ of SY*, DY*, and NYB can be calculated as follows:
 ----------------------------------------------------------------------------
 | command name | SX  | SY  | DX  | DY  | NX  | NY  | CLR |CMR H|CMR L| ARG |
 ----------------------------------------------------------------------------
-|     HMMC     | --- | --- | --- |  .  | --- |	#  | --- |  0  | --- | --- |
+|     HMMC     | --- | --- | --- |  .  | --- |  #  | --- |  0  | --- | --- |
 ----------------------------------------------------------------------------
-|     YMMM     | --- |	.  | --- |  .  | --- |	#  | --- |  0  | --- | --- |
+|     YMMM     | --- |  .  | --- |  .  | --- |  #  | --- |  0  | --- | --- |
 ----------------------------------------------------------------------------
-|     HMMM     | --- |	.  | --- |  .  | --- |	#  | --- |  0  | --- | --- |
+|     HMMM     | --- |  .  | --- |  .  | --- |  #  | --- |  0  | --- | --- |
 ----------------------------------------------------------------------------
-|     HMMV     | --- | --- | --- |  .  | --- |	#  | --- |  0  | --- | --- |
+|     HMMV     | --- | --- | --- |  .  | --- |  #  | --- |  0  | --- | --- |
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
-|     LMMC     | --- | --- | --- |  .  | --- |	#  | --- |  0  | --- | --- |
+|     LMMC     | --- | --- | --- |  .  | --- |  #  | --- |  0  | --- | --- |
 ----------------------------------------------------------------------------
-|     LMCM     | --- |	.  | --- | --- | --- |	#  |  .  |  0  | --- | --- |
+|     LMCM     | --- |  .  | --- | --- | --- |  #  |  .  |  0  | --- | --- |
 ----------------------------------------------------------------------------
-|     LMMM     | --- |	.  | --- |  .  | --- |	#  | --- |  0  | --- | --- |
+|     LMMM     | --- |  .  | --- |  .  | --- |  #  | --- |  0  | --- | --- |
 ----------------------------------------------------------------------------
-|     LMMV     | --- | --- | --- |  .  | --- |	#  | --- |  0  | --- | --- |
+|     LMMV     | --- | --- | --- |  .  | --- |  #  | --- |  0  | --- | --- |
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
 |     LINE     | --- | --- | --- |  .  | --- | --- | --- |  0  | --- | --- |
@@ -3352,7 +3352,7 @@ of SY*, DY*, and NYB can be calculated as follows:
 |     POINT    | --- | --- | --- | --- | --- | --- |  .  |  0  | --- | --- |
 ----------------------------------------------------------------------------
 
---- :	no change
- .  :	coordinate (SY*, DY*) and the colour code at the command termination
- #  :	the number of counts (NYB), when the screen edge is fetched
-
+--- :   no change
+ .  :   coordinate (SY*, DY*) and the colour code at the command termination
+ #  :   the number of counts (NYB), when the screen edge is fetched
+
