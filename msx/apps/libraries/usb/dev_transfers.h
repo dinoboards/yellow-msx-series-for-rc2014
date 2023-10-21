@@ -49,4 +49,8 @@ extern usb_error usbdev_data_in_transfer(device_config *const    device,
                                          uint8_t *const          buffer,
                                          const uint16_t          buffer_size,
                                          const usb_endpoint_type endpoint_type);
+
+extern usb_error usbdev_data_in_transfer_ep0(device_config *const device, uint8_t *const buffer, const uint8_t buffer_size)
+    __sdcccall(1);
+
 #endif

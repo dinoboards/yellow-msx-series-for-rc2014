@@ -101,13 +101,13 @@ extern int printf(const char *msg, ...);
 
 #endif
 
-#define calc_max_packet_sizex(packet_size) (packet_size & 0xFF)
+#define calc_max_packet_sizex(packet_size) (packet_size & 0x3FF)
 #define calc_max_packet_size(packet_sizex) packet_sizex
 
 typedef struct {
-  uint8_t toggle : 1;
-  uint8_t number : 3;
-  uint8_t max_packet_sizex;
+  uint8_t  toggle : 1;
+  uint8_t  number : 3;
+  uint16_t max_packet_sizex : 10;
 } endpoint_param;
 
 #define CH_SPEED_FULL     0 /* 12Mbps full speed FullSpeed ​​(default value) */
@@ -132,7 +132,7 @@ extern usb_error      ch_get_status(void);
 extern usb_error      ch_long_wait_int_and_get_status(void);
 extern usb_error      ch_short_wait_int_and_get_status(void);
 extern usb_error      ch_very_short_wait_int_and_get_status(void);
-extern uint8_t        ch_read_data(uint8_t *buffer, uint16_t buffer_size);
+extern uint8_t        ch_read_data(uint8_t *buffer) __sdcccall(1);
 extern void           ch_cmd_reset_all(void);
 extern uint8_t        ch_probe(void);
 extern usb_error      ch_cmd_set_usb_mode(const uint8_t mode) __z88dk_fastcall;

@@ -20,6 +20,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)extended-bios.c.o \
 	$(BINDIR)libraries/delay/delay.c.o \
 	$(BINDIR)libraries/usb/ch376.c.o \
+	$(BINDIR)libraries/usb/ch376.o \
 	$(BINDIR)libraries/usb/class_hub.c.o \
 	$(BINDIR)libraries/usb/class_scsi.c.o \
 	$(BINDIR)libraries/usb/class_ufi.c.o \
@@ -102,8 +103,7 @@ $(BINDIR)libraries/delay/%.o: $(BINDIR)libraries/delay/%.asm; $(assemble)
 
 .PRECIOUS: $(BINDIR)libraries/usb/%.c.asm
 $(BINDIR)libraries/usb/%.c.asm: ../apps/libraries/usb/%.c; $(compile)
-$(BINDIR)libraries/usb/%.o: $(BINDIR)libraries/usb/%.asm; $(assemble)
-
+$(BINDIR)libraries/usb/%.o: ../apps/libraries/usb/%.asm; $(assemble)
 
 .PHONY: format
 format: SHELL:=/bin/bash

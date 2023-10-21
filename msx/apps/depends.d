@@ -135,8 +135,7 @@
  libraries/usb/class_ufi.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_cbi.h \
  libraries/usb/usb_state.h
-./bin/helloworld.c.asm: helloworld.c libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h
+./bin/helloworld.c.asm: helloworld.c
 ./bin/usbtst/printer_drv.c.asm: usbtst/printer_drv.c libraries/usb/class_printer.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h usbtst/print.h \
@@ -351,6 +350,7 @@
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_date.o: ./libraries/msxdos/msxdos_set_date.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/usb/ch376.o: ./libraries/usb/ch376.asm
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm
 ./bin/v9958.o: ./v9958.asm ./msx.inc

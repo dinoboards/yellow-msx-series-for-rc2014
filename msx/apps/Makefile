@@ -11,7 +11,6 @@ endif
 
 LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb
 
-# -DENUMERATE_TRACE_ENABLED
 # -DSTACK_TRACE_ENABLED
 ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
 
@@ -19,7 +18,7 @@ BIN := ./bin/
 SRC := ./
 
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all: $(addsuffix .com,$(addprefix $(BIN),fdisk helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -34,7 +33,7 @@ EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio_usb_get_present.lib ext
 FOSSIL := libraries/fossil/fossil.asm libraries/fossil/fossil.c
 DELAY := $(BIN)libraries/delay/delay.c.lib
 USBDRV := libraries/usb/ch376.c libraries/usb/protocol.c libraries/usb/transfers.c libraries/usb/dev_transfers.c libraries/usb/enumerate_storage.c libraries/usb/class_hub.c libraries/usb/enumerate.c libraries/usb/enumerate_hub.c libraries/usb/class_printer.c libraries/usb/class_ufi.c libraries/usb/usb_cbi.c libraries/usb/class_scsi.c
-USBSUPPORT := $(BIN)libraries/usb/format_mapping.c.lib $(BIN)libraries/usb/trace_ufi_format_capacities_response.c.lib libraries/usb/class_printer.c.lib
+USBSUPPORT := $(BIN)libraries/usb/format_mapping.c.lib $(BIN)libraries/usb/trace_ufi_format_capacities_response.c.lib libraries/usb/class_printer.c.lib libraries/usb/ch376.lib
 FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib fprintf.c.lib interrupts.lib)
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm $(SYSTEM_VARS))

@@ -55,10 +55,24 @@ usb_error usbdev_data_in_transfer(device_config *const    device,
 
   usb_error result;
 
-  if (buffer_size == 0)
-    return USB_ERR_OK;
-
   endpoint_param *const endpoint = &device->endpoints[endpoint_type];
+
+  result = usb_data_in_transfer(buffer, buffer_size, device->address, endpoint);
+
+  if (result == USB_ERR_STALL) {
+    usbtrn_clear_endpoint_halt(endpoint->number, device->address, device->max_packet_size);
+    endpoint->toggle = 0;
+    return USB_ERR_STALL;
+  }
+
+  RETURN_CHECK(result);
+}
+
+usb_error usbdev_data_in_transfer_ep0(device_config *const device, uint8_t *const buffer, const uint8_t buffer_size) __sdcccall(1) {
+
+  usb_error result;
+
+  endpoint_param *const endpoint = &device->endpoints[0];
 
   result = usb_data_in_transfer(buffer, buffer_size, device->address, endpoint);
 

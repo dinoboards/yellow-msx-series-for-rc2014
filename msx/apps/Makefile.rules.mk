@@ -32,6 +32,8 @@ ifexists = $(if $(wildcard $1),$(patsubst %.c,%.c.o,$1),)
 app_files = $(call objects,$(2) $(call sources,$(1))) $(call ifexists,$1.c)
 
 .PRECIOUS: $(BIN)%.c.asm
+.PRECIOUS: %.o
+.PRECIOUS: $(BIN)%.o
 $(BIN)%.c.asm: %.c; $(compile)
 $(BIN)%.o: $(BIN)%.asm; $(assemble)
 $(BIN)%.o: %.asm; $(assemble)

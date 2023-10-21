@@ -18,21 +18,7 @@ void ch_command(const uint8_t command) __z88dk_fastcall {
   CH376_COMMAND_PORT = command;
 }
 
-usb_error ch_wait_int_and_get_status(const int16_t timeout) __z88dk_fastcall {
-  const int16_t timeout_point = get_future_time(timeout);
-
-  while ((CH376_COMMAND_PORT & PARA_STATE_INTB) && !is_time_past(timeout_point))
-    ;
-
-  if ((CH376_COMMAND_PORT & PARA_STATE_INTB)) {
-    if (CH376_COMMAND_PORT & PARA_STATE_BUSY)
-      return USB_ERR_CH376_BLOCKED;
-
-    return USB_ERR_CH376_TIMEOUT;
-  }
-
-  return ch_get_status();
-}
+extern usb_error ch_wait_int_and_get_status(const int16_t timeout) __z88dk_fastcall;
 
 usb_error ch_long_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(from_ms_50hz(5000)); }
 
@@ -89,22 +75,13 @@ usb_error ch_get_status(void) {
   return USB_ERR_UNEXPECTED_STATUS_FROM_HOST;
 }
 
-uint8_t ch_read_data(uint8_t *buffer, uint16_t buffer_size) {
+uint8_t ch_read_data(uint8_t *buffer) __sdcccall(1) {
   ch_command(CH_CMD_RD_USB_DATA0);
   const uint8_t amount_received = CH376_DATA_PORT;
   uint8_t       count           = amount_received;
-  uint8_t       extra           = 0;
-
-  if (count > buffer_size) {
-    extra = count - buffer_size;
-    count = buffer_size;
-  }
 
   while (count-- != 0)
     *buffer++ = CH376_DATA_PORT;
-
-  while (extra-- != 0) // do we need to flush buffer?
-    CH376_DATA_PORT;
 
   return amount_received;
 }
@@ -201,7 +178,7 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
 
     endpoint->toggle = !endpoint->toggle;
 
-    count = ch_read_data(buffer, buffer_size);
+    count = ch_read_data(buffer);
     if (count == 0) {
       USB_MODULE_LEDS = 0x00;
       return USB_ERR_DATA_ERROR;

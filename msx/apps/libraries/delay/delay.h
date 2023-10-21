@@ -10,6 +10,7 @@ extern void delay_20ms(void);
 extern void delay_short(void);
 extern void delay_medium(void);
 
+#define from_ms_60hz(period)    ((int16_t)(1L * (period) * (60) / 1000))
 #define from_ms_50hz(period)    ((int16_t)(1L * (period) * (50) / 1000))
 #define from_ms(period)         ((int16_t)(1L * (period) * (GET_VDP_FREQUENCY()) / 1000))
 #define from_seconds(period)    ((int16_t)(1L * (period) * (GET_VDP_FREQUENCY())))
