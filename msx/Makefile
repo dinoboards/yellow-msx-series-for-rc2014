@@ -225,11 +225,13 @@ release:
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*.com
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/msxsyssrc-*.rom
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/yellow-*.rom
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/rcmusic.rom
 	(cd ./bin && tar -cvf ../../release/msx-rc2014-$${version}.tar *.jed)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar *.doc)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar *.com)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar msxsyssrc-*.rom)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar yellow-*.rom)
+	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar rcmusic.rom)
 	(cd ./bin && gzip -qf ../../release/msx-rc2014-$${version}.tar)
 
 bin/bbcbasic.com: $(wildcard bbcbasic-z80/*)
