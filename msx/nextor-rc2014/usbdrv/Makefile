@@ -57,7 +57,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)work-area.o \
 	../apps/libraries/msxbios/system_vars.c
 
-$(BINDIR)exports.asm: $(BINDIR)exports.c.o
+$(BINDIR)exports.asm: $(BINDIR)exports.c.asm
 	@printf "_size_of_usb_state:	EQU" > $(BINDIR)exports.asm
 	cat $(BINDIR)exports.c.asm | grep "defc _size_of_usb_state" | cut -d '=' -f 2 >> $(BINDIR)exports.asm
 
@@ -118,13 +118,13 @@ ZSDCPP_FLAGS=-iquote"." -isystem"${ZCCCFG}/../../include/_DEVELOPMENT/sdcc" $(LI
 deps:
 	@echo "" > ./depends.d
 	# C Dependencies
-	find -name "*.c" | while read -r file; do
+	(cd usbdrv && find -name "*.c") | while read -r file; do
 		file_no_ext="$${file%.*}"
 		file_no_ext=$${file_no_ext#./}
 		filename=$$(basename $$file_no_ext)
 		from="$$filename.o"
 		to="$(BINDIR)$$file_no_ext.c.asm"
-		sdcpp ${ZSDCPP_FLAGS} -MM -MF /tmp/deps.deps $$file
+		sdcpp ${ZSDCPP_FLAGS} -MM -MF /tmp/deps.deps ./usbdrv/$$filename.c
 		sed "s+$$from+$$to+g" /tmp/deps.deps >> ./depends.d
 	done
 
@@ -161,3 +161,4 @@ deps:
 	done
 
 	echo "./depends.d created"
+

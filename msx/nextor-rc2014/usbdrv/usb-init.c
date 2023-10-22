@@ -134,31 +134,39 @@ uint8_t usb_host_init(const uint8_t flag) __z88dk_fastcall {
   if (flag == 0) {
     ch_cmd_reset_all();
 
+    _usb_state *const p_boot = get_boot_work_area();
+    memset(p_boot, 0, sizeof(_usb_state));
+
+    if (!ch_probe()) {
+      return 0;
+    }
+
+    p_boot->version = ch_cmd_get_ic_version();
+
+    usb_host_bus_reset();
+
     return 0;
   }
+
+  _usb_state *const p_boot = get_boot_work_area();
 
   work_area *const p = get_work_area();
   __asm__("EI");
   _usb_state *const work_area = &p->ch376;
   memset(work_area, 0, sizeof(_usb_state));
 
-  delay_short();
-
-  if (!ch_probe()) {
+  if (p_boot->version == 0) {
     print_string("CH376:           NOT PRESENT\r\n");
     return false;
   }
 
   p->present |= PRES_CH376;
 
-  const uint8_t ver = ch_cmd_get_ic_version();
-  print_string("CH376:           PRESENT (VER ");
-  print_hex(ver);
+  print_string("CH376:           PRESENT (VERy ");
+  print_hex(p_boot->version);
   print_string(")\r\n");
 
   print_string("USB:             SCANNING...");
-
-  usb_host_bus_reset();
 
   for (uint8_t i = 0; i < 4; i++) {
     const uint8_t r = ch_very_short_wait_int_and_get_status();
