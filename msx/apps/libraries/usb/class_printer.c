@@ -46,7 +46,7 @@ usb_error prt_soft_reset(const device_config_printer *const dev) {
   return result;
 }
 
-usb_error prt_send_text(device_config_printer *dev, const uint8_t *text, const uint8_t length) {
+usb_error prt_send(device_config_printer *dev, const uint8_t *text, const uint8_t length) {
   usb_error result;
 
   CHECK(usb_data_out_transfer(text, length, dev->address, &dev->endpoints[0]));

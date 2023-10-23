@@ -81,10 +81,10 @@ usb_error command_printer_check(const uint8_t last_device_address) __sdcccall(1)
       strcpy((char *)buffer, sample_text);
 
       for (int k = 0; k < 32; k++) {
-        result = prt_send_text(&printer_config, buffer, strlen(buffer));
+        result = prt_send(&printer_config, buffer, strlen(buffer));
 
         if (result) {
-          printf("prt_send_text failed %d\r\n", result);
+          printf("prt_send failed %d\r\n", result);
           goto finally;
         }
       }

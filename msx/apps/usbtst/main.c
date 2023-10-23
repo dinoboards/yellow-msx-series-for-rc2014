@@ -5,6 +5,7 @@
 #include "usb-dev-read-ufi.h"
 #include "usb-dev-write-ufi.h"
 #include "usb-lun-info-ufi.h"
+#include "usb_state.h"
 #include <ch376.h>
 #include <class_printer.h>
 #include <class_scsi.h>
@@ -73,13 +74,14 @@ void right_trim(char *buffer) {
       break;
 }
 
-void state_devices(_usb_state *const work_area) __z88dk_fastcall {
-  const bool hasCdc     = work_area->cdc_config.address != 0;
-  const bool hasPrinter = work_area->printer_config.address != 0;
+const char *printer_test_txt = "Verifying printer output works!\n";
 
-  uint8_t        index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  device_config *storage_device = &work_area->storage_device[0];
-  usb_error      result;
+void state_devices(_usb_state *const work_area) __z88dk_fastcall {
+  const bool hasCdc     = find_device_config(USB_IS_CDC) != NULL;
+  const bool hasPrinter = find_device_config(USB_IS_PRINTER) != NULL;
+
+  uint8_t   index = MAX_NUMBER_OF_STORAGE_DEVICES;
+  usb_error result;
 
   uint8_t buffer[512];
 
@@ -91,18 +93,14 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   if (hasPrinter) {
     print_string("PRINTER\r\n");
 
-    const char *str = "Verifying printer output works!\n";
-
-    for (uint8_t p = 0; p < strlen(str); p++) {
-      result = USBPRT(str[p]);
-
-      if (result != USB_ERR_OK)
-        printf(" USBPRT: %d, %d\r\n", p, result);
-    }
+    strcpy(buffer, printer_test_txt);
+    result = prt_send_text(buffer);
+    printf("prt_send_text: %d\r\n", result);
   }
 
-  do {
-    const usb_device_type t = storage_device->type;
+  for (uint8_t index = 1; index <= MAX_NUMBER_OF_STORAGE_DEVICES; index++) {
+    device_config        *storage_device = get_usb_device_config(index);
+    const usb_device_type t              = storage_device->type;
     memset(buffer, 0, sizeof(buffer));
 
     if (t == USB_IS_FLOPPY) {
@@ -149,47 +147,56 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
       result = scsi_read_write((device_config *)storage_device, false, 0, 1, buffer);
       printf("  scsi_read_write: %d\r\n", result);
     }
-
-    storage_device++;
-  } while (--index != 0);
+  };
 }
 
-inline void initialise_scsi_devices(_usb_state *const work_area) {
-  uint8_t        index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  device_config *storage_device = &work_area->storage_device[0];
+void state_storage_order(void) {
+  uint8_t index = 1; // MAX_NUMBER_OF_STORAGE_DEVICES;
 
   do {
-    if (storage_device->type == USB_IS_MASS_STORAGE) {
-      const usb_error result = scsi_sense_init(storage_device);
+    const device_config *const storage_device = get_usb_device_config(index);
+    if (storage_device == NULL)
+      break;
+
+    const usb_device_type t = storage_device->type;
+    if (t == USB_IS_FLOPPY) {
+      print_string("    FLOPPY\r\n");
+
+    } else if (t == USB_IS_MASS_STORAGE) {
+      print_string("    STORAGE\r\n");
     }
 
-    storage_device++;
-  } while (--index != 0);
+  } while (++index != MAX_NUMBER_OF_STORAGE_DEVICES + 1);
+}
+
+void initialise_scsi_devices(void) {
+  const _usb_state *const boot_state = get_usb_boot_area();
+
+  for (device_config *storage_device = first_device_config(boot_state); storage_device;
+       storage_device                = next_device_config(boot_state, storage_device))
+    if (storage_device->type == USB_IS_MASS_STORAGE) {
+                     const usb_error result = scsi_sense_init(storage_device);
+                     if (result)
+        printf("\r\nscsi_sense_init: %d\r\n", result);
+    }
 }
 
 #define ERASE_LINE "\x1B\x6C\r"
 
-void main(const int argc, const char *argv[]) {
-  (void)argc;
-  (void)argv;
-
-  _usb_state *const work_area = get_usb_work_area();
-
-  memset(work_area, 0, sizeof(_usb_state));
+uint16_t simulate_boot_phase_1(void) {
+  _usb_state *const boot_state = get_usb_boot_area();
+  memset(boot_state, 0, sizeof(_usb_state));
 
   ch_cmd_reset_all();
 
-  if (!ch_probe()) {
-    printf("CH376:           NOT PRESENT\r\n");
-    return;
-  }
+  if (!ch_probe())
+    return NULL;
 
-  const uint8_t ver = ch_cmd_get_ic_version();
-  printf("CH376:           PRESENT (VER ");
-  printf("%d", ver);
-  printf(")\r\n");
+  boot_state->connected = true;
 
-  printf("USB:             SCANNING...\r\n");
+  boot_state->version = ch_cmd_get_ic_version();
+
+  printf("USB:             SCANNING...");
 
   usb_host_bus_reset();
 
@@ -199,13 +206,45 @@ void main(const int argc, const char *argv[]) {
     if (r == USB_INT_CONNECT) {
       enumerate_all_devices();
 
-      initialise_scsi_devices(work_area);
+      initialise_scsi_devices();
+      printf(ERASE_LINE);
 
-      state_devices(work_area);
+      const uint16_t last = (uint16_t)find_first_free();
 
-      return;
+      return last - (uint16_t)boot_state;
     }
   }
 
-  printf("DISCONNECTED\r\n");
+  printf(ERASE_LINE);
+  return NULL;
+}
+
+void simulate_boot_phase_2(const uint16_t size) {
+  (void)size;
+  _usb_state *const boot_state = get_usb_boot_area();
+  _usb_state *const usb_state  = get_usb_work_area();
+  memcpy(usb_state, boot_state, sizeof(_usb_state));
+
+  if (!usb_state->connected) {
+    printf("CH376:           NOT PRESENT\r\n");
+    return;
+  }
+
+  printf("CH376:           PRESENT (VER ");
+  printf("%d", usb_state->version);
+  printf(")\r\n");
+
+  state_devices(usb_state);
+
+  state_storage_order();
+}
+
+void main(const int argc, const char *argv[]) {
+  (void)argc;
+  (void)argv;
+
+  const uint16_t size = simulate_boot_phase_1();
+  printf("memory size %d\r\n", size);
+
+  simulate_boot_phase_2(size);
 }

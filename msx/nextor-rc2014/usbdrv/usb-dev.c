@@ -1,37 +1,6 @@
 #include "usb-dev.h"
 #include "../../apps/libraries/msxdos/msxdos_rc2014_ex.h"
-
-device_config *get_usb_device_config(const uint8_t device_index) __z88dk_fastcall {
-  const device_config *const p = get_usb_work_area()->storage_device;
-
-  uint8_t counter = 1;
-  int8_t  i;
-  for (i = MAX_NUMBER_OF_STORAGE_DEVICES - 1; i >= 0; i--) {
-    if (p[i].type == USB_IS_FLOPPY) {
-      if (counter == device_index)
-        return &p[i];
-      counter++;
-    }
-  }
-
-  for (i = MAX_NUMBER_OF_STORAGE_DEVICES - 1; i >= 0; i--) {
-    if (p[i].type == USB_IS_MASS_STORAGE) {
-      if (counter == device_index)
-        return &p[i];
-      counter++;
-    }
-  }
-
-  for (i = MAX_NUMBER_OF_STORAGE_DEVICES - 1; i >= 0; i--) {
-    if (p[i].type == USB_NOT_SUPPORTED && p[i].address) {
-      if (counter == device_index)
-        return &p[i];
-      counter++;
-    }
-  }
-
-  return NULL; // is not a usb device
-}
+#include "work-area.h"
 
 /**
  * @brief Retrieve hardware probe status of the USB Module

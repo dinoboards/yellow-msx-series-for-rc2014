@@ -5,15 +5,16 @@ _usb_state *get_usb_work_area(void) {
   return &p->ch376;
 }
 
-uint8_t get_number_of_usb_drives(void) {
-  const work_area *const p = get_work_area();
-  uint8_t                c = 0;
+_usb_state *get_usb_boot_area(void) { return (_usb_state *)0xC000; }
 
-  const device_config *const last = &p->ch376.storage_device[MAX_NUMBER_OF_STORAGE_DEVICES - 1];
-  for (device_config *dev = p->ch376.storage_device; dev <= last; dev++) {
-    if (dev->address != 0)
+uint8_t get_number_of_usb_drives(void) {
+  const _usb_state *const usb_state = get_usb_work_area();
+  uint8_t                 c         = 0;
+
+  for (device_config *p = first_device_config(usb_state); p; p = next_device_config(usb_state, p))
+    if (p->type == USB_IS_FLOPPY || p->type == USB_IS_MASS_STORAGE)
       c++;
-  }
+
   return c;
 }
 

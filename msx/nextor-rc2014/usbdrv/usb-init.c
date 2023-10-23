@@ -72,17 +72,21 @@ void print_disk_size(const uint8_t device_index) {
   print_string(")\r\n");
 }
 
-bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
-  const bool hasCdc     = work_area->cdc_config.address != 0;
-  const bool hasPrinter = work_area->printer_config.address != 0;
+bool state_devices(const _usb_state *const boot_area) __z88dk_fastcall {
+  const bool hasCdc     = find_device_config(USB_IS_CDC) != NULL;
+  const bool hasPrinter = find_device_config(USB_IS_PRINTER) != NULL;
 
   uint8_t storage_count = 0;
   uint8_t index         = 1; // MAX_NUMBER_OF_STORAGE_DEVICES;
 
-  if (work_area->count_of_detected_usb_devices > 1)
-    print_string("USB:\r\n");
-  else
-    print_string("USB:         ");
+  const uint16_t size = boot_area->bytes_required;
+  print_string("USB:");
+  if (size > 0) {
+    print_string("             (");
+    print_uint16(size);
+    print_string(" bytes)");
+  }
+  print_string("\r\n");
 
   if (hasCdc)
     print_string("    CDC\r\n");
@@ -110,63 +114,50 @@ bool state_devices(const _usb_state *const work_area) __z88dk_fastcall {
   } while (++index != MAX_NUMBER_OF_STORAGE_DEVICES + 1);
 
   if (!hasCdc && !hasPrinter && storage_count == 0) {
-    print_string("\r\n");
+    print_string("    DISCONNECTED\r\n");
     return false;
   }
 
   return storage_count != 0;
 }
 
-inline void initialise_mass_storage_devices(_usb_state *const work_area) {
-  uint8_t        index          = MAX_NUMBER_OF_STORAGE_DEVICES;
-  device_config *storage_device = &work_area->storage_device[0];
+void initialise_scsi_devices(void) {
+  const _usb_state *const boot_state = get_usb_boot_area();
 
-  do {
+  for (device_config *storage_device = first_device_config(boot_state); storage_device;
+       storage_device                = next_device_config(boot_state, storage_device))
     if (storage_device->type == USB_IS_MASS_STORAGE)
       scsi_sense_init(storage_device);
-    storage_device++;
-  } while (--index != 0);
 }
 
 #define ERASE_LINE "\x1B\x6C\r"
 
-uint8_t usb_host_init(const uint8_t flag) __z88dk_fastcall {
-  if (flag == 0) {
-    ch_cmd_reset_all();
+/**
+ * @brief enumerate all usb devices, noting them in usb_boot_area (0xC000)
+ *
+ * @return uint16_t the number of bytes required to hold usb configuration
+ */
+uint16_t boot_phase_1(void) {
+  _usb_state *const boot_state = get_usb_boot_area();
+  memset(boot_state, 0, sizeof(_usb_state));
 
-    _usb_state *const p_boot = get_boot_work_area();
-    memset(p_boot, 0, sizeof(_usb_state));
+  ch_cmd_reset_all();
 
-    if (!ch_probe()) {
-      return 0;
-    }
-
-    p_boot->version = ch_cmd_get_ic_version();
-
-    usb_host_bus_reset();
-
+  if (!ch_probe()) {
+    print_string("CH376:           NOT PRESENT\r\n");
     return 0;
   }
 
-  _usb_state *const p_boot = get_boot_work_area();
+  boot_state->connected = true;
+  // boot_state->version   = ch_cmd_get_ic_version();
 
-  work_area *const p = get_work_area();
-  __asm__("EI");
-  _usb_state *const work_area = &p->ch376;
-  memset(work_area, 0, sizeof(_usb_state));
-
-  if (p_boot->version == 0) {
-    print_string("CH376:           NOT PRESENT\r\n");
-    return false;
-  }
-
-  p->present |= PRES_CH376;
-
-  print_string("CH376:           PRESENT (VERy ");
-  print_hex(p_boot->version);
+  print_string("CH376:           PRESENT (VER ");
+  print_hex(ch_cmd_get_ic_version());
   print_string(")\r\n");
 
   print_string("USB:             SCANNING...");
+
+  usb_host_bus_reset();
 
   for (uint8_t i = 0; i < 4; i++) {
     const uint8_t r = ch_very_short_wait_int_and_get_status();
@@ -174,19 +165,51 @@ uint8_t usb_host_init(const uint8_t flag) __z88dk_fastcall {
     if (r == USB_INT_CONNECT) {
       enumerate_all_devices();
 
-      initialise_mass_storage_devices(work_area);
-
-      install_printer(work_area);
-
+      initialise_scsi_devices();
       print_string(ERASE_LINE);
 
-      return state_devices(work_area);
+      const uint16_t last = (uint16_t)find_first_free();
+
+      boot_state->bytes_required = (last - (uint16_t)boot_state) + 1;
+
+      return boot_state->bytes_required;
     }
   }
 
   print_string(ERASE_LINE);
+  return 0;
+}
 
-  print_string("USB:             DISCONNECTED\r\n");
+/**
+ * @brief state the discovered usb devices and copy from
+ * temp boot usb store to permenant usb work area
+ *
+ * @return uint16_t the number of usb drives found
+ *                  (floppy and or mass storage)
+ */
+uint16_t boot_phase_2(void) {
+  _usb_state *const boot_state = get_usb_boot_area();
+  work_area *const  p          = get_work_area();
+  __asm__("EI");
+  _usb_state *const usb_state = &p->ch376;
+  memcpy(usb_state, boot_state, boot_state->bytes_required);
 
-  return false;
+  if (!boot_state->connected) {
+    return 0;
+  }
+
+  p->present |= PRES_CH376;
+
+  install_printer();
+
+  state_devices(boot_state);
+
+  return get_number_of_usb_drives();
+}
+
+uint16_t usb_host_init(const uint8_t flag) __z88dk_fastcall {
+  if (flag == 0)
+    return boot_phase_1();
+
+  return boot_phase_2();
 }

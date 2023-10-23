@@ -27,12 +27,12 @@
  ../apps/libraries/msxbios/system_vars.h \
  ../apps/libraries/usb/transfers.h
 ./bin/usb-lun-info.c.asm: usbdrv/usb-lun-info.c usbdrv/nextor.h usbdrv/usb-dev.h \
- ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
- usbdrv/work-area.h ../apps/libraries/usb/protocol.h \
- ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
- ../apps/libraries/usb/transfers.h ../apps/libraries/usb/usb_state.h \
- ../apps/libraries/usb/protocol.h usbdrv/usb-lun-info-scsi.h \
- usbdrv/usb-lun-info-ufi.h
+ usbdrv/usb-lun-info-scsi.h ../apps/libraries/usb/ch376.h \
+ ../apps/libraries/usb/ch376inc.h ../apps/libraries/usb/dev_transfers.h \
+ ../apps/libraries/usb/ch376.h ../apps/libraries/usb/transfers.h \
+ usbdrv/usb-lun-info-ufi.h ../apps/libraries/usb/protocol.h \
+ ../apps/libraries/usb/dev_transfers.h usbdrv/work-area.h \
+ ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/protocol.h
 ./bin/usb-dev-write.c.asm: usbdrv/usb-dev-write.c usbdrv/nextor.h \
  usbdrv/usb-dev-write-scsi.h ../apps/libraries/usb/ch376.h \
  ../apps/libraries/usb/ch376inc.h usbdrv/work-area.h \
@@ -73,12 +73,11 @@
  ../apps/libraries/usb/usb_cbi.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/usb_state.h
 ./bin/usb-dev.c.asm: usbdrv/usb-dev.c usbdrv/usb-dev.h \
+ usbdrv/../../apps/libraries/msxdos/msxdos_rc2014_ex.h usbdrv/work-area.h \
  ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
- usbdrv/work-area.h ../apps/libraries/usb/protocol.h \
- ../apps/libraries/usb/ch376.h ../apps/libraries/usb/dev_transfers.h \
- ../apps/libraries/usb/transfers.h ../apps/libraries/usb/usb_state.h \
- ../apps/libraries/usb/protocol.h \
- usbdrv/../../apps/libraries/msxdos/msxdos_rc2014_ex.h
+ ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \
+ ../apps/libraries/usb/dev_transfers.h ../apps/libraries/usb/transfers.h \
+ ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/protocol.h
 ./bin/usb-dev-info-scsi.c.asm: usbdrv/usb-dev-info-scsi.c \
  usbdrv/usb-dev-info-scsi.h usbdrv/nextor.h \
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/ch376.h \
@@ -149,7 +148,7 @@
  ../apps/libraries/msxbios/system_vars.h \
  ../apps/libraries/usb/enumerate.h ../apps/libraries/usb/usb_state.h \
  ../apps/libraries/usb/enumerate_hub.h ../apps/libraries/usb/enumerate.h
-./bin/rc2014dr.inc.o: ./rc2014dr.inc.asm 
+./bin/rc2014dr.inc.o: ./rc2014dr.inc.asm
 ./bin/rc2014dr.o: ./rc2014dr.asm
 ./bin/embinc.o: ./embinc.asm
 ./bin/rcembdrv.o: ./rcembdrv.asm

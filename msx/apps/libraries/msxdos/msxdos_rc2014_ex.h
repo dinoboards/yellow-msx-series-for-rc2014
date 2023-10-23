@@ -2,6 +2,8 @@
 #ifndef _MSXDOS_RC2014_EX_H_
 #define _MSXDOS_RC2014_EX_H_
 
+#include <stdint.h>
+
 typedef struct {
   uint8_t extendedMediumType;
 

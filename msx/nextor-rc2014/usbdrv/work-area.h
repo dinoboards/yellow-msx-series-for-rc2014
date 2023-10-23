@@ -43,8 +43,8 @@ typedef struct _work_area {
   _usb_state ch376;
 } work_area;
 
-#define get_boot_work_area() ((_usb_state *)0xC100)
-
 extern work_area *get_work_area(void);
+
+extern uint8_t get_number_of_usb_drives(void);
 
 #endif

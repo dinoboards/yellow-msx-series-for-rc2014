@@ -6,7 +6,6 @@
 	EXTERN	_usb_dev_read
 	EXTERN	_usb_dev_write
 	EXTERN  _fn_enum
-	EXTERN	_get_number_of_usb_drives
 	EXTERN	_drv_direct4
 	EXTERN	_drv_direct1
 	EXTERN	_device_mapping
@@ -29,8 +28,6 @@ usb_dev_write:
 	JP	_usb_dev_write
 fn_enum:
 	JP	_fn_enum
-get_number_of_usb_drives:
-	JP	_get_number_of_usb_drives
 drv_direct4:
 	JP	_drv_direct4
 device_mapping:

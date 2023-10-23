@@ -6,15 +6,16 @@
 #include <stdint.h>
 #include <system_vars.h>
 #include <transfers.h>
+#include <usb_state.h>
 
 // overload the use of the system var LOWLIM (used during tape load/save) to
 // optmised interrupt handle when print buffer is empty.
 
-void drv_timi(void) {
+void drv_timi(void) __sdcccall(1) {
   if (!(LOWLIM & 0x80))
     return;
 
-  device_config_printer *const printer_config = &get_usb_work_area()->printer_config;
+  device_config_printer *const printer_config = (device_config_printer *)find_device_config(USB_IS_PRINTER);
 
   if (printer_config->buffer_length == 0) {
     printer_config->buffer_wait = 0;
@@ -35,8 +36,8 @@ void drv_timi(void) {
   LOWLIM &= 0x7F;
 }
 
-uint8_t USBPRT(const uint8_t ch) __z88dk_fastcall {
-  device_config_printer *const printer_config = &get_usb_work_area()->printer_config;
+uint8_t USBPRT(const uint8_t ch) __sdcccall(1) {
+  device_config_printer *const printer_config = (device_config_printer *)find_device_config(USB_IS_PRINTER);
 
   while (printer_config->buffer_length >= PRINTER_BUFFER_SIZE) {
     __asm__("EI");
@@ -73,8 +74,10 @@ typedef struct {
 jump_hook H_LPTO_ADDR         H_LPTO;
 jump_hook_disable H_LPTS_ADDR H_LPTS;
 
-void install_printer(const _usb_state *const work_area) __z88dk_fastcall {
-  const bool hasPrinter = work_area->printer_config.address != 0;
+void install_printer(void) __sdcccall(1) {
+  device_config_printer *const printer_config = (device_config_printer *)find_device_config(USB_IS_PRINTER);
+
+  const bool hasPrinter = printer_config != NULL;
 
   if (!hasPrinter)
     return;

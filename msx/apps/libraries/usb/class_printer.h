@@ -10,6 +10,6 @@ usb_error prt_get_device_id(const device_config_printer *const dev, uint8_t *buf
 
 usb_error prt_soft_reset(const device_config_printer *const dev);
 
-usb_error prt_send_text(device_config_printer *dev, const uint8_t *text, const uint8_t length);
+usb_error prt_send(device_config_printer *dev, const uint8_t *text, const uint8_t length);
 
 #endif

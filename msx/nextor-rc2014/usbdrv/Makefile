@@ -15,7 +15,6 @@ SRC := ./usbdrv/
 ZCC := zcc +msx --vc -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
-	$(BINDIR)exports.asm \
 	$(BINDIR)exports.c.o \
 	$(BINDIR)extended-bios.c.o \
 	$(BINDIR)libraries/delay/delay.c.o \
@@ -32,6 +31,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/usb/protocol.c.o \
 	$(BINDIR)libraries/usb/transfers.c.o \
 	$(BINDIR)libraries/usb/usb_cbi.c.o \
+	$(BINDIR)libraries/usb/usb_state.c.o \
 	$(BINDIR)print.o \
 	$(BINDIR)printer_drv.c.o \
 	$(BINDIR)printer_drv.o \
@@ -56,10 +56,6 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)work-area.c.o \
 	$(BINDIR)work-area.o \
 	../apps/libraries/msxbios/system_vars.c
-
-$(BINDIR)exports.asm: $(BINDIR)exports.c.asm
-	@printf "_size_of_usb_state:	EQU" > $(BINDIR)exports.asm
-	cat $(BINDIR)exports.c.asm | grep "defc _size_of_usb_state" | cut -d '=' -f 2 >> $(BINDIR)exports.asm
 
 $(BINDIR)%.bin:
 	@mkdir -p $(dir $@)

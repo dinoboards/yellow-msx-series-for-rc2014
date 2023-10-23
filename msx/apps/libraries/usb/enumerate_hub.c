@@ -36,7 +36,7 @@ usb_error hub_get_status_port(const device_config_hub *const hub_config, const u
 }
 
 usb_error configure_usb_hub(_working *const working) __z88dk_fastcall {
-  _usb_state *const work_area = get_usb_work_area();
+  _usb_state *const work_area = get_usb_boot_area();
 
   usb_error                      result;
   hub_descriptor                 hub_description;

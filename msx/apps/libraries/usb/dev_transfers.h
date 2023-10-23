@@ -18,10 +18,10 @@
 #include <stdlib.h>
 
 #define COMMON_DEVICE_CONFIG                                                                                                       \
-  uint8_t         max_packet_size;                                                                                                 \
-  uint8_t         interface_number;                                                                                                \
   usb_device_type type : 4;                                                                                                        \
-  uint8_t         address : 4;
+  uint8_t         address : 4;                                                                                                     \
+  uint8_t         max_packet_size;                                                                                                 \
+  uint8_t         interface_number;
 
 typedef struct {
   COMMON_DEVICE_CONFIG

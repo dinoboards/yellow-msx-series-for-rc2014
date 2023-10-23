@@ -10,7 +10,7 @@
 
 typedef struct {
   uint8_t next_device_address;
-  int8_t  next_storage_device_index;
+  // int8_t  next_storage_device_index;
 } enumeration_state;
 
 typedef struct __working {
@@ -24,7 +24,8 @@ typedef struct __working {
   uint8_t            current_device_address;
   device_config_hub *hub_config;
 
-  const uint8_t *ptr;
+  uint8_t       *ptr;
+  device_config *p_current_device;
 
   union {
     uint8_t           buffer[MAX_CONFIG_SIZE];

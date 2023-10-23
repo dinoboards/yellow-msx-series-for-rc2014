@@ -17,9 +17,9 @@ clean:
 	@rm -rf bin
 	cd ../nextor/source && make clean --no-print-directory -f Makefile-rc2014.mk
 
-$(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm rcembdrv.inc
+$(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm rc2014dr.inc.asm
 	@mkdir -p $(BINDIR)
-	$(ASM) rcembdrv.asm rcembdrv.inc
+	$(ASM) rcembdrv.asm rc2014dr.inc.asm
 	filesize=$$(stat -c%s "$(BINDIR)rcembdrv.bin")
 	if ((filesize > 16484 )); then
 		echo -e "\r\nError: $(BINDIR)rcembdrv.bin exceeded size of 16k"

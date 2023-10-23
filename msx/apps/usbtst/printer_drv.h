@@ -1,5 +1,4 @@
 
 #include "usb_state.h"
 
-uint8_t USBPRT(const uint8_t ch) __z88dk_fastcall;
-void    install_printer(const _usb_state *const work_area) __z88dk_fastcall;
+extern uint8_t prt_send_text(const char *str) __sdcccall(1);

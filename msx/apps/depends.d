@@ -138,9 +138,8 @@
 ./bin/helloworld.c.asm: helloworld.c
 ./bin/usbtst/printer_drv.c.asm: usbtst/printer_drv.c libraries/usb/class_printer.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
- libraries/usb/dev_transfers.h libraries/usb/transfers.h usbtst/print.h \
- libraries/usb/usb_state.h libraries/delay/delay.h \
- libraries/msxbios/system_vars.h
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/usb_state.h
 ./bin/usbtst/usb-dev-info-ufi.c.asm: usbtst/usb-dev-info-ufi.c usbtst/usb-dev-info-ufi.h \
  usbtst/nextor.h libraries/usb/protocol.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -261,6 +260,9 @@
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_state.h libraries/usb/enumerate_hub.h \
  libraries/usb/enumerate_storage.h
+./bin/libraries/usb/usb_state.c.asm: libraries/usb/usb_state.c libraries/usb/usb_state.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h
 ./bin/libraries/usb/class_hub.c.asm: libraries/usb/class_hub.c libraries/usb/class_hub.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \

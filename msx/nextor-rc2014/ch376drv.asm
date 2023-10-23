@@ -1,15 +1,3 @@
-DRV_INIT_CH376:
-	push	ix
-	call	_usb_host_init
-	pop	ix
-
-	ld	a, l
-	or	a
-	ret	z
-
-	OR	255
-	RET
-
 ; ------------------------------------------------
 ; Initialize the Work-area
 ; ------------------------------------------------

@@ -1,7 +1,7 @@
 #include "usb_trace.h"
 
 void log_ufi_format_capacities_response(const ufi_format_capacities_response const *response) {
-  printf("Descriptor Code: %02X, Length: %d\r\n", response->capacity_list_length);
+  printf("capacity_list_length: %d\r\n", response->capacity_list_length);
 
   const uint8_t count = response->capacity_list_length / 8;
 
