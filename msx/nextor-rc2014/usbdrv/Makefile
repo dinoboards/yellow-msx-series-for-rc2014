@@ -9,7 +9,7 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 --allow-unsafe-read
 endif
 
-LIBS := -I./../apps/libraries/msxbios/ -I./../apps/libraries/delay/ -I./../apps/libraries/usb
+LIBS := -I./../apps/libraries/msxbios/ -I./../apps/libraries/delay/ -I./../apps/libraries/usb -I./../apps/libraries
 SRC := ./usbdrv/
 
 ZCC := zcc +msx --vc -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
@@ -17,6 +17,7 @@ ZCC := zcc +msx --vc -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc 
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)exports.c.o \
 	$(BINDIR)extended-bios.c.o \
+	$(BINDIR)keyboard_drv.c.o \
 	$(BINDIR)libraries/delay/delay.c.o \
 	$(BINDIR)libraries/usb/ch376.c.o \
 	$(BINDIR)libraries/usb/ch376.o \
@@ -32,6 +33,8 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/usb/transfers.c.o \
 	$(BINDIR)libraries/usb/usb_cbi.c.o \
 	$(BINDIR)libraries/usb/usb_state.c.o \
+	$(BINDIR)libraries/usb/class_hid.c.o \
+	$(BINDIR)libraries/usb/class_hid_keyboard.c.o \
 	$(BINDIR)print.o \
 	$(BINDIR)printer_drv.c.o \
 	$(BINDIR)printer_drv.o \

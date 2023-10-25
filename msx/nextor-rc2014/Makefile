@@ -36,6 +36,7 @@ $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014d
 	filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")
 	if ((filesize > 16484 )); then
 		echo -e "\r\nError: $(BINDIR)rc2014dr.bin exceeded size of 16k"
+		echo -e "Size: $$filesize"
 		exit 1
 	fi
 	echo "Assembled $@"

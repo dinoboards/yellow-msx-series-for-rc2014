@@ -53,3 +53,6 @@ uint8_t LINL40_ADDR LINL40;
 
 // FFE7-FFF6: storage of VDP 8-23
 uint8_t RG8SAV_ADDR RG8SAV[23 - 8];
+
+// keyboard buffer; each char entered via the keyboard ends up here
+char KEYBUF_ADDR KEYBUF[240];

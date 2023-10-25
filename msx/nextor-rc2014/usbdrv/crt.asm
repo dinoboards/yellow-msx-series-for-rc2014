@@ -13,7 +13,7 @@
 	EXTERN	_extbio_rc2014
 	EXTERN	_drv_timi
 
-	ORG	$5000
+	ORG	$4B00
 usb_host_init:
 	JP	_usb_host_init
 usb_dev_info:

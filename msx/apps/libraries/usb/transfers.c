@@ -14,6 +14,7 @@
 #include "ch376.h"
 #include <delay.h>
 #include <stdlib.h>
+#include <z80.h>
 
 usb_error usb_control_transfer_external(const setup_packet *const cmd_packet,
                                         void *const               buffer,
@@ -49,6 +50,8 @@ usb_error usb_control_transfer(const setup_packet *const cmd_packet,
 
   if (transferIn && buffer == 0)
     return USB_ERR_OTHER;
+
+  DI;
 
   ch_set_usb_address(device_address);
 
@@ -107,6 +110,7 @@ usb_error usb_data_in_transfer_external(uint8_t              *buffer,
 usb_error
 usb_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
   usb_error result;
+  DI;
   ch_set_usb_address(device_address);
 
   RETURN_CHECK(ch_data_in_transfer(buffer, buffer_size, endpoint));
@@ -136,6 +140,7 @@ usb_error usb_data_out_transfer_external(const uint8_t        *buffer,
  */
 usb_error
 usb_data_out_transfer(const uint8_t *buffer, uint16_t buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
+  DI;
   ch_set_usb_address(device_address);
   usb_error result;
 

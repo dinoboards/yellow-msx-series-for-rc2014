@@ -7,11 +7,14 @@
 #include "usb-lun-info-ufi.h"
 #include "usb_state.h"
 #include <ch376.h>
+#include <class_hid.h>
+#include <class_hid_keyboard.h>
 #include <class_printer.h>
 #include <class_scsi.h>
 #include <class_ufi.h>
 #include <delay.h>
 #include <enumerate.h>
+#include <msxdos.h>
 #include <usb_trace.h>
 
 uint16_t dumpSector(device_config *config, const uint32_t number) {
@@ -77,8 +80,10 @@ void right_trim(char *buffer) {
 const char *printer_test_txt = "Verifying printer output works!\n";
 
 void state_devices(_usb_state *const work_area) __z88dk_fastcall {
-  const bool hasCdc     = find_device_config(USB_IS_CDC) != NULL;
-  const bool hasPrinter = find_device_config(USB_IS_PRINTER) != NULL;
+
+  const bool hasCdc      = find_device_config(USB_IS_CDC) != NULL;
+  const bool hasPrinter  = find_device_config(USB_IS_PRINTER) != NULL;
+  const bool hasKeyboard = find_device_config(USB_IS_KEYBOARD) != NULL;
 
   uint8_t   index = MAX_NUMBER_OF_STORAGE_DEVICES;
   usb_error result;
@@ -92,15 +97,59 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
   if (hasPrinter) {
     print_string("PRINTER\r\n");
-
     strcpy(buffer, printer_test_txt);
     result = prt_send_text(buffer);
     printf("prt_send_text: %d\r\n", result);
   }
 
+  if (hasKeyboard) {
+    const device_config_keyboard *const keyboard_config = (device_config_keyboard *)find_device_config(USB_IS_KEYBOARD);
+    printf("Keyboard detected\r\n");
+
+    printf("  address: %d\r\n", keyboard_config->address);
+    printf("  max_packet_size: %d\r\n", keyboard_config->max_packet_size);
+    printf("  interface_number: %d\r\n", keyboard_config->interface_number);
+    printf("  toggle: %d\r\n", keyboard_config->endpoints[0].toggle);
+    printf("  number: %d\r\n", keyboard_config->endpoints[0].number);
+    printf("  max packet sizeX: %d\r\n", keyboard_config->endpoints[0].max_packet_sizex);
+
+    result = hid_set_protocol(keyboard_config, 1);
+    printf("  hid_set_protocol: %d\r\n", result);
+
+    result = hid_set_idle(keyboard_config, 0x80);
+    printf("  hid_set_idle: %d\r\n", result);
+
+    memset(buffer, 0, sizeof(buffer));
+    const keyboard_report *const p_report = (const keyboard_report *)buffer;
+
+    while (!msxbiosBreakX()) {
+      // int16_t t = JIFFY;
+      for (uint16_t i = 0; i < 1000; i++) {
+        ch_configure_nak_retry_disable();
+        result = usbdev_data_in_transfer_ep0((device_config *)keyboard_config, buffer, 8);
+        ch_configure_nak_retry_3s();
+        if (result == 0) {
+          const char c = scancode_to_char(p_report->keyCode[0]);
+          if (c >= 32 && c < 127)
+            printf("%c: ", c);
+          else
+            printf("0x%02X: ", p_report->keyCode[0]);
+
+          for (uint8_t i = 0; i < 8; i++)
+            printf(" %02X ", buffer[i]);
+
+          printf("\r\n");
+        }
+      }
+      // printf("t %d\r\n", JIFFY - t);
+      delay(3);
+    }
+  }
+
   for (uint8_t index = 1; index <= MAX_NUMBER_OF_STORAGE_DEVICES; index++) {
     device_config        *storage_device = get_usb_device_config(index);
     const usb_device_type t              = storage_device->type;
+
     memset(buffer, 0, sizeof(buffer));
 
     if (t == USB_IS_FLOPPY) {

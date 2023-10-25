@@ -1,18 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-
-typedef struct {
-  uint8_t bModifierKeys;
-  uint8_t bReserved;
-  uint8_t keyCode1;
-  uint8_t keyCode2;
-  uint8_t keyCode3;
-  uint8_t keyCode4;
-  uint8_t keyCode5;
-  uint8_t keyCode6;
-} keyboard_report;
-
-keyboard_report current;
+#include "class_hid_keyboard.h"
 
 #define ESC 0x1B
 
@@ -179,22 +165,10 @@ char scancodes_table[128] = {
     0x00 /* MUTE */,
 };
 
-char scancode_to_char(void) {
+char scancode_to_char(const uint8_t code) __sdcccall(1) {
 
-  if (current.keyCode1 >= 0x80)
+  if (code >= 0x80)
     return 0;
 
-  return scancodes_table[current.keyCode1];
-}
-
-void main(const int argc, const char *argv[]) {
-  (void)argc;
-  (void)argv;
-  printf("     Hello World\r\n");
-
-  memset(&current, 0, sizeof(current));
-
-  current.keyCode1 = 4;
-
-  printf("     %c\r\n", scancode_to_char());
+  return scancodes_table[code];
 }

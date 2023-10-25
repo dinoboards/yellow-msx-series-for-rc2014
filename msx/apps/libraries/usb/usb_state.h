@@ -8,8 +8,8 @@
 #define MAX_NUMBER_OF_STORAGE_DEVICES 4
 
 typedef struct __usb_state {
-  uint8_t
-      device_configs[sizeof(device_config) * MAX_NUMBER_OF_STORAGE_DEVICES + sizeof(device_config_printer) + sizeof(device_config)];
+  uint8_t device_configs[sizeof(device_config) * MAX_NUMBER_OF_STORAGE_DEVICES + sizeof(device_config_printer) +
+                         sizeof(device_config) + sizeof(device_config_keyboard)];
 
   uint8_t device_configs_end; // always zero to mark end
 

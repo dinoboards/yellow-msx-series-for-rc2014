@@ -42,6 +42,7 @@ typedef enum {
   USB_IS_MASS_STORAGE = 2,
   USB_IS_CDC          = 3,
   USB_IS_PRINTER      = 4,
+  USB_IS_KEYBOARD     = 5,
   USB_IS_HUB          = 15
 } usb_device_type; // 4 bits only
 

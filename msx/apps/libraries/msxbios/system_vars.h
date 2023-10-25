@@ -17,6 +17,7 @@
 #define RG8SAV_ADDR __at(0xFFE7)
 #define LOWLIM_ADDR __at(0xFCA4)
 #define WINWID_ADDR __at(0xFCA5)
+#define KEYBUF_ADDR __at(0xFBF0)
 
 // F417: switch indicating if hooked up printer is an MSX printer or not
 // values: 0: MSX-Printer, 1: no MSX-Printer
@@ -67,6 +68,9 @@ extern uint8_t CSRSW_ADDR CSRSW;
 
 // F3AE: # of positions on a line in SCREEN 0 (ini:39)
 extern uint8_t LINL40_ADDR LINL40;
+
+// keyboard buffer; each char entered via the keyboard ends up here
+extern char KEYBUF_ADDR KEYBUF[240];
 
 #define msxJiffy  JIFFY
 #define msxNewKey NEWKEY

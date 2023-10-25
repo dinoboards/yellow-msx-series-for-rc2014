@@ -17,6 +17,12 @@
 #include "transfers.h"
 #include <stdlib.h>
 
+typedef struct {
+
+  uint8_t  number : 3;
+  uint16_t max_packet_sizex : 10;
+} endpoint;
+
 #define COMMON_DEVICE_CONFIG                                                                                                       \
   usb_device_type type : 4;                                                                                                        \
   uint8_t         address : 4;                                                                                                     \
@@ -40,6 +46,11 @@ typedef struct {
   int8_t         buffer_wait;
   uint8_t        buffer[PRINTER_BUFFER_SIZE];
 } device_config_printer;
+
+typedef struct {
+  COMMON_DEVICE_CONFIG
+  endpoint_param endpoints[1]; // Isochronous
+} device_config_keyboard;
 
 extern usb_error usbdev_control_transfer(device_config *const device, const setup_packet *const cmd, uint8_t *const buffer);
 

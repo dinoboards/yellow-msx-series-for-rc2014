@@ -4,6 +4,9 @@
 #include "protocol.h"
 #include <string.h>
 
+usb_error op_identify_class_driver(_working *const working) __sdcccall(1);
+usb_error op_parse_endpoint(_working *const working) __sdcccall(1);
+
 void parse_endpoint_printer(device_config_printer *const printer_config, const endpoint_descriptor *const pEndpoint) __sdcccall(1) {
   endpoint_param *const ep = &printer_config->endpoints[0];
   ep->number               = pEndpoint->bEndpointAddress;
@@ -11,8 +14,13 @@ void parse_endpoint_printer(device_config_printer *const printer_config, const e
   ep->max_packet_sizex     = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
 }
 
-usb_error op_identify_class_driver(_working *const working) __sdcccall(1);
-usb_error op_parse_endpoint(_working *const working) __sdcccall(1);
+void parse_endpoint_keyboard(device_config_keyboard *const keyboard_config, const endpoint_descriptor const *pEndpoint)
+    __sdcccall(1) {
+  endpoint_param *const ep = &keyboard_config->endpoints[0];
+  ep->number               = pEndpoint->bEndpointAddress;
+  ep->toggle               = 0;
+  ep->max_packet_sizex     = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
+}
 
 usb_device_type identify_class_driver(_working *const working) {
   const interface_descriptor *const p = (const interface_descriptor *)working->ptr;
@@ -30,6 +38,9 @@ usb_device_type identify_class_driver(_working *const working) {
 
   if (p->bInterfaceClass == 9 && p->bInterfaceSubClass == 0 && p->bInterfaceProtocol == 0)
     return USB_IS_HUB;
+
+  if (p->bInterfaceClass == 3)
+    return USB_IS_KEYBOARD;
 
   return 0;
 }
@@ -51,8 +62,6 @@ usb_error op_endpoint_next(_working *const working) __sdcccall(1) {
 }
 
 usb_error op_parse_endpoint(_working *const working) __sdcccall(1) {
-  // _usb_state *const work_area = get_usb_work_area();
-
   const endpoint_descriptor *endpoint = (endpoint_descriptor *)working->ptr;
   device_config *const       device   = working->p_current_device;
 
@@ -66,6 +75,11 @@ usb_error op_parse_endpoint(_working *const working) __sdcccall(1) {
   case USB_IS_PRINTER: {
     parse_endpoint_printer((device_config_printer *)device, endpoint);
     break;
+
+  case USB_IS_KEYBOARD: {
+    parse_endpoint_keyboard((device_config_keyboard *)device, endpoint);
+    break;
+  }
   }
   }
 
@@ -121,6 +135,17 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
     if (dev_cfg == NULL)
       return USB_ERR_OUT_OF_MEMORY;
     dev_cfg->type             = USB_IS_PRINTER;
+    working->p_current_device = dev_cfg;
+
+    CHECK(configure_device(working, interface, dev_cfg));
+    break;
+  }
+
+  case USB_IS_KEYBOARD: {
+    device_config *dev_cfg = find_first_free();
+    if (dev_cfg == NULL)
+      return USB_ERR_OUT_OF_MEMORY;
+    dev_cfg->type             = USB_IS_KEYBOARD;
     working->p_current_device = dev_cfg;
 
     CHECK(configure_device(working, interface, dev_cfg));

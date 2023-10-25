@@ -176,12 +176,14 @@
  libraries/usb/transfers.h usbtst/usb-dev-info-ufi.h usbtst/nextor.h \
  libraries/usb/protocol.h usbtst/usb-dev-read-ufi.h \
  usbtst/usb-dev-write-ufi.h usbtst/usb-lun-info-ufi.h \
- libraries/usb/ch376.h libraries/usb/class_printer.h \
+ libraries/usb/ch376.h libraries/usb/class_hid.h \
+ libraries/usb/class_hid_keyboard.h libraries/usb/class_printer.h \
  libraries/usb/class_scsi.h libraries/usb/class_ufi.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
  libraries/usb/usb_state.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/usb/enumerate.h \
- libraries/usb/usb_trace.h libraries/usb/class_ufi.h
+ libraries/msxdos/msxdos.h libraries/usb/usb_trace.h \
+ libraries/usb/class_ufi.h
 ./bin/fdisk/screen_control.c.asm: fdisk/screen_control.c fdisk/screen_control.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/fdisk/driver_selection.c.asm: fdisk/driver_selection.c fdisk/driver_selection.h \
@@ -286,13 +288,16 @@
  libraries/delay/delay.h libraries/msxbios/system_vars.h
 ./bin/libraries/usb/transfers.c.asm: libraries/usb/transfers.c libraries/usb/transfers.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/delay/delay.h \
- libraries/msxbios/system_vars.h
+ libraries/msxbios/system_vars.h libraries/z80.h
 ./bin/libraries/usb/class_ufi.c.asm: libraries/usb/class_ufi.c libraries/usb/class_ufi.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h
+./bin/libraries/usb/class_hid.c.asm: libraries/usb/class_hid.c libraries/usb/class_hid.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h
 ./bin/libraries/usb/ch376.c.asm: libraries/usb/ch376.c libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
@@ -300,6 +305,8 @@
  libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h
+./bin/libraries/usb/class_hid_keyboard.c.asm: libraries/usb/class_hid_keyboard.c \
+ libraries/usb/class_hid_keyboard.h
 ./bin/libraries/usb/class_scsi.c.asm: libraries/usb/class_scsi.c libraries/usb/class_scsi.h \
  libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \

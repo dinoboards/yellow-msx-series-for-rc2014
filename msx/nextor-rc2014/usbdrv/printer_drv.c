@@ -1,6 +1,7 @@
 #include "class_printer.h"
 #include "print.h"
 #include "work-area.h"
+#include "z80.h"
 #include <delay.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -11,11 +12,16 @@
 // overload the use of the system var LOWLIM (used during tape load/save) to
 // optmised interrupt handle when print buffer is empty.
 
-void drv_timi(void) __sdcccall(1) {
+void drv_timi_printer(void) {
   if (!(LOWLIM & 0x80))
     return;
 
   device_config_printer *const printer_config = (device_config_printer *)find_device_config(USB_IS_PRINTER);
+
+  if (printer_config == NULL) {
+    LOWLIM &= 0x7F;
+    return;
+  }
 
   if (printer_config->buffer_length == 0) {
     printer_config->buffer_wait = 0;
@@ -74,7 +80,7 @@ typedef struct {
 jump_hook H_LPTO_ADDR         H_LPTO;
 jump_hook_disable H_LPTS_ADDR H_LPTS;
 
-void install_printer(void) __sdcccall(1) {
+void install_printer(void) {
   device_config_printer *const printer_config = (device_config_printer *)find_device_config(USB_IS_PRINTER);
 
   const bool hasPrinter = printer_config != NULL;
