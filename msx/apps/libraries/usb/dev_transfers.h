@@ -52,6 +52,11 @@ typedef struct {
   endpoint_param endpoints[1]; // Isochronous
 } device_config_keyboard;
 
+typedef struct {
+  COMMON_DEVICE_CONFIG
+  endpoint_param endpoints[2]; // Bulk in and out
+} device_config_ftdi;
+
 extern usb_error usbdev_control_transfer(device_config *const device, const setup_packet *const cmd, uint8_t *const buffer);
 
 extern usb_error usbdev_bulk_out_transfer(device_config *const device, const uint8_t *const buffer, const uint16_t buffer_size);

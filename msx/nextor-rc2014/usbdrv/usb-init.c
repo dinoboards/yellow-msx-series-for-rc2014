@@ -73,9 +73,6 @@ void print_disk_size(const uint8_t device_index) {
 }
 
 bool state_devices(const _usb_state *const boot_area) __z88dk_fastcall {
-  const bool hasCdc      = find_device_config(USB_IS_CDC) != NULL;
-  const bool hasPrinter  = find_device_config(USB_IS_PRINTER) != NULL;
-  const bool hasKeyboard = find_device_config(USB_IS_KEYBOARD) != NULL;
 
   uint8_t storage_count = 0;
   uint8_t index         = 1; // MAX_NUMBER_OF_STORAGE_DEVICES;
@@ -89,14 +86,21 @@ bool state_devices(const _usb_state *const boot_area) __z88dk_fastcall {
   }
   print_string("\r\n");
 
+  const bool hasCdc = find_device_config(USB_IS_CDC) != NULL;
   if (hasCdc)
     print_string("    CDC\r\n");
 
+  const bool hasPrinter = find_device_config(USB_IS_PRINTER) != NULL;
   if (hasPrinter)
     print_string("    PRINTER\r\n");
 
+  const bool hasKeyboard = find_device_config(USB_IS_KEYBOARD) != NULL;
   if (hasKeyboard)
     print_string("    KEYBOARD\r\n");
+
+  const bool hasFTDI = find_device_config(USB_IS_FTDI) != NULL;
+  if (hasFTDI)
+    print_string("    FTDI\r\n");
 
   do {
     const device_config *const storage_device = get_usb_device_config(index);

@@ -7,6 +7,7 @@ const uint8_t device_config_sizes[_USB_LAST_DEVICE_TYPE] = {
     sizeof(device_config),          /* USB_IS_CDC          = 3 */
     sizeof(device_config_printer),  /* USB_IS_PRINTER      = 4 */
     sizeof(device_config_keyboard), /* USB_IS_KEYBOARD    = 5 */
+    sizeof(device_config_ftdi),     /* USB_IS_FTDI      = 6 */
 };
 
 // always usb work area

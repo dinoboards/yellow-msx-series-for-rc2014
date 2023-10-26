@@ -42,6 +42,9 @@ usb_device_type identify_class_driver(_working *const working) {
   if (p->bInterfaceClass == 3)
     return USB_IS_KEYBOARD;
 
+  if (working->desc.idVendor == 0x403 && working->desc.idProduct == 0x6001)
+    return USB_IS_FTDI;
+
   return 0;
 }
 
@@ -68,7 +71,7 @@ usb_error op_parse_endpoint(_working *const working) __sdcccall(1) {
   switch (working->usb_device) {
   case USB_IS_FLOPPY:
   case USB_IS_MASS_STORAGE: {
-    parse_endpoint_storage(device, endpoint);
+    parse_endpoints(device, endpoint);
     break;
   }
 
@@ -78,6 +81,11 @@ usb_error op_parse_endpoint(_working *const working) __sdcccall(1) {
 
   case USB_IS_KEYBOARD: {
     parse_endpoint_keyboard((device_config_keyboard *)device, endpoint);
+    break;
+  }
+
+  case USB_IS_FTDI: {
+    parse_endpoints(device, endpoint);
     break;
   }
   }
@@ -215,7 +223,7 @@ usb_error enumerate_all_devices(void) {
           -> op_identify_class_driver
             -> op_capture_driver_interface (increment index)
               -> op_parse_endpoint
-                -> parse_endpoint_storage
+                -> parse_endpoints
                 -> parse_endpoint_hub
                 -> op_endpoint_next
                   -> op_parse_endpoint -^ (install driver endpoint)

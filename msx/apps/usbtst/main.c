@@ -84,6 +84,7 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   const bool hasCdc      = find_device_config(USB_IS_CDC) != NULL;
   const bool hasPrinter  = find_device_config(USB_IS_PRINTER) != NULL;
   const bool hasKeyboard = find_device_config(USB_IS_KEYBOARD) != NULL;
+  const bool hasFTDI     = find_device_config(USB_IS_FTDI) != NULL;
 
   uint8_t   index = MAX_NUMBER_OF_STORAGE_DEVICES;
   usb_error result;
@@ -91,6 +92,10 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   uint8_t buffer[512];
 
   print_string("USB: (%d)\r\n", work_area->count_of_detected_usb_devices);
+
+  if (hasFTDI) {
+    print_string("FTDI\r\n");
+  }
 
   if (hasCdc)
     print_string("CDC\r\n");
@@ -282,7 +287,7 @@ void simulate_boot_phase_2(const uint16_t size) {
   __asm__("EI");
   memcpy(usb_state, boot_state, boot_state->bytes_required);
 
-  if (!usb_state->connected)
+  if (!boot_state->connected)
     return;
 
   state_devices(usb_state);

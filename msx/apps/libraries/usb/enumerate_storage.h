@@ -3,6 +3,6 @@
 
 #include "protocol.h"
 
-extern void parse_endpoint_storage(device_config *const storage_dev, const endpoint_descriptor const *pEndpoint);
+extern void parse_endpoints(device_config *const storage_dev, const endpoint_descriptor const *pEndpoint);
 
 #endif
