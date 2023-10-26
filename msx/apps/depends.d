@@ -294,13 +294,12 @@
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
- libraries/delay/delay.h libraries/msxbios/system_vars.h
+ libraries/delay/delay.h libraries/msxbios/system_vars.h libraries/z80.h
 ./bin/libraries/usb/class_hid.c.asm: libraries/usb/class_hid.c libraries/usb/class_hid.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h
 ./bin/libraries/usb/ch376.c.asm: libraries/usb/ch376.c libraries/usb/ch376.h \
- libraries/usb/ch376inc.h libraries/delay/delay.h \
- libraries/msxbios/system_vars.h
+ libraries/usb/ch376inc.h
 ./bin/libraries/usb/protocol.c.asm: libraries/usb/protocol.c libraries/usb/protocol.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
@@ -310,7 +309,8 @@
 ./bin/libraries/usb/class_scsi.c.asm: libraries/usb/class_scsi.c libraries/usb/class_scsi.h \
  libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- libraries/usb/usb_state.h libraries/msxbios/system_vars.h
+ libraries/usb/usb_state.h libraries/msxbios/system_vars.h \
+ libraries/z80.h
 ./bin/libraries/usb/format_mapping.c.asm: libraries/usb/format_mapping.c \
  libraries/usb/format_mapping.h
 ./bin/libraries/msxbios/system_vars.c.asm: libraries/msxbios/system_vars.c \

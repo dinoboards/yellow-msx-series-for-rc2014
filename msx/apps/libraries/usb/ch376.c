@@ -1,5 +1,4 @@
 #include "ch376.h"
-#include <delay.h>
 #include <stdbool.h>
 
 void ch_command(const uint8_t command) __z88dk_fastcall {

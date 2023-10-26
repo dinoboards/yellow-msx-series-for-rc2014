@@ -129,7 +129,7 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
         result = usbdev_data_in_transfer_ep0((device_config *)keyboard_config, buffer, 8);
         ch_configure_nak_retry_3s();
         if (result == 0) {
-          const char c = scancode_to_char(p_report->keyCode[0]);
+          const char c = scancode_to_char(p_report->bModifierKeys, p_report->keyCode[0]);
           if (c >= 32 && c < 127)
             printf("%c: ", c);
           else

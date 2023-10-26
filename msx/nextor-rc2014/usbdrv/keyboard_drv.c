@@ -37,7 +37,7 @@ void drv_timi_keyboard(void) {
   const usb_error result = usbdev_data_in_transfer_ep0((device_config *)keyboard_config, (uint8_t *)report, 8);
   ch_configure_nak_retry_3s();
   if (result == 0) {
-    const char c = scancode_to_char(report.keyCode[0]);
+    const char c = scancode_to_char(report.bModifierKeys, report.keyCode[0]);
     key_put_into_buf(c);
   }
 
