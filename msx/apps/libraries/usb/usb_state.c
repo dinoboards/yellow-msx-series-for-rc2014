@@ -1,11 +1,12 @@
 #include "usb_state.h"
 
-const uint8_t device_config_sizes[] = {
-    0,                             /* USB_NOT_SUPPORTED   = 0 */
-    sizeof(device_config),         /* USB_IS_FLOPPY       = 1 */
-    sizeof(device_config),         /* USB_IS_MASS_STORAGE = 2 */
-    sizeof(device_config),         /* USB_IS_CDC          = 3 */
-    sizeof(device_config_printer), /* USB_IS_PRINTER      = 4 */
+const uint8_t device_config_sizes[_USB_LAST_DEVICE_TYPE] = {
+    0,                              /* USB_NOT_SUPPORTED   = 0 */
+    sizeof(device_config),          /* USB_IS_FLOPPY       = 1 */
+    sizeof(device_config),          /* USB_IS_MASS_STORAGE = 2 */
+    sizeof(device_config),          /* USB_IS_CDC          = 3 */
+    sizeof(device_config_printer),  /* USB_IS_PRINTER      = 4 */
+    sizeof(device_config_keyboard), /* USB_IS_KEYBOARD    = 5 */
 };
 
 // always usb work area

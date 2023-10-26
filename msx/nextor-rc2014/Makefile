@@ -39,7 +39,7 @@ $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014d
 		echo -e "Size: $$filesize"
 		exit 1
 	fi
-	echo "Assembled $@"
+	echo "Assembled $@ ($$filesize bytes)"
 
 $(BINDIR)unapi-nextor-id.dat: unapi-nextor-id.asm
 	@mkdir -p $(BINDIR)

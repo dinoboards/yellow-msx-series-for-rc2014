@@ -44,7 +44,8 @@ $(BIN)%.com:
 	@@mkdir -p $(dir $@)
 	$(eval $(notdir $@).crt_enable_commandline ?= 0)
 	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $(filter-out %.inc,$(filter-out %.lib,$^)) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
-	echo "Linked $(notdir $@) from $(notdir $^)"
+	filesize=$$(stat -c%s "$@")
+	echo "Linked $(notdir $@) ($$filesize bytes)"
 
 ZSDCPP_FLAGS=-iquote"." -isystem"${ZCCCFG}/../../include/_DEVELOPMENT/sdcc" $(LIBS)
 

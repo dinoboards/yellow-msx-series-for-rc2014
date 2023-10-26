@@ -120,50 +120,17 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   working->p_current_device = NULL;
 
   switch (working->usb_device) {
-  case USB_IS_FLOPPY:
-  case USB_IS_MASS_STORAGE: {
-    device_config *dev_cfg = find_first_free();
-    if (dev_cfg == NULL)
-      return USB_ERR_OUT_OF_MEMORY;
-    working->p_current_device = dev_cfg;
-    CHECK(configure_device(working, interface, dev_cfg));
-    break;
-  }
-
-  case USB_IS_PRINTER: {
-    device_config *dev_cfg = find_first_free();
-    if (dev_cfg == NULL)
-      return USB_ERR_OUT_OF_MEMORY;
-    dev_cfg->type             = USB_IS_PRINTER;
-    working->p_current_device = dev_cfg;
-
-    CHECK(configure_device(working, interface, dev_cfg));
-    break;
-  }
-
-  case USB_IS_KEYBOARD: {
-    device_config *dev_cfg = find_first_free();
-    if (dev_cfg == NULL)
-      return USB_ERR_OUT_OF_MEMORY;
-    dev_cfg->type             = USB_IS_KEYBOARD;
-    working->p_current_device = dev_cfg;
-
-    CHECK(configure_device(working, interface, dev_cfg));
-    break;
-  }
-
-  case USB_IS_CDC: {
-    device_config *dev_cfg = find_first_free();
-    if (dev_cfg == NULL)
-      return USB_ERR_OUT_OF_MEMORY;
-    dev_cfg->type             = USB_IS_CDC;
-    working->p_current_device = dev_cfg;
-    CHECK(configure_device(working, interface, dev_cfg));
-    break;
-  }
-
   case USB_IS_HUB: {
     CHECK(op_capture_hub_driver_interface(working))
+    break;
+  }
+
+  default: {
+    device_config *dev_cfg = find_first_free();
+    if (dev_cfg == NULL)
+      return USB_ERR_OUT_OF_MEMORY;
+    working->p_current_device = dev_cfg;
+    CHECK(configure_device(working, interface, dev_cfg));
     break;
   }
   }

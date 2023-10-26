@@ -63,7 +63,8 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 $(BINDIR)%.bin:
 	@mkdir -p $(dir $@)
 	$(ZCC) $(filter-out %.inc,$(filter-out %.lib,$^)) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
-	echo "Linked $(notdir $@) from $(notdir $^)"
+	filesize=$$(stat -c%s "$@")
+	echo "Linked $(notdir $@) ($$filesize bytes)"
 
 define assemble
 	@mkdir -p $(dir $@)
@@ -101,6 +102,7 @@ $(BINDIR)libraries/delay/%.c.asm: ../apps/libraries/delay/%.c; $(compile)
 $(BINDIR)libraries/delay/%.o: $(BINDIR)libraries/delay/%.asm; $(assemble)
 
 .PRECIOUS: $(BINDIR)libraries/usb/%.c.asm
+.PRECIOUS: $(BINDIR)libraries/usb/%.c.o
 $(BINDIR)libraries/usb/%.c.asm: ../apps/libraries/usb/%.c; $(compile)
 $(BINDIR)libraries/usb/%.o: ../apps/libraries/usb/%.asm; $(assemble)
 
