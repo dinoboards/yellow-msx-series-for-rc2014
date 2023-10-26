@@ -1,4 +1,9 @@
 #include "class_printer.h"
+
+/*
+
+For the USB/Centronics adapters tested against, these following operations dont seem to be implemented
+
 #include "protocol.h"
 #include <string.h>
 
@@ -45,7 +50,7 @@ usb_error prt_soft_reset(const device_config_printer *const dev) {
 
   return result;
 }
-
+*/
 usb_error prt_send(device_config_printer *dev, const uint8_t *text, const uint8_t length) {
   usb_error result;
 
