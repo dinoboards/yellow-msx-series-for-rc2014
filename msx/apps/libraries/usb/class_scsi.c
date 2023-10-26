@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <system_vars.h>
+#include <z80.h>
 
 _scsi_command_block_wrapper scsi_command_block_wrapper = {{0x55, 0x53, 0x42, 0x43}, {0, 0}, 0, 0, 0, 0};
 
@@ -17,6 +18,8 @@ do_scsi_cmd(device_config *const dev, _scsi_command_block_wrapper *const cbw, vo
 
   usb_error result;
 
+  EI;
+  HALT;
   cbw->dCBWTag[0] = JIFFY;
 
   if (!send)

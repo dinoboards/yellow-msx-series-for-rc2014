@@ -8,6 +8,8 @@
 CH376_DATA_PORT 	EQU	0x88
 CH376_COMMAND_PORT	EQU 	0x89
 
+DELAY_FACTOR		EQU	60
+
 ; HL -> timeout
 ; returns
 ; L -> error code
@@ -16,29 +18,28 @@ CH376_COMMAND_PORT	EQU 	0x89
 ; Function ch_wait_int_and_get_status
 ; ---------------------------------
 _ch_wait_int_and_get_status:
-	ld	de, (_JIFFY)
-	add	hl, de
-	ex	de, hl
+	ld	bc, DELAY_FACTOR
 
-l_ch_wait_int_and_get_status_00102:
+keep_waiting:
 	in	a, (CH376_COMMAND_PORT)
 	rlca
 	jp	NC, _ch_get_status
 
-	ld	hl, (_JIFFY)
-	ld	a, e
-	sub	a, l
-	ld	a, d
-	sbc	a, h
-	jp	P, l_ch_wait_int_and_get_status_00102
+	dec	bc
+	ld	a, b
+	or	c
+	jr	NZ, keep_waiting
+
+	dec	hl
+	ld	a, h
+	or	l
+	jr	NZ, keep_waiting
 
 	in	a, (CH376_COMMAND_PORT)
 	bit	4, a		 ; CH376_COMMAND_PORT & PARA_STATE_BUSY
-	jr	Z, l_ch_wait_int_and_get_status_00106
 
 	ld	l, 0x0c 	; USB_ERR_CH376_BLOCKED;
-	ret
+	ret	nz
 
-l_ch_wait_int_and_get_status_00106:
 	ld	l, 0x0d 	; USB_ERR_CH376_TIMEOUT
 	ret

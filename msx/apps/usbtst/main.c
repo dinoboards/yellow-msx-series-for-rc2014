@@ -238,14 +238,18 @@ uint16_t simulate_boot_phase_1(void) {
 
   ch_cmd_reset_all();
 
-  if (!ch_probe())
-    return NULL;
+  if (!ch_probe()) {
+    print_string("CH376:           NOT PRESENT\r\n");
+    goto finally;
+  }
 
   boot_state->connected = true;
 
-  boot_state->version = ch_cmd_get_ic_version();
+  print_string("CH376:           PRESENT (VER ");
+  print_hex(ch_cmd_get_ic_version());
+  print_string(")\r\n");
 
-  printf("USB:             SCANNING...");
+  print_string("USB:             SCANNING...");
 
   usb_host_bus_reset();
 
@@ -256,32 +260,30 @@ uint16_t simulate_boot_phase_1(void) {
       enumerate_all_devices();
 
       initialise_scsi_devices();
-      printf(ERASE_LINE);
 
-      const uint16_t last = (uint16_t)find_first_free();
-
-      return last - (uint16_t)boot_state;
+      goto finally;
     }
   }
 
-  printf(ERASE_LINE);
-  return NULL;
+finally:
+  print_string(ERASE_LINE);
+
+  const uint16_t last = (uint16_t)find_first_free();
+
+  boot_state->bytes_required = (last - (uint16_t)boot_state) + 1;
+
+  return boot_state->bytes_required;
 }
 
 void simulate_boot_phase_2(const uint16_t size) {
   (void)size;
   _usb_state *const boot_state = get_usb_boot_area();
   _usb_state *const usb_state  = get_usb_work_area();
-  memcpy(usb_state, boot_state, sizeof(_usb_state));
+  __asm__("EI");
+  memcpy(usb_state, boot_state, boot_state->bytes_required);
 
-  if (!usb_state->connected) {
-    printf("CH376:           NOT PRESENT\r\n");
+  if (!usb_state->connected)
     return;
-  }
-
-  printf("CH376:           PRESENT (VER ");
-  printf("%d", usb_state->version);
-  printf(")\r\n");
 
   state_devices(usb_state);
 

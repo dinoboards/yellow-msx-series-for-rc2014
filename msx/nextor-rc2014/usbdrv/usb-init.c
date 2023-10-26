@@ -149,11 +149,10 @@ uint16_t boot_phase_1(void) {
 
   if (!ch_probe()) {
     print_string("CH376:           NOT PRESENT\r\n");
-    return 0;
+    goto finally;
   }
 
   boot_state->connected = true;
-  // boot_state->version   = ch_cmd_get_ic_version();
 
   print_string("CH376:           PRESENT (VER ");
   print_hex(ch_cmd_get_ic_version());
@@ -170,18 +169,19 @@ uint16_t boot_phase_1(void) {
       enumerate_all_devices();
 
       initialise_scsi_devices();
-      print_string(ERASE_LINE);
 
-      const uint16_t last = (uint16_t)find_first_free();
-
-      boot_state->bytes_required = (last - (uint16_t)boot_state) + 1;
-
-      return boot_state->bytes_required;
+      goto finally;
     }
   }
 
+finally:
   print_string(ERASE_LINE);
-  return 0;
+
+  const uint16_t last = (uint16_t)find_first_free();
+
+  boot_state->bytes_required = (last - (uint16_t)boot_state) + 1;
+
+  return boot_state->bytes_required;
 }
 
 /**

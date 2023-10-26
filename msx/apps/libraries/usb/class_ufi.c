@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <z80.h>
 
 const ufi_request_sense_command          _ufi_cmd_request_sense          = {0x03, 0, 0, 0, 0, 18, {0, 0, 0, 0, 0, 0, 0}};
 const ufi_read_format_capacities_command _ufi_cmd_read_format_capacities = {0x23, 0, 0, {0, 0, 0, 0, 0}, {0, 12}, {0, 0, 0}};
@@ -15,14 +16,14 @@ uint8_t wait_for_device_ready(device_config *const storage_device, const uint16_
   usb_error                  result;
   ufi_request_sense_response sense;
 
+  EI;
   int16_t timeout = get_future_time(from_ms(timeout_period));
 
   do {
     memset(&sense, 0, sizeof(sense));
     result = ufi_test_unit_ready(storage_device, &sense);
 
-    // trace_printf("wait_for_device_ready: %d, %02X %02X %02X\r\n", result, sense.sense_key, sense.asc, sense.ascq);
-
+    EI;
     if ((result == USB_ERR_OK && sense.sense_key == 0) || is_time_past(timeout))
       break;
 

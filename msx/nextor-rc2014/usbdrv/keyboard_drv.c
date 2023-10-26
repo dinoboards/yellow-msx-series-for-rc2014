@@ -22,9 +22,14 @@ void key_put_into_buf(const uint8_t code) __z88dk_fastcall {
 
 void drv_timi_keyboard(void) {
   device_config_keyboard *const keyboard_config = (device_config_keyboard *)find_device_config(USB_IS_KEYBOARD);
-
   if (keyboard_config == NULL)
     return;
+
+  _usb_state *const p = get_usb_work_area();
+  if (p->active)
+    return;
+
+  p->active = true;
 
   keyboard_report report;
 
@@ -35,6 +40,8 @@ void drv_timi_keyboard(void) {
     const char c = scancode_to_char(report.keyCode[0]);
     key_put_into_buf(c);
   }
+
+  p->active = false;
 }
 
 void install_keyboard(void) {

@@ -20,11 +20,11 @@ void ch_command(const uint8_t command) __z88dk_fastcall {
 
 extern usb_error ch_wait_int_and_get_status(const int16_t timeout) __z88dk_fastcall;
 
-usb_error ch_long_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(from_ms_50hz(5000)); }
+usb_error ch_long_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(5000); }
 
-usb_error ch_short_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(from_ms_50hz(100)); }
+usb_error ch_short_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(100); }
 
-usb_error ch_very_short_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(from_ms_50hz(10)); }
+usb_error ch_very_short_wait_int_and_get_status(void) { return ch_wait_int_and_get_status(10); }
 
 usb_error ch_get_status(void) {
   ch_command(CH_CMD_GET_STATUS);
