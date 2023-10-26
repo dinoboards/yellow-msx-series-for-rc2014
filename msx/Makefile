@@ -10,6 +10,7 @@ all: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcb
 
 pmsxsysromimages:
 	@$(MAKE) -j -O msxsysromimages --no-print-directory
+	printf "Built bin/msxsyssrc-rc2014-<country>-<with>-rtc.rom (s)\r\n\r\n"
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/turbo-cpu-mwait.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed
 
@@ -70,7 +71,7 @@ rom-image-pal: bin/cbios.nextor.rom cbios ./rc2014-extended/bin/rc2014-extended.
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1  seek=3
 	dd status=none conv=notrunc if=./bin/cbios.nextor.rom             	    			of=bin/yellow-msx-pal-rc2104.rom bs=16k count=27 seek=4
 	dd status=none conv=notrunc if=./rc2014-extended/bin/rc2014-extended.rom		 	of=bin/yellow-msx-pal-rc2104.rom bs=16k count=1  seek=31
-	# printf 'Built bin/yellow-msx-pal-rc2104.rom\r\n'
+	printf 'Built bin/yellow-msx-pal-rc2104.rom\r\n'
 
 .PHONY: rom-image-ntsc
 rom-image-ntsc: bin/cbios.nextor.rom cbios ./rc2014-extended/bin/rc2014-extended.rom
@@ -81,7 +82,7 @@ rom-image-ntsc: bin/cbios.nextor.rom cbios ./rc2014-extended/bin/rc2014-extended
 	dd status=none conv=notrunc if=./cbios/derived/bin/cbios_sub.rom        			of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1  seek=3
 	dd status=none conv=notrunc if=./bin/cbios.nextor.rom    			     						of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=27 seek=4
 	dd status=none conv=notrunc if=./rc2014-extended/bin/rc2014-extended.rom		 	of=bin/yellow-msx-ntsc-rc2104.rom bs=16k count=1  seek=31
-	# printf 'Built bin/yellow-msx-ntsc-rc2104.rom\r\n'
+	printf 'Built bin/yellow-msx-ntsc-rc2104.rom\r\n'
 
 .PHONY: rom-image-nms8250
 rom-image-nms8250: nextor-rc2014 cbios systemroms/nms8250_basic-bios2.rom systemroms/nms8250_msx2sub.rom ./rc2014-extended/bin/rc2014-extended.rom

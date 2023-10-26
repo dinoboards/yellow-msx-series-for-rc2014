@@ -30,6 +30,7 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm rc2014dr.inc.asm
 $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc.asm version.asm ch376drv.asm $(BINDIR)usbdrv.bin drvend.asm
 	@mkdir -p $(BINDIR)
 	$(ASM) rc2014dr.asm ch376drv.asm rc2014dr.inc.asm drvend.asm
+	basedrv_filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")
 	cat $(BINDIR)rc2014dr.bin $(BINDIR)usbdrv.bin > $(BINDIR)tmp.bin
 	rm $(BINDIR)rc2014dr.bin
 	cp $(BINDIR)tmp.bin $(BINDIR)rc2014dr.bin
@@ -39,7 +40,10 @@ $(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014d
 		echo -e "Size: $$filesize"
 		exit 1
 	fi
+	usbdrv_filesize=$$(stat -c%s "$(BINDIR)usbdrv.bin")
 	echo "Assembled $@ ($$filesize bytes)"
+	echo "          basdrv.bin ($$basedrv_filesize bytes)"
+	echo "          usbdrv.bin ($$usbdrv_filesize bytes)"
 
 $(BINDIR)unapi-nextor-id.dat: unapi-nextor-id.asm
 	@mkdir -p $(BINDIR)
@@ -108,6 +112,10 @@ ifndef VERSION
 override VERSION=$$(date +"%m-%d %H-%M")
 endif
 
-.PHONY: version.asm
-version.asm:
-	@echo -e "INFO_S:			DB	10, 13, \"MSX ON RC2014 ($(VERSION))\", 10, 13\r\n" > "./version.asm"
+.PHONY: $(BINDIR)version.asm
+$(BINDIR)version.asm:
+	@echo -e "INFO_S:			DB	10, 13, \"MSX ON RC2014 ($(VERSION))\", 10, 13\r\n" > "$(BINDIR)version.asm"
+
+version.asm: $(BINDIR)version.asm
+	@echo "ROM version $(VERSION)"
+	cmp --silent "$(BINDIR)version.asm" "./version.asm" || echo -e "INFO_S:			DB	10, 13, \"MSX ON RC2014 ($(VERSION))\", 10, 13\r\n" > "./version.asm"
