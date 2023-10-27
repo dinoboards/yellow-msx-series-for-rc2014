@@ -6,6 +6,7 @@ const char *report_file_name;
 char        floppy_drive_letter;
 subcommands subcommand;
 bool        quick_format;
+uint32_t    baud_rate;
 
 const unsigned char *usage = "Usage: usbctrl <subcommand> ... <options>\r\n\n"
                              "inspected and managed connected\r\n"
@@ -16,7 +17,9 @@ const unsigned char *usage = "Usage: usbctrl <subcommand> ... <options>\r\n\n"
                              " floppy help \r\n"
                              "  display floppy commands\r\n"
                              " printer help\r\n"
-                             "  display printer commands\r\n";
+                             "  display printer commands\r\n"
+                             " ftdi help\r\n"
+                             "  display ftdi commands\r\n";
 
 const unsigned char *floppy_help = "Usage: usbctrl floppy ...\r\n\n"
                                    " floppy report\r\n"
@@ -32,6 +35,10 @@ const unsigned char *floppy_help = "Usage: usbctrl floppy ...\r\n\n"
 const unsigned char *printer_help = "Usage: usbctrl printer ....\r\n\n"
                                     " printer check\r\n"
                                     "   send sample text to printer\r\n";
+
+const unsigned char *ftdi_help = "Usage: usbctrl ftdi\r\n\n"
+                                 " ftdi check\r\n"
+                                 "   check ftdi sio\r\n";
 
 #define abort_with_help() abort_with_help_msg(usage);
 
@@ -204,6 +211,28 @@ arg_search arg_command_printer_check(const char **const argv, const int argc) __
   return arg_search_abort;
 }
 
+arg_search arg_ftdi_help(const char **const argv) __sdcccall(1) {
+  if (arg_is_help_command("ftdi", argv))
+    return abort_with_help_msg(ftdi_help);
+
+  return arg_search_continue;
+}
+
+arg_search arg_command_ftdi_check(const char **const argv, const int argc) __sdcccall(1) {
+  if (argc < 3)
+    return arg_search_continue;
+
+  const char *floppy_action = argv[2];
+  if (strncmp(floppy_action, "check", 6) != 0)
+    return arg_search_continue;
+
+  if (argc != 3)
+    return abort_with_help();
+
+  subcommand = cmd_ftdi_check;
+  return arg_search_abort;
+}
+
 arg_search arg_command_floppy_dump(const char **const argv, const int argc) __sdcccall(1) {
   if (argc < 3)
     return arg_search_continue;
@@ -292,10 +321,25 @@ arg_search check_printer_commands(const int argc, const char **const argv) __sdc
   return arg_search_continue;
 }
 
+arg_search check_ftdi_commands(const int argc, const char **const argv) __sdcccall(1) {
+  arg_search i;
+
+  i = arg_ftdi_help(argv);
+  if (i == arg_search_abort)
+    return i;
+
+  i = arg_command_ftdi_check(argv, argc);
+  if (i == arg_search_abort)
+    return i;
+
+  return arg_search_continue;
+}
+
 arg_search process_cli_arguments(int argc, const char **const argv) __sdcccall(1) {
   report_file_name = NULL;
   subcommand       = cmd_none;
   quick_format     = false;
+  baud_rate        = 4800;
 
   for (uint8_t i = argc - 1; i > 1; i++) {
     arg_help_msg(i, argv);
@@ -325,6 +369,9 @@ arg_search process_cli_arguments(int argc, const char **const argv) __sdcccall(1
         return arg_search_abort;
     } else if (strcmp(arg_subcommand, "printer") == 0) {
       if (check_printer_commands(argc, argv) == arg_search_abort)
+        return arg_search_abort;
+    } else if (strcmp(arg_subcommand, "ftdi") == 0) {
+      if (check_ftdi_commands(argc, argv) == arg_search_abort)
         return arg_search_abort;
     }
   }

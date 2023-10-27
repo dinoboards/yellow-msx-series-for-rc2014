@@ -23,7 +23,8 @@ typedef enum {
   cmd_floppy_check,
   cmd_floppy_report_drive,
   cmd_floppy_dump,
-  cmd_printer_check
+  cmd_printer_check,
+  cmd_ftdi_check,
 } subcommands;
 
 typedef enum { cmd_unknown, cmd_report, cmd_floppy, cmd_printer, cmd_ftdi } main_commands;
