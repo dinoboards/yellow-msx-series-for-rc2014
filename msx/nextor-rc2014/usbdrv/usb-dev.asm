@@ -3,12 +3,14 @@ EXTBIO_RC2014_USB_GET_PRESENT_FN		EQU	0x81
 EXTBIO_RC2014_USB_CONTROL_TRANSFER_FN		EQU	0x82
 EXTBIO_RC2014_USB_OUT_TRANSFER_FN		EQU	0x83
 EXTBIO_RC2014_USB_IN_TRANSFER_FN		EQU	0x84
+EXTBIO_RC2014_USB_IN_TRANSFER_N_FN		EQU	0x85
 
 ;uint32_t extbio_rc2014(const uint16_t hl, const uint16_t de) __naked {
 	PUBLIC	_extbio_rc2014
 	EXTERN	_usb_control_transfer_external
 	EXTERN	_usb_data_out_transfer_external
 	EXTERN	_usb_data_in_transfer_external
+	EXTERN	_usb_data_in_transfer_n_external
 	EXTERN	_extbio_rc2014_usb_get_present
 
 _extbio_rc2014:
@@ -22,6 +24,8 @@ _extbio_rc2014:
 	JR	Z, __extbio_rc2014_usb_data_out_transfer
 	CP	EXTBIO_RC2014_USB_IN_TRANSFER_FN
 	JR	Z, __extbio_rc2014_usb_data_in_transfer
+	CP	EXTBIO_RC2014_USB_IN_TRANSFER_N_FN
+	JR	Z, __extbio_rc2014_usb_data_in_transfer_n
 
 	POP	AF
 	RET
@@ -100,6 +104,27 @@ loop_data_in:
 
 	JR	extbio_handled
 
+__extbio_rc2014_usb_data_in_transfer_n:
+	POP	AF
+
+	; duplicate 7 stack bytes
+	ld	bc, 7
+	add	hl, bc
+	ld	b, c
+loop_data_in_n:
+	dec	hl
+	ld	a, (hl)
+	push	af
+	inc	sp
+	djnz	loop_data_in_n
+
+	call	_usb_data_in_transfer_n_external
+	pop	af
+	pop	af
+	pop	af
+	inc	sp
+
+	JR	extbio_handled
 ; ---------------------------
 
 	PUBLIC	_drv_direct1

@@ -137,9 +137,9 @@
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
  libraries/usb/usb_state.h libraries/usb/class_printer.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h \
- libraries/fusion/msx_fusion.h libraries/usb/protocol.h \
- libraries/usb/vendor_ftdi.h libraries/usb/ch376.h \
- libraries/usb/dev_transfers.h
+ libraries/fusion/msx_fusion.h libraries/msxdos/msxdos.h \
+ libraries/usb/protocol.h libraries/usb/vendor_ftdi.h \
+ libraries/usb/ch376.h libraries/usb/dev_transfers.h
 ./bin/usbctrl/read_and_write_sectors.c.asm: usbctrl/read_and_write_sectors.c \
  usbctrl/read_and_write_sectors.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -364,6 +364,7 @@
 ./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_control_transfer.o: ./libraries/extbio/extbio_usb_control_transfer.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_data_in_transfer_n.o: ./libraries/extbio/extbio_usb_data_in_transfer_n.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
 ./bin/libraries/fusion/interrupts.o: ./libraries/fusion/interrupts.asm

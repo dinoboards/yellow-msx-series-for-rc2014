@@ -16,6 +16,7 @@ typedef struct {
 
 typedef enum {
   cmd_none,
+  cmd_floppy_help,
   cmd_report_all_devices,
   cmd_floppy_report,
   cmd_floppy_format,
@@ -26,11 +27,16 @@ typedef enum {
   cmd_ftdi_check,
 } subcommands;
 
+typedef enum { cmd_unknown, cmd_report, cmd_floppy, cmd_printer, cmd_ftdi } main_commands;
+
+typedef enum { arg_search_continue = 0, arg_search_abort = 1 } arg_search;
+
 extern const char *report_file_name;
 extern char        floppy_drive_letter;
 extern bool        quick_format;
 extern subcommands subcommand;
+extern uint32_t    baud_rate;
 
-void process_cli_arguments(const int argc, const char **argv) __sdcccall(1);
+arg_search process_cli_arguments(const int argc, const char **argv) __sdcccall(1);
 
 #endif

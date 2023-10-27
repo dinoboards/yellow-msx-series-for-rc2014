@@ -32,6 +32,7 @@ typedef enum {
   USB_INT_CONNECT                     = 0x81,
   USB_BAD_ADDRESS                     = 0x82,
   USB_ERR_OUT_OF_MEMORY               = 0x83,
+  USB_ERR_BUFF_TO_LARGE               = 0x84
 } usb_error;
 
 typedef enum { CH_NAK_RETRY_DONT = 0b00, CH_NAK_RETRY_INDEFINITE = 0b10, CH_NAK_RETRY_3S = 0b11 } ch_nak_retry_type;
@@ -149,6 +150,7 @@ extern usb_error ch_control_transfer_request_descriptor(const uint8_t descriptor
 extern usb_error ch_control_transfer_set_address(const uint8_t device_address) __z88dk_fastcall;
 extern usb_error ch_control_transfer_set_config(const uint8_t config_value) __z88dk_fastcall;
 extern usb_error ch_data_in_transfer(uint8_t *buffer, int16_t data_length, endpoint_param *const endpoint);
+extern usb_error ch_data_in_transfer_n(uint8_t *buffer, int8_t *const buffer_size, endpoint_param *const endpoint);
 extern usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint);
 
 inline void ch_configure_nak_retry(const ch_nak_retry_type retry, const uint8_t number_of_retries) {

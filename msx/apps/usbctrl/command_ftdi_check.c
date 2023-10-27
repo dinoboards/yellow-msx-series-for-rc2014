@@ -4,125 +4,144 @@
 #include <class_printer.h>
 #include <delay.h>
 #include <msx_fusion.h>
+#include <msxdos.h>
 #include <protocol.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <usb/vendor_ftdi.h>
 
-usb_error find_ftdi(const uint8_t address, device_config_interface *const ftdi_interface) __sdcccall(1) {
-  uint8_t buffer[151];
+bool is_ftdi(const device_descriptor *const device_descriptor, const interface_descriptor *const interface) __sdcccall(1) {
+  (void)interface;
+  return device_descriptor->idVendor == 0x403 && device_descriptor->idProduct == 0x6001 && device_descriptor->bcdDevice == 0x600;
+}
 
-  device_descriptor my_device_descriptor;
-  memset(&my_device_descriptor, 0, sizeof(device_descriptor));
+#define BUF_SIZE 64
 
-  usb_error result = usbtrn_get_descriptor2(&my_device_descriptor, address);
-  __asm__("EI");
-  if (result) {
-    printf("usbtrn_get_descriptor2 failed %d\r\n", result);
+usb_error read_from_ftdi(device_config_ftdi *ftdi_config, uint8_t *const read_bytes) {
+  usb_error result;
+  uint8_t   buffer[BUF_SIZE];
+  uint8_t   buffer_size = BUF_SIZE;
+
+  memset(buffer, 0, sizeof(buffer));
+
+  result = ftdi_read_data(ftdi_config, buffer, &buffer_size);
+  if (result == USB_TOKEN_OUT_OF_SYNC) {
+    printf("Sync: size: %d, %d, %d\r\n", buffer_size, ftdi_config->endpoints[0].toggle, ftdi_config->endpoints[1].toggle);
+    result = ftdi_read_data(ftdi_config, buffer, &buffer_size);
+  }
+
+  *read_bytes = buffer_size;
+
+  if (result)
     return result;
-  }
 
-  for (uint8_t config_index = 0; config_index < my_device_descriptor.bNumConfigurations; config_index++) {
-    memset(buffer, 0, sizeof(buffer));
-    result = usbtrn_get_full_config_descriptor(config_index, address, my_device_descriptor.bMaxPacketSize0, 150, buffer);
-    __asm__("EI");
-    if (result) {
-      printf("usbtrn_get_full_config_descriptor failed %d\r\n", result);
-      return result;
-    }
+  for (uint8_t i = 0; i < buffer_size; i++)
+    printf("%02X  ", buffer[i]);
 
-    const config_descriptor *const config = (config_descriptor *)buffer;
-
-    for (uint8_t interface_index = 0; interface_index < config->bNumInterfaces; interface_index++) {
-      const interface_descriptor *const interface =
-          (interface_descriptor *)(buffer + sizeof(config_descriptor) + interface_index * sizeof(interface_descriptor));
-
-      if (my_device_descriptor.idVendor == 0x403 && my_device_descriptor.idProduct == 0x6001 &&
-          my_device_descriptor.bcdDevice == 0x600) {
-        ftdi_interface->address         = address;
-        ftdi_interface->config_index    = config_index;
-        ftdi_interface->interface_index = interface_index;
-        return USB_ERR_OK;
-      }
-    }
-  }
-
-  return 255;
+  return USB_ERR_OK;
 }
 
 usb_error command_ftdi_check(const uint8_t last_device_address) __sdcccall(1) {
-  usb_error result;
+  usb_error result = USB_ERR_OK;
 
-  device_config_interface ftdi_interface;
-  memset(&ftdi_interface, 0, sizeof(device_config_interface));
+  device_config_ftdi ftdi_config;
+  memset(&ftdi_config, 0, sizeof(ftdi_config));
 
-  for (uint8_t address = 1; address <= last_device_address + 1; address++) {
-    result = find_ftdi(address, &ftdi_interface);
+  printf("Checking ftdi loop back\r\n");
+  for (uint8_t address = 1; address <= last_device_address; address++) {
+    result = find_device(address, is_ftdi, (device_config *)&ftdi_config);
 
     if (result && result != 255) {
       printf("USB error %02x\r\n", result);
       goto finally;
     }
 
-    if (result == 0) {
-      printf("FTDI @ address %d, config index %d and interface %d\r\n", ftdi_interface.address, ftdi_interface.config_index,
-             ftdi_interface.interface_index);
+    if (result == 255) {
+      result = USB_ERR_OK;
+      continue;
+    }
 
-      device_config_ftdi ftdi_config;
-      memset(&ftdi_config, 0, sizeof(ftdi_config));
+    // printf("FTDI @ address %d, config index %d and interface %d\r\n", ftdi_interface.address, ftdi_interface.config_index,
+    //        ftdi_interface.interface_index);
 
-      result = construct_device_config(ftdi_interface.address, ftdi_interface.config_index, ftdi_interface.interface_index,
-                                       (device_config *)&ftdi_config);
-      if (result) {
-        printf("construct_device_config failed %d\r\n", result);
+    printf("ftdi_set_baudrate (requested: %ld", baud_rate);
+    result = ftdi_set_baudrate(&ftdi_config, &baud_rate);
+    if (result)
+      printf(")\r\nresult: %d\r\n", result);
+
+    printf(", %ld)\r\n", baud_rate);
+
+    printf("ftdi_set_line_property2: 8 bits, 1 stop bit, no parity, break off\r\n");
+    result = ftdi_set_line_property2(&ftdi_config, BITS_8, STOP_BIT_1, NONE, BREAK_OFF);
+    if (result)
+      printf("result: %d\r\n", result);
+
+    printf("ftdi_usb_purge_tx/rx_buffer\r\n");
+    result = ftdi_usb_purge_tx_buffer(&ftdi_config);
+    if (result)
+      printf("ftdi_usb_purge_tx_buffer failed: %d\r\n", result);
+
+    result = ftdi_usb_purge_rx_buffer(&ftdi_config);
+    if (result)
+      printf("ftdi_usb_purge_rx_buffer failed: %d\r\n", result);
+
+    uint8_t buffer_size = BUF_SIZE;
+    uint8_t buffer[BUF_SIZE];
+    uint8_t id = 0;
+
+    while (true) {
+      if (msxbiosBreakX())
         goto finally;
+
+      printf("ftdi_write_data (64 bytes, from %d)\r\n", id);
+
+      for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
+        buffer[buf_index] = id++;
+
+      result = ftdi_write_data(&ftdi_config, buffer, BUF_SIZE);
+      if (result) {
+        printf("ftdi_write_data errored: %d\r\n", result);
+        break;
       }
 
-      // printf("ftdi_set_baudrate(2400):\r\n");
-      // result = ftdi_set_baudrate(&ftdi_config, 2400);
-      // if (result)
-      //   printf("result: %d\r\n", result);
+      printf("ftdi_read_data: \r\n");
+      uint8_t  read_count;
+      uint8_t  total_read = 0;
+      uint16_t count      = 0;
+      int16_t  timeout    = get_future_time(from_ms(5000));
+      while (total_read != 64 && !is_time_past(timeout)) {
+        if (msxbiosBreakX())
+          goto finally;
 
-      // printf("ftdi_set_baudrate(4800):\r\n");
-      // result = ftdi_set_baudrate(&ftdi_config, 4800);
-      // if (result)
-      //   printf("result: %d\r\n", result);
+        result = read_from_ftdi(&ftdi_config, &read_count);
+        total_read += read_count;
+        count++;
+        if (result) {
+          printf("ftdi_read_data errored: %d\r\n", result);
+          break;
+        }
+      }
 
-      printf("ftdi_set_baudrate(9600):\r\n");
-      result = ftdi_set_baudrate(&ftdi_config, 9600);
-      if (result)
-        printf("result: %d\r\n", result);
+      if (total_read != 64) {
+        printf("\r\nftdi_read_data returned %d bytes in %d chunks.  Expected 64 bytes\r\n", total_read, count);
+        continue;
+      }
 
-      printf("ftdi_set_line_property2: 8 bits, 1 stop bit, no parity, break off\r\n");
-      result = ftdi_set_line_property2(&ftdi_config, BITS_8, STOP_BIT_1, NONE, BREAK_OFF);
-      if (result)
-        printf("result: %d\r\n", result);
+      do {
+        if (msxbiosBreakX())
+          goto finally;
 
-      // printf("ftdi_set_baudrate(14400):\r\n");
-      // result = ftdi_set_baudrate(&ftdi_config, 14400);
-      // if (result)
-      //   printf("result: %d\r\n", result);
+        result = read_from_ftdi(&ftdi_config, &read_count);
+        if (result) {
+          printf("ftdi_read_data errored: %d\r\n", result);
+          break;
+        }
 
-      // printf("ftdi_set_baudrate(19200):\r\n", result);
-      // result = ftdi_set_baudrate(&ftdi_config, 19200);
-      // if (result)
-      //   printf("result: %d\r\n", result);
-
-      // printf("ftdi_set_baudrate(38400):\r\n", result);
-      // result = ftdi_set_baudrate(&ftdi_config, 38400);
-      // if (result)
-      //   printf("result: %d\r\n", result);
-
-      // printf("ftdi_set_baudrate(57600):\r\n", result);
-      // result = ftdi_set_baudrate(&ftdi_config, 57600);
-      // if (result)
-      //   printf("result: %d\r\n", result);
-
-      goto finally;
+        if (read_count != 0)
+          printf("\r\nftdi_read_data returned %d bytes.  Expected 0 bytes\r\n", read_count);
+      } while (read_count != 0);
     }
   }
-
-  result = 0;
 
 finally:
   return result;

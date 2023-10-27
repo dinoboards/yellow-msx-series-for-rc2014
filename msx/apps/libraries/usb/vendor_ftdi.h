@@ -41,11 +41,22 @@ enum ftdi_break_type { BREAK_OFF = 0, BREAK_ON = 1 };
 #define SIO_WRITE_EEPROM_REQUEST      0x91
 #define SIO_ERASE_EEPROM_REQUEST      0x92
 
-extern usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, int32_t baudrate) __sdcccall(1);
+#define SIO_RESET_SIO      0
+#define SIO_RESET_PURGE_RX 1
+#define SIO_RESET_PURGE_TX 2
+
+
+#define C_CLK 48000000 /* the 232R's clock rate */
+
+extern usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, int32_t *const baudrate) __sdcccall(1);
 extern usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi,
                                          enum ftdi_bits_type       bits,
                                          enum ftdi_stopbits_type   sbit,
                                          enum ftdi_parity_type     parity,
                                          enum ftdi_break_type      break_type);
+extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint8_t *const size);
+extern usb_error ftdi_write_data(device_config_ftdi *const ftdi, const uint8_t *const buf, const uint16_t size);
+extern usb_error ftdi_usb_purge_tx_buffer(device_config_ftdi *const ftdi) __sdcccall(1);
+extern usb_error ftdi_usb_purge_rx_buffer(device_config_ftdi *const ftdi) __sdcccall(1);
 
 #endif

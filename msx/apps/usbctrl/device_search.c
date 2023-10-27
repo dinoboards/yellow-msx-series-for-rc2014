@@ -169,3 +169,40 @@ usb_error retrieve_floppy_formats(device_config *const storage_device, ufi_forma
 
   return 0;
 }
+
+usb_error find_device(const uint8_t address, interface_match_fn fn, device_config *const device) __sdcccall(1) {
+  uint8_t buffer[151];
+
+  device_descriptor my_device_descriptor;
+  memset(&my_device_descriptor, 0, sizeof(device_descriptor));
+
+  usb_error result = usbtrn_get_descriptor2(&my_device_descriptor, address);
+  __asm__("EI");
+  if (result) {
+    printf("usbtrn_get_descriptor2 failed %d\r\n", result);
+    return result;
+  }
+
+  for (uint8_t config_index = 0; config_index < my_device_descriptor.bNumConfigurations; config_index++) {
+    memset(buffer, 0, sizeof(buffer));
+    result = usbtrn_get_full_config_descriptor(config_index, address, my_device_descriptor.bMaxPacketSize0, 150, buffer);
+    __asm__("EI");
+    if (result) {
+      printf("usbtrn_get_full_config_descriptor failed %d\r\n", result);
+      return result;
+    }
+
+    const config_descriptor *const config = (config_descriptor *)buffer;
+
+    for (uint8_t interface_index = 0; interface_index < config->bNumInterfaces; interface_index++) {
+      const interface_descriptor *const interface =
+          (interface_descriptor *)(buffer + sizeof(config_descriptor) + interface_index * sizeof(interface_descriptor));
+
+      if (fn(&my_device_descriptor, interface)) {
+        return construct_device_config(address, config_index, interface_index, device);
+      }
+    }
+  }
+
+  return 255;
+}
