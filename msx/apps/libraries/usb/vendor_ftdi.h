@@ -5,6 +5,15 @@
 #include <usb/ch376.h>
 #include <usb/dev_transfers.h>
 
+/** Parity mode for ftdi_set_line_property() */
+enum ftdi_parity_type { NONE = 0, ODD = 1, EVEN = 2, MARK = 3, SPACE = 4 };
+/** Number of stop bits for ftdi_set_line_property() */
+enum ftdi_stopbits_type { STOP_BIT_1 = 0, STOP_BIT_15 = 1, STOP_BIT_2 = 2 };
+/** Number of bits for ftdi_set_line_property() */
+enum ftdi_bits_type { BITS_7 = 7, BITS_8 = 8 };
+/** Break type for ftdi_set_line_property2() */
+enum ftdi_break_type { BREAK_OFF = 0, BREAK_ON = 1 };
+
 /* Definitions for flow control */
 #define SIO_RESET         0 /* Reset the port */
 #define SIO_MODEM_CTRL    1 /* Set the modem control register */
@@ -33,5 +42,10 @@
 #define SIO_ERASE_EEPROM_REQUEST      0x92
 
 extern usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, int32_t baudrate) __sdcccall(1);
+extern usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi,
+                                         enum ftdi_bits_type       bits,
+                                         enum ftdi_stopbits_type   sbit,
+                                         enum ftdi_parity_type     parity,
+                                         enum ftdi_break_type      break_type);
 
 #endif

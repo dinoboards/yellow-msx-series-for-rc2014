@@ -78,40 +78,45 @@ usb_error command_ftdi_check(const uint8_t last_device_address) __sdcccall(1) {
         goto finally;
       }
 
-      printf("ftdi_set_baudrate(2400):\r\n");
-      result = ftdi_set_baudrate(&ftdi_config, 2400);
-      if (result)
-        printf("result: %d\r\n", result);
+      // printf("ftdi_set_baudrate(2400):\r\n");
+      // result = ftdi_set_baudrate(&ftdi_config, 2400);
+      // if (result)
+      //   printf("result: %d\r\n", result);
 
-      printf("ftdi_set_baudrate(4800):\r\n");
-      result = ftdi_set_baudrate(&ftdi_config, 4800);
-      if (result)
-        printf("result: %d\r\n", result);
+      // printf("ftdi_set_baudrate(4800):\r\n");
+      // result = ftdi_set_baudrate(&ftdi_config, 4800);
+      // if (result)
+      //   printf("result: %d\r\n", result);
 
       printf("ftdi_set_baudrate(9600):\r\n");
       result = ftdi_set_baudrate(&ftdi_config, 9600);
       if (result)
         printf("result: %d\r\n", result);
 
-      printf("ftdi_set_baudrate(14400):\r\n");
-      result = ftdi_set_baudrate(&ftdi_config, 14400);
+      printf("ftdi_set_line_property2: 8 bits, 1 stop bit, no parity, break off\r\n");
+      result = ftdi_set_line_property2(&ftdi_config, BITS_8, STOP_BIT_1, NONE, BREAK_OFF);
       if (result)
         printf("result: %d\r\n", result);
 
-      printf("ftdi_set_baudrate(19200):\r\n", result);
-      result = ftdi_set_baudrate(&ftdi_config, 19200);
-      if (result)
-        printf("result: %d\r\n", result);
+      // printf("ftdi_set_baudrate(14400):\r\n");
+      // result = ftdi_set_baudrate(&ftdi_config, 14400);
+      // if (result)
+      //   printf("result: %d\r\n", result);
 
-      printf("ftdi_set_baudrate(38400):\r\n", result);
-      result = ftdi_set_baudrate(&ftdi_config, 38400);
-      if (result)
-        printf("result: %d\r\n", result);
+      // printf("ftdi_set_baudrate(19200):\r\n", result);
+      // result = ftdi_set_baudrate(&ftdi_config, 19200);
+      // if (result)
+      //   printf("result: %d\r\n", result);
 
-      printf("ftdi_set_baudrate(57600):\r\n", result);
-      result = ftdi_set_baudrate(&ftdi_config, 57600);
-      if (result)
-        printf("result: %d\r\n", result);
+      // printf("ftdi_set_baudrate(38400):\r\n", result);
+      // result = ftdi_set_baudrate(&ftdi_config, 38400);
+      // if (result)
+      //   printf("result: %d\r\n", result);
+
+      // printf("ftdi_set_baudrate(57600):\r\n", result);
+      // result = ftdi_set_baudrate(&ftdi_config, 57600);
+      // if (result)
+      //   printf("result: %d\r\n", result);
 
       goto finally;
     }
