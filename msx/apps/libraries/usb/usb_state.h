@@ -9,12 +9,12 @@
 
 typedef struct __usb_state {
   uint8_t active : 1; /* if true, a usb operation/interrupt handler is active, prevent re-entrant */
+  uint8_t count_of_detected_usb_devices;
   uint8_t device_configs[sizeof(device_config) * MAX_NUMBER_OF_STORAGE_DEVICES + sizeof(device_config_printer) +
                          sizeof(device_config) + sizeof(device_config_keyboard)];
 
   uint8_t device_configs_end; // always zero to mark end
 
-  uint8_t count_of_detected_usb_devices;
   uint8_t connected;
   uint8_t bytes_required;
 } _usb_state;
