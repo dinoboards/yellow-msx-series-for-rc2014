@@ -1,4 +1,5 @@
 #include "vendor_ftdi.h"
+#include <usb/ch376.h>
 
 /*  ftdi_to_clkbits Convert a requested baudrate for a given system clock  and predivisor
                     to encoded divisor and the achievable baudrate
@@ -122,4 +123,76 @@ usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, int32_t baudrate) __
   ftdi->baudrate = baudrate;
 
   return USB_ERR_OK;
+}
+
+/**
+    Set (RS232) line characteristics
+
+    \param ftdi pointer to ftdi_context
+    \param bits Number of bits
+    \param sbit Number of stop bits
+    \param parity Parity mode
+    \param break_type Break type
+
+    \retval  0: all fine
+    \retval -1: Setting line property failed
+    \retval -2: USB device unavailable
+*/
+usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi,
+                                  enum ftdi_bits_type       bits,
+                                  enum ftdi_stopbits_type   sbit,
+                                  enum ftdi_parity_type     parity,
+                                  enum ftdi_break_type      break_type) {
+  setup_packet cmd;
+  usb_error    result;
+  uint16_t     value = bits;
+
+  switch (parity) {
+  case NONE:
+    value |= (0x00 << 8);
+    break;
+  case ODD:
+    value |= (0x01 << 8);
+    break;
+  case EVEN:
+    value |= (0x02 << 8);
+    break;
+  case MARK:
+    value |= (0x03 << 8);
+    break;
+  case SPACE:
+    value |= (0x04 << 8);
+    break;
+  }
+
+  switch (sbit) {
+  case STOP_BIT_1:
+    value |= (0x00 << 11);
+    break;
+  case STOP_BIT_15:
+    value |= (0x01 << 11);
+    break;
+  case STOP_BIT_2:
+    value |= (0x02 << 11);
+    break;
+  }
+
+  switch (break_type) {
+  case BREAK_OFF:
+    value |= (0x00 << 14);
+    break;
+  case BREAK_ON:
+    value |= (0x01 << 14);
+    break;
+  }
+
+  cmd.bmRequestType = FTDI_DEVICE_OUT_REQTYPE;
+  cmd.bRequest      = SIO_SET_DATA_REQUEST;
+  cmd.bValue[0]     = value >> 8;
+  cmd.bValue[1]     = value & 0xFF;
+  cmd.bIndex[0]     = 0;
+  cmd.bIndex[1]     = 0;
+  cmd.wLength       = 0;
+
+  RETURN_CHECK(usbdev_control_transfer((device_config *)ftdi, &cmd, NULL));
 }
