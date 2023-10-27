@@ -22,7 +22,8 @@ typedef enum {
   cmd_floppy_check,
   cmd_floppy_report_drive,
   cmd_floppy_dump,
-  cmd_printer_check
+  cmd_printer_check,
+  cmd_ftdi_check,
 } subcommands;
 
 extern const char *report_file_name;

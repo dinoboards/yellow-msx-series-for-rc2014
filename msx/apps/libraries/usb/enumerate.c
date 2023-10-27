@@ -42,7 +42,7 @@ usb_device_type identify_class_driver(_working *const working) {
   if (p->bInterfaceClass == 3)
     return USB_IS_KEYBOARD;
 
-  if (working->desc.idVendor == 0x403 && working->desc.idProduct == 0x6001)
+  if (working->desc.idVendor == 0x403 && working->desc.idProduct == 0x6001 && working->desc.bcdDevice == 0x600)
     return USB_IS_FTDI;
 
   return 0;

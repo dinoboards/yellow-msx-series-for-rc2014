@@ -121,7 +121,7 @@ bool state_devices(const _usb_state *const boot_area) __z88dk_fastcall {
 
   } while (++index != MAX_NUMBER_OF_STORAGE_DEVICES + 1);
 
-  if (!hasCdc && !hasPrinter && storage_count == 0) {
+  if (!hasCdc && !hasPrinter && !hasFTDI && storage_count == 0) {
     print_string("    DISCONNECTED\r\n");
     return false;
   }

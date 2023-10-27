@@ -67,6 +67,25 @@ typedef struct _setup_packet {
   uint16_t wLength;
 } setup_packet;
 
+enum libusb_request_type {
+  LIBUSB_REQUEST_TYPE_STANDARD = (0x00 << 5),
+  LIBUSB_REQUEST_TYPE_CLASS    = (0x01 << 5),
+  LIBUSB_REQUEST_TYPE_VENDOR   = (0x02 << 5),
+  LIBUSB_REQUEST_TYPE_RESERVED = (0x03 << 5),
+};
+
+enum libusb_request_recipient {
+  LIBUSB_RECIPIENT_DEVICE    = 0x00,
+  LIBUSB_RECIPIENT_INTERFACE = 0x01,
+  LIBUSB_RECIPIENT_ENDPOINT  = 0x02,
+  LIBUSB_RECIPIENT_OTHER     = 0x03,
+};
+
+enum libusb_endpoint_direction {
+  LIBUSB_ENDPOINT_IN  = 0x80,
+  LIBUSB_ENDPOINT_OUT = 0x00,
+};
+
 extern usb_error usb_control_transfer(const setup_packet *const cmd_packet,
                                       void *const               buffer,
                                       const uint8_t             device_address,

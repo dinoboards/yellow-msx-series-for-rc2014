@@ -23,7 +23,9 @@ const unsigned char *usage = "Usage: usbctrl <options> <subcommand>\r\n\n"
                              " floppy check <drive-letter>:\r\n"
                              "   write and verify all sectors\r\n"
                              " printer check\r\n"
-                             "   send sample text to printer\r\n";
+                             "   send sample text to printer\r\n"
+                             " ftdi check\r\n"
+                             "   check ftdi sio\r\n";
 
 uint8_t abort_with_help(void) {
   printf(usage);
@@ -183,6 +185,25 @@ uint8_t arg_command_printer_check(const uint8_t i, const char **argv, const int 
   return i + 3;
 }
 
+uint8_t arg_command_ftdi_check(const uint8_t i, const char **argv, const int argc) __sdcccall(1) {
+  if (i != 1)
+    return i;
+
+  const char *arg_subcommand = argv[1];
+  if (strncmp(arg_subcommand, "ftdi", 5) != 0)
+    return i;
+
+  const char *floppy_action = argv[2];
+  if (strncmp(floppy_action, "check", 6) != 0)
+    return i;
+
+  if (argc != 3)
+    return abort_with_help();
+
+  subcommand = cmd_ftdi_check;
+  return i + 3;
+}
+
 uint8_t arg_command_floppy_dump(const uint8_t i, const char **argv, const int argc) __sdcccall(1) {
   if (i != 1)
     return i;
@@ -280,6 +301,10 @@ void process_cli_arguments(int argc, const char **argv) __sdcccall(1) {
       continue;
 
     i = arg_command_printer_check(i, argv, argc);
+    if (current_i != i)
+      continue;
+
+    i = arg_command_ftdi_check(i, argv, argc);
     if (current_i != i)
       continue;
 
