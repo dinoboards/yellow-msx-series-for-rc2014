@@ -14,6 +14,7 @@
 #include <delay.h>
 #include <enumerate.h>
 #include <msxdos.h>
+#include <usb/vendor_ftdi.h>
 #include <usb_trace.h>
 
 uint16_t dumpSector(device_config *config, const uint32_t number) {
@@ -93,7 +94,21 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   print_string("USB: (%d)\r\n", work_area->count_of_detected_usb_devices);
 
   if (hasFTDI) {
-    print_string("FTDI\r\n");
+    printf("FTDI\r\n");
+
+    device_config_ftdi *ftdi_config = (device_config_ftdi *)find_device_config(USB_IS_FTDI);
+
+    result = ftdi_set_baudrate(ftdi_config, 9600);
+    printf("ftdi_set_baudrate(9600): %d\r\n", result);
+
+    result = ftdi_set_baudrate(ftdi_config, 4800);
+    printf("ftdi_set_baudrate(4800): %d\r\n", result);
+
+    result = ftdi_set_baudrate(ftdi_config, 19200);
+    printf("ftdi_set_baudrate(19200): %d\r\n", result);
+
+    result = ftdi_set_baudrate(ftdi_config, 38400);
+    printf("ftdi_set_baudrate(38400): %d\r\n", result);
   }
 
   if (hasCdc)
@@ -124,7 +139,6 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
     const keyboard_report *const p_report = (const keyboard_report *)buffer;
 
     while (!msxbiosBreakX()) {
-      // int16_t t = JIFFY;
       for (uint16_t i = 0; i < 1000; i++) {
         ch_configure_nak_retry_disable();
         result = usbdev_data_in_transfer_ep0((device_config *)keyboard_config, buffer, 8);
@@ -142,7 +156,6 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
           printf("\r\n");
         }
       }
-      // printf("t %d\r\n", JIFFY - t);
       delay(3);
     }
   }
