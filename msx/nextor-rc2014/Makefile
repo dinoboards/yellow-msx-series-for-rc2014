@@ -114,7 +114,8 @@ endif
 
 .PHONY: $(BINDIR)version.asm
 $(BINDIR)version.asm:
-	@echo -e "INFO_S:			DB	10, 13, \"MSX ON RC2014 ($(VERSION))\", 10, 13\r\n" > "$(BINDIR)version.asm"
+	@mkdir -p $(BINDIR)
+	echo -e "INFO_S:			DB	10, 13, \"MSX ON RC2014 ($(VERSION))\", 10, 13\r\n" > "$(BINDIR)version.asm"
 
 version.asm: $(BINDIR)version.asm
 	@echo "ROM version $(VERSION)"

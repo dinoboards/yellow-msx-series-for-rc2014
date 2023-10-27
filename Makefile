@@ -39,7 +39,6 @@ release-build-jeds:
 .PHONY: release-build-msx-apps
 release-build-msx-apps:
 	@version=$$(date +%y-%m-%d)
-	RELEASE=true $(MAKE) -C msx/apps -j
 	RELEASE=true $(MAKE) -C msx apps
 
 .PHONY: release-build-msx-roms
