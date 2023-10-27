@@ -192,6 +192,30 @@ usb_error ch_data_in_transfer(uint8_t *buffer, int16_t buffer_size, endpoint_par
   return USB_ERR_OK;
 }
 
+usb_error ch_data_in_transfer_n(uint8_t *const buffer, int8_t *const buffer_size, endpoint_param *const endpoint) {
+  uint8_t   count;
+  usb_error result;
+
+  if (*buffer_size == 0)
+    return USB_ERR_OK;
+
+  USB_MODULE_LEDS = 0x01;
+
+  ch_issue_token_in(endpoint);
+
+  CHECK(ch_long_wait_int_and_get_status());
+
+  endpoint->toggle = !endpoint->toggle;
+
+  count = ch_read_data(buffer);
+
+  *buffer_size = count;
+
+  USB_MODULE_LEDS = 0x00;
+
+  return USB_ERR_OK;
+}
+
 usb_error ch_data_out_transfer(const uint8_t *buffer, int16_t buffer_length, endpoint_param *const endpoint) {
   usb_error     result;
   const uint8_t number          = endpoint->number;

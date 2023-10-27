@@ -55,6 +55,8 @@ extern usb_error usbdev_control_transfer(device_config *const device, const setu
 
 extern usb_error usbdev_bulk_out_transfer(device_config *const device, const uint8_t *const buffer, const uint16_t buffer_size);
 
+extern usb_error usbdev_bulk_in_transfer(device_config *const dev, uint8_t *const buffer, uint8_t *const buffer_size);
+
 extern usb_error usbdev_data_in_transfer(device_config *const    device,
                                          uint8_t *const          buffer,
                                          const uint16_t          buffer_size,

@@ -3,6 +3,6 @@
 
 #include "ch376.h"
 
-extern usb_error command_ftdi_check(void) __sdcccall(1);
+extern usb_error command_ftdi_check(void);
 
 #endif
