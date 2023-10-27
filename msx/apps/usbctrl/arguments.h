@@ -35,6 +35,7 @@ extern const char *report_file_name;
 extern char        floppy_drive_letter;
 extern bool        quick_format;
 extern subcommands subcommand;
+extern uint32_t    baud_rate;
 
 arg_search process_cli_arguments(const int argc, const char *const *const argv) __sdcccall(1);
 

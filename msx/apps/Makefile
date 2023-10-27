@@ -31,7 +31,7 @@ GETSLT_LIB := $(addprefix $(BIN),getslt.lib)
 CONFIG_REQUEST_LIB := $(addprefix $(BIN),config_request.c.lib)
 SYSTEM_VARS_LIB := $(addprefix $(BIN)libraries/msxbios/,system_vars.c.lib)
 MSXDOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxdos/*.asm)))
-EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio.lib extbio_usb_get_present.lib extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer.lib unapi_get_ram_helper.lib extbio_rc2014_get_version.lib extbio_rc2014_hello.lib memmapper.lib)
+EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio.lib extbio_usb_get_present.lib extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer.lib unapi_get_ram_helper.lib extbio_rc2014_get_version.lib extbio_rc2014_hello.lib extbio_usb_data_in_transfer_n.lib memmapper.lib)
 FOSSIL_LIB := $(addprefix $(BIN)libraries/fossil/,fossil.lib fossil.c.lib)
 DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
 

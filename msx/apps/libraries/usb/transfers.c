@@ -100,6 +100,22 @@ usb_error usb_data_in_transfer_external(uint8_t              *buffer,
   return usb_data_in_transfer(buffer, buffer_size, device_address, endpoint);
 }
 
+usb_error usb_data_in_transfer_n_external(uint8_t              *buffer,
+                                          uint16_t             *buffer_size,
+                                          const uint8_t         device_address,
+                                          endpoint_param *const endpoint) {
+  if (buffer != 0 && ((uint16_t)buffer & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  if (((uint16_t)endpoint & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  if (((uint16_t)buffer_size & 0xC000) == 0)
+    return USB_BAD_ADDRESS;
+
+  return usb_data_in_transfer_n(buffer, buffer_size, device_address, endpoint);
+}
+
 /**
  * @brief Perform a USB data in on the specififed endpoint
  *
@@ -116,6 +132,24 @@ usb_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t 
   ch_set_usb_address(device_address);
 
   RETURN_CHECK(ch_data_in_transfer(buffer, buffer_size, endpoint));
+}
+
+/**
+ * @brief Perform a USB data in on the specififed endpoint
+ *
+ * @param buffer the buffer to receive the data
+ * @param buffer_size on entry the maximum size of data to be received, on exit the actual size of data received
+ * @param device_address the usb address of the device
+ * @param endpoint the usb endpoint to receive from (toggle of endpoint is updated)
+ * @return usb_error USB_ERR_OK if all good, otherwise specific error code
+ */
+usb_error
+usb_data_in_transfer_n(uint8_t *buffer, uint8_t *const buffer_size, const uint8_t device_address, endpoint_param *const endpoint) {
+  usb_error result;
+  DI;
+  ch_set_usb_address(device_address);
+
+  RETURN_CHECK(ch_data_in_transfer_n(buffer, buffer_size, endpoint));
 }
 
 usb_error usb_data_out_transfer_external(const uint8_t        *buffer,

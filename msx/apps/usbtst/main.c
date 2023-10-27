@@ -79,6 +79,114 @@ void right_trim(char *buffer) {
 
 const char *printer_test_txt = "Verifying printer output works!\n";
 
+#define BUF_SIZE 64
+
+usb_error read_from_ftdi(device_config_ftdi *ftdi_config, uint8_t *const read_bytes) {
+  usb_error result;
+  uint8_t   buffer[BUF_SIZE];
+  uint8_t   buffer_size = BUF_SIZE;
+
+  memset(buffer, 0, sizeof(buffer));
+
+  result      = ftdi_read_data(ftdi_config, buffer, &buffer_size);
+  *read_bytes = buffer_size;
+  // printf(" (%d, %d) \r\n", buffer_size, *read_count);
+
+  if (result)
+    return result;
+
+  for (uint8_t i = 0; i < buffer_size; i++)
+    printf("%02X  ", buffer[i]);
+
+  return USB_ERR_OK;
+}
+
+void conduct_ftdi_loop_back_verification(void) {
+  usb_error           result;
+  device_config_ftdi *ftdi_config = (device_config_ftdi *)find_device_config(USB_IS_FTDI);
+
+  uint32_t baud_rate = 4800;
+  printf("ftdi_set_baudrate (requested: %ld", baud_rate);
+  result = ftdi_set_baudrate(ftdi_config, &baud_rate);
+  if (result)
+    printf(")\r\nresult: %d\r\n", result);
+
+  printf(", %ld)\r\n", baud_rate);
+
+  printf("ftdi_set_line_property2: 8 bits, 1 stop bit, no parity, break off\r\n");
+  result = ftdi_set_line_property2(ftdi_config, BITS_8, STOP_BIT_1, NONE, BREAK_OFF);
+  if (result)
+    printf("result: %d\r\n", result);
+
+  printf("ftdi_usb_purge_tx/rx_buffer\r\n");
+  result = ftdi_usb_purge_tx_buffer(ftdi_config);
+  if (result)
+    printf("ftdi_usb_purge_tx_buffer failed: %d\r\n", result);
+
+  result = ftdi_usb_purge_rx_buffer(ftdi_config);
+  if (result)
+    printf("ftdi_usb_purge_rx_buffer failed: %d\r\n", result);
+
+  uint8_t buffer_size = BUF_SIZE;
+  uint8_t buffer[BUF_SIZE];
+  uint8_t id = 0;
+
+  while (true) {
+    if (msxbiosBreakX())
+      goto finally;
+
+    printf("ftdi_write_data (64 bytes, from %d)\r\n", id);
+
+    for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
+      buffer[buf_index] = id++;
+
+    result = ftdi_write_data(ftdi_config, buffer, BUF_SIZE);
+    if (result) {
+      printf("ftdi_write_data errored: %d\r\n", result);
+      break;
+    }
+
+    printf("ftdi_read_data: \r\n");
+    uint8_t  read_count;
+    uint8_t  total_read = 0;
+    uint16_t count      = 0;
+    int16_t  timeout    = get_future_time(from_ms(5000));
+    while (total_read != 64 && !is_time_past(timeout)) {
+      if (msxbiosBreakX())
+        goto finally;
+
+      result = read_from_ftdi(ftdi_config, &read_count);
+      total_read += read_count;
+      count++;
+      if (result) {
+        printf("ftdi_read_data errored: %d\r\n", result);
+        break;
+      }
+    }
+
+    if (total_read != 64) {
+      printf("\r\nftdi_read_data returned %d bytes in %d chunks.  Expected 64 bytes\r\n", total_read, count);
+      continue;
+    }
+
+    do {
+      if (msxbiosBreakX())
+        goto finally;
+
+      result = read_from_ftdi(ftdi_config, &read_count);
+      if (result) {
+        printf("ftdi_read_data errored: %d\r\n", result);
+        break;
+      }
+
+      if (read_count != 0)
+        printf("\r\nftdi_read_data returned %d bytes.  Expected 0 bytes\r\n", read_count);
+    } while (read_count != 0);
+  }
+
+finally:
+}
+
 void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
   const bool hasCdc      = find_device_config(USB_IS_CDC) != NULL;
@@ -96,19 +204,7 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   if (hasFTDI) {
     printf("FTDI\r\n");
 
-    device_config_ftdi *ftdi_config = (device_config_ftdi *)find_device_config(USB_IS_FTDI);
-
-    result = ftdi_set_baudrate(ftdi_config, 9600);
-    printf("ftdi_set_baudrate(9600): %d\r\n", result);
-
-    result = ftdi_set_baudrate(ftdi_config, 4800);
-    printf("ftdi_set_baudrate(4800): %d\r\n", result);
-
-    result = ftdi_set_baudrate(ftdi_config, 19200);
-    printf("ftdi_set_baudrate(19200): %d\r\n", result);
-
-    result = ftdi_set_baudrate(ftdi_config, 38400);
-    printf("ftdi_set_baudrate(38400): %d\r\n", result);
+    conduct_ftdi_loop_back_verification();
   }
 
   if (hasCdc)

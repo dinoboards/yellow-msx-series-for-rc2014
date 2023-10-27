@@ -76,7 +76,8 @@ $(BINDIR)$1.fdd.dsk: $1-nextor-kernel $(BINDIR)rcembdrv.bin
 	mmove -i $(BINDIR)$1.fdd.dsk ::/system/command2.com ::/
 	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/nextor.sys ::/
 	[[ $$$$(ls -A ./extras) ]] && mcopy -i $(BINDIR)$1.fdd.dsk ./extras/* ::/
-	# echo "Built disk image $(BINDIR)$1.fdd.dsk"
+	freespace=$$$$(mdir -i $(BINDIR)$1.fdd.dsk | grep free | sed 's/bytes free//' | sed 's/ //g')
+	echo "Built disk image $1.fdd.dsk ($$$$freespace bytes free)"
 
 #Package driver and disk image
 $(BINDIR)$1.driver-with-sectors.bin: $(BINDIR)rc2014dr.bin $(BINDIR)rcembdrv.bin $(BINDIR)$1.fdd.dsk
