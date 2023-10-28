@@ -15,9 +15,14 @@ First some nice things to know about this driver:
 To use this driver, you have to do the following things:
 
 * Detect the driver
-	Check for the "RS" mark at address &HF3FE
+	Check for the "RS" mark at address ~~&HF3FE~~ &HF3FC
 * Get the driver jump table
-	The address of the jump table is at &HF3FE+2=&HF400
+	The address of the jump table is at ~~&HF3FE+2=&HF400~~  &HF3FE
+
+> **The above points seem to be inconsistent with the sample code below
+> The RC2014 implementation had incorrectly used the original incorrect addresses
+> for the marker and jump table - creating incompatibilities with RC2014 utilities and
+> general MSX utilities.**
 
 In MLFOSSIL.GEN you see an example of how to use this jump table.
 
@@ -25,7 +30,7 @@ From here on, more detailed information follows, or better, something like
 a copy from sources...
 
 
-
+```
 &HF3FC: DB	"RS"
 	DW	DRIVER
 
@@ -126,6 +131,7 @@ DRIVER:
 				; driver info block. This block describes
 				; the current situation about the driver.
 
+
 ;************** Driver Info Block **************
 ;
 ;	Offset	Bytes	Description
@@ -161,6 +167,8 @@ DRIVER:
 ;			4 = NMS1250, adapted for RS232C
 ;			8 = 16550 UART with FIFO (Sunrise RS232C + ACCNET)
 ; ************** End of InfoBlock **************
+
+
 MLFOSSIL.GEN:
 
 ;
@@ -232,3 +240,4 @@ F_Hook38Stat    jp      0       ; 17
 F_Chput_Hook    jp      0       ; 18
 F_Keyb_Hook     jp      0       ; 19
 F_Get_Info      jp      0       ; 20
+```
