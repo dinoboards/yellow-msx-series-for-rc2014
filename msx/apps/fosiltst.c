@@ -31,7 +31,7 @@ void main(void) {
 
   printf("fossil_link should return false before install %d\r\n", fossil_link());
 
-  void *p = extbio_fossil_install();
+  void *p = extbio_fossil_install(FOSSIL_FOR_SIO2);
 
   printf("fossil_link should return true after %d\r\n", fossil_link());
 

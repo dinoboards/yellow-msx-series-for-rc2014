@@ -42,7 +42,8 @@ usb_error read_from_ftdi(device_config_ftdi *ftdi_config, uint8_t *const read_by
   return USB_ERR_OK;
 }
 
-usb_error command_ftdi_check(void) {
+usb_error command_ftdi_check(const uint8_t last_device_address) __sdcccall(1) {
+  last_device_address;
   usb_error result = USB_ERR_OK;
 
   device_config_ftdi ftdi_config;
@@ -57,14 +58,14 @@ usb_error command_ftdi_check(void) {
   }
 
   printf("ftdi_set_baudrate (requested: %ld", baud_rate);
-  result = ftdi_set_baudrate(&ftdi_config, &baud_rate);
+  result = ftdi_set_baudrate(&ftdi_config, baud_rate);
   if (result)
     printf(")\r\nresult: %d\r\n", result);
 
   printf(", %ld)\r\n", baud_rate);
 
   printf("ftdi_set_line_property2: 8 bits, 1 stop bit, no parity, break off\r\n");
-  result = ftdi_set_line_property2(&ftdi_config, BITS_8, STOP_BIT_1, NONE, BREAK_OFF);
+  result = ftdi_set_line_property2(&ftdi_config, FTDI_PARITY_NONE | FTDI_STOPBITS_1 | FTDI_BITS_8 | FTDI_BREAK_OFF);
   if (result)
     printf("result: %d\r\n", result);
 

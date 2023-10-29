@@ -176,7 +176,7 @@ DRV_NAME:
 	jp	DRV_INIT
 	jp	DRV_BASSTAT
 	jp	DRV_BASDEV
-	jp	UNAPI_EXTBIO
+	jp	EXTBIO
 	jp	UNAPI_ENTRY
 	jp	DRV_DIRECT1
 	jp	DRV_DIRECT2
@@ -382,17 +382,9 @@ DRV_BASDEV:
 ; D'=1 if the old hook must be called, D'=0 otherwise.
 ; It is entered with D'=1.
 
-;==============================
-;===  UNAPI EXTBIO HANDLER  ===
-;==============================
-
-; Works the expected way, except that it must return
-; D'=1 if the old hook must be called, D'=0 otherwise.
-; It is entered with D'=1.
-
 EXTBIO_RC2014_ID		EQU	214
 
-UNAPI_EXTBIO:
+EXTBIO:
 	PUSH	AF
 
 	LD	A, D
