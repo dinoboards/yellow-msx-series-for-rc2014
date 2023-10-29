@@ -4,6 +4,7 @@ EXTBIO_RC2014_USB_CONTROL_TRANSFER_FN		EQU	0x82
 EXTBIO_RC2014_USB_OUT_TRANSFER_FN		EQU	0x83
 EXTBIO_RC2014_USB_IN_TRANSFER_FN		EQU	0x84
 EXTBIO_RC2014_USB_IN_TRANSFER_N_FN		EQU	0x85
+EXTBIO_RC2014_FTDI_FN				EQU	0x86
 
 ;uint32_t extbio_rc2014(const uint16_t hl, const uint16_t de) __naked {
 	PUBLIC	_extbio_rc2014
@@ -12,6 +13,7 @@ EXTBIO_RC2014_USB_IN_TRANSFER_N_FN		EQU	0x85
 	EXTERN	_usb_data_in_transfer_external
 	EXTERN	_usb_data_in_transfer_n_external
 	EXTERN	_extbio_rc2014_usb_get_present
+	EXTERN  _extbio_rc2014_ftdi
 
 _extbio_rc2014:
 	PUSH	AF
@@ -26,6 +28,8 @@ _extbio_rc2014:
 	JR	Z, __extbio_rc2014_usb_data_in_transfer
 	CP	EXTBIO_RC2014_USB_IN_TRANSFER_N_FN
 	JR	Z, __extbio_rc2014_usb_data_in_transfer_n
+	CP	EXTBIO_RC2014_FTDI_FN
+	JP	Z, __extbio_rc2014_ftdi
 
 	POP	AF
 	RET
@@ -125,6 +129,11 @@ loop_data_in_n:
 	inc	sp
 
 	JR	extbio_handled
+
+__extbio_rc2014_ftdi:
+	POP	AF
+	JP	0; //_extbio_rc2014_ftdi
+
 ; ---------------------------
 
 	PUBLIC	_drv_direct1

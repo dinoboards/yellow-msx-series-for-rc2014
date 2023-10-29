@@ -100,16 +100,15 @@ _extbio_get_dev_info_table:
 
 
 ;
-; extern void* extbio_fossil_install()
+; extern void* extbio_fossil_install(const uint16_t device_type)
 ;
 	PUBLIC	_extbio_fossil_install
 _extbio_fossil_install:
 	PUSH	IX
 	LD	D, 214					; RC2014 EXTENDED DRIVER
 	LD	E, EXTBIO_RC2014_INSTALL_FOSSIL_FN	; FUNCTION INSTALL
-	LD	HL, 0					; 0 INDICATES WE WANT THE
-	CALL	EXTBIO					; THE FOSSIL DRIVER FOR SIO/2
-	POP	IX					; THE ONLY SUPPORT DRIVER AT THIS STAGE.
+	CALL	EXTBIO
+	POP	IX
 	RET
 
 ;

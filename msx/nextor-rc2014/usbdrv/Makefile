@@ -14,6 +14,9 @@ SRC := ./usbdrv/
 
 ZCC := zcc +msx --vc -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
+	# $(BINDIR)ftdi_drv.c.o \
+	# $(BINDIR)libraries/usb/vendor_ftdi.c.o \
+
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)exports.c.o \
 	$(BINDIR)extended-bios.c.o \
@@ -21,6 +24,8 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/delay/delay.c.o \
 	$(BINDIR)libraries/usb/ch376.c.o \
 	$(BINDIR)libraries/usb/ch376.o \
+	$(BINDIR)libraries/usb/class_hid_keyboard.c.o \
+	$(BINDIR)libraries/usb/class_hid.c.o \
 	$(BINDIR)libraries/usb/class_hub.c.o \
 	$(BINDIR)libraries/usb/class_scsi.c.o \
 	$(BINDIR)libraries/usb/class_ufi.c.o \
@@ -33,8 +38,6 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/usb/transfers.c.o \
 	$(BINDIR)libraries/usb/usb_cbi.c.o \
 	$(BINDIR)libraries/usb/usb_state.c.o \
-	$(BINDIR)libraries/usb/class_hid.c.o \
-	$(BINDIR)libraries/usb/class_hid_keyboard.c.o \
 	$(BINDIR)print.o \
 	$(BINDIR)usb-dev-info-scsi.c.o \
 	$(BINDIR)usb-dev-info-ufi.c.o \

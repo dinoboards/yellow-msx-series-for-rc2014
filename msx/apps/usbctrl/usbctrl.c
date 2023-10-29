@@ -9,7 +9,7 @@
 #include "command_report_all_devices.h"
 #include <extbio_rc2014.h>
 
-uint8_t main(const int argc, const char *argv[]) {
+uint8_t main(const int argc, const char *const argv[]) {
   process_cli_arguments(argc, argv);
 
   uint16_t      hl = extbio_usb_get_present();

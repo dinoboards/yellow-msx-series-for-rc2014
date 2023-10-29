@@ -369,6 +369,9 @@
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
+./bin/ftditest/baud_rate_clock_calculator.c.asm: ftditest/baud_rate_clock_calculator.c \
+ ftditest/baud_rate_clock_calculator.h
+./bin/ftditest/ftditest.c.asm: ftditest/ftditest.c ftditest/baud_rate_clock_calculator.h
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
@@ -390,6 +393,7 @@
 ./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/extbio/memmapper.o: ./libraries/extbio/memmapper.asm
+./bin/libraries/extbio/extbio_usb_ftdi.o: ./libraries/extbio/extbio_usb_ftdi.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_control_transfer.o: ./libraries/extbio/extbio_usb_control_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer_n.o: ./libraries/extbio/extbio_usb_data_in_transfer_n.asm ./msx.inc
 ./bin/libraries/extbio/extbio_rc2014_get_version.o: ./libraries/extbio/extbio_rc2014_get_version.asm ./msx.inc

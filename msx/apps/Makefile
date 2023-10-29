@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all: $(BIN)hello.sys $(BIN)prnt.sys  $(addsuffix .com,$(addprefix $(BIN),fdisk service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all: $(BIN)hello.sys $(BIN)prnt.sys  $(addsuffix .com,$(addprefix $(BIN),fdisk ftditest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -69,6 +69,10 @@ memory.com.crt_enable_commandline:=1
 helloworld_files = $(call app_file,helloworld)
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 helloworld.com.crt_enable_commandline:=1
+
+ftditest_files = $(call app_file,ftditest)
+$(BIN)ftditest.com: $(addprefix $(BIN),$(ftditest_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB)
+ftditest.com.crt_enable_commandline:=1
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm)
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)

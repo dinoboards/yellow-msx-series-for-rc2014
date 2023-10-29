@@ -107,14 +107,14 @@ void conduct_ftdi_loop_back_verification(void) {
 
   uint32_t baud_rate = 4800;
   printf("ftdi_set_baudrate (requested: %ld", baud_rate);
-  result = ftdi_set_baudrate(ftdi_config, &baud_rate);
+  result = ftdi_set_baudrate(ftdi_config, baud_rate);
   if (result)
     printf(")\r\nresult: %d\r\n", result);
 
   printf(", %ld)\r\n", baud_rate);
 
   printf("ftdi_set_line_property2: 8 bits, 1 stop bit, no parity, break off\r\n");
-  result = ftdi_set_line_property2(ftdi_config, BITS_8, STOP_BIT_1, NONE, BREAK_OFF);
+  result = ftdi_set_line_property2(ftdi_config, FTDI_PARITY_NONE | FTDI_STOPBITS_1 | FTDI_BITS_8 | FTDI_BREAK_OFF);
   if (result)
     printf("result: %d\r\n", result);
 
