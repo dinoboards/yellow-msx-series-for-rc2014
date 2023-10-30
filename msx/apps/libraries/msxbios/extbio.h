@@ -39,6 +39,9 @@ typedef struct {
 extern void                 extbio_get_dev_info_table(uint8_t device_id, void *info_table);
 extern extbio_device_table *extbio_get_dev(extbio_device_table *table) __z88dk_fastcall;
 
+// UNAPI
+extern uint16_t unapi_get_ram_helper(void);
+
 // RC2014 DRIVER
 
 #define SIO_CLK_307200  1

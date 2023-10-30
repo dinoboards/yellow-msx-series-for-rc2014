@@ -343,6 +343,7 @@
 ./bin/muflash/slot_helpers.o: ./muflash/slot_helpers.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_get_present.o: ./libraries/extbio/extbio_usb_get_present.asm ./msx.inc
+./bin/libraries/extbio/unapi_get_ram_helper.o: ./libraries/extbio/unapi_get_ram_helper.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_out_transfer.o: ./libraries/extbio/extbio_usb_data_out_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc

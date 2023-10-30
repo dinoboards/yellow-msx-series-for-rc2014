@@ -76,5 +76,8 @@ void main(void) {
   for (int i = 0; i < count; i++)
     xprintf("%d: %s (%02X) (%02X)\r\n", i, extendedBiosName(table[i].deviceId), table[i].deviceId, table[i]._reserved);
 
+  const uint16_t hl = unapi_get_ram_helper();
+  printf("UNAPI RAM HELPER @ %04X\r\n", hl);
+
   xprintf("\r\n");
 }
