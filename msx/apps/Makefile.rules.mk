@@ -30,6 +30,7 @@ endef
 ifexists = $(if $(wildcard $1),$(patsubst %.c,%.c.o,$1),)
 
 app_files = $(call objects,$(2) $(call sources,$(1))) $(call ifexists,$1.c)
+app_file = $(call objects, $(call sources,$(1))) $(call ifexists,$1.c)
 
 .PRECIOUS: $(BIN)%.c.asm
 .PRECIOUS: %.o

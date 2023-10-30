@@ -28,7 +28,7 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/usb/enumerate_hub.c.o \
 	$(BINDIR)libraries/usb/enumerate_storage.c.o \
 	$(BINDIR)libraries/usb/enumerate.c.o \
-	$(BINDIR)libraries/usb/format_mapping.c.lib \
+	$(BINDIR)libraries/usb/format_mapping.c.o \
 	$(BINDIR)libraries/usb/protocol.c.o \
 	$(BINDIR)libraries/usb/transfers.c.o \
 	$(BINDIR)libraries/usb/usb_cbi.c.o \
