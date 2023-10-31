@@ -2,7 +2,17 @@
 #define __CLASS_PRINTER
 
 #include "ch376.h"
+#include "dev_transfers.h"
 #include "protocol.h"
+
+#define PRINTER_BUFFER_SIZE 64
+typedef struct {
+  COMMON_DEVICE_CONFIG
+  endpoint_param endpoints[1]; // bulk out
+  uint8_t        buffer_length;
+  int8_t         buffer_wait;
+  uint8_t        buffer[PRINTER_BUFFER_SIZE];
+} device_config_printer;
 
 /*
 

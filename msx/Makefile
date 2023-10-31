@@ -6,7 +6,7 @@ MAKEFLAGS += --no-builtin-rules
 
 MAKEFLAGS += -s
 
-all: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com
+all: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com usbimage
 
 pmsxsysromimages:
 	@$(MAKE) -j -O msxsysromimages --no-print-directory
@@ -32,8 +32,8 @@ cbios:
 
 
 # esp8266.com
-INCLUDED_APPS 	:= testram.com testram.txt memtest.com memtest.eng memtest.fr memtest.jpn pt3play.com iteratn.pt3 mbrot.com usbctrl.com
-INCLUDED_SYSTEM := xrecv.com fdisk.com rtccalb.com siocfg.com fossilon.com
+INCLUDED_APPS 	:= testram.com memtest.com memtest.eng pt3play.com iteratn.pt3 mbrot.com
+INCLUDED_SYSTEM := xrecv2.com fdisk.com rtccalb.com siocfg.com service.com prnt.sys
 INCLUDED_ROOT 	:= AUTOEXEC.BAT SROM.COM SROM.TXT SROM.INI
 
 define BUILD_versions =
@@ -113,19 +113,19 @@ clean:
 VPATH = ./tools/xmodem:./bin/
 PASMO := pasmo --public -v -I ./bin/
 
-tools: apps/bin/xrecv.com bin/chkspd.com
+tools: apps/bin/xrecv2.com bin/chkspd.com
 
 bin/chkspd.com: ./tools/chkspd/chkspd.asm
 	@mkdir -p bin
 	$(PASMO) $< $@
 
-.PHONY: apps/bin/xrecv.com
-apps/bin/xrecv.com:
-	@make -C apps bin/xrecv.com --no-print-directory
+.PHONY: apps/bin/xrecv2.com
+apps/bin/xrecv2.com:
+	@make -C apps bin/xrecv2.com --no-print-directory
 
-nextor-rc2014/extras/system/xrecv.com: apps/bin/xrecv.com
+nextor-rc2014/extras/system/xrecv2.com: apps/bin/xrecv2.com
 	@mkdir -p nextor-rc2014/extras/system
-	cp -up apps/bin/xrecv.com nextor-rc2014/extras/system/xrecv.com
+	cp -up apps/bin/xrecv2.com nextor-rc2014/extras/system/xrecv2.com
 
 bin/%.com: %.asm
 	@mkdir -p bin
@@ -141,6 +141,10 @@ nextor-rc2014/extras/apps/%: bin/%
 	@cp -up "$<" "$@"
 
 nextor-rc2014/extras/system/%.com: bin/%.com
+	@mkdir -p nextor-rc2014/extras/system
+	@cp -up "$<" "$@"
+
+nextor-rc2014/extras/system/%.sys: bin/%.sys
 	@mkdir -p nextor-rc2014/extras/system
 	@cp -up "$<" "$@"
 
@@ -217,7 +221,20 @@ bin/rcmusic.rom:
 	$(MAKE) --no-print-directory -C rc2014-music
 	cp rc2014-music/bin/rcmusic.rom ./bin/rcmusic.rom
 
-release:
+.PHONY: usbimage
+usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com
+	@rm -rf bin/usbimage
+	mkdir -p bin/usbimage/system
+	mkdir -p bin/usbimage/apps
+	cp ./nextor/bin/working/rc2014/nextor.sys ./bin/usbimage/nextor.sys
+	cp ./nextor/bin/working/rc2014/command2.com ./bin/usbimage/command2.com
+	cp ./nextor/bin/working/rc2014/*.com ./bin/usbimage/system
+	cp -r ./nextor-rc2014/extras/* ./bin/usbimage/
+	cp -r ./apps/bin/*.com ./bin/usbimage/apps
+	cp -r ./apps/bin/*.sys ./bin/usbimage/system
+	rm ./bin/usbimage/system/command2.com
+
+release: usbimage
 	@version=$$(date +%y-%m-%d)
 	mkdir -p ../release
 	rm -f ../release/msx-rc2014-$${version}.zip
@@ -234,6 +251,10 @@ release:
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar yellow-*.rom)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar rcmusic.rom)
 	(cd ./bin && gzip -qf ../../release/msx-rc2014-$${version}.tar)
+	rm -f ../release/usbimage-$${version}.zip
+	(cd ./bin/usbimage && zip -r ../../../release/usbimage-$${version}.zip *)
+	(cd ./bin/usbimage && pwd && tar -cvf ../../../release/usbimage-$${version}.tar *)
+	(cd ./bin/usbimage && gzip -qf ../../../release/usbimage-$${version}.tar)
 
 bin/bbcbasic.com: $(wildcard bbcbasic-z80/*)
 	@$(MAKE) -C bbcbasic-z80 --no-print-directory

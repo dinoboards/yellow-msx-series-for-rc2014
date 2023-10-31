@@ -171,7 +171,7 @@ These binaries are for flashing onto the SST39SF040 ROM for the MSX Memory Modul
 | fdisk.com                   | Testing tool                                                 |           |               |             |
 | lines.com                   | Testing tool                                                 |           |               |             |
 | mbrot.com                   | Testing tool                                                 |           |               |             |
-| xrecv.com                   | Xmodem receive tools for the RC2014 SIO/2 Module             |           |               |             |
+| xrecv2.com                  | Xmodem receive tools for the RC2014 SIO/2 Module             |           |               |             |
 | rtccalb.com                 | Tool to calibrate RTC module against CPU Clock               |           |               |             |
 
 See Also [Apps and Utils for MSX on RC2014](./docs/apps.md)

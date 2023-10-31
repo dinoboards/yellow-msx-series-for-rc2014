@@ -12,34 +12,60 @@ endif
 LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb -I./libraries
 
 # -DSTACK_TRACE_ENABLED
-ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1-DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
+ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -g -pragma-define:CLIB_32BIT_FLOAT=1 -DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
+ZCC_FOR_sys := zcc  +msx --vc -subtype=rom -startup=1  -compiler=sdcc -Cs --Werror -D__MATH_MATH32 -g $(ZCCRELFLAGS) $(LIBS)
 
 BIN := ./bin/
 SRC := ./
 
+#
 .PHONY: all
-all: $(addsuffix .com,$(addprefix $(BIN),fdisk helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all: $(BIN)hello.sys $(BIN)prnt.sys  $(addsuffix .com,$(addprefix $(BIN),fdisk service helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
 zcchelp:
 	@$(ZCC) -Cl
 
-
 GETSLT_LIB := $(addprefix $(BIN),getslt.lib)
 CONFIG_REQUEST_LIB := $(addprefix $(BIN),config_request.c.lib)
 SYSTEM_VARS_LIB := $(addprefix $(BIN)libraries/msxbios/,system_vars.c.lib)
-MSXDOS_LIB := $(addprefix $(BIN)libraries/msxdos/,msxdos_get_drive_letter_info.lib msxbios_break_x.lib msxdos.lib msxdos_set_date.lib msxdos_set_time.lib msxdos_get_time.lib msxdos_drv_direct_1.lib)
-EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio.lib extbio_usb_get_present.lib extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer.lib unapi_get_ram_helper.lib)
+MSXDOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxdos/*.asm)))
+EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio.lib extbio_usb_get_present.lib extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer.lib unapi_get_ram_helper.lib extbio_rc2014_get_version.lib extbio_rc2014_hello.lib memmapper.lib)
 FOSSIL_LIB := $(addprefix $(BIN)libraries/fossil/,fossil.lib fossil.c.lib)
 DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
-USB_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib ch376.lib usb_state.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib ch376.c.lib transfers.c.lib dev_transfers.c.lib enumerate_storage.c.lib class_hub.c.lib enumerate.c.lib enumerate_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib)
-FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib fprintf.c.lib interrupts.lib inputstring.lib inkey.lib inputchar.lib)
+
+USB_KERNEL_LIB := $(addprefix $(BIN)libraries/usb/,ch376.lib usb_state.c.lib ch376.c.lib transfers.c.lib dev_transfers.c.lib enumerate_storage.c.lib enumerate.c.lib enumerate_hub.c.lib)
+USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib)
+
+FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib fprintf.c.lib interrupts.lib inputstring.lib inkey.lib inputchar.lib io.lib)
 V9958_LIB := $(addprefix $(BIN),v9958.c.lib v9958.lib)
+SYS_LIB := $(addprefix $(BIN)libraries/sysload/, sysload.c.lib sysload.lib)
 
 .PHONY: list
 list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
+
+syshello_files = $(addprefix $(BIN),$(call app_file,sys/hello/body))
+$(BIN)sys/hello/body/hello.body: $(syshello_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(BIN)sys/hello/body/hello.reloc: $(BIN)sys/hello/body/hello.body
+$(BIN)hello.sys: $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(addprefix $(BIN)sys/hello/body/, import.asm hello.body hello.reloc hello.def.lib) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+hello.sys.crt_enable_commandline:=1
+
+sysprnt_files = $(addprefix $(BIN),$(call app_file,sys/prnt/body))
+$(BIN)sys/prnt/body/prnt.body: $(sysprnt_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(BIN)sys/prnt/body/prnt.reloc: $(BIN)sys/prnt/body/prnt.body
+$(BIN)prnt.sys: $(addprefix $(BIN),$(call app_file,sys/prnt/init)) $(addprefix $(BIN)sys/prnt/body/, import.asm prnt.body prnt.reloc prnt.def.lib) $(USB_USER_LIB) $(DELAY_LIB) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+prnt.sys.crt_enable_commandline:=1
+
+service_files = $(call app_file,service)
+$(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+service.com.crt_enable_commandline:=1
+
+
+helloworld_files = $(call app_file,helloworld)
+$(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+helloworld.com.crt_enable_commandline:=1
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm)
 $(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
@@ -48,16 +74,12 @@ clrdir_files = $(call app_file,clrdir)
 $(BIN)clrdir.com: $(addprefix $(BIN),$(clrdir_files)) $(MSXDOS_LIB) $(FUSION_LIB) $(SYSTEM_VARS_LIB)
 clrdir.com.crt_enable_commandline:=1
 
-helloworld_files = $(call app_file,helloworld)
-$(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-helloworld.com.crt_enable_commandline:=1
-
 usbctrl_files = $(call app_file,usbctrl)
-$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(USB_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(USB_USER_LIB) $(SYSTEM_VARS_LIB)
 usbctrl.com.crt_enable_commandline:=1
 
 usbtst_files = $(call app_file,usbtst)
-$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(MSXDOS_LIB) $(USB_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB)
+$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(MSXDOS_LIB) $(USB_USER_LIB) $(USB_KERNEL_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB)
 usbtst.com.crt_enable_commandline:=1
 
 dots_files = $(call app_file,dots)
@@ -128,9 +150,6 @@ romflash.com.crt_enable_commandline:=1
 muflash_files = $(call app_file,muflash)
 $(BIN)muflash.com: $(addprefix $(BIN),$(muflash_files)) $(SYSTEM_VARS_LIB)
 muflash.com.crt_enable_commandline:=1
-
-bin/xrecv.com: bin/xrecv2.com
-	@cp bin/xrecv2.com bin/xrecv.com
 
 .PHONY: bin/chip8.com
 bin/chip8.com:

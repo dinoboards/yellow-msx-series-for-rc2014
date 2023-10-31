@@ -1,6 +1,6 @@
 #include "main.h"
 #include "print.h"
-#include "printer_drv.h"
+// #include "printer_drv.h"
 #include "usb-dev-info-ufi.h"
 #include "usb-dev-read-ufi.h"
 #include "usb-dev-write-ufi.h"
@@ -9,7 +9,6 @@
 #include <ch376.h>
 #include <class_hid.h>
 #include <class_hid_keyboard.h>
-#include <class_printer.h>
 #include <class_scsi.h>
 #include <class_ufi.h>
 #include <delay.h>
@@ -82,7 +81,7 @@ const char *printer_test_txt = "Verifying printer output works!\n";
 void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
   const bool hasCdc      = find_device_config(USB_IS_CDC) != NULL;
-  const bool hasPrinter  = find_device_config(USB_IS_PRINTER) != NULL;
+  const bool hasUnknown  = find_device_config(USB_IS_UNKNOWN) != NULL;
   const bool hasKeyboard = find_device_config(USB_IS_KEYBOARD) != NULL;
   const bool hasFTDI     = find_device_config(USB_IS_FTDI) != NULL;
 
@@ -100,11 +99,8 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
   if (hasCdc)
     print_string("CDC\r\n");
 
-  if (hasPrinter) {
-    print_string("PRINTER\r\n");
-    strcpy(buffer, printer_test_txt);
-    result = prt_send_text(buffer);
-    printf("prt_send_text: %d\r\n", result);
+  if (hasUnknown) {
+    print_string("UNKNOWN\r\n");
   }
 
   if (hasKeyboard) {

@@ -1,8 +1,10 @@
 #include <stdio.h>
-#include <string.h>
 
-void main(const int argc, const char *argv[]) {
+uint8_t main(const int argc, const char *argv[]) {
   (void)argc;
   (void)argv;
-  printf("     Hello World\r\n");
+
+  printf("Hello World\r\n");
+
+  return 0;
 }

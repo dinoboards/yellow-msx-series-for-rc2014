@@ -1,15 +1,11 @@
 
-APPS := dots lines mbrot cpusptst clrdir fdisk vramtest extbio rs232tst fosiltst term fossilon xrecv rtccalb esp8266 chip8 chip8asm romflash muflash siocfg usbtst usbctrl
-APP_TARGETS := $(addsuffix .com,$(addprefix ./bin/,$(APPS)))
 
 .PHONY: apps
-apps: $(APP_TARGETS)
-
-.PHONY: $(APP_TARGETS)
-$(APP_TARGETS):
+apps:
 	@mkdir -p bin
-	$(MAKE) "$@" --no-print-directory -j -C apps
-	cp -up ./apps/$@ ./bin/
+	$(MAKE) --no-print-directory -j -C apps
+	cp -up ./apps/bin/*.com ./bin/
+	cp -up ./apps/bin/*.sys ./bin/
 
 .PHONY: format
 format:

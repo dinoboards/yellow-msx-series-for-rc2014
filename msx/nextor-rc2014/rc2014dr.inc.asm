@@ -21,7 +21,7 @@ _usb_dev_status:		EQU		DRIVER_ASM_END+9
 _usb_dev_read:			EQU		DRIVER_ASM_END+12
 _usb_dev_write:			EQU		DRIVER_ASM_END+15
 _fn_enum:			EQU		DRIVER_ASM_END+18
-_drv_direct4:			EQU		DRIVER_ASM_END+21
+; _drv_direct4:			EQU		DRIVER_ASM_END+21
 _device_mapping:		EQU		DRIVER_ASM_END+24
 _convert_and_print_disk_size:	EQU		DRIVER_ASM_END+27
 extbio_rc2014:			EQU		DRIVER_ASM_END+30

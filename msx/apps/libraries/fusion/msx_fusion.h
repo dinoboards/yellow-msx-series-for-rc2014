@@ -462,7 +462,4 @@ JoystickRead
                     #FF = when the speified trigger is pressed down
 ============================================================================= */
 
-/* --------------------------------------------------------- */
-/* FUSION-C Version tag									 	 */
-static const unsigned char Done_Version[] = "Made with FUSION-C 1.2 (ebsoft)";
 #endif

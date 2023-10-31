@@ -1,12 +1,12 @@
 #include "command_printer_check.h"
 #include "arguments.h"
 #include "device_search.h"
-#include <class_printer.h>
 #include <delay.h>
 #include <msx_fusion.h>
 #include <protocol.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <usb/class_printer.h>
 
 usb_error find_printer(const uint8_t address, device_config_interface *const printer_interface) __sdcccall(1) {
   uint8_t buffer[151];

@@ -6,7 +6,7 @@
 	EXTERN	_usb_dev_read
 	EXTERN	_usb_dev_write
 	EXTERN  _fn_enum
-	EXTERN	_drv_direct4
+	; EXTERN	_drv_direct4
 	EXTERN	_drv_direct1
 	EXTERN	_device_mapping
 	EXTERN	_convert_and_print_disk_size
@@ -29,7 +29,7 @@ usb_dev_write:
 fn_enum:
 	JP	_fn_enum
 drv_direct4:
-	JP	_drv_direct4
+	JP	0
 device_mapping:
 	JP	_device_mapping
 convert_and_print_disk_size:

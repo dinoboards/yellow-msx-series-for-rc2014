@@ -133,7 +133,7 @@ If you created more than one parition, you may need to use the [MAPDRV](https://
 
 This version of the ROM image includes a very basic serial driver for the SIO/2 chip.
 
-By use of the included `xrecv.com` application, files can be sent to your device using xmodem.
+By use of the included `xrecv2.com` application, files can be sent to your device using xmodem.
 
 The image has been compiled on the assumption that the second clock rate is set to 0.3072Mhz (equating to 19200)
 

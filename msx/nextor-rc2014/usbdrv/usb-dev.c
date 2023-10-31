@@ -1,7 +1,7 @@
 #include "usb-dev.h"
 #include "../../apps/libraries/msxdos/msxdos_rc2014_ex.h"
 #include "keyboard_drv.h"
-#include "printer_drv.h"
+// #include "printer_drv.h"
 #include "work-area.h"
 
 /**
@@ -41,6 +41,6 @@ uint16_t rc2014_get_lun_info_ex(const uint8_t device_index, const uint8_t lun, r
 }
 
 void drv_timi(void) {
-  drv_timi_printer();
+  // drv_timi_printer();
   drv_timi_keyboard();
 }

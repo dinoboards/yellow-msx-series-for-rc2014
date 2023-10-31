@@ -36,8 +36,6 @@ $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)libraries/usb/class_hid.c.o \
 	$(BINDIR)libraries/usb/class_hid_keyboard.c.o \
 	$(BINDIR)print.o \
-	$(BINDIR)printer_drv.c.o \
-	$(BINDIR)printer_drv.o \
 	$(BINDIR)usb-dev-info-scsi.c.o \
 	$(BINDIR)usb-dev-info-ufi.c.o \
 	$(BINDIR)usb-dev-info.c.o \

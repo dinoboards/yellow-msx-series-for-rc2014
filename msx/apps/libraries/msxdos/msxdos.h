@@ -1,7 +1,10 @@
 #ifndef __NEXTOR_DOS
 #define __NEXTOR_DOS
 
+/* must include stdbool before stdio, as stdio include msx.h which will define its own bool if none defined */
 #include <stdbool.h>
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -154,8 +157,78 @@ extern uint8_t msxdosSetDate(uint16_t year, uint8_t month, uint8_t date);
 extern uint8_t msxdosSetTime(uint8_t hour, uint8_t minutes, uint8_t seconds, uint8_t centiseconds);
 extern void    msxdosGetTime(uint8_t *hour, uint8_t *minutes, uint8_t *seconds);
 
-#define _IPART 0xB4
+extern uint8_t msxdosGetEnvironment(const char *name, char *value, const uint8_t buffer_size);
+extern uint8_t msxdosSetEnvironment(const char *name, const char *value) __sdcccall(1);
+
+// MSX-DOS 2 File functions
+
+#define IO_RDONLY      0
+#define IO_WRONLY      1
+#define IO_INHERITABLE 2
+
+extern uint16_t msxdosOpenFile(const char *filename, const uint8_t open_mode);
+extern uint16_t msxdosCreateFile(const char *filename, const uint8_t open_mode);
+extern uint16_t msxdosReadFile(const uint8_t file_handle, const void *buf, uint16_t nbytes);
+extern uint16_t msxdosCloseFile(const uint8_t file_handle) __sdcccall(1);
+extern void     msxdosExplainErrorCode(const uint8_t error_code, char *const error_description);
+
+#define _NCOMP 0xFF
+#define _WRERR 0xFE
+#define _DISK  0xFD
+#define _NRDY  0xFC
+#define _VERFY 0xFB
+#define _DATA  0xFA
+#define _RNF   0xF9
+#define _WPROT 0xF8
+#define _UFORM 0xF7
+#define _NDOS  0xF6
+#define _WDISK 0xF5
+#define _WFILE 0xF4
+#define _SEEK  0xF3
+#define _IFAT  0xF2
+#define _NOUPB 0xF1
+#define _IFORM 0xF0
+#define _INTER 0xDF
+#define _NORAM 0xDE
+#define _IBDOS 0xDC
+#define _IDRV  0xDB
+#define _IFNM  0xDA
+#define _IPATH 0xD9
+#define _PLONG 0xD8
 #define _NOFIL 0xD7
+#define _NODIR 0xD6
+#define _DRFUL 0xD5
+#define _DKFUL 0xD4
+#define _DUPF  0xD3
+#define _DIRE  0xD2
+#define _FILRO 0xD1
+#define _DIRNE 0xD0
+#define _IATTR 0xCF
+#define _DOT   0xCE
+#define _SYSX  0xCD
+#define _DIRX  0xCC
+#define _FILEX 0xCB
+#define _FOPEN 0xCA
+#define _OV64K 0xC9
+#define _FILE  0xC8
+#define _EOF   0xC7
+#define _ACCV  0xC6
+#define _IPROC 0xC5
+#define _NHAND 0xC4
+#define _IHAND 0xC3
+#define _NOPEN 0xC2
+#define _IDEV  0xC1
+#define _IENV  0xC0
+#define _ELONG 0xBF
+#define _IDATE 0xBE
+#define _ITIME 0xBD
+#define _RAMDX 0xBC
+#define _NRAMD 0xBB
+#define _HDEAD 0xBA
+#define _EOL   0xB9
+#define _ISBFN 0xB8
+
+#define _IPART 0xB4
 
 // MSX BIOS functions
 extern void msxbiosInit32(void);

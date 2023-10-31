@@ -253,7 +253,7 @@ Results:     L=A = Input character
 
 
    A character is read from the auxiliary input device (file handle 3) and if
-no character  is ready then it will wait for one. The auxiliary input device
+no character  is ready then it will wait for one. The auxiliary input  device
 must  have been installed before this function may be used. If no such device
 has been  installed then  this function  will always  return the  end of file
 character ("Ctrl-Z").
@@ -269,7 +269,7 @@ Results:       None
 
    The character passed in register E will be written to the auxiliary output
 device (file  handle 3). The auxiliary output device must have been installed
-before this function  may be used. If no such device has been installed then
+before this function  may be used.  If no such device has been installed then
 this function will simply throw the character away.
 
 
@@ -281,11 +281,11 @@ Parameters:    C = 05H (_LSTOUT)
 Results:       None
 
 
-   The character passed  in register  E will be sent to the standard printer
-device (file  handle 4 - usually  the parallel printer). The same channel is
+   The character passed  in register  E will be  sent to the standard printer
+device (file  handle 4 - usually  the  parallel printer). The same channel is
 used for console output which is echoed to the printer. TABs are not expanded
-by  thisfunction, although  they are expanded when screen output is echoed to
-the printer with "Ctrl-P".
+by  this function, although  they are  expanded when  screen output is echoed
+to the printer with "Ctrl-P".
 
 
 

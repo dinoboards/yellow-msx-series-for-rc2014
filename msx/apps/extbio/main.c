@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+bool hasRC2014;
+
 const char *extendedBiosName(uint8_t id) {
   switch (id) {
   case 0:
@@ -37,6 +39,7 @@ const char *extendedBiosName(uint8_t id) {
     return "μ-driver by Yoshikazu Yamamoto";
 
   case 214:
+    hasRC2014 = true;
     return "RC2014 Extensions";
 
   case 241:
@@ -52,6 +55,8 @@ extbio_device_table table[32];
 extern uint8_t getSlotPage0(void *) __z88dk_fastcall;
 
 void main(void) {
+  hasRC2014 = false;
+
   const bool extendedBiosReady = HOKVLD & 1;
   if (!extendedBiosReady) {
     xprintf("No bios extenstions installed\r\n");
@@ -76,8 +81,23 @@ void main(void) {
   for (int i = 0; i < count; i++)
     xprintf("%d: %s (%02X) (%02X)\r\n", i, extendedBiosName(table[i].deviceId), table[i].deviceId, table[i]._reserved);
 
-  const uint16_t hl = unapi_get_ram_helper();
-  printf("UNAPI RAM HELPER @ %04X\r\n", hl);
+  const uint16_t reduced_mapper_table = 0;
+  const uint8_t  number               = 0;
+
+  if (hasRC2014) {
+    const uint8_t v = extbio_rc2014_get_version();
+    printf("RC2014 Extensions Version: %d\r\n", v);
+
+    const uint16_t h = extbio_rc2014_hello();
+    printf("RC2014 Hello World Test: %d\r\n", h);
+  }
+
+  const jump_table_entry *hl = unapi_get_ram_helper(&reduced_mapper_table, &number);
+  printf("\r\nUNAPI:\r\n");
+  printf("  RAM HELPER\r\n");
+  printf("    JUMP TABLE @ %p\r\n", hl);
+  printf("    REDUCED TABLE @ %p\r\n", reduced_mapper_table);
+  printf("    NUMBER OF ENTRIES %d\r\n", number);
 
   xprintf("\r\n");
 }

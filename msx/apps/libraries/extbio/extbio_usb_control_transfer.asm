@@ -1,3 +1,4 @@
+	SECTION	CODE
 	include	"msx.inc"
 
 ;

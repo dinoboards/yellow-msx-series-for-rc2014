@@ -11,7 +11,7 @@ const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",  
                                     "9600", "19200", "38400", "57600", "unknown", "115200"};
 
 uint8_t abort_with_help(void) {
-  print_str("Usage:  xrecv <filename> [options]\r\n\r\n"
+  print_str("Usage:  xrecv2 <filename> [options]\r\n\r\n"
             "Receive a file using xmodem protocol\r\n"
             "using the active fossil driver\r\n\r\n"
             "  /b<rate>, /baud=<rate>\r\n"

@@ -1,6 +1,6 @@
 #include "nextor.h"
 #include "print.h"
-#include "printer_drv.h"
+// #include "printer_drv.h"
 #include "usb-dev.h"
 #include "usb-lun-info.h"
 #include "work-area.h"
@@ -90,9 +90,9 @@ bool state_devices(const _usb_state *const boot_area) __z88dk_fastcall {
   if (hasCdc)
     print_string("    CDC\r\n");
 
-  const bool hasPrinter = find_device_config(USB_IS_PRINTER) != NULL;
-  if (hasPrinter)
-    print_string("    PRINTER\r\n");
+  const bool hasUnknown = find_device_config(USB_IS_UNKNOWN) != NULL;
+  if (hasUnknown)
+    print_string("    UNKNOWN <DRIVER REQUIRED>\r\n");
 
   const bool hasKeyboard = find_device_config(USB_IS_KEYBOARD) != NULL;
   if (hasKeyboard)
@@ -121,7 +121,7 @@ bool state_devices(const _usb_state *const boot_area) __z88dk_fastcall {
 
   } while (++index != MAX_NUMBER_OF_STORAGE_DEVICES + 1);
 
-  if (!hasCdc && !hasPrinter && storage_count == 0) {
+  if (!hasCdc && hasUnknown && storage_count == 0) {
     print_string("    DISCONNECTED\r\n");
     return false;
   }
@@ -208,7 +208,7 @@ uint16_t boot_phase_2(void) {
 
   p->present |= PRES_CH376;
 
-  install_printer();
+  // install_printer();
 
   state_devices(boot_state);
 

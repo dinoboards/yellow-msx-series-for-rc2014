@@ -1,4 +1,5 @@
 
+	SECTION	CODE
 
 ;
 ; extern void memmap_link(void *p) __z88dk_fastcall;
@@ -10,7 +11,7 @@ _memmap_link:
 	LDIR
 	RET
 
-	
+
 ; HL+0h	ALL_SEG
 ; 	Use: Allocate a segment
 ; 	Entry: A=0 for the user, A=1 for the system
@@ -26,7 +27,7 @@ _memmap_link:
 ; 		 A  = Segment number
 ; 		 B  = Slot number
 
-; extern bool memmap_allocate_segment(bool for_user, uint8_t mapper_slot, &allocated_segment, & allocated_slot);
+; extern uint8_t memmap_allocate_segment(uint8_t for_user, uint8_t mapper_slot, uint8_t *allocated_segment, uint8_t *allocated_slot)
 	PUBLIC	_memmap_allocate_segment
 _memmap_allocate_segment:
 	PUSH	IX
@@ -42,15 +43,15 @@ _memmap_allocate_segment:
 	LD	L, (IX+6)		; allocated_segment
 	LD	H, (IX+7)
 	LD	(HL), A
-	
-	LD	L, (IX+7)		; allocated_slot
-	LD	H, (IX+8)
+
+	LD	L, (IX+8)		; allocated_slot
+	LD	H, (IX+9)
 	LD	(HL), B
 
 	LD	L, 255
-	JR	C, allocated
+	JR	C, not_allocated
 	LD	L, 0
-allocated:
+not_allocated:
 
 	POP	IX
 	RET
@@ -99,16 +100,9 @@ allocated:
 ; 		A = Segment number
 ; 	 Modifies: Nothing
 
-; HL+15h	GET_PH
-; 	 Use: Get the selected segment number on the corresponding memory page at the
-; 		 specified address.
-; 	 Entry:HL = Address (in fact the bits 6~7 of H specify the page number)
-; 		A = Segment number
-; 	 Modifies: Nothing
-
 ; HL+18h	PUT_P0
 ; 	 Use: Select a segment on page 0 (0000h~3FFFh)
-; 	 Entry: A = Segment number 
+; 	 Entry: A = Segment number
 ; 	 Modifies: Nothing
 
 ; HL+1Bh	GET_P0
@@ -146,6 +140,33 @@ allocated:
 ; 	 Output: A = Segment number
 ; 	 Modifies: A
 
+
+; HL+12h  PUT_PH
+;          Use: Select a segment on the corresponding memory page at the specified address.
+;          Entry: HL = Address (in fact the bits 6~7 of H specify the page number)
+;                 A = Segment number
+;          Modifies: Nothing
+
+	PUBLIC	_memmap_put_page
+_memmap_put_page:
+	CALL	put_page
+	LD	L, A
+	RET
+
+
+; HL+15h  GET_PH
+;          Use: Get the selected segment number on the corresponding memory page at the
+;                  specified address.
+;          Entry: HL = Address (in fact the bits 6~7 of H specify the page number)
+;          Output: A = Segment number
+;          Modifies: Nothing
+
+	PUBLIC	_memmap_get_page
+_memmap_get_page:
+	CALL	get_page
+	LD	L, A
+	RET
+
 	PUBLIC	_memmap_get_page_0
 _memmap_get_page_0:
 	CALL	get_page_0
@@ -166,8 +187,8 @@ _memmap_get_page_1:
 
 	PUBLIC	_memmap_put_page_1
 _memmap_put_page_1:
+	LD	A, L
 	CALL	put_page_1
-	LD	L, A
 	RET
 
 	PUBLIC	_memmap_get_page_2
@@ -189,8 +210,8 @@ _memmap_get_page_3:
 
 	PUBLIC	_memmap_put_page_3
 _memmap_put_page_3:
+	LD	A, L
 	CALL	put_page_3
-	LD	L, A
 	RET
 
 jump_table:
@@ -200,7 +221,7 @@ allocate_segment:
 free_segment:
 	JP	0
 
-read_segment:	
+read_segment:
 	JP	0
 
 write_segment:

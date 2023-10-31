@@ -41,9 +41,9 @@ typedef enum {
   USB_IS_FLOPPY       = 1,
   USB_IS_MASS_STORAGE = 2,
   USB_IS_CDC          = 3,
-  USB_IS_PRINTER      = 4,
-  USB_IS_KEYBOARD     = 5,
-  USB_IS_FTDI         = 6,
+  USB_IS_KEYBOARD     = 4,
+  USB_IS_FTDI         = 5,
+  USB_IS_UNKNOWN      = 6,
   _USB_LAST_DEVICE_TYPE,
   USB_IS_HUB = 15
 } usb_device_type; // 4 bits only

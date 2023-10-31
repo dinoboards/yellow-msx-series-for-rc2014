@@ -125,9 +125,9 @@
  libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
- libraries/usb/usb_state.h libraries/usb/class_printer.h \
- libraries/delay/delay.h libraries/msxbios/system_vars.h \
- libraries/fusion/msx_fusion.h libraries/usb/protocol.h
+ libraries/usb/usb_state.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h libraries/fusion/msx_fusion.h \
+ libraries/usb/protocol.h libraries/usb/class_printer.h
 ./bin/usbctrl/read_and_write_sectors.c.asm: usbctrl/read_and_write_sectors.c \
  usbctrl/read_and_write_sectors.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -136,10 +136,6 @@
  libraries/usb/dev_transfers.h libraries/usb/usb_cbi.h \
  libraries/usb/usb_state.h
 ./bin/helloworld.c.asm: helloworld.c
-./bin/usbtst/printer_drv.c.asm: usbtst/printer_drv.c libraries/usb/class_printer.h \
- libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
- libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- libraries/usb/usb_state.h
 ./bin/usbtst/usb-dev-info-ufi.c.asm: usbtst/usb-dev-info-ufi.c usbtst/usb-dev-info-ufi.h \
  usbtst/nextor.h libraries/usb/protocol.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -170,20 +166,20 @@
  libraries/usb/transfers.h libraries/usb/class_ufi.h \
  libraries/usb/protocol.h libraries/usb/usb_cbi.h libraries/usb/ch376.h \
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h
-./bin/usbtst/main.c.asm: usbtst/main.c usbtst/main.h usbtst/print.h usbtst/printer_drv.h \
- libraries/usb/usb_state.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
- libraries/usb/protocol.h libraries/usb/dev_transfers.h \
- libraries/usb/transfers.h usbtst/usb-dev-info-ufi.h usbtst/nextor.h \
- libraries/usb/protocol.h usbtst/usb-dev-read-ufi.h \
- usbtst/usb-dev-write-ufi.h usbtst/usb-lun-info-ufi.h \
- libraries/usb/ch376.h libraries/usb/class_hid.h \
- libraries/usb/class_hid_keyboard.h libraries/usb/class_printer.h \
- libraries/usb/class_scsi.h libraries/usb/class_ufi.h \
- libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
- libraries/usb/usb_state.h libraries/delay/delay.h \
- libraries/msxbios/system_vars.h libraries/usb/enumerate.h \
- libraries/msxdos/msxdos.h libraries/usb/usb_trace.h \
- libraries/usb/class_ufi.h
+./bin/usbtst/main.c.asm: usbtst/main.c usbtst/main.h usbtst/print.h \
+ usbtst/usb-dev-info-ufi.h usbtst/nextor.h libraries/usb/protocol.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ usbtst/usb-dev-read-ufi.h usbtst/usb-dev-write-ufi.h \
+ usbtst/usb-lun-info-ufi.h libraries/usb/usb_state.h \
+ libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/class_hid.h \
+ libraries/usb/class_hid_keyboard.h libraries/usb/class_scsi.h \
+ libraries/usb/class_ufi.h libraries/usb/usb_cbi.h \
+ libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/usb/enumerate.h libraries/msxdos/msxdos.h \
+ libraries/usb/usb_trace.h libraries/usb/class_ufi.h
+./bin/service/service.c.asm: service/service.c libraries/msxdos/msxdos.h
 ./bin/fdisk/screen_control.c.asm: fdisk/screen_control.c fdisk/screen_control.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/fdisk/driver_selection.c.asm: fdisk/driver_selection.c fdisk/driver_selection.h \
@@ -250,8 +246,8 @@
  libraries/msxbios/system_vars.h
 ./bin/libraries/usb/class_printer.c.asm: libraries/usb/class_printer.c \
  libraries/usb/class_printer.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h libraries/usb/protocol.h \
- libraries/usb/dev_transfers.h libraries/usb/transfers.h
+ libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
+ libraries/usb/transfers.h libraries/usb/protocol.h
 ./bin/libraries/usb/usb_cbi.c.asm: libraries/usb/usb_cbi.c libraries/usb/usb_cbi.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/ch376.h \
@@ -313,12 +309,28 @@
  libraries/z80.h
 ./bin/libraries/usb/format_mapping.c.asm: libraries/usb/format_mapping.c \
  libraries/usb/format_mapping.h
+./bin/libraries/sysload/sysload.c.asm: libraries/sysload/sysload.c libraries/sysload/sysload.h \
+ libraries/sysload/sys.h libraries/msxbios/extbio.h libraries/fusion/io.h \
+ libraries/msxdos/msxdos.h
 ./bin/libraries/msxbios/system_vars.c.asm: libraries/msxbios/system_vars.c \
  libraries/msxbios/system_vars.h
 ./bin/libraries/fossil/fossil.c.asm: libraries/fossil/fossil.c libraries/fossil/fossil.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h
 ./bin/fossilon.c.asm: fossilon.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
+./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
+ libraries/sysload/sys.h
+./bin/sys/prnt/body/prnt.c.asm: sys/prnt/body/prnt.c libraries/msxbios/system_vars.h \
+ libraries/usb/class_printer.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
+ libraries/usb/transfers.h libraries/usb/protocol.h
+./bin/sys/prnt/init/prnt.c.asm: sys/prnt/init/prnt.c libraries/msxbios/extbio_rc2014.h \
+ libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/fusion/msx_fusion.h libraries/sysload/sys.h \
+ libraries/sysload/sysload.h libraries/sysload/sys.h \
+ libraries/msxbios/system_vars.h libraries/usb/class_printer.h \
+ libraries/usb/protocol.h
 ./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h xstdio.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
 ./bin/siocfg/arguments.c.asm: siocfg/arguments.c siocfg/arguments.h
@@ -327,14 +339,15 @@
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
 ./bin/config_request.c.asm: config_request.c v9958.h
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
- romflash/memmapper.h libraries/msxbios/extbio.h \
- libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
+ libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
 ./bin/usbctrl/floopy_boot_code.o: ./usbctrl/floopy_boot_code.asm
 ./bin/usbtst/print.o: ./usbtst/print.asm
 ./bin/romflashwriter/romflashwriter.o: ./romflashwriter/romflashwriter.asm
+./bin/service/service.o: ./service/service.asm
 ./bin/fdisk/fdisk.o: ./fdisk/fdisk.asm
 ./bin/term/print.o: ./term/print.asm
 ./bin/term/msx2ansi.o: ./term/msx2ansi.asm
@@ -345,26 +358,40 @@
 ./bin/libraries/extbio/extbio_usb_get_present.o: ./libraries/extbio/extbio_usb_get_present.asm ./msx.inc
 ./bin/libraries/extbio/unapi_get_ram_helper.o: ./libraries/extbio/unapi_get_ram_helper.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_out_transfer.o: ./libraries/extbio/extbio_usb_data_out_transfer.asm ./msx.inc
+./bin/libraries/extbio/extbio_rc2014_hello.o: ./libraries/extbio/extbio_rc2014_hello.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
+./bin/libraries/extbio/memmapper.o: ./libraries/extbio/memmapper.asm
 ./bin/libraries/extbio/extbio_usb_control_transfer.o: ./libraries/extbio/extbio_usb_control_transfer.asm ./msx.inc
+./bin/libraries/extbio/extbio_rc2014_get_version.o: ./libraries/extbio/extbio_rc2014_get_version.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
 ./bin/libraries/fusion/interrupts.o: ./libraries/fusion/interrupts.asm
 ./bin/libraries/fusion/inputstring.o: ./libraries/fusion/inputstring.asm
 ./bin/libraries/fusion/inkey.o: ./libraries/fusion/inkey.asm
+./bin/libraries/msxdos/msxdos_set_environment.o: ./libraries/msxdos/msxdos_set_environment.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_get_environment.o: ./libraries/msxdos/msxdos_get_environment.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_drv_direct_1.o: ./libraries/msxdos/msxdos_drv_direct_1.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_drive_letter_info.o: ./libraries/msxdos/msxdos_get_drive_letter_info.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_explain_error_code.o: ./libraries/msxdos/msxdos_explain_error_code.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxbios_break_x.o: ./libraries/msxdos/msxbios_break_x.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_open_file.o: ./libraries/msxdos/msxdos_open_file.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_read_from_file.o: ./libraries/msxdos/msxdos_read_from_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_create_file.o: ./libraries/msxdos/msxdos_create_file.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_close_file.o: ./libraries/msxdos/msxdos_close_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_date.o: ./libraries/msxdos/msxdos_set_date.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/usb/ch376.o: ./libraries/usb/ch376.asm
+./bin/libraries/sysload/sysload.o: ./libraries/sysload/sysload.asm ./msx.inc
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
+./bin/sys/hello/body/crt.o: ./sys/hello/body/crt.asm
+./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
+./bin/sys/prnt/body/crt.o: ./sys/prnt/body/crt.asm
+./bin/sys/prnt/body/prnt.o: ./sys/prnt/body/prnt.asm
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm
 ./bin/v9958.o: ./v9958.asm ./msx.inc
 ./bin/romflash/flashloader.o: ./romflash/flashloader.asm 
-./bin/romflash/memmapper.o: ./romflash/memmapper.asm
 ./bin/utils.o: ./utils.asm 
 ./bin/rs232.o: ./rs232.asm ./msx.inc

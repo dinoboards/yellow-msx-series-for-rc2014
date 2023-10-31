@@ -256,9 +256,9 @@ DRV_INIT1:
 	LD	HL, ST_WRKAREA
 	ADD	HL, DE
 
-	;NOTE THAT CY IS 1 (INTERRUPT HOOK WANTED)
+	;NOTE THAT CY IS 10 (INTERRUPT HOOK NOT WANTED)
 	XOR	A
-	CCF
+	; CCF
 	RET
 
 DRV_INIT2:
@@ -593,10 +593,9 @@ DRV_DIRECT1:
 
 DRV_DIRECT2:
 DRV_DIRECT3:
+DRV_DIRECT4:
 	ret
 
-DRV_DIRECT4:
-	JP	_drv_direct4
 ;-----------------------------------------------------------------------------
 ;
 ; Get driver configuration

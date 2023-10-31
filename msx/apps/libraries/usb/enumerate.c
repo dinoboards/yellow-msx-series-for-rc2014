@@ -7,13 +7,6 @@
 usb_error op_identify_class_driver(_working *const working) __sdcccall(1);
 usb_error op_parse_endpoint(_working *const working) __sdcccall(1);
 
-void parse_endpoint_printer(device_config_printer *const printer_config, const endpoint_descriptor *const pEndpoint) __sdcccall(1) {
-  endpoint_param *const ep = &printer_config->endpoints[0];
-  ep->number               = pEndpoint->bEndpointAddress;
-  ep->toggle               = 0;
-  ep->max_packet_sizex     = calc_max_packet_sizex(pEndpoint->wMaxPacketSize);
-}
-
 void parse_endpoint_keyboard(device_config_keyboard *const keyboard_config, const endpoint_descriptor const *pEndpoint)
     __sdcccall(1) {
   endpoint_param *const ep = &keyboard_config->endpoints[0];
@@ -26,9 +19,6 @@ usb_device_type identify_class_driver(_working *const working) {
   const interface_descriptor *const p = (const interface_descriptor *)working->ptr;
   if (p->bInterfaceClass == 2)
     return USB_IS_CDC;
-
-  if (p->bInterfaceClass == 7)
-    return USB_IS_PRINTER;
 
   if (p->bInterfaceClass == 8 && (p->bInterfaceSubClass == 6 || p->bInterfaceSubClass == 5) && p->bInterfaceProtocol == 80)
     return USB_IS_MASS_STORAGE;
@@ -45,7 +35,8 @@ usb_device_type identify_class_driver(_working *const working) {
   if (working->desc.idVendor == 0x403 && working->desc.idProduct == 0x6001)
     return USB_IS_FTDI;
 
-  return 0;
+  trace_printf("Unknown device class %d\r\n", p->bInterfaceClass);
+  return USB_IS_UNKNOWN;
 }
 
 usb_error op_interface_next(_working *const working) __z88dk_fastcall {
@@ -75,10 +66,6 @@ usb_error op_parse_endpoint(_working *const working) __sdcccall(1) {
     break;
   }
 
-  case USB_IS_PRINTER: {
-    parse_endpoint_printer((device_config_printer *)device, endpoint);
-    break;
-
   case USB_IS_KEYBOARD: {
     parse_endpoint_keyboard((device_config_keyboard *)device, endpoint);
     break;
@@ -87,7 +74,6 @@ usb_error op_parse_endpoint(_working *const working) __sdcccall(1) {
   case USB_IS_FTDI: {
     parse_endpoints(device, endpoint);
     break;
-  }
   }
   }
 
@@ -130,6 +116,14 @@ usb_error op_capture_driver_interface(_working *const working) __z88dk_fastcall 
   switch (working->usb_device) {
   case USB_IS_HUB: {
     CHECK(op_capture_hub_driver_interface(working))
+    break;
+  }
+
+  case USB_IS_UNKNOWN: {
+    device_config unkown_dev_cfg;
+    memset(&unkown_dev_cfg, 0, sizeof(device_config));
+    working->p_current_device = &unkown_dev_cfg;
+    CHECK(configure_device(working, interface, &unkown_dev_cfg));
     break;
   }
 

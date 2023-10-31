@@ -42,11 +42,56 @@ $(BIN)%.m4.o: %.asm.m4; $(assemble)
 %.lib: %.o; $(buildlib)
 
 $(BIN)%.com:
-	@@mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(eval $(notdir $@).crt_enable_commandline ?= 0)
-	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $(filter-out %.inc,$(filter-out %.lib,$^)) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
+	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $(filter-out %.reloc,$(filter-out %.sys,$(filter-out %.inc,$(filter-out %.lib,$^)))) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
 	filesize=$$(stat -c%s "$@")
 	echo "Linked $(notdir $@) ($$filesize bytes)"
+
+$(BIN)%.sys:
+	@mkdir -p $(dir $@)
+	$(eval $(notdir $@).crt_enable_commandline ?= 0)
+	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $(filter-out %.reloc,$(filter-out %.body,$(filter-out %.inc,$(filter-out %.lib,$^)))) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
+	filesize=$$(stat -c%s "$@")
+	echo "Linked $(notdir $@) ($$filesize bytes)"
+
+$(BIN)%.body:
+	@mkdir -p $(dir $@)
+	$(ZCC_FOR_sys) -crt0 ./sys/$(notdir $(basename $@))/body/crt.asm -Cl-reloc-info $(filter-out %/crt.o,$(filter-out %.reloc,$(filter-out %.sys,$(filter-out %.inc,$(filter-out %.lib,$^))))) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
+	reloc_filesize=$$(stat -c%s "$(basename $@).reloc")
+	echo "Reloc info $(basename $@).reloc ($$reloc_filesize bytes)"
+	filesize=$$(stat -c%s "$@")
+	echo "Linked $(notdir $@) ($$filesize bytes)"
+
+.PRECIOUS: $(BIN)sys/%.def.asm
+$(BIN)sys/%.def.asm: $(BIN)sys/%.body sys/%.exports
+	@mkdir -p $(dir $@)
+	echo "" > $@
+	while IFS= read -r line
+	do
+		name=$$(echo "$$line" | cut -f2 -d' ')
+		if grep -Fxq "$$name" $(lastword $^); then
+			echo -e "\tPUBLIC\t$$name" >> $@
+			echo -e $$line >> $@
+		fi
+	done < "$(patsubst %.body,%.def,$<)"
+	echo "Exported symbols from $(notdir $^) to $(notdir $@)"
+
+$(BIN)sys/%/body/import.asm:
+	@mkdir -p  $(dir $@)
+	echo "	SECTION	DATA" >$@
+	echo "	PUBLIC	_relocation_table_start" >>$@
+	echo "	PUBLIC	_relocation_table_end" >>$@
+	echo "	PUBLIC	_sys_start" >>$@
+	echo "	PUBLIC	_sys" >>$@
+	echo "	PUBLIC  _sys_end" >>$@
+	echo "_relocation_table_start:" >>$@
+	echo "	BINARY \"./$(*F).reloc\"" >>$@
+	echo "_relocation_table_end:" >>$@
+	echo "_sys_start:" >>$@
+	echo "_sys:" >>$@
+	echo "	BINARY \"./$(*F).body\"" >>$@
+	echo "_sys_end:" >>$@
 
 ZSDCPP_FLAGS=-iquote"." -isystem"${ZCCCFG}/../../include/_DEVELOPMENT/sdcc" $(LIBS)
 
