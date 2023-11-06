@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all: $(BIN)hello.sys $(BIN)prnt.sys  $(addsuffix .com,$(addprefix $(BIN),fdisk ftditest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi)) $(addsuffix .com,$(addprefix $(BIN),fdisk ftditest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -45,6 +45,12 @@ SYS_LIB := $(addprefix $(BIN)libraries/sysload/, sysload.c.lib sysload.lib)
 .PHONY: list
 list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
+
+sysftdi_files = $(addprefix $(BIN),$(call app_file,sys/ftdi/body))
+$(BIN)sys/ftdi/body/ftdi.body: $(sysftdi_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(BIN)sys/ftdi/body/ftdi.reloc: $(BIN)sys/ftdi/body/ftdi.body
+$(BIN)ftdi.sys: $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(addprefix $(BIN)sys/ftdi/body/, import.asm ftdi.body ftdi.reloc ftdi.def.lib) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+ftdi.sys.crt_enable_commandline:=1
 
 syshello_files = $(addprefix $(BIN),$(call app_file,sys/hello/body))
 $(BIN)sys/hello/body/hello.body: $(syshello_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)

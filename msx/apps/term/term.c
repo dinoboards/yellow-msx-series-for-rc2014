@@ -283,7 +283,7 @@ extern void debugBreak(void);
 int main(const int argc, const unsigned char **argv) {
   process_cli_arguments(argc, argv);
 
-  extbio_fossil_install(FOSSIL_FOR_SIO2);
+  extbio_fossil_install();
 
   // we detect if enter was hit to avoid popping up protocol selection if transmit binary command is received in initial
   // negotiations

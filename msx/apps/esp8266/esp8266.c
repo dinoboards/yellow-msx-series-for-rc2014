@@ -164,7 +164,7 @@ void main(const int argc, const unsigned char **argv) {
   (void)argc;
   (void)argv;
   if (!fossil_link()) {
-    extbio_fossil_install(FOSSIL_FOR_SIO2);
+    extbio_fossil_install();
 
     if (!fossil_link()) {
       print_str("Fossil driver not found\r\n");
