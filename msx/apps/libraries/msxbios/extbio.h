@@ -56,11 +56,9 @@ extern jump_table_entry *unapi_get_ram_helper(void *reduced_mapper_table, uint8_
 #define SIO_CLK_2457600 5
 #define SIO_CLK_3686400 6
 
-#define FOSSIL_FOR_SIO2 0
-#define FOSSIL_FOR_FTDI 1
 
 extern uint8_t  extbio_rc2014_get_version(void);
-extern void    *extbio_fossil_install(const uint16_t device_type) __z88dk_fastcall;
+extern void    *extbio_fossil_install(void);
 extern uint8_t  extbio_sio_get_clock(void);
 extern uint8_t  extbio_sio_set_clock(const uint8_t new_code) __z88dk_fastcall;
 extern uint8_t  extbio_sio_get_present(void);

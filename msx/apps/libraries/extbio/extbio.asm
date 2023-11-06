@@ -100,7 +100,7 @@ _extbio_get_dev_info_table:
 
 
 ;
-; extern void* extbio_fossil_install(const uint16_t device_type)
+; extern void* extbio_fossil_install()
 ;
 	PUBLIC	_extbio_fossil_install
 _extbio_fossil_install:
