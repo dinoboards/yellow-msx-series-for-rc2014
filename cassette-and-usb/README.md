@@ -204,6 +204,20 @@ All but one of the hubs tested works.  All but one of the hub seemed to have bee
 
 </table>
 
+> #### Printer driver (ROM builds after 2023-11-06)
+> For ROM builds after 2023-11-06, the installation of a USB printer driver is required.  (The driver is no longer included in the embedded ROM image)
+>
+> The are 2 executables needed to install the driver (`SERVICE.COM` and `PRNT.SYS`).
+> In your AUTOEXEC.BAT file, you need to add this section:
+>
+> ```
+> SERVICE=PRNT.SYS
+> ```
+> If no printer or USB is detected during the install - then no driver will be installed.  If installation is successful, you will see the following output:
+>
+> ```
+> PRNT.SYS:    INSTALLED
+> ```
 
 
 ### What is the 'Yellow MSX Series of Boards'?

@@ -5072,8 +5072,8 @@ Terminate batch file (Y/N)?
 When MSX-DOS  aborts a  command prematurely (such as when the control-STOP or
 control-C key is pressed) and the command was executing in a batch file, this
 prompt  is issued.  If the  response is  'Y' then the batch file will also be
-aborted. If 'N' is the response  then the  batch file will continue with the command that follows
-the aborted command.
+aborted. If 'N' is the response  then the  batch file will  continue with the
+command that follows the aborted command.
 
 
 

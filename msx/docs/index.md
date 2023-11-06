@@ -1,6 +1,7 @@
 
 # MSX System Documentation
 
+* [MSX for RC2014 Manual](./msx-for-rc2014-manual.md) *NEW*
 * [Apps and Utils for MSX on RC2014](./apps.md)
 * [MSX Red Book](./the-msx-red-book.md)
 * [Sony's MSX Technical Data Book](./msx_technical_data_book.pdf)
