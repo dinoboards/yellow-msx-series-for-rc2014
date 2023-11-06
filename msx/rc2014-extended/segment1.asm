@@ -87,7 +87,10 @@ fossil_deinit:
 
 	LD	A, (RS_P1_SEG)
 	LD	B, 0				; main memory mapper
-	JP	MEMMAP_FREE
+	CALL	MEMMAP_FREE
+	XOR	A
+	LD	(RS_P1_SEG), A
+	RET
 
 fossil_set_baud:
 	ld	a, l

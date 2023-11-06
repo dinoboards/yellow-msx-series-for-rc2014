@@ -25,6 +25,10 @@ void extern enableVdpInterrupts(void);
 void extern disableVdpInterrupts(void);
 
 void main(void) {
+  bool stat;
+
+  xprintf("RS_TMP %02X\r\n", RS_TMP);
+
   printf("fossil_link should return false before install %d\r\n", fossil_link());
 
   void *p = extbio_fossil_install();
@@ -43,67 +47,33 @@ void main(void) {
   printf("Baud %04X\r\n", b);
 
   fossil_init();
+  xprintf("RS_TMP %02X\r\n", RS_TMP);
 
   xprintf("BUF AT %p, head: %p, tail: %p\r\n", RS_FCB, RS_FCB->pHead, RS_FCB->pTail);
   fossil_rs_out('A');
+  fossil_rs_out('T');
+  fossil_rs_out('\r');
+  fossil_rs_out('\n');
 
-  printf("Send A\r\n");
-  while (1) {
-    uint16_t timeout = 32000;
+  stat = fossil_rs_in_stat();
+  printf("sent AT.  Stat: %02X\r\n", stat);
 
-    printf(">");
-    fossil_rs_out('T');
-    printf("<");
+  stat = fossil_rs_in_stat();
 
-    bool stat;
-
-    if (msxbiosBreakX())
-      goto exitApp;
+  while (stat) {
+    uint16_t count = fossil_chars_in_buf();
+    // printf(">> H: %p, T: %p, ST: %d\r\n", RS_FCB->pHead, RS_FCB->pTail, stat);
+    printf("count: %d, ", count);
+    char ch = fossil_rs_in();
+    printf("%c\r\n", ch);
+    // printf(">> H: %p, T: %p, ST: %d, ch: %c,\r\n", RS_FCB->pHead, RS_FCB->pTail, stat, ch);
 
     stat = fossil_rs_in_stat();
-
-    while (!stat && timeout != 0) {
-      if (timeout % 2048 == 0) {
-        printf(".");
-      }
-
-      if (msxbiosBreakX())
-        goto exitApp;
-
-      stat = fossil_rs_in_stat();
-
-      printf(">");
-      fossil_rs_out('T');
-      printf("<");
-
-      timeout--;
-    }
-
-    if (timeout == 0) {
-      printf("\r\n");
-    }
-
-    while (stat) {
-      uint16_t count = fossil_chars_in_buf();
-      // printf(">> H: %p, T: %p, ST: %d\r\n", RS_FCB->pHead, RS_FCB->pTail, stat);
-      // printf(">> LN: %d ", count);
-      char ch = fossil_rs_in();
-      printf("%c", ch);
-      // printf(">> H: %p, T: %p, ST: %d, ch: %c,\r\n", RS_FCB->pHead, RS_FCB->pTail, stat, ch);
-
-      if (msxbiosBreakX())
-        goto exitApp;
-
-      stat = fossil_rs_in_stat();
-    }
-
-    fossil_rs_out('A');
-    fossil_rs_out('B');
-    fossil_rs_out('C');
-    fossil_rs_out('D');
   }
 
 exitApp:
+  xprintf("RS_TMP %02X\r\n", RS_TMP);
+
   printf("RS_FLAGS: %02X\r\nClosing...\r\n", RS_FLAGS);
   fossil_deinit();
   printf("RS_FLAGS: %02X\r\nClosed\r\n", RS_FLAGS);
