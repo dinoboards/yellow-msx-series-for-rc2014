@@ -52,7 +52,14 @@ uint8_t serial_get_driver_name(const uint8_t port_number, char *const driver_nam
 
 uint8_t serial_reset(const uint8_t port_number);
 
-uint8_t serial_set_protocol(const uint8_t port_number, const uint16_t protocol); // set protocol mask SERIAL_XXXX
+/**
+ * @brief set serial bit protocol
+ *
+ * @param port_number
+ * @param protocol combination of masks SERIAL_PARITY_XXX | SERIAL_STOPBITS_XXX | SERIAL_BITS_XXX | SERIAL_BREAK_XXX
+ * @return uint8_t
+ */
+uint8_t serial_set_protocol(const uint8_t port_number, const uint16_t protocol);
 
 uint8_t serial_set_baudrate(const uint8_t port_number, const int32_t baudrate);
 
