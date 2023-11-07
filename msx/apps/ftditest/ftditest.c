@@ -32,6 +32,9 @@ uint8_t main(const int argc, const char *const argv[]) {
   result = serial_set_baudrate(1, 4800);
   printf("(%02X): Set baudrate: %d\r\n", result, 4800);
 
+  result = serial_set_protocol(1, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
+  printf("(%02X): Set protocol %04X\r\n", result, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
+
   // printf("todo\r\n");
 
   // uint16_t value;
