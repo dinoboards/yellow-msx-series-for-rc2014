@@ -69,6 +69,15 @@ usb_error command_ftdi_check(const uint8_t last_device_address) __sdcccall(1) {
   if (result)
     printf("result: %d\r\n", result);
 
+  printf("ftdi_usb_purge_tx/rx_buffer\r\n");
+  result = ftdi_purge_tx_buffer(&ftdi_config);
+  if (result)
+    printf("ftdi_purge_tx_buffer failed: %d\r\n", result);
+
+  result = ftdi_purge_rx_buffer(&ftdi_config);
+  if (result)
+    printf("ftdi_purge_rx_buffer failed: %d\r\n", result);
+
   uint8_t buffer_size = BUF_SIZE;
   uint8_t buffer[BUF_SIZE];
   uint8_t id = 0;

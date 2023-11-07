@@ -14,9 +14,6 @@ SRC := ./usbdrv/
 
 ZCC := zcc +msx --vc -subtype=rom -startup=1 -crt0 $(SRC)crt.asm -compiler=sdcc -Cs --Werror  $(ZCCRELFLAGS) $(LIBS)
 
-	# $(BINDIR)ftdi_drv.c.o \
-	# $(BINDIR)libraries/usb/vendor_ftdi.c.o \
-
 $(BINDIR)usbdrv.bin: $(BINDIR)crt.o \
 	$(BINDIR)exports.c.o \
 	$(BINDIR)extended-bios.c.o \

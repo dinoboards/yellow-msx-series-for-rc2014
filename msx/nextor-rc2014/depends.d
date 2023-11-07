@@ -71,12 +71,6 @@
  ../apps/libraries/usb/protocol.h ../apps/libraries/usb/class_ufi.h \
  ../apps/libraries/usb/usb_cbi.h ../apps/libraries/usb/dev_transfers.h \
  ../apps/libraries/usb/usb_state.h
-./bin/ftdi_drv.c.asm: usbdrv/ftdi_drv.c usbdrv/ftdi_drv.h \
- ../apps/libraries/usb/ch376.h ../apps/libraries/usb/ch376inc.h \
- ../apps/libraries/usb/usb_state.h ../apps/libraries/usb/ch376.h \
- ../apps/libraries/usb/protocol.h ../apps/libraries/usb/dev_transfers.h \
- ../apps/libraries/usb/transfers.h ../apps/libraries/usb/dev_transfers.h \
- ../apps/libraries/usb/vendor_ftdi.h ../apps/libraries/usb/ch376.h
 ./bin/usb-dev.c.asm: usbdrv/usb-dev.c usbdrv/usb-dev.h \
  usbdrv/../../apps/libraries/msxdos/msxdos_rc2014_ex.h \
  usbdrv/keyboard_drv.h usbdrv/work-area.h ../apps/libraries/usb/ch376.h \

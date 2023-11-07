@@ -119,13 +119,13 @@ void conduct_ftdi_loop_back_verification(void) {
     printf("result: %d\r\n", result);
 
   printf("ftdi_usb_purge_tx/rx_buffer\r\n");
-  result = ftdi_usb_purge_tx_buffer(ftdi_config);
+  result = ftdi_purge_tx_buffer(ftdi_config);
   if (result)
-    printf("ftdi_usb_purge_tx_buffer failed: %d\r\n", result);
+    printf("ftdi_purge_tx_buffer failed: %d\r\n", result);
 
-  result = ftdi_usb_purge_rx_buffer(ftdi_config);
+  result = ftdi_purge_rx_buffer(ftdi_config);
   if (result)
-    printf("ftdi_usb_purge_rx_buffer failed: %d\r\n", result);
+    printf("ftdi_purge_rx_buffer failed: %d\r\n", result);
 
   uint8_t buffer_size = BUF_SIZE;
   uint8_t buffer[BUF_SIZE];

@@ -38,7 +38,7 @@ const unsigned char *printer_help = "Usage: usbctrl printer ....\r\n\n"
 
 const unsigned char *ftdi_help = "Usage: usbctrl ftdi\r\n\n"
                                  " ftdi check\r\n"
-                                 "   check ftdi sio\r\n";
+                                 "   check ftdi check\r\n";
 
 #define abort_with_help() abort_with_help_msg(usage);
 

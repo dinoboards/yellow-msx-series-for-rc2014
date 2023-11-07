@@ -31,12 +31,15 @@ GETSLT_LIB := $(addprefix $(BIN),getslt.lib)
 CONFIG_REQUEST_LIB := $(addprefix $(BIN),config_request.c.lib)
 SYSTEM_VARS_LIB := $(addprefix $(BIN)libraries/msxbios/,system_vars.c.lib)
 MSXDOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxdos/*.asm)))
-EXTBIO_LIB := $(addprefix $(BIN)libraries/extbio/,extbio.lib extbio_usb_get_present.lib extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer.lib unapi_get_ram_helper.lib extbio_rc2014_get_version.lib extbio_rc2014_hello.lib extbio_usb_data_in_transfer_n.lib memmapper.lib)
+EXTBIO_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/extbio/*.asm)))
+EXTBIO_USB_LIB :=  $(addprefix $(BIN)libraries/extbio/,extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer_n.lib extbio_usb_data_in_transfer.lib)
+# $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/extbio/*.asm)))
 FOSSIL_LIB := $(addprefix $(BIN)libraries/fossil/,fossil.lib fossil.c.lib)
 DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
 
 USB_KERNEL_LIB := $(addprefix $(BIN)libraries/usb/,ch376.lib usb_state.c.lib ch376.c.lib transfers.c.lib dev_transfers.c.lib enumerate_storage.c.lib enumerate.c.lib enumerate_hub.c.lib)
-USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib find_device.c.lib vendor_ftdi.c.lib)
+USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib find_device.c.lib)
+USB_VENDOR_FTDI_LIB := $(addprefix $(BIN)libraries/usb/,vendor_ftdi.c.lib)
 
 FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib fprintf.c.lib interrupts.lib inputstring.lib inkey.lib inputchar.lib io.lib)
 V9958_LIB := $(addprefix $(BIN),v9958.c.lib v9958.lib)
@@ -47,7 +50,7 @@ list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 sysftdi_files = $(addprefix $(BIN),$(call app_file,sys/ftdi/body))
-$(BIN)sys/ftdi/body/ftdi.body: $(sysftdi_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(BIN)sys/ftdi/body/ftdi.body: $(sysftdi_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_VENDOR_FTDI_LIB) $(USB_USER_LIB) $(GETSLT_LIB) $(EXTBIO_USB_LIB)
 $(BIN)sys/ftdi/body/ftdi.reloc: $(BIN)sys/ftdi/body/ftdi.body
 $(BIN)ftdi.sys: $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(addprefix $(BIN)sys/ftdi/body/, import.asm ftdi.body ftdi.reloc ftdi.def.lib) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 ftdi.sys.crt_enable_commandline:=1
@@ -92,7 +95,7 @@ $(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_L
 usbctrl.com.crt_enable_commandline:=1
 
 usbtst_files = $(call app_file,usbtst)
-$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(MSXDOS_LIB) $(USB_USER_LIB) $(USB_KERNEL_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB)
+$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(MSXDOS_LIB) $(USB_USER_LIB) $(USB_KERNEL_LIB) $(USB_VENDOR_FTDI_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB)
 usbtst.com.crt_enable_commandline:=1
 
 dots_files = $(call app_file,dots)
