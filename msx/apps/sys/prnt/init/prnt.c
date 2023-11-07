@@ -1,5 +1,4 @@
 #include "../prnt.h"
-
 #include <extbio_rc2014.h>
 #include <msx_fusion.h>
 #include <stdio.h>

@@ -52,7 +52,7 @@ list:
 sysftdi_files = $(addprefix $(BIN),$(call app_file,sys/ftdi/body))
 $(BIN)sys/ftdi/body/ftdi.body: $(sysftdi_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_VENDOR_FTDI_LIB) $(USB_USER_LIB) $(GETSLT_LIB) $(EXTBIO_USB_LIB)
 $(BIN)sys/ftdi/body/ftdi.reloc: $(BIN)sys/ftdi/body/ftdi.body
-$(BIN)ftdi.sys: $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(addprefix $(BIN)sys/ftdi/body/, import.asm ftdi.body ftdi.reloc ftdi.def.lib) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(BIN)ftdi.sys: $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(addprefix $(BIN)sys/ftdi/body/, import.asm ftdi.body ftdi.reloc ftdi.def.lib) $(USB_USER_LIB) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 ftdi.sys.crt_enable_commandline:=1
 
 syshello_files = $(addprefix $(BIN),$(call app_file,sys/hello/body))

@@ -33,7 +33,7 @@ cbios:
 
 # esp8266.com
 INCLUDED_APPS 	:= testram.com memtest.com memtest.eng pt3play.com iteratn.pt3 mbrot.com
-INCLUDED_SYSTEM := xrecv2.com fdisk.com rtccalb.com siocfg.com service.com prnt.sys
+INCLUDED_SYSTEM := xrecv2.com fdisk.com rtccalb.com siocfg.com service.com prnt.sys ftdi.sys
 INCLUDED_ROOT 	:= AUTOEXEC.BAT SROM.COM SROM.TXT SROM.INI
 
 define BUILD_versions =

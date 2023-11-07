@@ -7,6 +7,13 @@
 #include <usb/dev_transfers.h>
 
 typedef struct {
+  COMMON_DEVICE_CONFIG
+  endpoint_param endpoints[2];        // Bulk in and out
+  uint8_t        bitbang_enabled : 1; /* 0: normal mode 1: any of the bitbang modes enabled */
+  uint32_t       baudrate;
+} device_config_ftdi;
+
+typedef struct {
   uint32_t requested_baud_rate;
   uint32_t actual_baud_rate;
   uint16_t value;
