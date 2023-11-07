@@ -347,6 +347,8 @@
  libraries/msxbios/extbio.h
 ./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
  libraries/sysload/sys.h
+./bin/sys/ftdi/init/ftdi.c.asm: sys/ftdi/init/ftdi.c libraries/sysload/sysload.h \
+ libraries/sysload/sys.h
 ./bin/sys/prnt/body/prnt.c.asm: sys/prnt/body/prnt.c libraries/msxbios/system_vars.h \
  libraries/usb/class_printer.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -390,13 +392,17 @@
 ./bin/libraries/extbio/unapi_get_ram_helper.o: ./libraries/extbio/unapi_get_ram_helper.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_out_transfer.o: ./libraries/extbio/extbio_usb_data_out_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_rc2014_hello.o: ./libraries/extbio/extbio_rc2014_hello.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_ftdi_set_line_property2.o: ./libraries/extbio/extbio_usb_ftdi_set_line_property2.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/extbio/memmapper.o: ./libraries/extbio/memmapper.asm
-./bin/libraries/extbio/extbio_usb_ftdi.o: ./libraries/extbio/extbio_usb_ftdi.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_ftdi_purge_tx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_tx_buffer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_control_transfer.o: ./libraries/extbio/extbio_usb_control_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer_n.o: ./libraries/extbio/extbio_usb_data_in_transfer_n.asm ./msx.inc
 ./bin/libraries/extbio/extbio_rc2014_get_version.o: ./libraries/extbio/extbio_rc2014_get_version.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_ftdi_read_data.o: ./libraries/extbio/extbio_usb_ftdi_read_data.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_ftdi_set_baudrate.o: ./libraries/extbio/extbio_usb_ftdi_set_baudrate.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm
 ./bin/libraries/fusion/interrupts.o: ./libraries/fusion/interrupts.asm
@@ -424,6 +430,8 @@
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/sys/hello/body/crt.o: ./sys/hello/body/crt.asm
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
+./bin/sys/ftdi/body/crt.o: ./sys/ftdi/body/crt.asm
+./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
 ./bin/sys/prnt/body/crt.o: ./sys/prnt/body/crt.asm
 ./bin/sys/prnt/body/prnt.o: ./sys/prnt/body/prnt.asm
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm

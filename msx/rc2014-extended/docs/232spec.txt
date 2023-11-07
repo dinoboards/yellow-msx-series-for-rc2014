@@ -96,7 +96,7 @@ EXBTBL:
 
         Entry:  [HL]= address of the parameter table
                 [B] = slot address of the parameter table
-        Return: carry flag is set if illegal parameters are contained
+        Return: carry ag is set if illegal parameters are contained
         Modify: [AF]
 
         Description:

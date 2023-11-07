@@ -56,7 +56,6 @@ extern jump_table_entry *unapi_get_ram_helper(void *reduced_mapper_table, uint8_
 #define SIO_CLK_2457600 5
 #define SIO_CLK_3686400 6
 
-
 extern uint8_t  extbio_rc2014_get_version(void);
 extern void    *extbio_fossil_install(void);
 extern uint8_t  extbio_sio_get_clock(void);

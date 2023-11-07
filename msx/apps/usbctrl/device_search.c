@@ -113,4 +113,3 @@ usb_error retrieve_floppy_formats(device_config *const storage_device, ufi_forma
 
   return 0;
 }
-

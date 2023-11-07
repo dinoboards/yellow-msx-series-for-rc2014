@@ -44,7 +44,7 @@ static bool ftdi_convert_baudrate(const int32_t baudrate, setup_packet *const cm
  * @param baudrate on entry the requested baud rate, on exit the actual baud rate
  * @return usb_error
  */
-usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudrate) __sdcccall(1) {
+usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudrate) {
   setup_packet cmd;
   memcpy(&cmd, &cmd_ftdi_out_request, sizeof(setup_packet));
   usb_error      result;
@@ -73,7 +73,7 @@ usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudra
  * @return usb_error
  */
 
-usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t protocol_bits) __sdcccall(1) {
+usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t protocol_bits) {
   setup_packet cmd;
   memcpy(&cmd, &cmd_ftdi_out_request, sizeof(setup_packet));
 
@@ -93,25 +93,26 @@ usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t
  *             return the number of bytes actually received
  * @return usb_error
  */
-usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *const size) {
+usb_error
+_ftdi_read_data(xxx *const tmp) __z88dk_fastcall { // tmpdevice_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *const size) {
   usb_error result;
 
-  if (*size > 64)
+  if (*tmp->size > 64)
     return USB_ERR_BUFF_TO_LARGE;
 
   uint8_t temp_buf[64];
 
-  CHECK(usbdev_bulk_in_transfer((device_config *)ftdi, temp_buf, size));
+  CHECK(usbdev_bulk_in_transfer((device_config *)tmp->ftdi, temp_buf, tmp->size));
 
   // first 2 bytes are some kind of status code - ignore them
-  if (*size <= 2) {
+  if (*tmp->size <= 2) {
     // no serial bytes received
-    *size = 0;
+    *tmp->size = 0;
     return USB_ERR_OK;
   }
 
-  *size -= 2;
-  memcpy(buf, temp_buf + 2, *size);
+  *tmp->size -= 2;
+  memcpy(tmp->buf, temp_buf + 2, *tmp->size);
   return USB_ERR_OK;
 }
 
@@ -119,7 +120,7 @@ usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uin
  * @brief Clears the read buffer on the chip and the internal read buffer.
  *
  */
-usb_error ftdi_usb_purge_rx_buffer(device_config_ftdi *const ftdi) __sdcccall(1) {
+usb_error ftdi_purge_rx_buffer(device_config_ftdi *const ftdi) {
   setup_packet cmd;
   memcpy(&cmd, &cmd_ftdi_out_request, sizeof(setup_packet));
 
@@ -133,7 +134,7 @@ usb_error ftdi_usb_purge_rx_buffer(device_config_ftdi *const ftdi) __sdcccall(1)
  * @brief Clears the write buffer on the chip.
  *
  */
-usb_error ftdi_usb_purge_tx_buffer(device_config_ftdi *const ftdi) __sdcccall(1) {
+usb_error ftdi_purge_tx_buffer(device_config_ftdi *const ftdi) {
   setup_packet cmd;
   memcpy(&cmd, &cmd_ftdi_out_request, sizeof(setup_packet));
 

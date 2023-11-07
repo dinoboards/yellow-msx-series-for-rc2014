@@ -62,13 +62,29 @@ typedef struct {
 
 #define C_CLK 48000000 /* the 232R's clock rate */
 
-extern usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudrate) __sdcccall(1);
-extern usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t protocol_bits) __sdcccall(1);
-extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint8_t *const size);
+typedef struct {
+  uint8_t *const            size;
+  uint8_t *const            buf;
+  device_config_ftdi *const ftdi;
+} xxx;
+
+extern usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudrate);
+extern usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t protocol_bits);
+extern usb_error _ftdi_read_data(xxx *const tmp) __z88dk_fastcall;
 // extern usb_error ftdi_write_data(device_config_ftdi *const ftdi, const uint8_t *const buf, const uint16_t size);
-extern usb_error ftdi_usb_purge_tx_buffer(device_config_ftdi *const ftdi) __sdcccall(1);
-extern usb_error ftdi_usb_purge_rx_buffer(device_config_ftdi *const ftdi) __sdcccall(1);
+extern usb_error ftdi_purge_tx_buffer(device_config_ftdi *const ftdi);
+extern usb_error ftdi_purge_rx_buffer(device_config_ftdi *const ftdi);
 
 #define ftdi_write_data(ftdi, buf, size) usbdev_bulk_out_transfer((device_config *)(ftdi), buf, size)
+
+inline usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *size) {
+  xxx tmp = {size, buf, ftdi};
+  return _ftdi_read_data(&tmp);
+}
+
+// int ftdi_setflowctrl(struct ftdi_context *ftdi, int flowctrl);
+//     int ftdi_setdtr_rts(struct ftdi_context *ftdi, int dtr, int rts);
+//     int ftdi_setdtr(struct ftdi_context *ftdi, int state);
+//     int ftdi_setrts(struct ftdi_context *ftdi, int state);
 
 #endif
