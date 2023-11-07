@@ -16,14 +16,16 @@
 #include <stdlib.h>
 #include <z80.h>
 
+#define LOWER_SAFE_RAM_ADDRESS 0x8000
+
 usb_error usb_control_transfer_external(const setup_packet *const cmd_packet,
                                         void *const               buffer,
                                         const uint8_t             device_address,
                                         const uint8_t             max_packet_size) {
-  if (((uint16_t)cmd_packet & 0xC000) != 0xC000)
+  if ((uint16_t)cmd_packet < LOWER_SAFE_RAM_ADDRESS)
     return USB_BAD_ADDRESS;
 
-  if (buffer != 0 && ((uint16_t)buffer & 0xC000) != 0xC000)
+  if (buffer != 0 && (uint16_t)buffer < LOWER_SAFE_RAM_ADDRESS)
     return USB_BAD_ADDRESS;
 
   return usb_control_transfer(cmd_packet, buffer, device_address, max_packet_size);
@@ -89,10 +91,10 @@ usb_error usb_data_in_transfer_external(uint8_t              *buffer,
                                         const uint16_t        buffer_size,
                                         const uint8_t         device_address,
                                         endpoint_param *const endpoint) {
-  if (buffer != 0 && ((uint16_t)buffer & 0xC000) != 0xC000)
+  if (buffer != 0 && (uint16_t)buffer < LOWER_SAFE_RAM_ADDRESS)
     return USB_BAD_ADDRESS;
 
-  if (((uint16_t)endpoint & 0xC000) != 0xC000)
+  if ((uint16_t)endpoint < LOWER_SAFE_RAM_ADDRESS)
     return USB_BAD_ADDRESS;
 
   return usb_data_in_transfer(buffer, buffer_size, device_address, endpoint);
@@ -121,10 +123,10 @@ usb_error usb_data_out_transfer_external(const uint8_t        *buffer,
                                          const uint8_t         device_address,
                                          endpoint_param *const endpoint) {
 
-  if (buffer != 0 && ((uint16_t)buffer & 0xC000) != 0xC000)
+  if (buffer != 0 && (uint16_t)buffer < LOWER_SAFE_RAM_ADDRESS)
     return USB_BAD_ADDRESS;
 
-  if (((uint16_t)endpoint & 0xC000) != 0xC000)
+  if ((uint16_t)endpoint < LOWER_SAFE_RAM_ADDRESS)
     return USB_BAD_ADDRESS;
 
   return usb_data_out_transfer(buffer, buffer_size, device_address, endpoint);
