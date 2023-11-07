@@ -1,7 +1,9 @@
-#ifndef __SERIAL_H
-#ifndef __SERIAL_H
+#ifndef __RC2014_SERIAL_H
+#define __RC2014_SERIAL_H
 
 // Common interface for accessing serial devices such as SIO/2 and USB FTDI
+
+#include <stdint.h>
 
 #define SERIAL_BITS_7 7
 #define SERIAL_BITS_8 8
@@ -31,9 +33,22 @@
 #define SIO_SET_RTS_HIGH (2 | (SIO_SET_RTS_MASK << 8))
 #define SIO_SET_RTS_LOW  (0 | (SIO_SET_RTS_MASK << 8))
 
-uint8_t serial_get_available_ports(uint8_t *available ports); // set number of install ports
+/**
+ * @brief Retreive the number of installed serial port devices
+ *
+ * @param ports must be initialised to zero, will be incremented by each driver
+ * @return uint8_t zero if ok, otherwise error code
+ */
+uint8_t serial_get_available_ports(uint8_t *const available_ports) __z88dk_fastcall; // set number of install ports
 
-uint8_t serial_get_driver_name(const uint8_t port_numnber, const char *driver_name); // get driver name (eg: 'sio2' or 'usbftdi')
+/**
+ * @brief Retrieve a name for the driver associated with the port number
+ *
+ * @param port_number
+ * @param driver_name
+ * @return uint8_t
+ */
+uint8_t serial_get_driver_name(const uint8_t port_number, char *const driver_name);
 
 uint8_t serial_reset(const uint8_t port_number);
 
