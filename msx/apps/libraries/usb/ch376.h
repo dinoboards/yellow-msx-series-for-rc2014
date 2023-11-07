@@ -44,7 +44,6 @@ typedef enum {
   USB_IS_MASS_STORAGE = 2,
   USB_IS_CDC          = 3,
   USB_IS_KEYBOARD     = 4,
-  USB_IS_FTDI         = 5,
   USB_IS_UNKNOWN      = 6,
   _USB_LAST_DEVICE_TYPE,
   USB_IS_HUB = 15

@@ -11,7 +11,7 @@ typedef struct {
   uint32_t actual_baud_rate;
   uint16_t value;
   uint16_t index;
-} buad_rate_clock_divisor;
+} baud_rate_clock_divisor;
 
 #define FTDI_BITS_7 7
 #define FTDI_BITS_8 8

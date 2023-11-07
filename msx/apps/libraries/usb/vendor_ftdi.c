@@ -6,7 +6,7 @@ setup_packet cmd_ftdi_out_request = {FTDI_DEVICE_OUT_REQTYPE, SIO_RESET_REQUEST,
 
 #define BAUD_RATES_COUNT 12
 
-buad_rate_clock_divisor buad_rate_clock_divisors[BAUD_RATES_COUNT] = {
+baud_rate_clock_divisor baud_rate_clock_divisors[BAUD_RATES_COUNT] = {
     {300, 300, 0x2710, 0},       {1200, 1200, 0x09C4, 0},     {2400, 2400, 0x04E2, 0},     {4800, 4800, 0x0271, 0},
     {9600, 9600, 0x4138, 0},     {19200, 19200, 0x809C, 0},   {38400, 38400, 0xC04E, 0},   {56700, 56738, 0xC034, 1},
     {115200, 115385, 0x001A, 0}, {230400, 230769, 0x000D, 0}, {460800, 461538, 0x4006, 0}, {921600, 923077, 0x8003, 0},
@@ -21,7 +21,7 @@ buad_rate_clock_divisor buad_rate_clock_divisors[BAUD_RATES_COUNT] = {
  * @return int32_t the actually achieved baud rate
  */
 static bool ftdi_convert_baudrate(const int32_t baudrate, setup_packet *const cmd) {
-  buad_rate_clock_divisor *p = buad_rate_clock_divisors;
+  baud_rate_clock_divisor *p = baud_rate_clock_divisors;
   do {
     if (p->requested_baud_rate == baudrate) {
       cmd->bValue[0] = p->value >> 8;
@@ -31,7 +31,7 @@ static bool ftdi_convert_baudrate(const int32_t baudrate, setup_packet *const cm
       return true;
     }
     p++;
-  } while (p < buad_rate_clock_divisors + BAUD_RATES_COUNT);
+  } while (p < baud_rate_clock_divisors + BAUD_RATES_COUNT);
 
   trace_printf("  Unsupported baudrate %ld\n", baudrate);
   return false;
