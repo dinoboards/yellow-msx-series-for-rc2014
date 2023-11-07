@@ -33,6 +33,7 @@ usb_error command_printer_check(void) {
       }
     }
     return 0;
+
   }
 
   printf("USB FTDI Device not found: %02x\r\n", result);

@@ -101,98 +101,98 @@ usb_error read_from_ftdi(device_config_ftdi *ftdi_config, uint8_t *const read_by
   return USB_ERR_OK;
 }
 
-void conduct_ftdi_loop_back_verification(void) {
-  usb_error           result;
-  device_config_ftdi *ftdi_config = (device_config_ftdi *)find_device_config(USB_IS_FTDI);
+// void conduct_ftdi_loop_back_verification(void) {
+//   usb_error           result;
+//   device_config_ftdi *ftdi_config = (device_config_ftdi *)find_device_config(USB_IS_FTDI);
 
-  uint32_t baud_rate = 4800;
-  printf("ftdi_set_baudrate (requested: %ld", baud_rate);
-  result = ftdi_set_baudrate(ftdi_config, baud_rate);
-  if (result)
-    printf(")\r\nresult: %d\r\n", result);
+//   uint32_t baud_rate = 4800;
+//   printf("ftdi_set_baudrate (requested: %ld", baud_rate);
+//   result = ftdi_set_baudrate(ftdi_config, baud_rate);
+//   if (result)
+//     printf(")\r\nresult: %d\r\n", result);
 
-  printf(", %ld)\r\n", baud_rate);
+//   printf(", %ld)\r\n", baud_rate);
 
-  printf("ftdi_set_line_property2: 8 bits, 1 stop bit, no parity, break off\r\n");
-  result = ftdi_set_line_property2(ftdi_config, FTDI_PARITY_NONE | FTDI_STOPBITS_1 | FTDI_BITS_8 | FTDI_BREAK_OFF);
-  if (result)
-    printf("result: %d\r\n", result);
+//   printf("ftdi_set_line_property2: 8 bits, 1 stop bit, no parity, break off\r\n");
+//   result = ftdi_set_line_property2(ftdi_config, FTDI_PARITY_NONE | FTDI_STOPBITS_1 | FTDI_BITS_8 | FTDI_BREAK_OFF);
+//   if (result)
+//     printf("result: %d\r\n", result);
 
-  printf("ftdi_usb_purge_tx/rx_buffer\r\n");
-  result = ftdi_purge_tx_buffer(ftdi_config);
-  if (result)
-    printf("ftdi_purge_tx_buffer failed: %d\r\n", result);
+//   printf("ftdi_usb_purge_tx/rx_buffer\r\n");
+//   result = ftdi_purge_tx_buffer(ftdi_config);
+//   if (result)
+//     printf("ftdi_purge_tx_buffer failed: %d\r\n", result);
 
-  result = ftdi_purge_rx_buffer(ftdi_config);
-  if (result)
-    printf("ftdi_purge_rx_buffer failed: %d\r\n", result);
+//   result = ftdi_purge_rx_buffer(ftdi_config);
+//   if (result)
+//     printf("ftdi_purge_rx_buffer failed: %d\r\n", result);
 
-  uint8_t buffer_size = BUF_SIZE;
-  uint8_t buffer[BUF_SIZE];
-  uint8_t id = 0;
+//   uint8_t buffer_size = BUF_SIZE;
+//   uint8_t buffer[BUF_SIZE];
+//   uint8_t id = 0;
 
-  while (true) {
-    if (msxbiosBreakX())
-      goto finally;
+//   while (true) {
+//     if (msxbiosBreakX())
+//       goto finally;
 
-    printf("ftdi_write_data (64 bytes, from %d)\r\n", id);
+//     printf("ftdi_write_data (64 bytes, from %d)\r\n", id);
 
-    for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
-      buffer[buf_index] = id++;
+//     for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
+//       buffer[buf_index] = id++;
 
-    result = ftdi_write_data(ftdi_config, buffer, BUF_SIZE);
-    if (result) {
-      printf("ftdi_write_data errored: %d\r\n", result);
-      break;
-    }
+//     result = ftdi_write_data(ftdi_config, buffer, BUF_SIZE);
+//     if (result) {
+//       printf("ftdi_write_data errored: %d\r\n", result);
+//       break;
+//     }
 
-    printf("ftdi_read_data: \r\n");
-    uint8_t  read_count;
-    uint8_t  total_read = 0;
-    uint16_t count      = 0;
-    int16_t  timeout    = get_future_time(from_ms(5000));
-    while (total_read != 64 && !is_time_past(timeout)) {
-      if (msxbiosBreakX())
-        goto finally;
+//     printf("ftdi_read_data: \r\n");
+//     uint8_t  read_count;
+//     uint8_t  total_read = 0;
+//     uint16_t count      = 0;
+//     int16_t  timeout    = get_future_time(from_ms(5000));
+//     while (total_read != 64 && !is_time_past(timeout)) {
+//       if (msxbiosBreakX())
+//         goto finally;
 
-      result = read_from_ftdi(ftdi_config, &read_count);
-      total_read += read_count;
-      count++;
-      if (result) {
-        printf("ftdi_read_data errored: %d\r\n", result);
-        break;
-      }
-    }
+//       result = read_from_ftdi(ftdi_config, &read_count);
+//       total_read += read_count;
+//       count++;
+//       if (result) {
+//         printf("ftdi_read_data errored: %d\r\n", result);
+//         break;
+//       }
+//     }
 
-    if (total_read != 64) {
-      printf("\r\nftdi_read_data returned %d bytes in %d chunks.  Expected 64 bytes\r\n", total_read, count);
-      continue;
-    }
+//     if (total_read != 64) {
+//       printf("\r\nftdi_read_data returned %d bytes in %d chunks.  Expected 64 bytes\r\n", total_read, count);
+//       continue;
+//     }
 
-    do {
-      if (msxbiosBreakX())
-        goto finally;
+//     do {
+//       if (msxbiosBreakX())
+//         goto finally;
 
-      result = read_from_ftdi(ftdi_config, &read_count);
-      if (result) {
-        printf("ftdi_read_data errored: %d\r\n", result);
-        break;
-      }
+//       result = read_from_ftdi(ftdi_config, &read_count);
+//       if (result) {
+//         printf("ftdi_read_data errored: %d\r\n", result);
+//         break;
+//       }
 
-      if (read_count != 0)
-        printf("\r\nftdi_read_data returned %d bytes.  Expected 0 bytes\r\n", read_count);
-    } while (read_count != 0);
-  }
+//       if (read_count != 0)
+//         printf("\r\nftdi_read_data returned %d bytes.  Expected 0 bytes\r\n", read_count);
+//     } while (read_count != 0);
+//   }
 
-finally:
-}
+// finally:
+// }
 
 void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
   const bool hasCdc      = find_device_config(USB_IS_CDC) != NULL;
   const bool hasUnknown  = find_device_config(USB_IS_UNKNOWN) != NULL;
   const bool hasKeyboard = find_device_config(USB_IS_KEYBOARD) != NULL;
-  const bool hasFTDI     = find_device_config(USB_IS_FTDI) != NULL;
+  // const bool hasFTDI     = find_device_config(USB_IS_FTDI) != NULL;
 
   uint8_t   index = MAX_NUMBER_OF_STORAGE_DEVICES;
   usb_error result;
@@ -201,11 +201,11 @@ void state_devices(_usb_state *const work_area) __z88dk_fastcall {
 
   print_string("USB: (%d)\r\n", work_area->count_of_detected_usb_devices);
 
-  if (hasFTDI) {
-    printf("FTDI\r\n");
+  // if (hasFTDI) {
+  //   printf("FTDI\r\n");
 
-    conduct_ftdi_loop_back_verification();
-  }
+  //   conduct_ftdi_loop_back_verification();
+  // }
 
   if (hasCdc)
     print_string("CDC\r\n");
