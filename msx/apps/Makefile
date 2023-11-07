@@ -36,7 +36,7 @@ FOSSIL_LIB := $(addprefix $(BIN)libraries/fossil/,fossil.lib fossil.c.lib)
 DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
 
 USB_KERNEL_LIB := $(addprefix $(BIN)libraries/usb/,ch376.lib usb_state.c.lib ch376.c.lib transfers.c.lib dev_transfers.c.lib enumerate_storage.c.lib enumerate.c.lib enumerate_hub.c.lib)
-USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib)
+USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib find_device.c.lib)
 
 FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib fprintf.c.lib interrupts.lib inputstring.lib inkey.lib inputchar.lib io.lib)
 V9958_LIB := $(addprefix $(BIN),v9958.c.lib v9958.lib)

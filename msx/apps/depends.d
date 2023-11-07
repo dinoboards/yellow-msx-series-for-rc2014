@@ -96,7 +96,8 @@
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
  libraries/usb/usb_state.h libraries/msxdos/msxdos.h \
- libraries/msxdos/msxdos_rc2014_ex.h libraries/usb/protocol.h
+ libraries/msxdos/msxdos_rc2014_ex.h libraries/usb/protocol.h \
+ libraries/usb/find_device.h
 ./bin/usbctrl/command_floppy_format.c.asm: usbctrl/command_floppy_format.c \
  usbctrl/command_floppy_format.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h usbctrl/device_search.h usbctrl/arguments.h \
@@ -127,7 +128,8 @@
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
  libraries/usb/usb_state.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/fusion/msx_fusion.h \
- libraries/usb/protocol.h libraries/usb/class_printer.h
+ libraries/usb/protocol.h libraries/usb/class_printer.h \
+ libraries/usb/find_device.h
 ./bin/usbctrl/read_and_write_sectors.c.asm: usbctrl/read_and_write_sectors.c \
  usbctrl/read_and_write_sectors.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -294,6 +296,10 @@
 ./bin/libraries/usb/class_hid.c.asm: libraries/usb/class_hid.c libraries/usb/class_hid.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h
+./bin/libraries/usb/find_device.c.asm: libraries/usb/find_device.c libraries/usb/find_device.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/msxbios/extbio_rc2014.h libraries/usb/protocol.h
 ./bin/libraries/usb/ch376.c.asm: libraries/usb/ch376.c libraries/usb/ch376.h \
  libraries/usb/ch376inc.h
 ./bin/libraries/usb/protocol.c.asm: libraries/usb/protocol.c libraries/usb/protocol.h \
@@ -324,13 +330,14 @@
  libraries/usb/class_printer.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
  libraries/usb/transfers.h libraries/usb/protocol.h
-./bin/sys/prnt/init/prnt.c.asm: sys/prnt/init/prnt.c libraries/msxbios/extbio_rc2014.h \
- libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
+./bin/sys/prnt/init/prnt.c.asm: sys/prnt/init/prnt.c sys/prnt/init/../prnt.h \
+ libraries/msxbios/extbio_rc2014.h libraries/usb/protocol.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/fusion/msx_fusion.h libraries/sysload/sys.h \
  libraries/sysload/sysload.h libraries/sysload/sys.h \
  libraries/msxbios/system_vars.h libraries/usb/class_printer.h \
- libraries/usb/protocol.h
+ libraries/usb/protocol.h libraries/usb/find_device.h
 ./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h xstdio.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
 ./bin/siocfg/arguments.c.asm: siocfg/arguments.c siocfg/arguments.h

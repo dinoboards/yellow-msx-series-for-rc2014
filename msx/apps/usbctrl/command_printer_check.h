@@ -3,6 +3,6 @@
 
 #include "ch376.h"
 
-extern usb_error command_printer_check(const uint8_t last_device_address) __sdcccall(1);
+extern usb_error command_printer_check(void);
 
 #endif

@@ -45,7 +45,7 @@ uint8_t main(const int argc, const char *argv[]) {
     return command_floppy_dump();
 
   case cmd_printer_check:
-    return command_printer_check(l);
+    return command_printer_check();
   }
 
   return 0;

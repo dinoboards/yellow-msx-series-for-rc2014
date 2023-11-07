@@ -2,6 +2,7 @@
 #include <msxdos.h>
 #include <msxdos_rc2014_ex.h>
 #include <protocol.h>
+#include <usb/find_device.h>
 
 usb_error find_next_floppy_interface(const uint8_t address, device_config_interface *const floppy_interface) __sdcccall(1) {
   uint8_t buffer[151];
@@ -39,63 +40,6 @@ usb_error find_next_floppy_interface(const uint8_t address, device_config_interf
   }
 
   return 255;
-}
-
-uint8_t construct_device_config(const uint8_t        device_address,
-                                const uint8_t        config_index,
-                                const uint8_t        interface_index,
-                                device_config *const storage_device) __sdcccall(1) {
-  usb_error result;
-  uint8_t   buffer[151];
-  memset(buffer, 0, sizeof(buffer));
-
-  device_descriptor my_device_descriptor;
-  memset(&my_device_descriptor, 0, sizeof(device_descriptor));
-
-  result = usbtrn_get_descriptor2(&my_device_descriptor, device_address);
-  if (result) {
-    printf("usbtrn_get_descriptor2 failed %d\r\n", result);
-    return result;
-  }
-
-  result = usbtrn_get_full_config_descriptor(config_index, device_address, my_device_descriptor.bMaxPacketSize0, 150, buffer);
-  if (result) {
-    printf("usbtrn_get_full_config_descriptor failed %d\r\n", result);
-    return result;
-  }
-
-  const config_descriptor *const    config = (config_descriptor *)buffer;
-  const interface_descriptor *const interface =
-      (interface_descriptor *)(buffer + sizeof(config_descriptor) + interface_index * sizeof(interface_descriptor));
-
-  storage_device->max_packet_size  = my_device_descriptor.bMaxPacketSize0;
-  storage_device->address          = device_address;
-  storage_device->interface_number = interface->bInterfaceNumber;
-  storage_device->type             = USB_IS_FLOPPY;
-
-  for (uint8_t endpoint_index = 0; endpoint_index < interface->bNumEndpoints; endpoint_index++) {
-    const endpoint_descriptor *const endpoints = (endpoint_descriptor *)&interface[1];
-
-    const uint8_t         x   = calc_max_packet_sizex(endpoints[endpoint_index].wMaxPacketSize);
-    endpoint_param *const eps = storage_device->endpoints;
-    endpoint_param       *ep;
-
-    if (endpoints[endpoint_index].bmAttributes & 0x01) { // 3 -> Interrupt
-      if (!(endpoints[endpoint_index].bEndpointAddress & 0x80))
-        continue;
-
-      ep = &eps[ENDPOINT_INTERRUPT_IN];
-
-    } else {
-      ep = (endpoints[endpoint_index].bEndpointAddress & 0x80) ? &eps[ENDPOINT_BULK_IN] : &eps[ENDPOINT_BULK_OUT];
-    }
-
-    ep->number           = endpoints[endpoint_index].bEndpointAddress & 0x07;
-    ep->toggle           = 0;
-    ep->max_packet_sizex = x;
-  }
-
-  return 0;
 }
 
 usb_error get_device_config_from_drive_letter(device_config *storage_device) {

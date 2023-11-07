@@ -309,12 +309,6 @@ arg_search process_cli_arguments(int argc, const char **const argv) __sdcccall(1
       continue;
     }
 
-    if (strncmp(argv[i], "/b=", 3) == 0) {
-      baud_rate = atoi(argv[i] + 3);
-      argc--;
-      continue;
-    }
-
     printf("Invalid option %s\r\n", argv[i]);
     return abort_with_help();
   }
