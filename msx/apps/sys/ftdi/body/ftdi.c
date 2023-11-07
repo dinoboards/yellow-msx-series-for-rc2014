@@ -19,7 +19,7 @@ uint8_t serial_get_driver_name(const uint8_t port_number, char *const driver_nam
 uint8_t serial_set_baudrate(const uint8_t port_number, const int32_t baudrate) {
   if (port_number == assigned_port_number) {
     assigned_baudrate = baudrate;
-    return 0;
+    return ftdi_set_baudrate(&_ftdi_config, baudrate);
   }
   return 1;
 }
