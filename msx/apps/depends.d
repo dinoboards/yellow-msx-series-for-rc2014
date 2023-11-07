@@ -348,9 +348,17 @@
 ./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
  libraries/sysload/sys.h
 ./bin/sys/ftdi/body/ftdi.c.asm: sys/ftdi/body/ftdi.c sys/ftdi/body/../ftdi.h \
- libraries/extbio/serial.h
+ libraries/extbio/serial.h libraries/usb/vendor_ftdi.h \
+ libraries/usb/ch376.h libraries/usb/ch376inc.h \
+ libraries/usb/dev_transfers.h libraries/usb/ch376.h \
+ libraries/usb/transfers.h
 ./bin/sys/ftdi/init/ftdi.c.asm: sys/ftdi/init/ftdi.c sys/ftdi/init/../ftdi.h \
- libraries/sysload/sysload.h libraries/sysload/sys.h
+ libraries/sysload/sysload.h libraries/sysload/sys.h \
+ libraries/usb/find_device.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ libraries/usb/protocol.h libraries/usb/vendor_ftdi.h \
+ libraries/usb/ch376.h libraries/usb/dev_transfers.h
 ./bin/sys/prnt/body/prnt.c.asm: sys/prnt/body/prnt.c libraries/msxbios/system_vars.h \
  libraries/usb/class_printer.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
