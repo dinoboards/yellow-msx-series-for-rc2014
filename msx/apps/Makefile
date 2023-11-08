@@ -49,23 +49,21 @@ SYS_LIB := $(addprefix $(BIN)libraries/sysload/, sysload.c.lib sysload.lib)
 list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
 
+
 sysftdi_files = $(addprefix $(BIN),$(call app_file,sys/ftdi/body))
 $(BIN)sys/ftdi/body/ftdi.body: $(sysftdi_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_VENDOR_FTDI_LIB) $(USB_USER_LIB) $(GETSLT_LIB) $(EXTBIO_USB_LIB)
-$(BIN)sys/ftdi/body/ftdi.reloc: $(BIN)sys/ftdi/body/ftdi.body
 $(BIN)ftdi.sys: $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(addprefix $(BIN)sys/ftdi/body/, import.asm ftdi.body ftdi.reloc ftdi.def.lib) $(USB_USER_LIB) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
-ftdi.sys.crt_enable_commandline:=1
+$(eval $(call relocatable,ftdi))
 
 syshello_files = $(addprefix $(BIN),$(call app_file,sys/hello/body))
 $(BIN)sys/hello/body/hello.body: $(syshello_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
-$(BIN)sys/hello/body/hello.reloc: $(BIN)sys/hello/body/hello.body
-$(BIN)hello.sys: $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(addprefix $(BIN)sys/hello/body/, import.asm hello.body hello.reloc hello.def.lib) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
-hello.sys.crt_enable_commandline:=1
+$(BIN)hello.sys: $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(addprefix $(BIN)sys/hello/body/, import.asm hello.body hello.def.lib) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(eval $(call relocatable,hello))
 
 sysprnt_files = $(addprefix $(BIN),$(call app_file,sys/prnt/body))
 $(BIN)sys/prnt/body/prnt.body: $(sysprnt_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
-$(BIN)sys/prnt/body/prnt.reloc: $(BIN)sys/prnt/body/prnt.body
 $(BIN)prnt.sys: $(addprefix $(BIN),$(call app_file,sys/prnt/init)) $(addprefix $(BIN)sys/prnt/body/, import.asm prnt.body prnt.reloc prnt.def.lib) $(USB_USER_LIB) $(DELAY_LIB) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
-prnt.sys.crt_enable_commandline:=1
+$(eval $(call relocatable,prnt))
 
 service_files = $(call app_file,service)
 $(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
