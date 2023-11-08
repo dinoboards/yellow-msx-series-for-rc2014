@@ -23,6 +23,8 @@ extern uint16_t timi;
 
 #define relocation_table_size (((uint16_t)relocation_table_end - (uint16_t)relocation_table_start) / 2)
 
+#define to_next_page(x) (((uint16_t)x & 0xFF00) + 0x0100)
+
 uint8_t *address;
 char     buffer[128];
 uint8_t  allocated_segment;
@@ -57,7 +59,7 @@ void create(void) {
   // Clear the segment
   memset((void *)0x4000, 0, 0x4000);
 
-  sys_segment_head.next_address = (uint8_t *)(0x4000 + sizeof(sys_segment_head_t));
+  sys_segment_head.next_address = (uint8_t *)to_next_page(0x4000 + sizeof(sys_segment_head_t));
 
   install_extbio_hook();
   install_timi_hook();
@@ -138,10 +140,9 @@ uint16_t main(const int argc, const char *argv[]) {
 
   memcpy(sys_segment_head.next_address, sys_start, sys_end - sys_start);
 
-  const uint16_t offset = (uint16_t)sys_segment_head.next_address;
-
+  const uint16_t offset = ((uint16_t)sys_segment_head.next_address) >> 8;
   for (uint16_t i = 0; i < relocation_table_size; i++) {
-    uint16_t *p = (uint16_t *)(sys_segment_head.next_address + relocation_table_start[i]);
+    uint8_t *p = (uint8_t *)(sys_segment_head.next_address + relocation_table_start[i]);
     *p += offset;
   }
 
@@ -150,8 +151,8 @@ uint16_t main(const int argc, const char *argv[]) {
   if (result)
     goto finally_memmap;
 
-  sys_segment_head.next_address += (sys_end - sys_start);
-  const uint8_t flags = sys_segment_head.sys[index]->flags;
+  sys_segment_head.next_address = (uint8_t *)to_next_page(sys_segment_head.next_address + sys_end - sys_start);
+  const uint8_t flags           = sys_segment_head.sys[index]->flags;
 
   if (flags & REQUIRE_EXTBIO) {
     *relocated(extbio_next)                       = (uint16_t)&sys_segment_head.original_extbio_hook;

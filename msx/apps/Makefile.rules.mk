@@ -55,9 +55,22 @@ $(BIN)%.sys:
 	filesize=$$(stat -c%s "$@")
 	echo "Linked $(notdir $@) ($$filesize bytes)"
 
-$(BIN)%.body:
-	@mkdir -p $(dir $@)
-	$(ZCC_FOR_sys) -crt0 ./sys/$(notdir $(basename $@))/body/crt.asm -Cl-reloc-info $(filter-out %/crt.o,$(filter-out %.reloc,$(filter-out %.sys,$(filter-out %.inc,$(filter-out %.lib,$^))))) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
+define relocatable =
+$(BIN)sys/$1/body/$1.crtbase1000.asm: sys/$1/body/crt.asm
+	@mkdir -p $$(dir $$@)
+	echo -e "\tORG\t\$$$$1000\n\n" > $$@
+	cat $$^ >> $$@
+
+$1.sys.crt_enable_commandline:=1
+endef
+
+
+$(BIN)%.body: bin/%.crtbase1000.asm
+	@$(MAKE) $(BIN)extract-reloc-table.js --no-print-directory -s
+	mkdir -p $(dir $@)
+	$(ZCC_FOR_sys) -crt0 ./sys/$(notdir $(basename $@))/body/crt.asm $(filter-out %.crtbase1000.asm,$(filter-out %/crt.o,$(filter-out %.reloc,$(filter-out %.sys,$(filter-out %.inc,$(filter-out %.lib,$^))))) $(patsubst %,-l%,$(filter %.lib,$^))) -o $@
+	$(ZCC_FOR_sys) -crt0 $(firstword $^) $(filter-out %.crtbase1000.asm,$(filter-out %/crt.o,$(filter-out %.reloc,$(filter-out %.sys,$(filter-out %.inc,$(filter-out %.lib,$^))))) $(patsubst %,-l%,$(filter %.lib,$^))) -o $@.base1000
+	node $(BIN)extract-reloc-table.js $@ $@.base1000 "$(basename $@).reloc"
 	reloc_filesize=$$(stat -c%s "$(basename $@).reloc")
 	echo "Reloc info $(basename $@).reloc ($$reloc_filesize bytes)"
 	filesize=$$(stat -c%s "$@")
@@ -140,3 +153,60 @@ deps:
 	done
 
 	echo "./depends.d created"
+
+$(BIN)extract-reloc-table.js:
+	@cat <<EOT > $(BIN)extract-reloc-table.js
+	const fs = require('fs')
+	const util = require('util')
+	const childProcess = require('child_process')
+	const path = require('path')
+	const os = require('os')
+
+	function convertBitmapByte(hits, index) {
+		let byte = 0
+		for(let i = 0; i < 8; i++) {
+			const hit = hits.some(x => x === index + i)
+			if (hit)
+				byte |= Math.pow(2, 7 - i)
+		}
+
+		return byte
+	}
+
+	function convertToArrayOfUint16(hits) {
+		const data = Buffer.alloc(hits.length * 2)
+
+		for(let i = 0; i < hits.length; i++) {
+			data[i*2] = hits[i] & 255
+			data[(i*2) + 1] = hits[i] >> 8
+		}
+
+		return data
+	}
+
+	async function main(fileAt100, fileAt200, relocationFileName) {
+		const data1 = fs.readFileSync(fileAt100)
+		const data2 = fs.readFileSync(fileAt200)
+
+		if (data1.length != data2.length)
+			throw new Error("File length are different")
+
+		const hits = []
+		for(let i=0; i < data1.length; i++) {
+			if (data1[i] !== data2[i]) {
+				hits.push(i)
+			}
+		}
+
+		const data = convertToArrayOfUint16(hits, data2.length)
+
+		fs.writeFileSync(relocationFileName, data)
+	}
+
+	main(...[...process.argv].slice(2)).catch(err => {
+		console.log(err.stack)
+		console.log("");
+		process.exit(1)
+	})
+	EOT
+
