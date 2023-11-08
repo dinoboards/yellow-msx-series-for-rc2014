@@ -384,7 +384,8 @@
 ./bin/ftditest/baud_rate_clock_calculator.c.asm: ftditest/baud_rate_clock_calculator.c \
  ftditest/baud_rate_clock_calculator.h
 ./bin/ftditest/ftditest.c.asm: ftditest/ftditest.c ftditest/baud_rate_clock_calculator.h \
- libraries/extbio/serial.h
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/extbio/serial.h libraries/msxdos/msxdos.h
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
@@ -400,10 +401,12 @@
 ./bin/muflash/slot_helpers.o: ./muflash/slot_helpers.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_get_driver_name.o: ./libraries/extbio/extbio_serial_get_driver_name.asm ./msx.inc
+./bin/libraries/extbio/extbio_serial_read.o: ./libraries/extbio/extbio_serial_read.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_set_protocol.o: ./libraries/extbio/extbio_serial_set_protocol.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_get_present.o: ./libraries/extbio/extbio_usb_get_present.asm ./msx.inc
 ./bin/libraries/extbio/unapi_get_ram_helper.o: ./libraries/extbio/unapi_get_ram_helper.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_set_baudrate.o: ./libraries/extbio/extbio_serial_set_baudrate.asm ./msx.inc
+./bin/libraries/extbio/extbio_serial_write.o: ./libraries/extbio/extbio_serial_write.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_out_transfer.o: ./libraries/extbio/extbio_usb_data_out_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_rc2014_hello.o: ./libraries/extbio/extbio_rc2014_hello.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.asm ./msx.inc
@@ -417,6 +420,7 @@
 ./bin/libraries/extbio/extbio_serial_get_available_ports.o: ./libraries/extbio/extbio_serial_get_available_ports.asm ./msx.inc
 ./bin/libraries/extbio/extbio_rc2014_get_version.o: ./libraries/extbio/extbio_rc2014_get_version.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_read_data.o: ./libraries/extbio/extbio_usb_ftdi_read_data.asm ./msx.inc
+./bin/libraries/extbio/extbio_serial_purge_buffers.o: ./libraries/extbio/extbio_serial_purge_buffers.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_set_baudrate.o: ./libraries/extbio/extbio_usb_ftdi_set_baudrate.asm ./msx.inc
 ./bin/libraries/fusion/inputchar.o: ./libraries/fusion/inputchar.asm
 ./bin/libraries/fusion/io.o: ./libraries/fusion/io.asm

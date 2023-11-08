@@ -80,7 +80,7 @@ $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB) $(SY
 helloworld.com.crt_enable_commandline:=1
 
 ftditest_files = $(call app_file,ftditest)
-$(BIN)ftditest.com: $(addprefix $(BIN),$(ftditest_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB)
+$(BIN)ftditest.com: $(addprefix $(BIN),$(ftditest_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 ftditest.com.crt_enable_commandline:=1
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm)

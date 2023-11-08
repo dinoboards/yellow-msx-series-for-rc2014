@@ -20,8 +20,13 @@ baud_rate_clock_divisor baud_rate_clock_divisors[BAUD_RATES_COUNT] = {
  * @param index as per the FTDI chip spec
  * @return int32_t the actually achieved baud rate
  */
+static const baud_rate_clock_divisor *x;
+
 static bool ftdi_convert_baudrate(const int32_t baudrate, setup_packet *const cmd) {
-  baud_rate_clock_divisor *p = baud_rate_clock_divisors;
+  baud_rate_clock_divisor             *p           = baud_rate_clock_divisors;
+  const baud_rate_clock_divisor *const end_address = &baud_rate_clock_divisors[BAUD_RATES_COUNT];
+  x                                                = end_address;
+
   do {
     if (p->requested_baud_rate == baudrate) {
       cmd->bValue[0] = p->value >> 8;
@@ -31,9 +36,8 @@ static bool ftdi_convert_baudrate(const int32_t baudrate, setup_packet *const cm
       return true;
     }
     p++;
-  } while (p < baud_rate_clock_divisors + BAUD_RATES_COUNT);
+  } while (p < end_address);
 
-  trace_printf("  Unsupported baudrate %ld\n", baudrate);
   return false;
 }
 
