@@ -1,6 +1,5 @@
-#include <stdbool.h>
-
 #include <msxdos.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 extern void transition(const void *const source, const uint16_t size) __sdcccall(1);
@@ -27,7 +26,7 @@ uint8_t main(const int argc, const char *argv[]) {
   const uint8_t  handle       = error_handle & 0xFF;
   const uint8_t  error        = error_handle >> 8 & 0xFF;
 
-  if (handle > 8 & 0xFF) {
+  if (error) {
     char error_description[64];
     memset(error_description, 0, sizeof(error_description));
     msxdosExplainErrorCode(error, error_description);
