@@ -33,7 +33,6 @@ SYSTEM_VARS_LIB := $(addprefix $(BIN)libraries/msxbios/,system_vars.c.lib)
 MSXDOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxdos/*.asm)))
 EXTBIO_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/extbio/*.asm)))
 EXTBIO_USB_LIB :=  $(addprefix $(BIN)libraries/extbio/,extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer_n.lib extbio_usb_data_in_transfer.lib)
-# $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/extbio/*.asm)))
 FOSSIL_LIB := $(addprefix $(BIN)libraries/fossil/,fossil.lib fossil.c.lib)
 DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
 
@@ -50,19 +49,16 @@ list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 
-sysftdi_files = $(addprefix $(BIN),$(call app_file,sys/ftdi/body))
-$(BIN)sys/ftdi/body/ftdi.body: $(sysftdi_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_VENDOR_FTDI_LIB) $(USB_USER_LIB) $(GETSLT_LIB) $(EXTBIO_USB_LIB)
-$(BIN)ftdi.sys: $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(addprefix $(BIN)sys/ftdi/body/, import.asm ftdi.body ftdi.reloc ftdi.def.lib) $(USB_USER_LIB) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+ftdi.body := $(addprefix $(BIN),$(call app_file,sys/ftdi/body)) $(EXTBIO_USB_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB) $(USB_VENDOR_FTDI_LIB)
+ftdi.init := $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,ftdi))
 
-syshello_files = $(addprefix $(BIN),$(call app_file,sys/hello/body))
-$(BIN)sys/hello/body/hello.body: $(syshello_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
-$(BIN)hello.sys: $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(addprefix $(BIN)sys/hello/body/, import.asm hello.body hello.def.lib) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+hello.body := $(addprefix $(BIN),$(call app_file,sys/hello/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+hello.init := $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB)
 $(eval $(call relocatable,hello))
 
-sysprnt_files = $(addprefix $(BIN),$(call app_file,sys/prnt/body))
-$(BIN)sys/prnt/body/prnt.body: $(sysprnt_files) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
-$(BIN)prnt.sys: $(addprefix $(BIN),$(call app_file,sys/prnt/init)) $(addprefix $(BIN)sys/prnt/body/, import.asm prnt.body prnt.reloc prnt.def.lib) $(USB_USER_LIB) $(DELAY_LIB) $(SYS_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+prnt.body := $(addprefix $(BIN),$(call app_file,sys/prnt/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+prnt.init := $(addprefix $(BIN),$(call app_file,sys/prnt/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,prnt))
 
 service_files = $(call app_file,service)

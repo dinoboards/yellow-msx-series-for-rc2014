@@ -51,7 +51,7 @@ $(BIN)%.com:
 $(BIN)%.sys:
 	@mkdir -p $(dir $@)
 	$(eval $(notdir $@).crt_enable_commandline ?= 0)
-	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=$($(notdir $@).crt_enable_commandline) $(filter-out %.reloc,$(filter-out %.body,$(filter-out %.inc,$(filter-out %.lib,$^)))) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
+	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=0 $(filter-out %.init,$(filter-out %.reloc,$(filter-out %.body,$(filter-out %.inc,$(filter-out %.lib,$^))))) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
 	filesize=$$(stat -c%s "$@")
 	echo "Linked $(notdir $@) ($$filesize bytes)"
 
@@ -62,6 +62,13 @@ $(BIN)sys/$1/body/$1.crtbase1000.asm: sys/$1/body/crt.asm
 	cat $$^ >> $$@
 
 $1.sys.crt_enable_commandline:=1
+
+$(BIN)sys/$1/body/$1.reloc: $(BIN)sys/$1/body/$1.body
+
+$(BIN)$1.sys: $(addprefix $(BIN)sys/$1/body/, import.asm $1.body $1.reloc $1.def.lib) $($1.init)
+
+$(BIN)sys/$1/body/$1.body: $($1.body)
+
 endef
 
 
