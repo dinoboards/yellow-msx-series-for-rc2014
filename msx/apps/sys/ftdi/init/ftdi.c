@@ -1,10 +1,10 @@
 #include "../ftdi.h"
+#include "../vendor_ftdi.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <sysload/sysload.h>
 #include <usb/find_device.h>
 #include <usb/protocol.h>
-#include <usb/vendor_ftdi.h>
 
 extern device_config_ftdi _ftdi_config;
 device_config_ftdi       *ftdi_config;
@@ -23,7 +23,7 @@ uint16_t init(installed_sys_t *const my_header) __z88dk_fastcall {
   ftdi_config      = ((device_config_ftdi *)relocated(_ftdi_config));
   usb_error result = find_device(is_ftdi, (device_config *)ftdi_config);
 
-  if (result != 0) {
+  if (result == 0) {
     uint8_t *const relocated_assigned_port_number = &relocated2(&assigned_port_number);
     serial_get_available_ports(relocated_assigned_port_number);
     *relocated_assigned_port_number += 1;

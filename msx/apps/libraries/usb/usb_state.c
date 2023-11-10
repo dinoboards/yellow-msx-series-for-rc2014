@@ -6,7 +6,6 @@ const uint8_t device_config_sizes[_USB_LAST_DEVICE_TYPE] = {
     sizeof(device_config),          /* USB_IS_MASS_STORAGE = 2 */
     sizeof(device_config),          /* USB_IS_CDC          = 3 */
     sizeof(device_config_keyboard), /* USB_IS_KEYBOARD     = 5 */
-                                    // sizeof(device_config_ftdi),     /* USB_IS_FTDI         = 6 */
 };
 
 // always usb work area
@@ -49,6 +48,11 @@ device_config *next_device_config(const _usb_state *const usb_state, const devic
     return NULL;
 
   const uint8_t size = device_config_sizes[p->type];
+  // TODO: bug when size if zero we dont increment the pointer
+  // but if we abort on size 0 - we fail to pick up other devices???
+  // we should not get size of 0 unless the size entry is missing
+  //  if (size == 0)
+  //    return NULL;
 
   const uint8_t       *_p     = (uint8_t *)p;
   device_config *const result = (device_config *)(_p + size);

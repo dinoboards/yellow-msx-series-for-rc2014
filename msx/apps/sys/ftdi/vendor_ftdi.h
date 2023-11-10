@@ -77,17 +77,12 @@ typedef struct {
 
 extern usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudrate);
 extern usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t protocol_bits);
-extern usb_error _ftdi_read_data(xxx *const tmp) __z88dk_fastcall;
+extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *size);
 // extern usb_error ftdi_write_data(device_config_ftdi *const ftdi, const uint8_t *const buf, const uint16_t size);
 extern usb_error ftdi_purge_tx_buffer(device_config_ftdi *const ftdi);
 extern usb_error ftdi_purge_rx_buffer(device_config_ftdi *const ftdi);
 
 #define ftdi_write_data(ftdi, buf, size) usbdev_bulk_out_transfer((device_config *)(ftdi), buf, size)
-
-inline usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *size) {
-  xxx tmp = {size, buf, ftdi};
-  return _ftdi_read_data(&tmp);
-}
 
 // int ftdi_setflowctrl(struct ftdi_context *ftdi, int flowctrl);
 //     int ftdi_setdtr_rts(struct ftdi_context *ftdi, int dtr, int rts);

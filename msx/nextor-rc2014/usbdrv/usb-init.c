@@ -98,10 +98,6 @@ bool state_devices(const _usb_state *const boot_area) __z88dk_fastcall {
   if (hasKeyboard)
     print_string("    KEYBOARD\r\n");
 
-  // const bool hasFTDI = find_device_config(USB_IS_FTDI) != NULL;
-  // if (hasFTDI)
-  //   print_string("    FTDI\r\n");
-
   do {
     const device_config *const storage_device = get_usb_device_config(index);
     if (storage_device == NULL)

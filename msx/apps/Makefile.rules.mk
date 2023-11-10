@@ -50,9 +50,12 @@ $(BIN)%.com:
 
 $(BIN)%.sys:
 	@mkdir -p $(dir $@)
-	$(eval $(notdir $@).crt_enable_commandline ?= 0)
-	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=0 $(filter-out %.init,$(filter-out %.reloc,$(filter-out %.body,$(filter-out %.inc,$(filter-out %.lib,$^))))) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
+	$(ZCC) -pragma-define:CRT_ENABLE_COMMANDLINE=1 $(filter-out %.init,$(filter-out %.reloc,$(filter-out %.body,$(filter-out %.inc,$(filter-out %.lib,$^))))) $(patsubst %,-l%,$(filter %.lib,$^)) -o $@
 	filesize=$$(stat -c%s "$@")
+	if [ $$filesize -gt 16128 ]; then
+		echo "ERROR: $(notdir $@) ($$filesize bytes) is too big for a .sys file"
+		exit 1
+	fi
 	echo "Linked $(notdir $@) ($$filesize bytes)"
 
 define relocatable =
@@ -60,8 +63,6 @@ $(BIN)sys/$1/body/$1.crtbase1000.asm: sys/$1/body/crt.asm
 	@mkdir -p $$(dir $$@)
 	echo -e "\tORG\t\$$$$1000\n\n" > $$@
 	cat $$^ >> $$@
-
-$1.sys.crt_enable_commandline:=1
 
 $(BIN)sys/$1/body/$1.reloc: $(BIN)sys/$1/body/$1.body
 

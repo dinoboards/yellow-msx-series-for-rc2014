@@ -32,7 +32,7 @@ uint8_t construct_device_config(const uint8_t        device_address,
   storage_device->max_packet_size  = my_device_descriptor.bMaxPacketSize0;
   storage_device->address          = device_address;
   storage_device->interface_number = interface->bInterfaceNumber;
-  storage_device->type             = USB_IS_FLOPPY;
+  storage_device->type             = USB_NOT_SUPPORTED;
 
   for (uint8_t endpoint_index = 0; endpoint_index < interface->bNumEndpoints; endpoint_index++) {
     const endpoint_descriptor *const endpoints = (endpoint_descriptor *)&interface[1];

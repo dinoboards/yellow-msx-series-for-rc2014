@@ -33,7 +33,7 @@ keep_waiting:
 	dec	hl
 	ld	a, h
 	or	l
-	jr	NZ, keep_waiting
+	jr	NZ, _ch_wait_int_and_get_status
 
 	in	a, (CH376_COMMAND_PORT)
 	bit	4, a		 ; CH376_COMMAND_PORT & PARA_STATE_BUSY

@@ -133,18 +133,18 @@
  libraries/msxbios/system_vars.h libraries/fusion/msx_fusion.h \
  libraries/usb/protocol.h libraries/usb/class_printer.h \
  libraries/usb/find_device.h
-./bin/usbctrl/command_ftdi_check.c.asm: usbctrl/command_ftdi_check.c usbctrl/arguments.h \
+./bin/usbctrl/command_ftdi_check.c.asm: usbctrl/command_ftdi_check.c \
+ usbctrl/../sys/ftdi/vendor_ftdi.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
+ libraries/usb/ch376.h libraries/usb/transfers.h usbctrl/arguments.h \
  usbctrl/command_printer_check.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h usbctrl/device_search.h \
- libraries/usb/class_ufi.h libraries/usb/ch376.h libraries/usb/protocol.h \
- libraries/usb/dev_transfers.h libraries/usb/transfers.h \
+ usbctrl/device_search.h libraries/usb/class_ufi.h \
+ libraries/usb/protocol.h libraries/usb/dev_transfers.h \
  libraries/usb/usb_cbi.h libraries/usb/dev_transfers.h \
  libraries/usb/usb_state.h libraries/usb/class_printer.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h \
  libraries/fusion/msx_fusion.h libraries/msxdos/msxdos.h \
- libraries/usb/protocol.h libraries/usb/find_device.h \
- libraries/usb/vendor_ftdi.h libraries/usb/ch376.h \
- libraries/usb/dev_transfers.h
+ libraries/usb/protocol.h libraries/usb/find_device.h
 ./bin/usbctrl/read_and_write_sectors.c.asm: usbctrl/read_and_write_sectors.c \
  usbctrl/read_and_write_sectors.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -195,9 +195,7 @@
  libraries/usb/dev_transfers.h libraries/usb/usb_state.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h \
  libraries/usb/enumerate.h libraries/msxdos/msxdos.h \
- libraries/usb/vendor_ftdi.h libraries/usb/ch376.h \
- libraries/usb/dev_transfers.h libraries/usb/usb_trace.h \
- libraries/usb/class_ufi.h
+ libraries/usb/usb_trace.h libraries/usb/class_ufi.h
 ./bin/service/service.c.asm: service/service.c libraries/msxdos/msxdos.h
 ./bin/fdisk/screen_control.c.asm: fdisk/screen_control.c fdisk/screen_control.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
@@ -277,10 +275,6 @@
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/usb/usb_state.h libraries/usb/enumerate_hub.h \
  libraries/usb/enumerate_storage.h
-./bin/libraries/usb/vendor_ftdi.c.asm: libraries/usb/vendor_ftdi.c libraries/usb/vendor_ftdi.h \
- libraries/usb/ch376.h libraries/usb/ch376inc.h \
- libraries/usb/dev_transfers.h libraries/usb/ch376.h \
- libraries/usb/transfers.h
 ./bin/libraries/usb/usb_state.c.asm: libraries/usb/usb_state.c libraries/usb/usb_state.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h
@@ -348,17 +342,21 @@
 ./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
  libraries/sysload/sys.h
 ./bin/sys/ftdi/body/ftdi.c.asm: sys/ftdi/body/ftdi.c sys/ftdi/body/../ftdi.h \
- libraries/extbio/serial.h libraries/usb/vendor_ftdi.h \
+ sys/ftdi/body/../vendor_ftdi.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
+ libraries/usb/ch376.h libraries/usb/transfers.h \
+ libraries/extbio/serial.h
+./bin/sys/ftdi/vendor_ftdi.c.asm: sys/ftdi/vendor_ftdi.c sys/ftdi/vendor_ftdi.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/ch376.h \
  libraries/usb/transfers.h
 ./bin/sys/ftdi/init/ftdi.c.asm: sys/ftdi/init/ftdi.c sys/ftdi/init/../ftdi.h \
+ sys/ftdi/init/../vendor_ftdi.h libraries/usb/ch376.h \
+ libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
+ libraries/usb/ch376.h libraries/usb/transfers.h \
  libraries/sysload/sysload.h libraries/sysload/sys.h \
- libraries/usb/find_device.h libraries/usb/ch376.h \
- libraries/usb/ch376inc.h libraries/usb/protocol.h \
- libraries/usb/dev_transfers.h libraries/usb/transfers.h \
- libraries/usb/protocol.h libraries/usb/vendor_ftdi.h \
- libraries/usb/ch376.h libraries/usb/dev_transfers.h
+ libraries/usb/find_device.h libraries/usb/protocol.h \
+ libraries/usb/dev_transfers.h libraries/usb/protocol.h
 ./bin/sys/prnt/body/prnt.c.asm: sys/prnt/body/prnt.c libraries/msxbios/system_vars.h \
  libraries/usb/class_printer.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
