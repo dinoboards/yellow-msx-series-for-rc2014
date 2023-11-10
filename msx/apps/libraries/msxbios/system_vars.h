@@ -18,6 +18,10 @@
 #define LOWLIM_ADDR __at(0xFCA4)
 #define WINWID_ADDR __at(0xFCA5)
 #define KEYBUF_ADDR __at(0xFBF0)
+#define MEMSIZ_ADDR __at(0xF672)
+#define STKTOP_ADDR __at(0xF674)
+#define BOTTOM_ADDR __at(0xFC48)
+#define HIMEM_ADDR  __at(0xFC4A)
 
 // F417: switch indicating if hooked up printer is an MSX printer or not
 // values: 0: MSX-Printer, 1: no MSX-Printer
@@ -71,6 +75,22 @@ extern uint8_t LINL40_ADDR LINL40;
 
 // keyboard buffer; each char entered via the keyboard ends up here
 extern char KEYBUF_ADDR KEYBUF[240];
+
+// F672-F673: upper limit of memory area reserved for strings, contains the upper address
+// that is allowed to be used
+extern uint16_t MEMSIZ_ADDR MEMSIZ;
+
+// F674-F675: top of stack; also first byte below string area
+extern uint16_t STKTOP_ADDR STKTOP;
+
+// FC48-FC49: lowest address of the RAM memory; initialized at startup
+// and not changed normally
+extern uint16_t BOTTOM_ADDR BOTTOM;
+
+// FC4A-FC4B: highest address of the RAM memory that is not reserved by
+// the OS; string area, filebuffers and stack are below this address
+// initialized at startup and not changed normally
+extern uint16_t HIMEM_ADDR HIMEM;
 
 #define msxJiffy  JIFFY
 #define msxNewKey NEWKEY

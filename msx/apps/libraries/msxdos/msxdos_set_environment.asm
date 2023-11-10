@@ -6,7 +6,7 @@
 _msxdosSetEnvironment:
 	PUSH	IX
 
-	ld	c, $6C
+	LD	C, $6C
 	CALL	BDOS
 	LD	L, A
 

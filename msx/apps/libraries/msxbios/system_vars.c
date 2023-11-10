@@ -56,3 +56,19 @@ uint8_t RG8SAV_ADDR RG8SAV[23 - 8];
 
 // keyboard buffer; each char entered via the keyboard ends up here
 char KEYBUF_ADDR KEYBUF[240];
+
+// F672-F673: upper limit of memory area reserved for strings, contains the upper address
+// that is allowed to be used
+uint16_t MEMSIZ_ADDR MEMSIZ;
+
+// F674-F675: top of stack; also first byte below string area
+uint16_t STKTOP_ADDR STKTOP;
+
+// FC48-FC49: lowest address of the RAM memory; initialized at startup
+// and not changed normally
+uint16_t BOTTOM_ADDR BOTTOM;
+
+// FC4A-FC4B: highest address of the RAM memory that is not reserved by
+// the OS; string area, filebuffers and stack are below this address
+// initialized at startup and not changed normally
+uint16_t HIMEM_ADDR HIMEM;

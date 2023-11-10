@@ -20,6 +20,8 @@
  libraries/delay/delay.h libraries/msxbios/system_vars.h \
  libraries/msxbios/extbio.h libraries/fossil/fossil.h \
  libraries/msxdos/msxdos.h
+./bin/memory/memory.c.asm: memory/memory.c memory/memory.h libraries/msxbios/extbio.h \
+ libraries/msxbios/system_vars.h libraries/msxdos/msxdos.h
 ./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
 ./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/crc16.h xrecv2/serial.h \
  libraries/fossil/fossil.h libraries/msxbios/system_vars.h
@@ -384,6 +386,7 @@
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxbios_break_x.o: ./libraries/msxdos/msxbios_break_x.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_terminate_with_error.o: ./libraries/msxdos/msxdos_terminate_with_error.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_open_file.o: ./libraries/msxdos/msxdos_open_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_read_from_file.o: ./libraries/msxdos/msxdos_read_from_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc

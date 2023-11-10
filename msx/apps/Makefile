@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all: $(BIN)hello.sys $(BIN)prnt.sys  $(addsuffix .com,$(addprefix $(BIN),fdisk service helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all: $(BIN)hello.sys $(BIN)prnt.sys  $(addsuffix .com,$(addprefix $(BIN),fdisk service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -62,6 +62,9 @@ service_files = $(call app_file,service)
 $(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 service.com.crt_enable_commandline:=1
 
+memory_files = $(call app_file,memory)
+$(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+memory.com.crt_enable_commandline:=1
 
 helloworld_files = $(call app_file,helloworld)
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)

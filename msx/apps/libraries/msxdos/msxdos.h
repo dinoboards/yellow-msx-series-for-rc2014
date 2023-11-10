@@ -157,6 +157,7 @@ extern uint8_t msxdosSetDate(uint16_t year, uint8_t month, uint8_t date);
 extern uint8_t msxdosSetTime(uint8_t hour, uint8_t minutes, uint8_t seconds, uint8_t centiseconds);
 extern void    msxdosGetTime(uint8_t *hour, uint8_t *minutes, uint8_t *seconds);
 
+extern void    msxdosTerminateWithError(uint8_t code) __z88dk_fastcall;
 extern uint8_t msxdosGetEnvironment(const char *name, char *value, const uint8_t buffer_size);
 extern uint8_t msxdosSetEnvironment(const char *name, const char *value) __sdcccall(1);
 
