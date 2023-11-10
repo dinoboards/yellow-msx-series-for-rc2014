@@ -378,6 +378,7 @@
 ./bin/libraries/fusion/interrupts.o: ./libraries/fusion/interrupts.asm
 ./bin/libraries/fusion/inputstring.o: ./libraries/fusion/inputstring.asm
 ./bin/libraries/fusion/inkey.o: ./libraries/fusion/inkey.asm
+./bin/libraries/msxdos/fputc_cons_native.o: ./libraries/msxdos/fputc_cons_native.asm
 ./bin/libraries/msxdos/msxdos_set_environment.o: ./libraries/msxdos/msxdos_set_environment.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_environment.o: ./libraries/msxdos/msxdos_get_environment.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_drv_direct_1.o: ./libraries/msxdos/msxdos_drv_direct_1.asm ./libraries/msxdos/msxdos.inc
