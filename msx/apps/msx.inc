@@ -89,7 +89,6 @@ H_BEXT:         equ     $FFCA
 
 	MACRO MARSHAL count, fn
 	LOCAL	LOOP_CTRL
-	EX	AF, AF'
 
 	LD	BC, count
 	ADD	HL, BC

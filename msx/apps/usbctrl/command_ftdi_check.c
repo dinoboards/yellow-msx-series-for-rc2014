@@ -1,3 +1,4 @@
+#include "../sys/ftdi/vendor_ftdi.h"
 #include "arguments.h"
 #include "command_printer_check.h"
 #include "device_search.h"
@@ -9,7 +10,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <usb/find_device.h>
-#include <usb/vendor_ftdi.h>
 
 bool is_ftdi(const device_descriptor *const device_descriptor, const interface_descriptor *const interface) __sdcccall(1) {
   (void)interface;
@@ -26,6 +26,7 @@ usb_error read_from_ftdi(device_config_ftdi *ftdi_config, uint8_t *const read_by
   memset(buffer, 0, sizeof(buffer));
 
   result = ftdi_read_data(ftdi_config, buffer, &buffer_size);
+
   if (result == USB_TOKEN_OUT_OF_SYNC) {
     printf("Sync: size: %d, %d, %d\r\n", buffer_size, ftdi_config->endpoints[0].toggle, ftdi_config->endpoints[1].toggle);
     result = ftdi_read_data(ftdi_config, buffer, &buffer_size);
@@ -93,7 +94,7 @@ usb_error command_ftdi_check(const uint8_t last_device_address) __sdcccall(1) {
 
     result = ftdi_write_data(&ftdi_config, buffer, BUF_SIZE);
     if (result) {
-      printf("ftdi_write_data errored: %d\r\n", result);
+      printf("ftdi_write_data errored: %02X\r\n", result);
       break;
     }
 

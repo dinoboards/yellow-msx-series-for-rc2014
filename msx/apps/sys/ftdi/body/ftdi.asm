@@ -3,7 +3,7 @@
 	PUBLIC	_extbio
 	PUBLIC	_extbio_next
 
-	EXTERN	__ftdi_read_data
+	EXTERN	_ftdi_read_data
 	EXTERN	_ftdi_set_baudrate
 	EXTERN	_ftdi_set_line_property2
 	EXTERN	_ftdi_purge_rx_buffer
@@ -19,21 +19,21 @@
 	SECTION	CODE
 
 _extbio:
-	EX	AF, AF'
+	PUSH	AF
 	LD	A, D
-	CP	E
-	JR	Z, EXBIO_EXIT
 
 	CP	EXTBIO_RC2014
 	JR	Z, handle_extbio
 
+	POP	AF
+
 EXBIO_EXIT:
-	EX	AF, AF'
 	DB	$C3	; JP opcode
 _extbio_next:
 	DW	0
 
 handle_extbio:
+	POP	AF
 	LD	A, E
 	CP	EXTBIO_RC2014_USB_FTDI_FN
 	JP	Z, EXTBIO_RC2014_USB_FTDI
@@ -69,12 +69,12 @@ EXTBIO_RC2014_SERIAL:
 EXTBIO_RC2014_SERIAL_GET_AVAILABLE_PORTS:
 	INC	(HL)
 	LD	HL, 0
-
-	EX	AF, AF'
 	RET
+
 
 EXTBIO_RC2014_SERIAL_GET_DRIVER_NAME_SUB:
 	MARSHAL 3, _serial_get_driver_name
+
 EXTBIO_RC2014_SERIAL_RET_OR_NEXT:
 	LD	A, L			; MATCHED OUR DRIVER NUMBER?
 	OR	A
@@ -121,12 +121,11 @@ EXTBIO_RC2014_USB_FTDI:
 
 EXTBIO_UNKNOWN_SUB:
 	LD	HL, -1	; UNKNOWN SUB FUNCTION
-	EX	AF, AF'
 	RET
 
 EXTBIO_RC2014_USB_FTDI_READ_DATA_SUB:
-	EX	AF, AF'
-	JP	__ftdi_read_data
+	MARSHAL 6, _ftdi_read_data
+	RET
 
 EXTBIO_RC2014_USB_FTDI_SET_BAUDRATE_SUB:
 	MARSHAL 6, _ftdi_set_baudrate

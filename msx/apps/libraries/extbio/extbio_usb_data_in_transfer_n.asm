@@ -11,8 +11,8 @@ _usb_data_in_transfer_n:
 	PUSH	IX
 	LD	D, 214		; RC2014 EXTENDED DRIVER
 	LD	E, EXTBIO_RC2014_USB_IN_TRANSFER_N_FN		; FUNCTION CODE
-	ld	hl,4
-	add	hl,sp		; ARGS @ HL
+	LD	HL, 4
+	ADD	HL, SP		; ARGS @ HL
 	CALL	EXTBIO		; RETURN HL
 	POP	IX
 	RET

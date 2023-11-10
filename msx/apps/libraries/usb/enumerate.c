@@ -32,9 +32,6 @@ usb_device_type identify_class_driver(_working *const working) {
   if (p->bInterfaceClass == 3)
     return USB_IS_KEYBOARD;
 
-  // if (working->desc.idVendor == 0x403 && working->desc.idProduct == 0x6001 && working->desc.bcdDevice == 0x600)
-  //   return USB_IS_FTDI;
-
   trace_printf("Unknown device class %d\r\n", p->bInterfaceClass);
   return USB_IS_UNKNOWN;
 }
@@ -70,11 +67,6 @@ usb_error op_parse_endpoint(_working *const working) __sdcccall(1) {
     parse_endpoint_keyboard((device_config_keyboard *)device, endpoint);
     break;
   }
-
-    // case USB_IS_FTDI: {
-    //   parse_endpoints(device, endpoint);
-    //   break;
-    // }
   }
 
   return op_endpoint_next(working);

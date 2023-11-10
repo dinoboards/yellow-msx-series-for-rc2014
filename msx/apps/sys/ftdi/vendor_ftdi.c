@@ -95,26 +95,25 @@ usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t
  *             return the number of bytes actually received
  * @return usb_error
  */
-usb_error
-_ftdi_read_data(xxx *const tmp) __z88dk_fastcall { // tmpdevice_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *const size) {
+usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *const size) {
   usb_error result;
 
-  if (*tmp->size > 64)
+  if (*size > 64)
     return USB_ERR_BUFF_TO_LARGE;
 
   uint8_t temp_buf[64];
 
-  CHECK(usbdev_bulk_in_transfer((device_config *)tmp->ftdi, temp_buf, tmp->size));
+  CHECK(usbdev_bulk_in_transfer((device_config *)ftdi, temp_buf, size));
 
   // first 2 bytes are some kind of status code - ignore them
-  if (*tmp->size <= 2) {
+  if (*size <= 2) {
     // no serial bytes received
-    *tmp->size = 0;
+    *size = 0;
     return USB_ERR_OK;
   }
 
-  *tmp->size -= 2;
-  memcpy(tmp->buf, temp_buf + 2, *tmp->size);
+  *size -= 2;
+  memcpy(buf, temp_buf + 2, *size);
   return USB_ERR_OK;
 }
 
