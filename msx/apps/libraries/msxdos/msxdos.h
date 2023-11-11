@@ -158,6 +158,7 @@ extern uint8_t msxdosSetTime(uint8_t hour, uint8_t minutes, uint8_t seconds, uin
 extern void    msxdosGetTime(uint8_t *hour, uint8_t *minutes, uint8_t *seconds);
 
 extern void    msxdosTerminateWithError(uint8_t code) __z88dk_fastcall;
+extern uint16_t    msxdosRejoinParentProcess(uint8_t parent_process_id) __z88dk_fastcall;
 extern uint8_t msxdosGetEnvironment(const char *name, char *value, const uint8_t buffer_size);
 extern uint8_t msxdosSetEnvironment(const char *name, const char *value) __sdcccall(1);
 extern uint8_t msxdosFindEnvironment(const uint16_t index, char *env_item, const uint8_t buffer_size);
@@ -171,7 +172,7 @@ extern uint8_t msxdosFindEnvironment(const uint16_t index, char *env_item, const
 extern uint16_t msxdosOpenFile(const char *filename, const uint8_t open_mode);
 extern uint16_t msxdosCreateFile(const char *filename, const uint8_t open_mode);
 extern uint16_t msxdosReadFile(const uint8_t file_handle, const void *buf, uint16_t nbytes);
-extern uint16_t msxdosCloseFile(const uint8_t file_handle) __sdcccall(1);
+extern uint8_t msxdosCloseFile(const uint8_t file_handle) __sdcccall(1);
 extern void     msxdosExplainErrorCode(const uint8_t error_code, char *const error_description);
 
 #define _NCOMP 0xFF
