@@ -134,7 +134,7 @@ uint16_t main(const int argc, const char *argv[]) {
   if (check_already_installed())
     goto finally_memmap;
 
-  uint8_t index = sys_segment_head.count++;
+  uint8_t index = sys_segment_head.count;
 
   sys_segment_head.sys[index] = (installed_sys_t *)sys_segment_head.next_address;
 
@@ -151,6 +151,7 @@ uint16_t main(const int argc, const char *argv[]) {
   if (result)
     goto finally_memmap;
 
+  sys_segment_head.count++;
   sys_segment_head.next_address = (uint8_t *)to_next_page(sys_segment_head.next_address + sys_end - sys_start);
   const uint8_t flags           = sys_segment_head.sys[index]->flags;
 
