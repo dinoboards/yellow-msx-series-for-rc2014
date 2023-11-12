@@ -2,9 +2,10 @@
 	include	"msx.inc"
 
 ;
-; extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint8_t *const size);
+; extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint8_t *const size) __sdcccall(1);
 ;
 	PUBLIC	_ftdi_read_data
+	; TODO THGIS IS BORKEN
 _ftdi_read_data:
 	PUSH	IX
 	LD	D, EXTBIO_RC2014				; RC2014 EXTENDED DRIVER
@@ -14,4 +15,5 @@ _ftdi_read_data:
 	ADD	HL, SP						; ARGS @ HL
 	CALL	EXTBIO						; RETURN HL
 	POP	IX
+	LD HL, -1
 	RET
