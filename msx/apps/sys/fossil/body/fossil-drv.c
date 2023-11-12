@@ -205,3 +205,5 @@ uint16_t chars_in_buf(void) {
 
   return size;
 }
+
+void drv_timi(void) {}
