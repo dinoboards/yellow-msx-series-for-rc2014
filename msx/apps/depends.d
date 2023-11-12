@@ -386,6 +386,7 @@
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxbios_break_x.o: ./libraries/msxdos/msxbios_break_x.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_find_environment.o: ./libraries/msxdos/msxdos_find_environment.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_terminate_with_error.o: ./libraries/msxdos/msxdos_terminate_with_error.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_open_file.o: ./libraries/msxdos/msxdos_open_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_read_from_file.o: ./libraries/msxdos/msxdos_read_from_file.asm ./libraries/msxdos/msxdos.inc

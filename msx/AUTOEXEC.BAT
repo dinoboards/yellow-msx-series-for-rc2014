@@ -7,4 +7,4 @@ REM Tell the SIO driver the clock the SIO/2 chip
 REM is configured to.
 SIOCFG CLK=307200
 
-service=%_BOOT%:\SYSTEM\prnt.sys
+SERVICE=%_BOOT%:\SYSTEM\PRNT.SYS

@@ -160,6 +160,7 @@ extern void    msxdosGetTime(uint8_t *hour, uint8_t *minutes, uint8_t *seconds);
 extern void    msxdosTerminateWithError(uint8_t code) __z88dk_fastcall;
 extern uint8_t msxdosGetEnvironment(const char *name, char *value, const uint8_t buffer_size);
 extern uint8_t msxdosSetEnvironment(const char *name, const char *value) __sdcccall(1);
+extern uint8_t msxdosFindEnvironment(const uint16_t index, char *env_item, const uint8_t buffer_size);
 
 // MSX-DOS 2 File functions
 
