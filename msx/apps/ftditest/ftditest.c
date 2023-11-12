@@ -31,6 +31,16 @@ uint8_t read_data_chunk(uint8_t *const read_bytes) {
   return 0;
 }
 
+char     arg1[6];
+char     arg2[6];
+uint16_t idx;
+uint16_t value;
+
+uint16_t strtoulx(const char *restrict nptr, char **restrict endptr, int base) {
+  // strtoul is broken and corruptes IX!
+  return strtoul((char *)nptr, endptr, base);
+}
+
 uint8_t main(const int argc, const char *const argv[]) {
   (void)argc;
   (void)argv;
@@ -42,7 +52,23 @@ uint8_t main(const int argc, const char *const argv[]) {
   uint8_t buffer[BUF_SIZE];
   uint8_t id = 0;
 
-  // test via serial interface
+  // printf("argc: %d\r\n", argc);
+  // for (int i = 0; i < argc; i++) {
+  //   printf("argv[%d]: %s\r\n", i, argv[i]);
+  // }
+
+  memset(arg1, 0, sizeof(arg1));
+  strncpy(arg1, argv[1], 5);
+  memset(arg2, 0, sizeof(arg2));
+  strncpy(arg2, argv[2], 5);
+
+  // printf("arg1: %s, arg2: %s\r\n", arg1, arg2);
+
+  idx   = strtoulx(arg1, NULL, 16);
+  value = strtoulx(arg2, NULL, 16);
+
+  printf("Value: %04X\r\n", value);
+  printf("idx %04X,", idx);
 
   port_count = 0;
   result     = serial_get_available_ports(&port_count);
@@ -58,8 +84,9 @@ uint8_t main(const int argc, const char *const argv[]) {
   if (strncmp(name, "ftdi", 4) != 0)
     return 255;
 
-  result = serial_set_baudrate(1, 921600);
-  printf("(%02X): Set baudrate: %ld\r\n", result, 921600);
+  // result = spike_set_clks(1, value, idx);
+  result = serial_set_baudrate(1, 19200);
+  printf("(%02X): Set baudrate: %ld\r\n", result, 19200L);
 
   result = serial_set_protocol(1, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
   printf("(%02X): Set protocol %04X\r\n", result, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
@@ -71,10 +98,13 @@ uint8_t main(const int argc, const char *const argv[]) {
     if (msxbiosBreakX())
       return 0;
 
-    for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
-      buffer[buf_index] = id++;
+    // for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
+    //   buffer[buf_index] = id++;
 
-    result = serial_write(1, buffer, BUF_SIZE);
+    buffer[0] = 0x55;
+    buffer[1] = 0x55;
+
+    result = serial_write(1, buffer, 2);
     printf("(%02X): serial_write_data\r\n", result);
     if (result)
       return result;

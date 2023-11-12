@@ -75,6 +75,7 @@ typedef struct {
   device_config_ftdi *const ftdi;
 } xxx;
 
+extern usb_error ftdi_set_clks(device_config_ftdi *const ftdi, const uint16_t value, const uint16_t index);
 extern usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudrate);
 extern usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t protocol_bits);
 extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *size);

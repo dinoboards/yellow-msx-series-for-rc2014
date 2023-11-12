@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi)) $(addsuffix .com,$(addprefix $(BIN),fdisk ftditest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi)) $(addsuffix .com,$(addprefix $(BIN),fdisk fossil ftditest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -38,7 +38,6 @@ DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
 
 USB_KERNEL_LIB := $(addprefix $(BIN)libraries/usb/,ch376.lib usb_state.c.lib ch376.c.lib transfers.c.lib dev_transfers.c.lib enumerate_storage.c.lib enumerate.c.lib enumerate_hub.c.lib)
 USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib find_device.c.lib)
-# USB_VENDOR_FTDI_LIB := $(addprefix $(BIN)libraries/usb/,vendor_ftdi.c.lib)
 
 FUSION_LIB := $(addprefix $(BIN)libraries/fusion/,io.lib fprintf.c.lib interrupts.lib inputstring.lib inkey.lib inputchar.lib io.lib)
 V9958_LIB := $(addprefix $(BIN),v9958.c.lib v9958.lib)
@@ -61,6 +60,13 @@ prnt.body := $(addprefix $(BIN),$(call app_file,sys/prnt/body)) $(EXTBIO_LIB) $(
 prnt.init := $(addprefix $(BIN),$(call app_file,sys/prnt/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,prnt))
 
+$(BIN)fossil.com: $(BIN)fossil.sys
+	@cp $< $@
+
+fossil.body := $(addprefix $(BIN),$(call app_file,sys/fossil/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+fossil.init := $(addprefix $(BIN),$(call app_file,sys/fossil/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
+$(eval $(call relocatable,fossil))
+
 service_files = $(call app_file,service)
 $(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 service.com.crt_enable_commandline:=1
@@ -68,6 +74,17 @@ service.com.crt_enable_commandline:=1
 memory_files = $(call app_file,memory)
 $(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 memory.com.crt_enable_commandline:=1
+
+# fossil_files = $(call app_file,fossil)
+# $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+# fossil.com.crt_enable_commandline:=1
+# $(BIN)fossil/fossil.body: $(addprefix $(BIN),$(call app_file,fossil/body)) #$(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+# $(BIN)fossil/fossil.crtbase1000.asm: fossil/body/crt.asm
+# 	mkdir -p $(dir $@)
+# 	echo -e "\tORG\t\$$1000\n\n" > $@
+# 	cat $^ >> $@
+
+# $(eval $(call relocatable,fossil))
 
 helloworld_files = $(call app_file,helloworld)
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
