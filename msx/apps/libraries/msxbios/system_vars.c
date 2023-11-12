@@ -72,3 +72,7 @@ uint16_t BOTTOM_ADDR BOTTOM;
 // the OS; string area, filebuffers and stack are below this address
 // initialized at startup and not changed normally
 uint16_t HIMEM_ADDR HIMEM;
+
+// called at start of interrupt subroutine, when it is clear that
+// the interrupt is from the VDP
+uint8_t H_TIMI_ADDR H_TIMI[5];

@@ -22,6 +22,7 @@
 #define STKTOP_ADDR __at(0xF674)
 #define BOTTOM_ADDR __at(0xFC48)
 #define HIMEM_ADDR  __at(0xFC4A)
+#define H_TIMI_ADDR __at(0xFD9F)
 
 // F417: switch indicating if hooked up printer is an MSX printer or not
 // values: 0: MSX-Printer, 1: no MSX-Printer
@@ -91,6 +92,10 @@ extern uint16_t BOTTOM_ADDR BOTTOM;
 // the OS; string area, filebuffers and stack are below this address
 // initialized at startup and not changed normally
 extern uint16_t HIMEM_ADDR HIMEM;
+
+// called at start of interrupt subroutine, when it is clear that
+// the interrupt is from the VDP
+extern uint8_t H_TIMI_ADDR H_TIMI[5];
 
 #define msxJiffy  JIFFY
 #define msxNewKey NEWKEY

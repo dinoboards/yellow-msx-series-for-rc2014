@@ -3,6 +3,7 @@
 #include <msxdos.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <z80.h>
 
 #define MSXDOS_TPA_BASE_ADDR __at(0x0006)
 
@@ -19,6 +20,18 @@ uint16_t HIMSAV_ADDR   HIMSAV;
 uint16_t DOSHIM_ADDR   DOSHIM;
 uint8_t NOTFIRST_ADDR  NOTFIRST;
 uint8_t LOAD_FLAG_ADDR LOAD_FLAG;
+
+#define MOVE_UP_LINE "\x1E"
+#define ERASE_LINE   "\x1B\x6C\r"
+
+// CONTAINS "RS" IF INSTALLED AND ACTIVE
+#define FSMARK_ADDR __at(0xF3FC)
+
+// FOSSIL JUMP TABLE ADDRESS
+#define FSTABL_ADDR __at(0xF3FE)
+
+char FSMARK_ADDR     FSMARK[2];
+uint16_t FSTABL_ADDR FSTABL;
 
 extern void transition(const void *const source, const uint16_t size) __sdcccall(1);
 
@@ -70,17 +83,25 @@ void reloadMSXDOS(void) {
   // we never return from here
 }
 
-#define MOVE_UP_LINE "\x1E"
-#define ERASE_LINE   "\x1B\x6C\r"
+extern uint8_t original_timi_hook[];
+extern uint8_t timi[];
 
-// CONTAINS "RS" IF INSTALLED AND ACTIVE
-#define FSMARK_ADDR __at(0xF3FC)
+#define relocated(x) ((void *)((uint16_t)(x) + (uint16_t)(HIMSAV + 1)))
 
-// FOSSIL JUMP TABLE ADDRESS
-#define FSTABL_ADDR __at(0xF3FE)
+void install_timi_hook(void) {
+  printf("original_timi_hoook: %04X\r\n", original_timi_hook);
+  printf("timi:                %04X\r\n", timi);
 
-char FSMARK_ADDR     FSMARK[2];
-uint16_t FSTABL_ADDR FSTABL;
+  printf("r original_timi_hoook: %04X\r\n", relocated(original_timi_hook));
+  printf("r timi:                %04X\r\n", relocated(timi));
+
+  memcpy(relocated(original_timi_hook), H_TIMI, 5);
+
+  DI H_TIMI[0] = 0xC3; // JUMP OP CODE
+  H_TIMI[1]    = ((uint16_t)relocated(timi) & 0x00FF);
+  H_TIMI[2]    = ((uint16_t)relocated(timi)) >> 8;
+  EI;
+}
 
 uint8_t main(const int argc, const char *argv[]) {
   (void)argc;
@@ -111,6 +132,8 @@ uint8_t main(const int argc, const char *argv[]) {
     FSMARK[0] = 'S';
     FSMARK[1] = 'R';
     FSTABL    = fossil_driver_installed;
+
+    install_timi_hook();
 
     return 0;
   }
