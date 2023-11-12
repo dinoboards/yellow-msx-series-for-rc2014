@@ -109,7 +109,7 @@ usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t
  *             return the number of bytes actually received
  * @return usb_error
  */
-usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *const size) {
+usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *const size) __sdcccall(1) {
   usb_error result;
 
   if (*size > 64)
