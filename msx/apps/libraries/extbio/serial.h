@@ -61,6 +61,8 @@ extern uint8_t serial_reset(const uint8_t port_number);
  */
 extern uint8_t serial_set_protocol(const uint8_t port_number, const uint16_t protocol);
 
+extern uint8_t spike_set_clks(const uint8_t port_number, const uint16_t value, const uint16_t index);
+
 extern uint8_t serial_set_baudrate(const uint8_t port_number, const int32_t baudrate);
 
 extern uint8_t serial_set_flowcontrol(const uint8_t port_number, const uint16_t flowcontrol); // set flow control mask

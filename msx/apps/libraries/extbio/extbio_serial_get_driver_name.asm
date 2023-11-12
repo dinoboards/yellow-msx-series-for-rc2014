@@ -13,5 +13,6 @@ _serial_get_driver_name:
 	LD	HL, 4
 	ADD	HL, SP						; ARGS @ HL
 	CALL	EXTBIO						; RETURN HL
+	EI
 	POP	IX
 	RET

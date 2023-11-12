@@ -55,7 +55,7 @@ _fossil_link:
 	LD	E, (HL)
 	INC	HL
 	LD	D, (HL)
-	LD	(_fossil_channel+1), DE
+	LD	(_fossil_setchannel+1), DE
 	INC	HL
 
 	INC	HL
@@ -170,7 +170,7 @@ _fossil_link:
 	PUBLIC	_fossil_deinit
 	PUBLIC	_fossil_set_baud
 	PUBLIC	_fossil_set_protocol
-	PUBLIC	_fossil_channel
+	PUBLIC	_fossil_setchannel
 	PUBLIC	_fossil_rs_in
 	PUBLIC	_fossil_rs_out
 	PUBLIC	_fossil_rs_in_stat
@@ -204,7 +204,7 @@ _fossil_set_baud:
 _fossil_set_protocol:
 	JP	0
 
-_fossil_channel:
+_fossil_setchannel:
 	JP	0
 
 _fossil_rs_in:

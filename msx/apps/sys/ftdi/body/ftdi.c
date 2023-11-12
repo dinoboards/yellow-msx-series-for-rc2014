@@ -24,6 +24,13 @@ uint8_t serial_set_baudrate(const uint8_t port_number, const int32_t baudrate) {
   return ftdi_set_baudrate(&_ftdi_config, baudrate);
 }
 
+uint8_t spike_set_clks(const uint8_t port_number, const uint16_t value, const uint16_t index) {
+  if (port_number != assigned_port_number)
+    return 1;
+
+  return ftdi_set_clks(&_ftdi_config, value, index);
+}
+
 uint8_t serial_set_protocol(const uint8_t port_number, const uint16_t protocol) {
   if (port_number != assigned_port_number)
     return 1;

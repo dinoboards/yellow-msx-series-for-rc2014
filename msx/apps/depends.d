@@ -357,6 +357,9 @@
  libraries/sysload/sysload.h libraries/sysload/sys.h \
  libraries/usb/find_device.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/protocol.h
+./bin/sys/fossil/body/fossil-drv.c.asm: sys/fossil/body/fossil-drv.c libraries/extbio/serial.h
+./bin/sys/fossil/init/fossil.c.asm: sys/fossil/init/fossil.c sys/fossil/init/fossil.h \
+ libraries/msxbios/system_vars.h libraries/msxdos/msxdos.h
 ./bin/sys/prnt/body/prnt.c.asm: sys/prnt/body/prnt.c libraries/msxbios/system_vars.h \
  libraries/usb/class_printer.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -369,7 +372,7 @@
  libraries/sysload/sysload.h libraries/sysload/sys.h \
  libraries/msxbios/system_vars.h libraries/usb/class_printer.h \
  libraries/usb/protocol.h libraries/usb/find_device.h
-./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h xstdio.h \
+./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
 ./bin/siocfg/arguments.c.asm: siocfg/arguments.c siocfg/arguments.h
 ./bin/siocfg/siocfg.c.asm: siocfg/siocfg.c siocfg/arguments.h libraries/msxbios/extbio.h
@@ -410,6 +413,7 @@
 ./bin/libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_set_line_property2.o: ./libraries/extbio/extbio_usb_ftdi_set_line_property2.asm ./msx.inc
+./bin/libraries/extbio/extbio_spike_set_clks.o: ./libraries/extbio/extbio_spike_set_clks.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/extbio/memmapper.o: ./libraries/extbio/memmapper.asm
 ./bin/libraries/extbio/extbio_usb_ftdi_purge_tx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_tx_buffer.asm ./msx.inc
@@ -432,6 +436,7 @@
 ./bin/libraries/msxdos/msxdos_get_drive_letter_info.o: ./libraries/msxdos/msxdos_get_drive_letter_info.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_explain_error_code.o: ./libraries/msxdos/msxdos_explain_error_code.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_rejoin_parent_process.o: ./libraries/msxdos/msxdos_rejoin_parent_process.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxbios_break_x.o: ./libraries/msxdos/msxbios_break_x.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_find_environment.o: ./libraries/msxdos/msxdos_find_environment.asm ./libraries/msxdos/msxdos.inc
@@ -449,6 +454,9 @@
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
 ./bin/sys/ftdi/body/crt.o: ./sys/ftdi/body/crt.asm
 ./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
+./bin/sys/fossil/body/crt.o: ./sys/fossil/body/crt.asm
+./bin/sys/fossil/body/fossil-drv.o: ./sys/fossil/body/fossil-drv.asm ./msx.inc
+./bin/sys/fossil/init/transition.o: ./sys/fossil/init/transition.asm
 ./bin/sys/prnt/body/crt.o: ./sys/prnt/body/crt.asm
 ./bin/sys/prnt/body/prnt.o: ./sys/prnt/body/prnt.asm
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm

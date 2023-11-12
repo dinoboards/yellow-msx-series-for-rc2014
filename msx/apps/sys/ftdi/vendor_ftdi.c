@@ -27,10 +27,10 @@ static bool ftdi_convert_baudrate(const int32_t baudrate, setup_packet *const cm
 
   do {
     if (p->requested_baud_rate == baudrate) {
-      cmd->bValue[0] = p->value >> 8;
-      cmd->bValue[1] = p->value & 0xFF;
-      cmd->bIndex[0] = p->actual_baud_rate >> 8;
-      cmd->bIndex[1] = p->actual_baud_rate & 0xFF;
+      cmd->bValue[1] = p->value >> 8;
+      cmd->bValue[0] = p->value & 0xFF;
+      cmd->bIndex[1] = p->index >> 8;
+      cmd->bIndex[0] = p->index & 0xFF;
       return true;
     }
     p++;
@@ -62,6 +62,20 @@ usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudra
   ftdi->baudrate = requested_baudrate;
 
   return USB_ERR_OK;
+}
+
+usb_error ftdi_set_clks(device_config_ftdi *const ftdi, const uint16_t value, const uint16_t index) {
+  setup_packet cmd;
+  memcpy(&cmd, &cmd_ftdi_out_request, sizeof(setup_packet));
+  usb_error result;
+
+  cmd.bValue[0] = value >> 8;
+  cmd.bValue[1] = value & 0xFF;
+  cmd.bIndex[0] = index >> 8;
+  cmd.bIndex[1] = index & 0xFF;
+  cmd.bRequest  = SIO_SET_BAUDRATE_REQUEST;
+
+  RETURN_CHECK(usbdev_control_transfer((device_config *)ftdi, &cmd, NULL));
 }
 
 /**

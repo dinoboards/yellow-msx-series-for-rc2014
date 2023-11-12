@@ -14,7 +14,7 @@ uint8_t main(const int argc, const char *argv[]) {
   (void)argv;
 
   if (argc != 2) {
-    printf("Usage: servioce=<service>.sys\r\n");
+    printf("Usage: service=<service>.sys\r\n");
     return 1;
   }
 
