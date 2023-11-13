@@ -84,7 +84,6 @@ uint8_t main(const int argc, const char *const argv[]) {
   if (strncmp(name, "ftdi", 4) != 0)
     return 255;
 
-  // result = spike_set_clks(1, value, idx);
   result = serial_set_baudrate(1, 19200);
   printf("(%02X): Set baudrate: %ld\r\n", result, 19200L);
 

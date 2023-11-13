@@ -414,7 +414,6 @@
 ./bin/libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_set_line_property2.o: ./libraries/extbio/extbio_usb_ftdi_set_line_property2.asm ./msx.inc
-./bin/libraries/extbio/extbio_spike_set_clks.o: ./libraries/extbio/extbio_spike_set_clks.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/extbio/memmapper.o: ./libraries/extbio/memmapper.asm
 ./bin/libraries/extbio/extbio_usb_ftdi_purge_tx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_tx_buffer.asm ./msx.inc
