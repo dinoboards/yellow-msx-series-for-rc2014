@@ -6,7 +6,7 @@ MAKEFLAGS += --no-builtin-rules
 
 ZCCRELFLAGS=
 ifdef RELEASE
-ZCCRELFLAGS=-SO3 --max-allocs-per-node200000 --allow-unsafe-read
+ZCCRELFLAGS=-SO3 --max-allocs-per-node500000 --allow-unsafe-read
 endif
 
 LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb -I./libraries
@@ -48,7 +48,7 @@ list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 
-ftdi.body := $(addprefix $(BIN),$(call app_file,sys/ftdi/body)) $(BIN)sys/ftdi/vendor_ftdi.c.lib $(EXTBIO_USB_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
+ftdi.body := $(addprefix $(BIN),$(call app_file,sys/ftdi/body)) $(BIN)sys/ftdi/vendor_ftdi.c.lib $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB) $(USB_KERNEL_LIB) $(DELAY_LIB)
 ftdi.init := $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,ftdi))
 

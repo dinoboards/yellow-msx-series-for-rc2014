@@ -33,6 +33,7 @@ _extbio_next:
 	DW	0
 
 handle_extbio:
+	EI
 	POP	AF
 	LD	A, E
 	CP	EXTBIO_RC2014_USB_FTDI_FN
@@ -143,17 +144,6 @@ EXTBIO_RC2014_USB_FTDI_PURGE_TX_BUFFER_SUB:
 	MARSHAL 2, _ftdi_purge_tx_buffer
 	RET
 
-	PUBLIC	_timi
-	PUBLIC	_timi_next
-
-_timi:
-	DB	$C3	; JP opcode
-_timi_next:
-	DW	0
 
 	SECTION	DATA
-
-	PUBLIC	_helloworld
-_helloworld:
-	DB	"ftdi\r\n", 0
 

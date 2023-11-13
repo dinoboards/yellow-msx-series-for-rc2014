@@ -38,6 +38,7 @@ uint8_t serial_read(const uint8_t port_number, uint8_t *const buf, uint8_t *size
     return 1;
 
   device_config_ftdi device;
+
   // TODO: redesign to avoid need to do copy of the struct
   memcpy(&device, &_ftdi_config, sizeof(device_config_ftdi));
   const uint8_t result                            = ftdi_read_data(&device, buf, size);

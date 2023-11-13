@@ -357,7 +357,8 @@
  libraries/sysload/sysload.h libraries/sysload/sys.h \
  libraries/usb/find_device.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/protocol.h
-./bin/sys/fossil/body/fossil-drv.c.asm: sys/fossil/body/fossil-drv.c libraries/extbio/serial.h
+./bin/sys/fossil/body/fossil-drv.c.asm: sys/fossil/body/fossil-drv.c libraries/extbio/serial.h \
+ libraries/z80.h
 ./bin/sys/fossil/init/fossil.c.asm: sys/fossil/init/fossil.c sys/fossil/init/fossil.h \
  libraries/msxbios/system_vars.h libraries/msxdos/msxdos.h \
  libraries/z80.h
@@ -456,7 +457,6 @@
 ./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
 ./bin/sys/fossil/body/crt.o: ./sys/fossil/body/crt.asm
 ./bin/sys/fossil/body/fossil-drv.o: ./sys/fossil/body/fossil-drv.asm ./msx.inc
-./bin/sys/fossil/init/install_timi.o: ./sys/fossil/init/install_timi.asm
 ./bin/sys/fossil/init/transition.o: ./sys/fossil/init/transition.asm
 ./bin/sys/prnt/body/crt.o: ./sys/prnt/body/crt.asm
 ./bin/sys/prnt/body/prnt.o: ./sys/prnt/body/prnt.asm
