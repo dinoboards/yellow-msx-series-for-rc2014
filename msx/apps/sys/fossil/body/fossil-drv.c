@@ -1,4 +1,5 @@
 #include <extbio/serial.h>
+#include <z80.h>
 
 #define MAX_CHANNELS 2
 
@@ -6,12 +7,13 @@ typedef struct {
   uint8_t *next_byte;
   uint8_t *last_byte;
   uint8_t  incoming[64];
-} channel_buffer;
+} channel_buffer_t;
 
-channel_buffer channels[MAX_CHANNELS] = {{channels[0].incoming, channels[0].incoming},
-                                         {channels[1].incoming, channels[1].incoming}};
+channel_buffer_t channels[MAX_CHANNELS] = {{channels[0].incoming, channels[0].incoming},
+                                           {channels[1].incoming, channels[1].incoming}};
 
-uint8_t current_channel = 1;
+uint8_t           current_channel_number = 1;
+channel_buffer_t *current_channel        = &channels[0];
 
 /**
  * @brief initialises RS232
@@ -48,7 +50,7 @@ uint16_t set_baud(const uint16_t baud) __z88dk_fastcall {
   if (lowestbaud > 14)
     lowestbaud = 14;
 
-  serial_set_baudrate(current_channel, baudrates[lowestbaud]);
+  serial_set_baudrate(current_channel_number, baudrates[lowestbaud]);
 
   return lowestbaud | lowestbaud << 8;
 }
@@ -78,7 +80,6 @@ uint16_t set_baud(const uint16_t baud) __z88dk_fastcall {
  * @return uint16_t
  */
 uint16_t set_protocol(const uint16_t protocol) __z88dk_fastcall {
-
   uint16_t serial_bits;
 
   switch ((protocol >> 8) & 0x3) {
@@ -109,7 +110,7 @@ uint16_t set_protocol(const uint16_t protocol) __z88dk_fastcall {
     return -1; // not supported
   }
 
-  return serial_set_protocol(current_channel, serial_bits | serial_stop | serial_parity | SERIAL_BREAK_OFF);
+  return serial_set_protocol(current_channel_number, serial_bits | serial_stop | serial_parity | SERIAL_BREAK_OFF);
 }
 
 /**
@@ -126,8 +127,21 @@ uint16_t set_channel(const uint16_t _channel) __z88dk_fastcall {
   if (result || desired_channel > ports)
     return -1;
 
-  current_channel = desired_channel;
+  current_channel_number = desired_channel;
+  current_channel        = &channels[current_channel_number];
 
+  return 0;
+}
+
+uint8_t size = 64;
+
+uint8_t read_into_channel(void) {
+  size = 64;
+  const uint8_t result = serial_read(1, current_channel->incoming, &size);
+  if (result)
+    return result;
+  current_channel->next_byte = current_channel->incoming;
+  current_channel->last_byte = current_channel->incoming + size;
   return 0;
 }
 
@@ -137,20 +151,15 @@ uint16_t set_channel(const uint16_t _channel) __z88dk_fastcall {
  * @return uint8_t
  */
 uint8_t rs_in(void) __sdcccall(1) {
-  channel_buffer *const channel_buffer = &channels[current_channel];
-  if (channel_buffer->next_byte == NULL) {
-    uint8_t size = 64;
-    serial_read(1, channel_buffer->incoming, &size);
-    channel_buffer->next_byte = channel_buffer->incoming;
-    channel_buffer->last_byte = channel_buffer->incoming + size;
+  if (current_channel->next_byte == NULL)
+    read_into_channel();
+
+  while (current_channel->next_byte == current_channel->last_byte) {
+    EI;
+    HALT;
   }
 
-  if (channel_buffer->next_byte == channel_buffer->last_byte) {
-    // TODO: this doesnt seem right - should we be blocking??
-    return 0;
-  }
-
-  return *channel_buffer->next_byte++;
+  return *current_channel->next_byte++;
 }
 
 /**
@@ -158,30 +167,23 @@ uint8_t rs_in(void) __sdcccall(1) {
  *
  * @param byte
  */
-void rs_out(const uint8_t byte) __sdcccall(1) { serial_write(current_channel, &byte, 1); }
+void rs_out(const uint8_t byte) __sdcccall(1) { serial_write(current_channel_number, &byte, 1); }
 
 /**
  * @brief retrieve incoming buffer status
  * A=0 No data in buffer, A!=0 data in buffer
-                                ; The F register is set according the result
+ * The F register is set according the result
  *
  * @return uint8_t 0 if no data, nonzero if one of more bytes available
  */
 uint8_t rs_in_stat(void) __sdcccall(1) {
-  channel_buffer *const channel = &channels[current_channel];
-
-  if (channel->next_byte != channel->last_byte)
+  if (current_channel->next_byte != current_channel->last_byte)
     return 1;
 
-  uint8_t size  = 64;
-  uint8_t error = serial_read(1, channel->incoming, &size);
-  if (error != 0)
+  if (read_into_channel())
     return 0;
 
-  channel->next_byte = channel->incoming;
-  channel->last_byte = channel->incoming + size;
-
-  return channel->next_byte != channel->last_byte;
+  return current_channel->next_byte != current_channel->last_byte;
 }
 
 /**
@@ -190,20 +192,11 @@ uint8_t rs_in_stat(void) __sdcccall(1) {
  * @return uint16_t number of characters in receive buffer
  */
 uint16_t chars_in_buf(void) {
-  channel_buffer *const channel = &channels[current_channel];
+  if (current_channel->next_byte != current_channel->last_byte)
+    return current_channel->last_byte - current_channel->next_byte;
 
-  if (channel->next_byte != channel->last_byte)
-    return channel->last_byte - channel->next_byte;
-
-  uint8_t size  = 64;
-  uint8_t error = serial_read(1, channel->incoming, &size);
-  if (error != 0)
+  if (read_into_channel())
     return 0;
 
-  channel->next_byte = channel->incoming;
-  channel->last_byte = channel->incoming + size;
-
-  return size;
+  return current_channel->last_byte - current_channel->next_byte;
 }
-
-void drv_timi(void) {}

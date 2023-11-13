@@ -83,25 +83,7 @@ void reloadMSXDOS(void) {
   // we never return from here
 }
 
-extern uint8_t original_timi_hook[];
-extern uint8_t timi[];
-
 #define relocated(x) ((void *)((uint16_t)(x) + (uint16_t)(HIMSAV + 1)))
-
-void install_timi_hook(void) {
-  printf("original_timi_hoook: %04X\r\n", original_timi_hook);
-  printf("timi:                %04X\r\n", timi);
-
-  printf("r original_timi_hoook: %04X\r\n", relocated(original_timi_hook));
-  printf("r timi:                %04X\r\n", relocated(timi));
-
-  memcpy(relocated(original_timi_hook), H_TIMI, 5);
-
-  DI H_TIMI[0] = 0xC3; // JUMP OP CODE
-  H_TIMI[1]    = ((uint16_t)relocated(timi) & 0x00FF);
-  H_TIMI[2]    = ((uint16_t)relocated(timi)) >> 8;
-  EI;
-}
 
 uint8_t main(const int argc, const char *argv[]) {
   (void)argc;
@@ -132,8 +114,6 @@ uint8_t main(const int argc, const char *argv[]) {
     FSMARK[0] = 'S';
     FSMARK[1] = 'R';
     FSTABL    = fossil_driver_installed;
-
-    install_timi_hook();
 
     return 0;
   }
