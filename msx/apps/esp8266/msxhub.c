@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <xmodem.h>
+#include <xmodem/xmodem.h>
 
 char fileNames[1025];
 char msxHubUrl[128];

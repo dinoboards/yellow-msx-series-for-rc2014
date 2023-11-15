@@ -1,7 +1,9 @@
 #include "features.h"
-
-#include "../xrecv2/xmodem.c"
+#include <fossil/fossil.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <system_vars.h>
+#include <xmodem/serial.h>
 
 #ifdef DIAGNOSTIC_FILE_CAPTURE
 extern FILE *fptrDiagnostics;

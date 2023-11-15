@@ -21,7 +21,7 @@ bool is_ftdi(const device_descriptor *const device_descriptor, const interface_d
 usb_error read_from_ftdi(device_config_ftdi *ftdi_config, uint8_t *const read_bytes) {
   usb_error result;
   uint8_t   buffer[BUF_SIZE];
-  uint8_t   buffer_size = BUF_SIZE;
+  uint16_t  buffer_size = BUF_SIZE;
 
   memset(buffer, 0, sizeof(buffer));
 

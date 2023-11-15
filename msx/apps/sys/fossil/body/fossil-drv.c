@@ -12,8 +12,8 @@ typedef struct {
 channel_buffer_t channels[MAX_CHANNELS] = {{channels[0].incoming, channels[0].incoming},
                                            {channels[1].incoming, channels[1].incoming}};
 
-uint8_t           current_channel_number = 1;
-channel_buffer_t *current_channel        = &channels[0];
+uint8_t           current_port_number = 1;
+channel_buffer_t *current_channel     = &channels[0];
 
 /**
  * @brief initialises RS232
@@ -50,7 +50,8 @@ uint16_t set_baud(const uint16_t baud) __z88dk_fastcall {
   if (lowestbaud > 14)
     lowestbaud = 14;
 
-  serial_set_baudrate(current_channel_number, baudrates[lowestbaud]);
+  serial_set_baudrate(current_port_number, baudrates[lowestbaud]);
+  // serial_set_flowctrl(current_port_number, SERIAL_FLOW_CTRL_RTS_CTS);
 
   return lowestbaud | lowestbaud << 8;
 }
@@ -110,7 +111,7 @@ uint16_t set_protocol(const uint16_t protocol) __z88dk_fastcall {
     return -1; // not supported
   }
 
-  return serial_set_protocol(current_channel_number, serial_bits | serial_stop | serial_parity | SERIAL_BREAK_OFF);
+  return serial_set_protocol(current_port_number, serial_bits | serial_stop | serial_parity | SERIAL_BREAK_OFF);
 }
 
 /**
@@ -127,17 +128,17 @@ uint16_t set_channel(const uint16_t _channel) __z88dk_fastcall {
   if (result || desired_channel > ports)
     return -1;
 
-  current_channel_number = desired_channel;
-  current_channel        = &channels[current_channel_number];
+  current_port_number = desired_channel;
+  current_channel     = &channels[current_port_number - 1];
 
   return 0;
 }
 
-uint8_t size = 64;
+uint16_t size = 64;
 
 uint8_t read_into_channel(void) {
-  size = 64;
-  const uint8_t result = serial_read(1, current_channel->incoming, &size);
+  size                 = 64;
+  const uint8_t result = serial_read(current_port_number, current_channel->incoming, &size);
   if (result)
     return result;
   current_channel->next_byte = current_channel->incoming;
@@ -151,13 +152,11 @@ uint8_t read_into_channel(void) {
  * @return uint8_t
  */
 uint8_t rs_in(void) __sdcccall(1) {
-  if (current_channel->next_byte == NULL)
-    read_into_channel();
+  // if (current_channel->next_byte == NULL)
+  //   read_into_channel();
 
-  while (current_channel->next_byte == current_channel->last_byte) {
-    EI;
-    HALT;
-  }
+  while (current_channel->next_byte == current_channel->last_byte)
+    read_into_channel();
 
   return *current_channel->next_byte++;
 }
@@ -167,7 +166,7 @@ uint8_t rs_in(void) __sdcccall(1) {
  *
  * @param byte
  */
-void rs_out(const uint8_t byte) __sdcccall(1) { serial_write(current_channel_number, &byte, 1); }
+void rs_out(const uint8_t byte) __sdcccall(1) { serial_write(current_port_number, &byte, 1); }
 
 /**
  * @brief retrieve incoming buffer status

@@ -11,7 +11,7 @@ extern void fossil_flush_input(uint16_t period) __z88dk_fastcall;
 #ifdef DIAGNOSTIC_FILE_CAPTURE
 extern void          serial_out(uint8_t ch) __z88dk_fastcall;
 extern void          serial_flush_input(uint16_t period) __z88dk_fastcall;
-extern unsigned char serial_in();
+extern unsigned char serial_in(void);
 extern void          serial_in_block_start(const unsigned char *);
 extern void          serial_in_block_end(const unsigned char *);
 extern void          serial_diagnostic_message(const unsigned char *);

@@ -3,7 +3,6 @@
 #include "arguments.h"
 #include "esp8266.h"
 #include "print.h"
-#include "utils.h"
 #include <fossil.h>
 #include <msxdos.h>
 #include <stdbool.h>
@@ -12,7 +11,8 @@
 #include <string.h>
 #include <system_vars.h>
 #include <unistd.h>
-#include <xmodem.h>
+#include <xmodem/utils.h>
+#include <xmodem/xmodem.h>
 
 const unsigned char pTempFileName[] = "xmdwn.tmp";
 bool                started;

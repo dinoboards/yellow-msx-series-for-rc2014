@@ -35,6 +35,7 @@ EXTBIO_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/ext
 EXTBIO_USB_LIB :=  $(addprefix $(BIN)libraries/extbio/,extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer_n.lib extbio_usb_data_in_transfer.lib)
 FOSSIL_LIB := $(addprefix $(BIN)libraries/fossil/,fossil.lib fossil.c.lib)
 DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
+XMODEM_LIB :=  $(addprefix $(BIN)libraries/xmodem/,xmodem.c.lib crc16.c.lib serial.c.lib utils.c.lib)
 
 USB_KERNEL_LIB := $(addprefix $(BIN)libraries/usb/,ch376.lib usb_state.c.lib ch376.c.lib transfers.c.lib dev_transfers.c.lib enumerate_storage.c.lib enumerate.c.lib enumerate_hub.c.lib)
 USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib find_device.c.lib)
@@ -141,16 +142,17 @@ $(BIN)term.com: $(addprefix $(BIN),$(term_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(
 term.com.crt_enable_commandline:=1
 
 xrecv2_files = $(call app_files,xrecv2,memmap-override.asm print.c)
-$(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(DELAY_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB)
+$(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(DELAY_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
 xrecv2.com.crt_enable_commandline:=1
 
 rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c)
 $(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files)) $(MSXDOS_LIB)
 rtccalb.com.crt_enable_commandline:=1
 
-esp8266_files = $(call app_files,esp8266,memmap-override.asm print.c xrecv2/crc16.c xrecv2/serial.c xrecv2/utils.c)
-$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(EXTBIO_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(GETSLT_LIB)
+esp8266_files = $(call app_file,esp8266)
+$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(EXTBIO_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
 esp8266.com.crt_enable_commandline:=1
+# DIAGNOSTIC_FILE_CAPTURE
 
 siocfg_files = $(call app_files,siocfg,memmap-override.asm)
 $(BIN)siocfg.com: $(addprefix $(BIN),$(siocfg_files)) $(EXTBIO_LIB) $(GETSLT_LIB)

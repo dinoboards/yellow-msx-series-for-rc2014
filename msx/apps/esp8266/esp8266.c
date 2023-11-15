@@ -161,8 +161,6 @@ void resetModem(void) {
 }
 
 void main(const int argc, const unsigned char **argv) {
-  (void)argc;
-  (void)argv;
   if (!fossil_link()) {
     extbio_fossil_install();
 

@@ -2,6 +2,7 @@
 #include "../vendor_ftdi.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <sysload/sysload.h>
 #include <usb/find_device.h>
 #include <usb/protocol.h>
@@ -20,7 +21,8 @@ bool is_ftdi(const device_descriptor *const device_descriptor, const interface_d
 }
 
 uint16_t init(installed_sys_t *const my_header) __z88dk_fastcall {
-  ftdi_config      = ((device_config_ftdi *)relocated(_ftdi_config));
+  ftdi_config = ((device_config_ftdi *)relocated(_ftdi_config));
+  memset(ftdi_config, 0, sizeof(device_config_ftdi));
   usb_error result = find_device(is_ftdi, (device_config *)ftdi_config);
 
   if (result == 0) {

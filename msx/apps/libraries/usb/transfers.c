@@ -137,8 +137,8 @@ usb_data_in_transfer(uint8_t *buffer, const uint16_t buffer_size, const uint8_t 
 /**
  * @brief Perform a USB data in on the specififed endpoint
  *
- * @param buffer the buffer to receive the data
- * @param buffer_size on entry the maximum size of data to be received, on exit the actual size of data received
+ * @param buffer the buffer to receive the data - must be 62 bytes
+ * @param buffer_size  on exit the actual size of data received
  * @param device_address the usb address of the device
  * @param endpoint the usb endpoint to receive from (toggle of endpoint is updated)
  * @return usb_error USB_ERR_OK if all good, otherwise specific error code

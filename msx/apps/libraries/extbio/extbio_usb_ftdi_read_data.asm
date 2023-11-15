@@ -2,7 +2,7 @@
 	include	"msx.inc"
 
 ;
-; extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint8_t *const size) __sdcccall(1);
+; extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint16_t *const size) __sdcccall(1);
 ;
 	PUBLIC	_ftdi_read_data
 	; TODO THGIS IS BORKEN

@@ -3,6 +3,7 @@
 #include "serial.h"
 #include <stdio.h>
 #include <system_vars.h>
+#include <z80.h>
 
 #define SOH   0x01
 #define STX   0x02
@@ -13,7 +14,7 @@
 #define CTRLZ 0x1A
 #define RS    0x1e
 
-#define DLY_1S     VDP_FREQUENCY
+#define DLY_1S     (VDP_FREQUENCY * 2)
 #define MAXRETRANS 25
 #define TRANSMIT_XMODEM_1K
 
@@ -35,7 +36,10 @@ inline XMODEM_SIGNAL delay_start(uint16_t period, XMODEM_SIGNAL next_signal) {
   return DELAY_WAIT;
 }
 
-XMODEM_SIGNAL delay_reached(void) { return ((delay_point - ((int16_t)JIFFY) >= 0)) ? DELAY_WAIT : delay_resume; }
+XMODEM_SIGNAL delay_reached(void) {
+  EI;
+  return ((delay_point - ((int16_t)JIFFY) >= 0)) ? DELAY_WAIT : delay_resume;
+}
 
 static bool check_crc(void) {
   const unsigned char *buf = &xmodemState.packetBuffer[3];
@@ -67,10 +71,11 @@ bool read_packet_crc(void) {
 
   serial_in_block_start("\r\nReceiving Packet with CRC\r\n");
 
+  const uint16_t expected_size = xmodemState.currentPacketSize + 1 + 3;
   p++;
-  for (i = 0; i < (xmodemState.currentPacketSize + 1 + 3); ++i) {
+  for (i = 0; i < expected_size; ++i) {
     if (!wait_for_byte(DLY_1S)) {
-      serial_in_block_end("\r\nTimed out waiting for a full CRC packet to arrive.\r\n");
+      printf("\r\nTimed out waiting for a full CRC packet to arrive (%d, %d).\r\n", i, expected_size);
       return false;
     }
     *p++ = serial_in();
@@ -106,7 +111,9 @@ XMODEM_SIGNAL read_first_header(void) {
   serial_out('C');
 
   if (wait_for_byte(DLY_1S * 10)) {
-    switch (serial_in()) {
+    uint8_t x = serial_in();
+
+    switch (x) {
     case SOH:
       xmodemState.currentPacketSize = 128;
       return READ_CRC | READ_128;
@@ -126,6 +133,7 @@ XMODEM_SIGNAL read_first_header(void) {
     }
   }
 
+  printf("should not get here???");
   return delay_start(DLY_1S * 4, TRY_AGAIN);
 }
 
@@ -166,13 +174,13 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (!read_packet_crc())
     return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT | STREAM_ERROR);
 
-  serial_diagnostic_message("\r\nPacket Received via CRC\r\n");
+  printf("\r\nPacket Received via CRC\r\n");
 
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) &&
       check_crc())
     return signal | SAVE_PACKET;
 
-  serial_diagnostic_message("\r\nCRC failure\r\n");
+  printf("\r\nCRC failure\r\n");
 
   if (--retrans <= 0) {
     flush_input();
@@ -239,6 +247,8 @@ XMODEM_SIGNAL xmodem_too_many_errors(void) __z88dk_fastcall {
 
 XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   FOR_SIGNAL(DELAY_WAIT) { return delay_reached(); }
+
+  printf("SIG: (%04X)", signal);
 
   FOR_SIGNAL(READ_FIRST_HEADER) { return read_first_header(); }
 

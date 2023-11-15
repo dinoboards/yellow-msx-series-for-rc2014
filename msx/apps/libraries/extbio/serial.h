@@ -22,16 +22,16 @@
 #define SERIAL_BREAK_ON  ((uint16_t)1 << 14)
 
 #define SERIAL_FLOW_CTRL_DISABLE  0x0
-#define SERIAL_FLOW_CTRL_RTS_CTS  (0x1 << 8)
-#define SERIAL_FLOW_CTRL_DTR_DSR  (0x2 << 8)
-#define SERIAL_FLOW_CTRL_XON_XOFF (0x4 << 8)
+#define SERIAL_FLOW_CTRL_RTS_CTS  (0x1)
+#define SERIAL_FLOW_CTRL_DTR_DSR  (0x2)
+#define SERIAL_FLOW_CTRL_XON_XOFF (0x4)
 
-#define SIO_SET_DTR_MASK 0x1
-#define SIO_SET_DTR_HIGH (1 | (SIO_SET_DTR_MASK << 8))
-#define SIO_SET_DTR_LOW  (0 | (SIO_SET_DTR_MASK << 8))
-#define SIO_SET_RTS_MASK 0x2
-#define SIO_SET_RTS_HIGH (2 | (SIO_SET_RTS_MASK << 8))
-#define SIO_SET_RTS_LOW  (0 | (SIO_SET_RTS_MASK << 8))
+#define SERIAL_SET_DTR_MASK 0x1
+#define SERIAL_SET_DTR_HIGH (1 | (SERIAL_SET_DTR_MASK << 8))
+#define SERIAL_SET_DTR_LOW  (0 | (SERIAL_SET_DTR_MASK << 8))
+#define SERIAL_SET_RTS_MASK 0x2
+#define SERIAL_SET_RTS_HIGH (2 | (SERIAL_SET_RTS_MASK << 8))
+#define SERIAL_SET_RTS_LOW  (0 | (SERIAL_SET_RTS_MASK << 8))
 
 /**
  * @brief Retreive the number of installed serial port devices
@@ -78,7 +78,20 @@ extern uint8_t serial_set_rts(const uint8_t port_number, const uint16_t dtr_rts)
  * @param size on entry, the size of the buffer, on exit the number of bytes actually received (max 64)
  * @return uint8_t 0 if ok, otherwise error code
  */
-extern uint8_t serial_read(const uint8_t port_number, uint8_t *const buf, uint8_t *size);
+extern uint8_t serial_read(const uint8_t port_number, uint8_t *const buf, uint16_t *size);
+
+/**
+ * @brief read data from the serial port into the buffer
+ * unlike serial_read, serial_demand_read will wait upto timeout_period_ms to
+ * attempt to receive bytes as specified in size
+ *
+ * @param port_number
+ * @param buf
+ * @param size on entry the size of the buffer expected to be read, on exit the actual read byte count.
+ * @param timeout_period
+ * @return uint8_t
+ */
+extern uint8_t serial_demand_read(const uint8_t port_number, uint8_t *const buf, uint16_t *size, const uint16_t timeout_period_ms);
 
 /**
  * @brief write the contents of the buffer to the serial port
@@ -97,5 +110,9 @@ extern uint8_t serial_write(const uint8_t port_number, const uint8_t *const buf,
  * @return uint8_t
  */
 extern uint8_t serial_purge_buffers(const uint8_t port_number) __z88dk_fastcall;
+
+extern uint8_t serial_set_flowctrl(const uint8_t port_number, const int8_t flowctrl);
+
+extern uint8_t serial_set_dtr_rts(const uint8_t port_number, const int16_t dtr_rts_flags);
 
 #endif

@@ -1,1 +1,1 @@
-// #define DIAGNOSTIC_FILE_CAPTURE true
+// #define DIAGNOSTIC_FILE_CAPTURE
