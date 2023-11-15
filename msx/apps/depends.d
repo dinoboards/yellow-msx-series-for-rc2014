@@ -5,16 +5,16 @@
  xstdio.h libraries/msxbios/extbio.h
 ./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxdos/msxdos.h
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
- esp8266/esp8266.h print.h xrecv2/utils.h libraries/fossil/fossil.h \
+ esp8266/esp8266.h print.h libraries/fossil/fossil.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h \
- xrecv2/xmodem.h
+ libraries/xmodem/utils.h libraries/xmodem/xmodem.h
 ./bin/esp8266/xmodem_diagnostics.c.asm: esp8266/xmodem_diagnostics.c esp8266/features.h \
- esp8266/../xrecv2/xmodem.c esp8266/../xrecv2/xmodem.h \
- esp8266/../xrecv2/crc16.h esp8266/../xrecv2/serial.h \
- libraries/fossil/fossil.h libraries/msxbios/system_vars.h
+ libraries/fossil/fossil.h libraries/msxbios/system_vars.h \
+ libraries/xmodem/serial.h libraries/fossil/fossil.h
 ./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
 ./bin/esp8266/msxhub.c.asm: esp8266/msxhub.c esp8266/msxhub.h esp8266/arguments.h \
- esp8266/esp8266.h print.h esp8266/wget.h xrecv2/xmodem.h
+ esp8266/esp8266.h print.h esp8266/wget.h libraries/xmodem/xmodem.h
+./bin/esp8266/print.c.asm: esp8266/print.c
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/features.h esp8266/arguments.h \
  esp8266/esp8266.h esp8266/msxhub.h print.h esp8266/wget.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h \
@@ -22,17 +22,11 @@
  libraries/msxdos/msxdos.h
 ./bin/memory/memory.c.asm: memory/memory.c memory/memory.h libraries/msxbios/extbio.h \
  libraries/msxbios/system_vars.h libraries/msxdos/msxdos.h
-./bin/xrecv2/crc16.c.asm: xrecv2/crc16.c xrecv2/crc16.h
-./bin/xrecv2/xmodem.c.asm: xrecv2/xmodem.c xrecv2/xmodem.h xrecv2/crc16.h xrecv2/serial.h \
- libraries/fossil/fossil.h libraries/msxbios/system_vars.h
-./bin/xrecv2/serial.c.asm: xrecv2/serial.c xrecv2/serial.h libraries/fossil/fossil.h \
- libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
 ./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h print.h
-./bin/xrecv2/utils.c.asm: xrecv2/utils.c xrecv2/utils.h
 ./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h libraries/msxdos/msxdos.h \
- print.h xrecv2/utils.h xrecv2/xmodem.h libraries/delay/delay.h \
- libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
- libraries/fossil/fossil.h
+ print.h libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/msxbios/extbio.h libraries/fossil/fossil.h \
+ libraries/xmodem/utils.h libraries/xmodem/xmodem.h
 ./bin/clrdir/arguments.c.asm: clrdir/arguments.c clrdir/arguments.h
 ./bin/clrdir/fdisk2.c.asm: clrdir/fdisk2.c clrdir/fdisk2.h datatypes.h \
  libraries/msxdos/partition.h libraries/msxdos/fat.h \
@@ -254,6 +248,15 @@
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
 ./bin/libraries/fusion/fprintf.c.asm: libraries/fusion/fprintf.c libraries/fusion/fusion_ext.h \
  libraries/fusion/io.h
+./bin/libraries/xmodem/crc16.c.asm: libraries/xmodem/crc16.c libraries/xmodem/crc16.h
+./bin/libraries/xmodem/xmodem.c.asm: libraries/xmodem/xmodem.c libraries/xmodem/xmodem.h \
+ libraries/xmodem/crc16.h libraries/xmodem/serial.h \
+ libraries/fossil/fossil.h libraries/msxbios/system_vars.h \
+ libraries/z80.h
+./bin/libraries/xmodem/serial.c.asm: libraries/xmodem/serial.c libraries/xmodem/serial.h \
+ libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h libraries/z80.h
+./bin/libraries/xmodem/utils.c.asm: libraries/xmodem/utils.c libraries/xmodem/utils.h
 ./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
 ./bin/libraries/usb/dev_transfers.c.asm: libraries/usb/dev_transfers.c \
@@ -349,7 +352,8 @@
 ./bin/sys/ftdi/vendor_ftdi.c.asm: sys/ftdi/vendor_ftdi.c sys/ftdi/vendor_ftdi.h \
  libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/ch376.h \
- libraries/usb/transfers.h
+ libraries/usb/transfers.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h libraries/z80.h
 ./bin/sys/ftdi/init/ftdi.c.asm: sys/ftdi/init/ftdi.c sys/ftdi/init/../ftdi.h \
  sys/ftdi/init/../vendor_ftdi.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -410,11 +414,14 @@
 ./bin/libraries/extbio/unapi_get_ram_helper.o: ./libraries/extbio/unapi_get_ram_helper.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_set_baudrate.o: ./libraries/extbio/extbio_serial_set_baudrate.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_write.o: ./libraries/extbio/extbio_serial_write.asm ./msx.inc
+./bin/libraries/extbio/extbio_serial_set_dtr_rts.o: ./libraries/extbio/extbio_serial_set_dtr_rts.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_out_transfer.o: ./libraries/extbio/extbio_usb_data_out_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_rc2014_hello.o: ./libraries/extbio/extbio_rc2014_hello.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_rx_buffer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer.o: ./libraries/extbio/extbio_usb_data_in_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_set_line_property2.o: ./libraries/extbio/extbio_usb_ftdi_set_line_property2.asm ./msx.inc
+./bin/libraries/extbio/extbio_serial_set_flowctrl.o: ./libraries/extbio/extbio_serial_set_flowctrl.asm ./msx.inc
+./bin/libraries/extbio/extbio_serial_demand_read.o: ./libraries/extbio/extbio_serial_demand_read.asm ./msx.inc
 ./bin/libraries/extbio/extbio.o: ./libraries/extbio/extbio.asm ./msx.inc
 ./bin/libraries/extbio/memmapper.o: ./libraries/extbio/memmapper.asm
 ./bin/libraries/extbio/extbio_usb_ftdi_purge_tx_buffer.o: ./libraries/extbio/extbio_usb_ftdi_purge_tx_buffer.asm ./msx.inc
@@ -455,6 +462,7 @@
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
 ./bin/sys/ftdi/body/crt.o: ./sys/ftdi/body/crt.asm
 ./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
+./bin/sys/ftdi/init/init.o: ./sys/ftdi/init/init.asm
 ./bin/sys/fossil/body/crt.o: ./sys/fossil/body/crt.asm
 ./bin/sys/fossil/body/fossil-drv.o: ./sys/fossil/body/fossil-drv.asm ./msx.inc
 ./bin/sys/fossil/init/transition.o: ./sys/fossil/init/transition.asm

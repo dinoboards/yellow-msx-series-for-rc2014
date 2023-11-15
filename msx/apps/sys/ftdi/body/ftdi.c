@@ -24,6 +24,20 @@ uint8_t serial_set_baudrate(const uint8_t port_number, const int32_t baudrate) {
   return ftdi_set_baudrate(&_ftdi_config, baudrate);
 }
 
+uint8_t serial_set_flowctrl(const uint8_t port_number, const int8_t flowctrl) {
+  if (port_number != assigned_port_number)
+    return 1;
+
+  return ftdi_set_flowctrl(&_ftdi_config, flowctrl);
+}
+
+uint8_t serial_set_dtr_rts(const uint8_t port_number, const int16_t dtr_rts_flags) {
+  if (port_number != assigned_port_number)
+    return 1;
+
+  return ftdi_set_dtr_rts(&_ftdi_config, dtr_rts_flags);
+}
+
 uint8_t serial_set_protocol(const uint8_t port_number, const uint16_t protocol) {
   if (port_number != assigned_port_number)
     return 1;
@@ -33,30 +47,25 @@ uint8_t serial_set_protocol(const uint8_t port_number, const uint16_t protocol) 
   return ftdi_set_line_property2(&_ftdi_config, protocol);
 }
 
-uint8_t serial_read(const uint8_t port_number, uint8_t *const buf, uint8_t *size) {
+uint8_t serial_read(const uint8_t port_number, uint8_t *const buf, uint16_t *size) {
   if (port_number != assigned_port_number)
     return 1;
 
-  device_config_ftdi device;
+  return ftdi_read_data(&_ftdi_config, buf, size);
+}
 
-  // TODO: redesign to avoid need to do copy of the struct
-  memcpy(&device, &_ftdi_config, sizeof(device_config_ftdi));
-  const uint8_t result                            = ftdi_read_data(&device, buf, size);
-  _ftdi_config.endpoints[ENDPOINT_BULK_IN].toggle = device.endpoints[ENDPOINT_BULK_IN].toggle;
-  return result;
+uint8_t serial_demand_read(const uint8_t port_number, uint8_t *const buf, uint16_t *size, const uint16_t timeout_ms) {
+  if (port_number != assigned_port_number)
+    return 1;
+
+  return ftdi_demand_read_data(&_ftdi_config, buf, size, timeout_ms);
 }
 
 uint8_t serial_write(const uint8_t port_number, const uint8_t *const buf, const uint8_t size) {
   if (port_number != assigned_port_number)
     return 1;
 
-  device_config_ftdi device;
-  // TODO: redesign to avoid need to do copy of the struct
-  memcpy(&device, &_ftdi_config, sizeof(device_config_ftdi));
-  const uint8_t result                             = ftdi_write_data(&device, buf, size);
-  _ftdi_config.endpoints[ENDPOINT_BULK_OUT].toggle = device.endpoints[ENDPOINT_BULK_OUT].toggle;
-
-  return result;
+  return ftdi_write_data(&_ftdi_config, buf, size);
 }
 
 uint8_t serial_purge_buffers(const uint8_t port_number) __z88dk_fastcall {

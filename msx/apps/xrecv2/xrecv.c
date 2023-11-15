@@ -1,8 +1,6 @@
 #include "arguments.h"
 #include "msxdos.h"
 #include "print.h"
-#include "utils.h"
-#include "xmodem.h"
 #include <delay.h>
 #include <extbio.h>
 #include <fossil.h>
@@ -10,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <system_vars.h>
+#include <xmodem/utils.h>
+#include <xmodem/xmodem.h>
 
 /*
  * TODO:
@@ -121,7 +121,7 @@ int main(const int argc, const unsigned char **argv) {
     if (!started && (sig & (READ_128 | READ_1024))) {
       started = true;
       print_str(ERASE_LINE "Downloading ");
-      print_str(sig & READ_CRC ? "(crc) ... " : "(chksum) ... ");
+      print_str(sig & READ_CRC ? "x(crc) ... " : "(chksum) ... ");
     }
 
     if (sig & SAVE_PACKET) {

@@ -196,9 +196,6 @@ usb_error ch_data_in_transfer_n(uint8_t *const buffer, int8_t *const buffer_size
   uint8_t   count;
   usb_error result;
 
-  if (*buffer_size == 0)
-    return USB_ERR_OK;
-
   USB_MODULE_LEDS = 0x01;
 
   ch_issue_token_in(endpoint);

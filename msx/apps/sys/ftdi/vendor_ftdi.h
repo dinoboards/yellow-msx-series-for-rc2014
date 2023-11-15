@@ -7,10 +7,19 @@
 #include <usb/dev_transfers.h>
 
 typedef struct {
+  uint8_t status[2];
+  uint8_t data[62];
+} ftdi_packet;
+
+typedef struct {
   COMMON_DEVICE_CONFIG
   endpoint_param endpoints[2];        // Bulk in and out
   uint8_t        bitbang_enabled : 1; /* 0: normal mode 1: any of the bitbang modes enabled */
   uint32_t       baudrate;
+
+  ftdi_packet hold;
+  uint8_t     hold_size;
+
 } device_config_ftdi;
 
 typedef struct {
@@ -35,6 +44,11 @@ typedef struct {
 
 #define FTDI_BREAK_OFF 0
 #define FTDI_BREAK_ON  ((uint16_t)1 << 14)
+
+#define SIO_DISABLE_FLOW_CTRL 0x0
+#define SIO_RTS_CTS_HS        (0x1)
+#define SIO_DTR_DSR_HS        (0x2)
+#define SIO_XON_XOFF_HS       (0x4)
 
 /* Definitions for flow control */
 #define SIO_RESET         0 /* Reset the port */
@@ -69,25 +83,24 @@ typedef struct {
 
 #define C_CLK 48000000 /* the 232R's clock rate */
 
-typedef struct {
-  uint8_t *const            size;
-  uint8_t *const            buf;
-  device_config_ftdi *const ftdi;
-} xxx;
+#define SIO_SET_DTR_MASK 0x1
+#define SIO_SET_DTR_HIGH (1 | (SIO_SET_DTR_MASK << 8))
+#define SIO_SET_DTR_LOW  (0 | (SIO_SET_DTR_MASK << 8))
+#define SIO_SET_RTS_MASK 0x2
+#define SIO_SET_RTS_HIGH (2 | (SIO_SET_RTS_MASK << 8))
+#define SIO_SET_RTS_LOW  (0 | (SIO_SET_RTS_MASK << 8))
 
 extern usb_error ftdi_set_clks(device_config_ftdi *const ftdi, const uint16_t value, const uint16_t index);
 extern usb_error ftdi_set_baudrate(device_config_ftdi *const ftdi, const int32_t baudrate);
 extern usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t protocol_bits);
-extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *size) __sdcccall(1);
-// extern usb_error ftdi_write_data(device_config_ftdi *const ftdi, const uint8_t *const buf, const uint16_t size);
+extern usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *const buf, uint16_t *size) __sdcccall(1);
+extern usb_error
+ftdi_demand_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint16_t *const size, const uint16_t timeout_ms) __sdcccall(1);
+#define ftdi_write_data(ftdi, buf, size) usbdev_bulk_out_transfer((device_config *)(ftdi), buf, size)
 extern usb_error ftdi_purge_tx_buffer(device_config_ftdi *const ftdi);
 extern usb_error ftdi_purge_rx_buffer(device_config_ftdi *const ftdi);
 
-#define ftdi_write_data(ftdi, buf, size) usbdev_bulk_out_transfer((device_config *)(ftdi), buf, size)
-
-// int ftdi_setflowctrl(struct ftdi_context *ftdi, int flowctrl);
-//     int ftdi_setdtr_rts(struct ftdi_context *ftdi, int dtr, int rts);
-//     int ftdi_setdtr(struct ftdi_context *ftdi, int state);
-//     int ftdi_setrts(struct ftdi_context *ftdi, int state);
+extern usb_error ftdi_set_flowctrl(device_config_ftdi *const ftdi, uint8_t flowctrl);
+extern usb_error ftdi_set_dtr_rts(device_config_ftdi *const ftdi, const uint16_t dtr_rts_flags);
 
 #endif
