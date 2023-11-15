@@ -24,6 +24,9 @@ RAMAD0	equ	0F341h	; Slot of the Main-Ram on page 0~3FFFh
 EXTBIO	equ	0ffcah	; Call address to an extended Bios
 RDSLT	EQU	0000CH
 
+RG1SAV:        EQU     $F3E0
+VDP_INTEN:     EQU     5
+
 ; I GOT CAUGHT WITH THE FOSSIL DOCUMENTATION BEING AMBIGUOUS AS TO
 ; WHERE THE MARKER/JUMP TABLE ADDRESSES ARE TO BE STORED
 ; SEE UUPDATE DOC msx/rc2014-extended/docs/fossilspec.md FOR MORE DETAILS.
