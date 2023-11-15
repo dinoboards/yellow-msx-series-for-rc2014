@@ -19,11 +19,11 @@ bool                started;
 uint32_t            totalFileSize;
 const unsigned char rotatingChar[4][5] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
 uint8_t             rotatingIndex      = 0;
-FILE               *fptrDiagnostics;
+uint8_t             fptrDiagnostics;
 const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
 char               *waitForMessage          = NULL;
 char                backupPacket[1025];
-int32_t             backupPacketSize;
+int16_t             backupPacketSize;
 bool                firstPacket;
 
 char *strnstr(const char *haystack, const char *needle, size_t len) {
@@ -100,13 +100,20 @@ void wget(void) {
 
   strcat(downloadMessage, " ");
 
-  FILE *fptr = NULL;
-  if (pFileName)
-    fptr = fopen(pTempFileName, "wb");
+  uint8_t fptr = 0;
+  if (pFileName) {
+    const uint16_t error_handle = msxdosCreateFile(pTempFileName, IO_WRONLY);
+    const uint8_t  error        = error_handle >> 8 & 0xFF;
+    if (error) {
+      char error_description[64];
+      memset(error_description, 0, sizeof(error_description));
+      msxdosExplainErrorCode(error, error_description);
+      printf("%s (%02X): %s.\r\n", error_description, error, pFileName);
+      return;
+    }
 
-#ifdef DIAGNOSTIC_FILE_CAPTURE
-  fptrDiagnostics = fopen("esp8266.txt", "wb");
-#endif
+    fptr = error_handle & 0xFF;
+  }
 
   const int16_t startTime = JIFFY;
 
@@ -115,15 +122,12 @@ void wget(void) {
     if (msxbiosBreakX())
       goto abort;
 
-    if (!started && (sig & (READ_128 | READ_1024))) {
-      started = true;
-      print_str(downloadMessage);
-      print_str(sig & READ_CRC ? "(crc) ... " : "(chksum) ... ");
-    }
-
     if (sig & SAVE_PACKET && !(sig & INFO_PACKET)) {
       if (!firstPacket && pFileName)
-        fwrite(backupPacket, backupPacketSize, 1, fptr);
+        msxdosWriteFile(fptr, backupPacket, backupPacketSize);
+
+      print_str(downloadMessage);
+      print_str(sig & READ_CHECKSUM ? "(chksum) ... " : "(crc) ... ");
 
       firstPacket      = false;
       backupPacketSize = xmodemState.currentPacketSize;
@@ -170,20 +174,16 @@ void wget(void) {
   }
 
   if (pFileName) {
-    fwrite(backupPacket, backupPacketSize, 1, fptr);
+    msxdosWriteFile(fptr, backupPacket, backupPacketSize);
     print_str(ERASE_LINE "Saving file...");
   }
-
-#ifdef DIAGNOSTIC_FILE_CAPTURE
-  fclose(fptrDiagnostics);
-#endif
 
   if (pFileName) {
     const int16_t  ticks     = JIFFY - startTime;
     const float    totalTime = ((float)ticks / (float)GET_VDP_FREQUENCY());
     const uint32_t rate      = (float)totalFileSize / totalTime;
 
-    fclose(fptr);
+    msxdosCloseFile(fptr);
     remove(pFileName);
     rename(pTempFileName, pFileName);
 
@@ -199,11 +199,8 @@ void wget(void) {
   return;
 
 abort:
-#ifdef DIAGNOSTIC_FILE_CAPTURE
-  fclose(fptrDiagnostics);
-#endif
   if (pFileName) {
-    fclose(fptr);
+    msxdosCloseFile(fptr);
     remove(pTempFileName);
   }
 

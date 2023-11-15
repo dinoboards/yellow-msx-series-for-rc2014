@@ -171,7 +171,8 @@ extern uint8_t  msxdosFindEnvironment(const uint16_t index, char *env_item, cons
 
 extern uint16_t msxdosOpenFile(const char *filename, const uint8_t open_mode);
 extern uint16_t msxdosCreateFile(const char *filename, const uint8_t open_mode);
-extern uint16_t msxdosReadFile(const uint8_t file_handle, const void *buf, uint16_t nbytes);
+extern uint16_t msxdosReadFile(const uint8_t file_handle, void *buf, uint16_t nbytes);
+extern uint16_t msxdosWriteFile(const uint8_t file_handle, const void *buf, uint16_t nbytes);
 extern uint8_t  msxdosCloseFile(const uint8_t file_handle) __sdcccall(1);
 extern void     msxdosExplainErrorCode(const uint8_t error_code, char *const error_description);
 

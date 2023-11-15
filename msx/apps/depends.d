@@ -8,18 +8,14 @@
  esp8266/esp8266.h print.h libraries/fossil/fossil.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h \
  libraries/xmodem/utils.h libraries/xmodem/xmodem.h
-./bin/esp8266/xmodem_diagnostics.c.asm: esp8266/xmodem_diagnostics.c esp8266/features.h \
- libraries/fossil/fossil.h libraries/msxbios/system_vars.h \
- libraries/xmodem/serial.h libraries/fossil/fossil.h
 ./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
 ./bin/esp8266/msxhub.c.asm: esp8266/msxhub.c esp8266/msxhub.h esp8266/arguments.h \
  esp8266/esp8266.h print.h esp8266/wget.h libraries/xmodem/xmodem.h
 ./bin/esp8266/print.c.asm: esp8266/print.c
-./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/features.h esp8266/arguments.h \
- esp8266/esp8266.h esp8266/msxhub.h print.h esp8266/wget.h \
- libraries/delay/delay.h libraries/msxbios/system_vars.h \
- libraries/msxbios/extbio.h libraries/fossil/fossil.h \
- libraries/msxdos/msxdos.h
+./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/esp8266.h esp8266/arguments.h \
+ esp8266/msxhub.h print.h esp8266/wget.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
+ libraries/fossil/fossil.h libraries/msxdos/msxdos.h
 ./bin/memory/memory.c.asm: memory/memory.c memory/memory.h libraries/msxbios/extbio.h \
  libraries/msxbios/system_vars.h libraries/msxdos/msxdos.h
 ./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h print.h
@@ -444,13 +440,14 @@
 ./bin/libraries/msxdos/msxdos_get_drive_letter_info.o: ./libraries/msxdos/msxdos_get_drive_letter_info.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_explain_error_code.o: ./libraries/msxdos/msxdos_explain_error_code.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_read_file.o: ./libraries/msxdos/msxdos_read_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_rejoin_parent_process.o: ./libraries/msxdos/msxdos_rejoin_parent_process.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxbios_break_x.o: ./libraries/msxdos/msxbios_break_x.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_find_environment.o: ./libraries/msxdos/msxdos_find_environment.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_terminate_with_error.o: ./libraries/msxdos/msxdos_terminate_with_error.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_write_file.o: ./libraries/msxdos/msxdos_write_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_open_file.o: ./libraries/msxdos/msxdos_open_file.asm ./libraries/msxdos/msxdos.inc
-./bin/libraries/msxdos/msxdos_read_from_file.o: ./libraries/msxdos/msxdos_read_from_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_create_file.o: ./libraries/msxdos/msxdos_create_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_close_file.o: ./libraries/msxdos/msxdos_close_file.asm ./libraries/msxdos/msxdos.inc
