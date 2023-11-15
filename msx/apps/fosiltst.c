@@ -26,7 +26,8 @@ void extern disableVdpInterrupts(void);
 void main(void) {
   bool stat;
 
-  // this is deprecated - let confirm it does not modify driver if already installed
+  printf("fossil_link before install -> %d\r\n", fossil_link());
+
   extbio_fossil_install();
 
   printf("fossil_link should return 1 -> %d\r\n", fossil_link());

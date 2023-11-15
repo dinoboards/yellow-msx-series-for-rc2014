@@ -76,17 +76,6 @@ memory_files = $(call app_file,memory)
 $(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 memory.com.crt_enable_commandline:=1
 
-# fossil_files = $(call app_file,fossil)
-# $(BIN)fossil.com: $(addprefix $(BIN),$(fossil_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-# fossil.com.crt_enable_commandline:=1
-# $(BIN)fossil/fossil.body: $(addprefix $(BIN),$(call app_file,fossil/body)) #$(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-# $(BIN)fossil/fossil.crtbase1000.asm: fossil/body/crt.asm
-# 	mkdir -p $(dir $@)
-# 	echo -e "\tORG\t\$$1000\n\n" > $@
-# 	cat $^ >> $@
-
-# $(eval $(call relocatable,fossil))
-
 helloworld_files = $(call app_file,helloworld)
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 helloworld.com.crt_enable_commandline:=1

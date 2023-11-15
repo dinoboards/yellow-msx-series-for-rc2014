@@ -3,10 +3,12 @@
 
 #define MAX_CHANNELS 2
 
+#define BUFFER_SIZE 256
+
 typedef struct {
   uint8_t *next_byte;
   uint8_t *last_byte;
-  uint8_t  incoming[64];
+  uint8_t  incoming[BUFFER_SIZE];
 } channel_buffer_t;
 
 channel_buffer_t channels[MAX_CHANNELS] = {{channels[0].incoming, channels[0].incoming},
@@ -117,7 +119,7 @@ uint16_t set_protocol(const uint16_t protocol) __z88dk_fastcall {
 /**
  * @brief set serial channel
  *
- * @param channel (H) high byte chanel number, (L) low byte ignored
+ * @param channel (H) high byte channel number (0 or 1), (L) low byte ignored
  */
 uint16_t set_channel(const uint16_t _channel) __z88dk_fastcall {
   uint8_t desired_channel = (_channel >> 8) + 1;
@@ -134,10 +136,10 @@ uint16_t set_channel(const uint16_t _channel) __z88dk_fastcall {
   return 0;
 }
 
-uint16_t size = 64;
+uint16_t size = BUFFER_SIZE;
 
 uint8_t read_into_channel(void) {
-  size                 = 64;
+  size                 = BUFFER_SIZE;
   const uint8_t result = serial_read(current_port_number, current_channel->incoming, &size);
   if (result)
     return result;
@@ -152,9 +154,6 @@ uint8_t read_into_channel(void) {
  * @return uint8_t
  */
 uint8_t rs_in(void) __sdcccall(1) {
-  // if (current_channel->next_byte == NULL)
-  //   read_into_channel();
-
   while (current_channel->next_byte == current_channel->last_byte)
     read_into_channel();
 
