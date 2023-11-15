@@ -11,6 +11,8 @@ _serial_write:
 	LD	C, EXTBIO_RC2014_SERIAL_WRITE_SUB_FN
 	LD	HL, 4
 	ADD	HL, SP						; ARGS @ HL
+	LD	B, (HL)
+	INC	HL
 	CALL	EXTBIO						; RETURN HL
 	EI
 	POP	IX
