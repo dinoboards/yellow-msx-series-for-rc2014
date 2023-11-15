@@ -7,5 +7,5 @@
 ; Version H.L (H,L packed BCD)
 ;
 getversion:
-	LD	HL, 0x0101
+	LD	HL, 0x0201
 	RET

@@ -145,8 +145,8 @@ usb_error __ftdi_read_packet(device_config_ftdi *const ftdi, uint8_t *const buf,
  * @brief retrieve any pending data in the rx bufffer
  *
  * @param ftdi the device_config of the ftdi usb device
- * @param buf the buffer to store the received bytes in - must be 62 bytes
- * @param size returns the number of bytes actually received
+ * @param buf the buffer to store the received bytes in
+ * @param size on entry, the size of the buffer, on exit the number of bytes actually received
  * @return usb_error
  */
 usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint16_t *const size) __sdcccall(1) {
@@ -172,8 +172,8 @@ usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint16_t 
  * @brief retrieve any pending data in the rx bufffer
  *
  * @param ftdi the device_config of the ftdi usb device
- * @param buf the buffer to store the received bytes in - must be 62 bytes
- * @param size returns the number of bytes actually received
+ * @param buf the buffer to store the received bytes in
+ * @param size on entry, the size of the buffer, on exit the number of bytes actually received
  * @return usb_error
  */
 usb_error ftdi_demand_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint16_t *const size, const uint16_t timeout_ms)
