@@ -64,42 +64,35 @@ static bool check_sum(void) {
   return (cks == *buf);
 }
 
-static void flush_input(void) { serial_flush_input((DLY_1S * 3) >> 1); }
+static void flush_input(void) { fossil_flush_input((DLY_1S * 3) >> 1); }
+
+static uint16_t expected_size;
 
 bool read_packet_crc(void) {
   unsigned char *p = xmodemState.packetBuffer;
 
-  serial_in_block_start("\r\nReceiving Packet with CRC\r\n");
-
-  const uint16_t expected_size = xmodemState.currentPacketSize + 1 + 3;
+  expected_size = xmodemState.currentPacketSize + 1 + 3;
   p++;
-  for (i = 0; i < expected_size; ++i) {
-    if (!wait_for_byte(DLY_1S)) {
-      printf("\r\nTimed out waiting for a full CRC packet to arrive (%d, %d).\r\n", i, expected_size);
+  for (i = expected_size; i > 0; i--) {
+    if (!wait_for_byte(DLY_1S))
       return false;
-    }
-    *p++ = serial_in();
+
+    *p++ = fossil_rs_in();
   }
 
-  serial_in_block_end(NULL);
   return true;
 }
 
 bool read_packet_sum(void) {
   unsigned char *p = xmodemState.packetBuffer;
 
-  serial_in_block_start("\r\nReceiving Packet with CHKSUM\r\n");
-
   p++;
   for (i = 0; i < (xmodemState.currentPacketSize + 0 + 3); ++i) {
     if (!wait_for_byte(DLY_1S)) {
-      serial_in_block_end("\r\nTimed out waiting for a full CHKSUM packet to arrive.\r\n");
       return false;
     }
-    *p++ = serial_in();
+    *p++ = fossil_rs_in();
   }
-
-  serial_in_block_end(NULL);
 
   return true;
 }
@@ -108,10 +101,10 @@ XMODEM_SIGNAL read_first_header(void) {
   packetno = 1;
   retry = retrans = MAXRETRANS;
 
-  serial_out('C');
+  fossil_rs_out('C');
 
   if (wait_for_byte(DLY_1S * 10)) {
-    uint8_t x = serial_in();
+    uint8_t x = fossil_rs_in();
 
     switch (x) {
     case SOH:
@@ -123,23 +116,22 @@ XMODEM_SIGNAL read_first_header(void) {
       return READ_CRC | READ_1024;
 
     case EOT:
-      serial_out(ACK);
+      fossil_rs_out(ACK);
       return END_OF_STREAM;
 
     case CAN:
       flush_input();
-      serial_out(ACK);
+      fossil_rs_out(ACK);
       return UPSTREAM_CANCELLED;
     }
   }
 
-  printf("should not get here???");
   return delay_start(DLY_1S * 4, TRY_AGAIN);
 }
 
 XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (wait_for_byte(DLY_1S * 10)) {
-    switch (serial_in()) {
+    switch (fossil_rs_in()) {
     case SOH:
       xmodemState.currentPacketSize = 128;
       return signal | READ_128;
@@ -154,15 +146,15 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     case EOT:
       if (supportExtendedInfoPacket) {
         packetno = 0;
-        serial_out(ACK);
+        fossil_rs_out(ACK);
         return read_header(signal & (READ_CRC | READ_CHECKSUM));
       }
-      serial_out(ACK);
+      fossil_rs_out(ACK);
       return END_OF_STREAM;
 
     case CAN:
       flush_input();
-      serial_out(ACK);
+      fossil_rs_out(ACK);
       return UPSTREAM_CANCELLED;
     }
   }
@@ -174,19 +166,15 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   if (!read_packet_crc())
     return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT | STREAM_ERROR);
 
-  printf("\r\nPacket Received via CRC\r\n");
-
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) &&
       check_crc())
     return signal | SAVE_PACKET;
 
-  printf("\r\nCRC failure\r\n");
-
   if (--retrans <= 0) {
     flush_input();
-    serial_out(CAN);
-    serial_out(CAN);
-    serial_out(CAN);
+    fossil_rs_out(CAN);
+    fossil_rs_out(CAN);
+    fossil_rs_out(CAN);
     return TOO_MANY_ERRORS;
   }
 
@@ -197,19 +185,15 @@ XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcal
   if (!read_packet_sum())
     return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT | STREAM_ERROR);
 
-  serial_diagnostic_message("\r\nPacket Received via CHKSUM\r\n");
-
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) &&
       check_sum())
     return signal | SAVE_PACKET;
 
-  serial_diagnostic_message("\r\nCHKSUM failure\r\n");
-
   if (--retrans <= 0) {
     flush_input();
-    serial_out(CAN);
-    serial_out(CAN);
-    serial_out(CAN);
+    fossil_rs_out(CAN);
+    fossil_rs_out(CAN);
+    fossil_rs_out(CAN);
     return TOO_MANY_ERRORS;
   }
 
@@ -223,13 +207,13 @@ XMODEM_SIGNAL xmodem_tryagain(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     return TOO_MANY_ERRORS;
 
   fputc_cons('.');
-  serial_out(NAK);
+  fossil_rs_out(NAK);
   retry++;
   return signal | READ_HEADER;
 }
 
 XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  serial_out(ACK);
+  fossil_rs_out(ACK);
   ++packetno;
   retrans = MAXRETRANS + 1;
   retry   = 0;
@@ -238,22 +222,14 @@ XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 
 XMODEM_SIGNAL xmodem_too_many_errors(void) __z88dk_fastcall {
   flush_input();
-  serial_out(CAN);
-  serial_out(CAN);
-  serial_out(CAN);
+  fossil_rs_out(CAN);
+  fossil_rs_out(CAN);
+  fossil_rs_out(CAN);
   xmodemState.finish_reason = TOO_MANY_ERRORS;
   return FINISHED;
 }
 
 XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  FOR_SIGNAL(DELAY_WAIT) { return delay_reached(); }
-
-  printf("SIG: (%04X)", signal);
-
-  FOR_SIGNAL(READ_FIRST_HEADER) { return read_first_header(); }
-
-  FOR_SIGNAL(READ_HEADER) { return read_header(signal & ~READ_HEADER); }
-
   FOR_SIGNAL(READ_128 | READ_1024) {
     FOR_SIGNAL(READ_CRC) { return start_receive_crc(signal & ~(READ_128 | READ_1024)); }
     else {
@@ -261,13 +237,19 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     }
   }
 
+  FOR_SIGNAL(DELAY_WAIT) { return delay_reached(); }
+
+  FOR_SIGNAL(READ_FIRST_HEADER) { return read_first_header(); }
+
+  FOR_SIGNAL(READ_HEADER) { return read_header(signal & ~READ_HEADER); }
+
   FOR_SIGNAL(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN) {
     return xmodem_tryagain(signal & ~(PACKET_TIMEOUT | PACKET_REJECT | TRY_AGAIN));
   }
 
   FOR_SIGNAL(INFO_PACKET) {
     FOR_SIGNAL(SAVE_PACKET) {
-      serial_out(ACK);
+      fossil_rs_out(ACK);
       return INFO_PACKET | END_OF_STREAM;
     }
   }
@@ -302,7 +284,7 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 					goto start_trans;
 // 				case CAN:
 // 					if ((c = _inbyte(DLY_1S)) == CAN) {
-// 						serial_out(ACK);
+// 						fossil_rs_out(ACK);
 // 						flush_input();
 // 						return -1; /* canceled by remote */
 // 					}
@@ -312,9 +294,9 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 				}
 // 			}
 // 		}
-// 		serial_out(CAN);
-// 		serial_out(CAN);
-// 		serial_out(CAN);
+// 		fossil_rs_out(CAN);
+// 		fossil_rs_out(CAN);
+// 		fossil_rs_out(CAN);
 // 		flush_input();
 // 		return -2; /* no sync */
 
@@ -347,7 +329,7 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 				}
 // 				for (retry = 0; retry < MAXRETRANS; ++retry) {
 // 					for (i = 0; i < xmodemState.currentPacketSize+4+(crc?1:0); ++i) {
-// 						serial_out(xmodemState.packetBuffer[i]);
+// 						fossil_rs_out(xmodemState.packetBuffer[i]);
 // 					}
 // 					if ((c = _inbyte(DLY_1S)) >= 0 ) {
 // 						switch (c) {
@@ -357,7 +339,7 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 							goto start_trans;
 // 						case CAN:
 // 							if ((c = _inbyte(DLY_1S)) == CAN) {
-// 								serial_out(ACK);
+// 								fossil_rs_out(ACK);
 // 								flush_input();
 // 								return -1; /* canceled by remote */
 // 							}
@@ -368,15 +350,15 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 // 						}
 // 					}
 // 				}
-// 				serial_out(CAN);
-// 				serial_out(CAN);
-// 				serial_out(CAN);
+// 				fossil_rs_out(CAN);
+// 				fossil_rs_out(CAN);
+// 				fossil_rs_out(CAN);
 // 				flush_input();
 // 				return -4; /* xmit error */
 // 			}
 // 			else {
 // 				for (retry = 0; retry < 10; ++retry) {
-// 					serial_out(EOT);
+// 					fossil_rs_out(EOT);
 // 					if ((c = _inbyte((DLY_1S)<<1)) == ACK) break;
 // 				}
 // 				flush_input();

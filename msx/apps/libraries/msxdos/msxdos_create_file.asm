@@ -10,6 +10,7 @@ _msxdosCreateFile:
 	LD	E, (IY+2)
 	LD	D, (IY+3)
 	LD	A, (IY+4)
+	LD	B, 0
 
 	LD	C, $44
 	CALL	BDOS

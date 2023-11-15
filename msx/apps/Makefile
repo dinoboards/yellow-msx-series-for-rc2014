@@ -141,7 +141,6 @@ rtccalb.com.crt_enable_commandline:=1
 esp8266_files = $(call app_file,esp8266)
 $(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(EXTBIO_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
 esp8266.com.crt_enable_commandline:=1
-# DIAGNOSTIC_FILE_CAPTURE
 
 siocfg_files = $(call app_files,siocfg,memmap-override.asm)
 $(BIN)siocfg.com: $(addprefix $(BIN),$(siocfg_files)) $(EXTBIO_LIB) $(GETSLT_LIB)
