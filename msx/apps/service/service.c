@@ -1,6 +1,7 @@
 #include <msxdos.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 extern void transition(const void *const source, const uint16_t size) __sdcccall(1);
 
@@ -22,7 +23,7 @@ uint8_t main(const int argc, const char *argv[]) {
 
   memcpy((void *)0xC000, transition_start, transition_end - transition_start);
 
-  const uint16_t error_handle = msxdosOpenFile(argv[1] + 1, IO_RDONLY);
+  const uint16_t error_handle = msxdosOpenFile(argv[1] + 1, IO_NO_WR);
   const uint8_t  handle       = error_handle & 0xFF;
   const uint8_t  error        = error_handle >> 8 & 0xFF;
 

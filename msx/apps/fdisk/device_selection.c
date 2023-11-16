@@ -7,6 +7,7 @@
 #include "temp.h"
 #include <msxdos.h>
 #include <stdio.h>
+#include <string.h>
 
 deviceInfo  devices[MAX_DEVICES_PER_DRIVER];
 static bool availableDevicesCount;

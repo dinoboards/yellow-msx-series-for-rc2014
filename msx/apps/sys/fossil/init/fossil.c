@@ -3,6 +3,7 @@
 #include <msxdos.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <z80.h>
 
 #define MSXDOS_TPA_BASE_ADDR __at(0x0006)
@@ -53,7 +54,7 @@ void reloadMSXDOS(void) {
   msxdosGetEnvironment("BOOT", boot_path, 255);
   char nextor_path[256];
   sprintf(nextor_path, "%s\\NEXTOR.SYS", boot_path);
-  const uint16_t error_handle = msxdosOpenFile(nextor_path, IO_RDONLY);
+  const uint16_t error_handle = msxdosOpenFile(nextor_path, IO_NO_WR);
   const uint8_t  handle       = error_handle & 0xFF;
   uint8_t        error        = error_handle >> 8 & 0xFF;
 

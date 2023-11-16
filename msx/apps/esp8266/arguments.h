@@ -3,10 +3,7 @@
 
 /* must include stdbool before stdio, as stdio include msx.h which will define its own bool if none defined */
 #include <stdbool.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdint.h>
 
 #define SUB_COMMAND_TIME_SYNC    1
 #define SUB_COMMAND_HANGUP       2
@@ -20,7 +17,7 @@ extern const char *pNewTimeZone;
 extern const char *pNewSSID;
 extern const char *pNewPassword;
 extern const char *pWgetUrl;
-extern const char *pFileName;
+extern const char *pFilePathName;
 extern uint16_t    baud_rate;
 extern const char *pMsxHubPackageName;
 extern uint8_t     requestLargePacket;

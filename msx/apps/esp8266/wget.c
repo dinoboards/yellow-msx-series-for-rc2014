@@ -4,22 +4,19 @@
 #include "esp8266.h"
 #include "print.h"
 #include <fossil.h>
+#include <msx/libgen.h>
 #include <msxdos.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <system_vars.h>
-#include <unistd.h>
 #include <xmodem/utils.h>
 #include <xmodem/xmodem.h>
 
-const unsigned char pTempFileName[] = "xmdwn.tmp";
 bool                started;
 uint32_t            totalFileSize;
-const unsigned char rotatingChar[4][5] = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
-uint8_t             rotatingIndex      = 0;
-uint8_t             fptrDiagnostics;
+const unsigned char rotatingChar[4][5]      = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
+uint8_t             rotatingIndex           = 0;
 const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
 char               *waitForMessage          = NULL;
 char                backupPacket[1025];
@@ -44,7 +41,7 @@ char *strnstr(const char *haystack, const char *needle, size_t len) {
 
 void subCommandWGet(void) {
   print_str("Attempting to retrieve file ");
-  print_str(pFileName);
+  print_str(pFilePathName);
   print_str(" from ");
   print_str(pWgetUrl);
   print_str("\r\n");
@@ -53,6 +50,13 @@ void subCommandWGet(void) {
 
   wget();
 }
+
+uint16_t error_handle;
+uint8_t  error;
+char    *pPath;
+char    *pFileName;
+char     fileNameBuffer[256];
+char     pTempFileName[256];
 
 void wget(void) {
   xmodem_enable_extended_info_packet_support();
@@ -93,22 +97,28 @@ void wget(void) {
 
   char downloadMessage[3 + 13 + 1];
   strcpy(downloadMessage, ERASE_LINE);
-  if (pFileName)
-    strcat(downloadMessage, pFileName);
+  if (pFilePathName)
+    strcat(downloadMessage, pFilePathName);
   else
     strcat(downloadMessage, "Downloading");
 
   strcat(downloadMessage, " ");
 
   uint8_t fptr = 0;
-  if (pFileName) {
-    const uint16_t error_handle = msxdosCreateFile(pTempFileName, IO_WRONLY);
-    const uint8_t  error        = error_handle >> 8 & 0xFF;
+  if (pFilePathName) {
+
+    strcpy(fileNameBuffer, pFilePathName);
+    pPath     = dirname(fileNameBuffer);
+    pFileName = basename(pFilePathName);
+    sprintf(pTempFileName, "%sxmdwn.tmp", pPath, pFileName);
+
+    error_handle = msxdosCreateFile(pTempFileName, IO_NO_RD);
+    error        = error_handle >> 8 & 0xFF;
     if (error) {
       char error_description[64];
       memset(error_description, 0, sizeof(error_description));
       msxdosExplainErrorCode(error, error_description);
-      printf("%s (%02X): %s.\r\n", error_description, error, pFileName);
+      printf("%s (%02X): %s.\r\n", error_description, error, pTempFileName);
       return;
     }
 
@@ -123,8 +133,16 @@ void wget(void) {
       goto abort;
 
     if (sig & SAVE_PACKET && !(sig & INFO_PACKET)) {
-      if (!firstPacket && pFileName)
-        msxdosWriteFile(fptr, backupPacket, backupPacketSize);
+      if (!firstPacket && pFilePathName) {
+        error = msxdosWriteFile(fptr, backupPacket, backupPacketSize);
+        if (error) {
+          char error_description[64];
+          memset(error_description, 0, sizeof(error_description));
+          msxdosExplainErrorCode(error, error_description);
+          printf("%s (%02X): %s.\r\n", error_description, error, pFilePathName);
+          return;
+        }
+      }
 
       print_str(downloadMessage);
       print_str(sig & READ_CHECKSUM ? "(chksum) ... " : "(crc) ... ");
@@ -173,23 +191,23 @@ void wget(void) {
     }
   }
 
-  if (pFileName) {
+  if (pFilePathName) {
     msxdosWriteFile(fptr, backupPacket, backupPacketSize);
     print_str(ERASE_LINE "Saving file...");
   }
 
-  if (pFileName) {
+  if (pFilePathName) {
     const int16_t  ticks     = JIFFY - startTime;
     const float    totalTime = ((float)ticks / (float)GET_VDP_FREQUENCY());
     const uint32_t rate      = (float)totalFileSize / totalTime;
 
     msxdosCloseFile(fptr);
-    remove(pFileName);
-    rename(pTempFileName, pFileName);
+    msxdosDeleteFile(pFilePathName);
+    msxdosRenameFile(pFilePathName, pTempFileName);
 
     print_str(ERASE_LINE);
-    if (pFileName)
-      print_str(pFileName);
+    if (pFilePathName)
+      print_str(pFilePathName);
     else
       print_str("Downloaded");
 
@@ -199,9 +217,9 @@ void wget(void) {
   return;
 
 abort:
-  if (pFileName) {
+  if (pFilePathName) {
     msxdosCloseFile(fptr);
-    remove(pTempFileName);
+    msxdosDeleteFile(pTempFileName);
   }
 
   abortWithError(NULL);

@@ -1,6 +1,6 @@
 	include "msxdos.inc"
 
-; extern uint16_t msxdosWriteFile(const uint8_t file_handle, const void *buf, uint16_t nbytes)  __sdcccall(1);
+; extern uint8_t msxdosWriteFile(const uint8_t file_handle, const void *buf, uint16_t nbytes)  __sdcccall(1);
 	PUBLIC	_msxdosWriteFile
 
 _msxdosWriteFile:
@@ -16,6 +16,7 @@ _msxdosWriteFile:
 
 	ld	c, $49
 	CALL	BDOS
+	LD	L, A
 				; a error code is ignored
 	POP	IX
 	RET

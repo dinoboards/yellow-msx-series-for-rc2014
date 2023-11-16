@@ -7,6 +7,8 @@
 #include <extbio.h>
 #include <fossil.h>
 #include <msxdos.h>
+#include <stdio.h>
+#include <string.h>
 #include <system_vars.h>
 
 unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
@@ -158,7 +160,7 @@ void resetModem(void) {
   fossil_rs_read_line(false);
 }
 
-void main(const int argc, const unsigned char **argv) {
+uint8_t main(const int argc, const char *argv[]) {
   if (!fossil_link()) {
     extbio_fossil_install();
 
@@ -216,4 +218,6 @@ void main(const int argc, const unsigned char **argv) {
 
 done:
   fossil_deinit();
+
+  return 0;
 }

@@ -1,13 +1,15 @@
 #include "arguments.h"
 #include "print.h"
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
 uint8_t     subCommand = 0;
 const char *pNewTimeZone;
 const char *pNewSSID;
 const char *pNewPassword;
 const char *pWgetUrl;
-const char *pFileName;
+const char *pFilePathName;
 uint16_t    baud_rate = 7 * 256 + 7; // 19200
 const char *pMsxHubPackageName;
 uint8_t     requestLargePacket;
@@ -84,12 +86,12 @@ uint8_t arg_sub_command(const uint8_t i, const char **argv, const int argc) {
       subCommand = SUB_COMMAND_WGET;
       if (strncasecmp(argv[i + 1], "1k", 2) == 0) {
         pWgetUrl           = argv[i + 2];
-        pFileName          = argv[i + 3];
+        pFilePathName      = argv[i + 3];
         requestLargePacket = true;
         return i + 4;
       }
       pWgetUrl           = argv[i + 1];
-      pFileName          = argv[i + 2];
+      pFilePathName      = argv[i + 2];
       requestLargePacket = false;
       return i + 3;
     }

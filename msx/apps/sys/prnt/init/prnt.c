@@ -70,7 +70,7 @@ uint16_t init(installed_sys_t *my_header) __z88dk_fastcall {
       return 255;
     }
 
-    printf("PRNT.SYS:        INSTALLED\r\n");
+    printf("USB/PRINTER:     INSTALLED\r\n");
     return 0;
   }
 
@@ -78,6 +78,8 @@ uint16_t init(installed_sys_t *my_header) __z88dk_fastcall {
     printf("USB error %02x\r\n", result);
     return result;
   }
+
+  printf("USB/PRINTER:     NOT PRESENT\r\n");
 
   return 255;
 }
