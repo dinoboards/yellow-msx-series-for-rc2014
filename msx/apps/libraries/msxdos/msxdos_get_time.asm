@@ -4,29 +4,26 @@
 	PUBLIC	_msxdosGetTime
 
 _msxdosGetTime:
-	PUSH	IX
-
 	LD	C, $2C
 	CALL	BDOS
 
-	LD	IX, 0
-	ADD	IX, SP
+	LD	IY, 0
+	ADD	IY, SP
 
 	LD	C, L
 	LD	B, H
 
-	LD	L, (IX+4)		; HOUR POINTER
-	LD	H, (IX+5)
+	LD	L, (IY+2)		; HOUR POINTER
+	LD	H, (IY+3)
 	LD	(HL), B
 
-	LD	L, (IX+6)		; MIN POINTER
-	LD	H, (IX+7)
+	LD	L, (IY+4)		; MIN POINTER
+	LD	H, (IY+5)
 	LD	(HL), C
 
-	LD	L, (IX+8)		; SEC POINTER
-	LD	H, (IX+9)
+	LD	L, (IY+6)		; SEC POINTER
+	LD	H, (IY+7)
 	LD	(HL), D
 
-	POP	IX
 	RET
 

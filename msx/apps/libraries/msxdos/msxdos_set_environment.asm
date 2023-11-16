@@ -4,11 +4,8 @@
 	PUBLIC	_msxdosSetEnvironment
 
 _msxdosSetEnvironment:
-	PUSH	IX
-
 	LD	C, $6C
 	CALL	BDOS
 	LD	L, A
 
-	POP	IX
 	RET

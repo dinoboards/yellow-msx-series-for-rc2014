@@ -4,19 +4,17 @@
 	PUBLIC	_msxdosFindEnvironment
 
 _msxdosFindEnvironment:
-	PUSH	IX
-	LD	IX, 0
-	ADD	IX, SP
+	LD	IY, 0
+	ADD	IY, SP
 
-	LD	E, (IX+4) 	; index
-	LD	D, (IX+5) 	; index
-	LD	L, (IX+6) 	; env_item
-	LD	H, (IX+7) 	; env_item
-	LD	B, (IX+8) 	; buffer_size
+	LD	E, (IY+2) 	; index
+	LD	D, (IY+3) 	; index
+	LD	L, (IY+4) 	; env_item
+	LD	H, (IY+5) 	; env_item
+	LD	B, (IY+6) 	; buffer_size
 
 	LD	C, $6D
 	CALL	BDOS
 	LD	L, A
 
-	POP	IX
 	RET

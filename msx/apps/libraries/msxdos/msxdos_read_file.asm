@@ -4,18 +4,15 @@
 	PUBLIC	_msxdosReadFile
 
 _msxdosReadFile:
-	PUSH	IX
-	LD	IX, 0
-	ADD	IX, SP
+	LD	IY, 0
+	ADD	IY, SP
 
-	LD	B, (IX+4) 	; file_handle
-	LD	E, (IX+5)  	; buff
-	LD	D, (IX+6)
-	LD	L, (IX+7)  	; nbytes
-	LD	H, (IX+8)
+	LD	B, (IY+2) 	; file_handle
+	LD	E, (IY+3)  	; buff
+	LD	D, (IY+4)
+	LD	L, (IY+5)  	; nbytes
+	LD	H, (IY+6)
 
-	ld	c, $48
-	CALL	BDOS
+	LD	C, $48
+	JP	BDOS
 				; a error code is ignored
-	POP	IX
-	RET

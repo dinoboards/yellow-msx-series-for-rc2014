@@ -4,7 +4,6 @@
 	PUBLIC	_msxdosCloseFile
 
 _msxdosCloseFile:
-	PUSH	IX
 	LD	B, A
 
 	LD	C, $45
@@ -12,5 +11,4 @@ _msxdosCloseFile:
 	LD	L, A
 	LD	H, 0
 
-	POP	IX
 	RET
