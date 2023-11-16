@@ -4,6 +4,7 @@
 #include "print.h"
 #include "wget.h"
 #include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -71,7 +72,7 @@ int8_t getNumberOfPages(void) {
   p            = str_append(p, "/latest/pages");
 
   pWgetUrl           = msxHubUrl;
-  pFileName          = NULL;
+  pFilePathName      = NULL;
   requestLargePacket = false;
   waitForMessage     = (char *)(ERASE_LINE "Retreiving file list");
 
@@ -88,7 +89,7 @@ void getFileListForPage(int8_t i) __z88dk_fastcall {
   sprintf(p, "%d", i);
 
   pWgetUrl           = msxHubUrl;
-  pFileName          = NULL;
+  pFilePathName      = NULL;
   requestLargePacket = true;
   waitForMessage     = (char *)(ERASE_LINE "Retreiving file list page");
 
@@ -102,7 +103,7 @@ const char *getInstallDirectory(void) {
   str_append(p, "/latest/installdir");
 
   pWgetUrl           = msxHubUrl;
-  pFileName          = NULL;
+  pFilePathName      = NULL;
   requestLargePacket = false;
   waitForMessage     = (char *)(ERASE_LINE "Retrieving installdir name");
 
@@ -133,7 +134,7 @@ void downloadFile(const char *fileName) __z88dk_fastcall {
   str_append(p, fileName);
 
   pWgetUrl           = msxHubUrl;
-  pFileName          = fileName;
+  pFilePathName      = fileName;
   requestLargePacket = false;
   waitForMessage     = (char *)(ERASE_LINE "Retrieving 12345678.123  ");
   sprintf(waitForMessage + 3 + 11, fileName);

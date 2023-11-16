@@ -9,7 +9,7 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node500000 --allow-unsafe-read
 endif
 
-LIBS := -I./fdisk/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb -I./libraries
+LIBS := -I./fdisk/ -I./libraries/msx/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb -I./libraries
 
 # -DSTACK_TRACE_ENABLED
 ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -g -pragma-define:CLIB_32BIT_FLOAT=1 -DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
@@ -20,13 +20,14 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi)) $(addsuffix .com,$(addprefix $(BIN),fdisk fossil ftditest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2)) $(addsuffix .com,$(addprefix $(BIN),fdisk fossil ftditest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
 zcchelp:
 	@$(ZCC) -Cl
 
+LIBGEN_LIB := $(addprefix $(BIN)libraries/msx/libgen/,basename.c.lib dirname.c.lib)
 GETSLT_LIB := $(addprefix $(BIN),getslt.lib)
 CONFIG_REQUEST_LIB := $(addprefix $(BIN),config_request.c.lib)
 SYSTEM_VARS_LIB := $(addprefix $(BIN)libraries/msxbios/,system_vars.c.lib)
@@ -53,6 +54,11 @@ ftdi.body := $(addprefix $(BIN),$(call app_file,sys/ftdi/body)) $(BIN)sys/ftdi/v
 ftdi.init := $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,ftdi))
 
+sio2.body := $(addprefix $(BIN),$(call app_file,sys/sio2/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+sio2.init := $(addprefix $(BIN),$(call app_file,sys/sio2/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB)
+$(eval $(call relocatable,sio2))
+
+
 hello.body := $(addprefix $(BIN),$(call app_file,sys/hello/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 hello.init := $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB)
 $(eval $(call relocatable,hello))
@@ -77,7 +83,7 @@ $(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(SYSTEM_VAR
 memory.com.crt_enable_commandline:=1
 
 helloworld_files = $(call app_file,helloworld)
-$(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
 ftditest_files = $(call app_file,ftditest)
@@ -139,7 +145,7 @@ $(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files)) $(MSXDOS_LIB)
 rtccalb.com.crt_enable_commandline:=1
 
 esp8266_files = $(call app_file,esp8266)
-$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(EXTBIO_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
+$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(FOSSIL_LIB) $(EXTBIO_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
 esp8266.com.crt_enable_commandline:=1
 
 siocfg_files = $(call app_files,siocfg,memmap-override.asm)

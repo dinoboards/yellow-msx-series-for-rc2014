@@ -6,8 +6,9 @@
 ./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxdos/msxdos.h
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
  esp8266/esp8266.h print.h libraries/fossil/fossil.h \
- libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h \
- libraries/xmodem/utils.h libraries/xmodem/xmodem.h
+ libraries/msx/libgen.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h libraries/xmodem/utils.h \
+ libraries/xmodem/xmodem.h
 ./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
 ./bin/esp8266/msxhub.c.asm: esp8266/msxhub.c esp8266/msxhub.h esp8266/arguments.h \
  esp8266/esp8266.h print.h esp8266/wget.h libraries/xmodem/xmodem.h
@@ -244,6 +245,7 @@
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
 ./bin/libraries/fusion/fprintf.c.asm: libraries/fusion/fprintf.c libraries/fusion/fusion_ext.h \
  libraries/fusion/io.h
+./bin/libraries/msxdos/rename.c.asm: libraries/msxdos/rename.c
 ./bin/libraries/xmodem/crc16.c.asm: libraries/xmodem/crc16.c libraries/xmodem/crc16.h
 ./bin/libraries/xmodem/xmodem.c.asm: libraries/xmodem/xmodem.c libraries/xmodem/xmodem.h \
  libraries/xmodem/crc16.h libraries/xmodem/serial.h \
@@ -255,6 +257,10 @@
 ./bin/libraries/xmodem/utils.c.asm: libraries/xmodem/utils.c libraries/xmodem/utils.h
 ./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
+./bin/libraries/msx/libgen/basename.c.asm: libraries/msx/libgen/basename.c \
+ libraries/msx/libgen/../libgen.h
+./bin/libraries/msx/libgen/dirname.c.asm: libraries/msx/libgen/dirname.c \
+ libraries/msx/libgen/../libgen.h
 ./bin/libraries/usb/dev_transfers.c.asm: libraries/usb/dev_transfers.c \
  libraries/usb/dev_transfers.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/transfers.h \
@@ -339,6 +345,10 @@
 ./bin/fossilon.c.asm: fossilon.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
 ./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
+ libraries/sysload/sys.h
+./bin/sys/sio2/body/sio2.c.asm: sys/sio2/body/sio2.c sys/sio2/body/../sio2.h
+./bin/sys/sio2/init/sio2.c.asm: sys/sio2/init/sio2.c sys/sio2/init/../sio2.h \
+ libraries/extbio/serial.h libraries/sysload/sysload.h \
  libraries/sysload/sys.h
 ./bin/sys/ftdi/body/ftdi.c.asm: sys/ftdi/body/ftdi.c sys/ftdi/body/../ftdi.h \
  sys/ftdi/body/../vendor_ftdi.h libraries/usb/ch376.h \
@@ -445,6 +455,7 @@
 ./bin/libraries/msxdos/msxdos_set_environment.o: ./libraries/msxdos/msxdos_set_environment.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_environment.o: ./libraries/msxdos/msxdos_get_environment.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_drv_direct_1.o: ./libraries/msxdos/msxdos_drv_direct_1.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_rename_file.o: ./libraries/msxdos/msxdos_rename_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_drive_letter_info.o: ./libraries/msxdos/msxdos_get_drive_letter_info.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_explain_error_code.o: ./libraries/msxdos/msxdos_explain_error_code.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
@@ -456,6 +467,7 @@
 ./bin/libraries/msxdos/msxdos_terminate_with_error.o: ./libraries/msxdos/msxdos_terminate_with_error.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_write_file.o: ./libraries/msxdos/msxdos_write_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_open_file.o: ./libraries/msxdos/msxdos_open_file.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_delete_file.o: ./libraries/msxdos/msxdos_delete_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_create_file.o: ./libraries/msxdos/msxdos_create_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_close_file.o: ./libraries/msxdos/msxdos_close_file.asm ./libraries/msxdos/msxdos.inc
@@ -465,6 +477,9 @@
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/sys/hello/body/crt.o: ./sys/hello/body/crt.asm
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
+./bin/sys/sio2/body/crt.o: ./sys/sio2/body/crt.asm
+./bin/sys/sio2/body/sio2.o: ./sys/sio2/body/sio2.asm ./msx.inc
+./bin/sys/sio2/init/probe.o: ./sys/sio2/init/probe.asm
 ./bin/sys/ftdi/body/crt.o: ./sys/ftdi/body/crt.asm
 ./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
 ./bin/sys/ftdi/init/init.o: ./sys/ftdi/init/init.asm

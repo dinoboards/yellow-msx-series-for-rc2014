@@ -3,10 +3,7 @@
 
 /* must include stdbool before stdio, as stdio include msx.h which will define its own bool if none defined */
 #include <stdbool.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdint.h>
 
 #define DRIVER_NAME_LENGTH       32
 #define MAX_INSTALLED_DRIVERS    8
@@ -165,16 +162,18 @@ extern uint8_t  msxdosFindEnvironment(const uint16_t index, char *env_item, cons
 
 // MSX-DOS 2 File functions
 
-#define IO_RDONLY      0
-#define IO_WRONLY      1
-#define IO_INHERITABLE 2
+#define IO_NO_WR       1
+#define IO_NO_RD       2
+#define IO_INHERITABLE 4
 
 extern uint16_t msxdosOpenFile(const char *filename, const uint8_t open_mode);
 extern uint16_t msxdosCreateFile(const char *filename, const uint8_t open_mode);
 extern uint16_t msxdosReadFile(const uint8_t file_handle, void *buf, uint16_t nbytes);
-extern uint16_t msxdosWriteFile(const uint8_t file_handle, const void *buf, uint16_t nbytes);
+extern uint8_t  msxdosWriteFile(const uint8_t file_handle, const void *buf, uint16_t nbytes);
 extern uint8_t  msxdosCloseFile(const uint8_t file_handle) __sdcccall(1);
 extern void     msxdosExplainErrorCode(const uint8_t error_code, char *const error_description);
+extern uint8_t  msxdosRenameFile(const char *const new_filename, const char *const filename) __sdcccall(1);
+extern uint8_t  msxdosDeleteFile(const char *filename) __sdcccall(1);
 
 #define _NCOMP 0xFF
 #define _WRERR 0xFE

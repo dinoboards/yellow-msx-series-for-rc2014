@@ -1,5 +1,6 @@
 #include "screen_control.h"
 #include <stdio.h>
+#include <string.h>
 #include <system_vars.h>
 
 screenConfiguration        currentScreenConfig;

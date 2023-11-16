@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 partitionInfo partitions[MAX_PARTITIONS_TO_HANDLE];
 uint32_t      autoPartitionSizeInK;

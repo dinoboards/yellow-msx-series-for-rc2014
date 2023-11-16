@@ -36,7 +36,7 @@ uint8_t _serial_demand_read(uint8_t *const buf, uint16_t *size, const uint16_t t
 
 uint8_t _serial_write(const uint8_t *const buf, const uint8_t size) { return ftdi_write_data(&_ftdi_config, buf, size); }
 
-uint8_t _serial_purge_buffers(void) __z88dk_fastcall {
+uint8_t _serial_purge_buffers(void) {
   uint8_t result = ftdi_purge_tx_buffer(&_ftdi_config);
   if (result)
     return result;
