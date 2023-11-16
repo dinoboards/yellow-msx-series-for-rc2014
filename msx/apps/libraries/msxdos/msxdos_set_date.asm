@@ -4,19 +4,17 @@
 	PUBLIC	_msxdosSetDate
 
 _msxdosSetDate:
-	PUSH	IX
-	LD	IX, 0
-	ADD	IX, SP
+	LD	IY, 0
+	ADD	IY, SP
 
-	LD	L, (IX+4)		; YEAR
-	LD	H, (IX+5)
-	LD	D, (IX+6)		; MONTH
-	LD	E, (IX+7)		; DATE
+	LD	L, (IY+2)		; YEAR
+	LD	H, (IY+3)
+	LD	D, (IY+4)		; MONTH
+	LD	E, (IY+5)		; DATE
 
 	ld	c, $2B
 	CALL	BDOS
 	LD	L, A
 
-	POP	IX
 	RET
 

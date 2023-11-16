@@ -4,19 +4,17 @@
 	PUBLIC	_msxdosSetTime
 
 _msxdosSetTime:
-	PUSH	IX
-	LD	IX, 0
-	ADD	IX, SP
+	LD	IY, 0
+	ADD	IY, SP
 
-	LD	H, (IX+4)		; HOUR
-	LD	L, (IX+5)		; MINUTES
-	LD	D, (IX+6)		; SECONDS
-	LD	E, (IX+7)		; CENTI-SECONDS
+	LD	H, (IY+2)		; HOUR
+	LD	L, (IY+3)		; MINUTES
+	LD	D, (IY+4)		; SECONDS
+	LD	E, (IY+5)		; CENTI-SECONDS
 
 	ld	c, $2D
 	CALL	BDOS
 	LD	L, A
 
-	POP	IX
 	RET
 

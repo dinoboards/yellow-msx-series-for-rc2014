@@ -4,12 +4,10 @@
 	PUBLIC	_msxdosRejoinParentProcess
 
 _msxdosRejoinParentProcess:
-	PUSH	IX
 	LD	B, L
 
 	LD	C, $61
 	CALL	BDOS
 	LD	L, A
 	LD	H, B
-	POP	IX
 	RET

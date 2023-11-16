@@ -6,18 +6,16 @@ _GDLI	EQU	079h
 	PUBLIC	_msxdosGetDriveLetterInfo
 
 _msxdosGetDriveLetterInfo:
-	PUSH	IX
-	LD	IX, 0
-	ADD	IX, SP
+	LD	IY, 0
+	ADD	IY, SP
 
-	LD	A, (IX+4) 	; drive_leter
-	LD	L, (IX+5)  	; DATA pInfo
-	LD	H, (IX+6)
+	LD	A, (IY+2) 	; drive_leter
+	LD	L, (IY+3)  	; DATA pInfo
+	LD	H, (IY+4)
 
 	LD	C, _GDLI
 	CALL	BDOS
 	LD	L, A
 
-	POP	IX
 	RET
 

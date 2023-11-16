@@ -4,21 +4,19 @@
 	PUBLIC	_msxdosGetEnvironment
 
 _msxdosGetEnvironment:
-	PUSH	IX
-	LD	IX, 0
-	ADD	IX, SP
+	LD	IY, 0
+	ADD	IY, SP
 
-	LD	L, (IX+4)		; name
-	LD	H, (IX+5)
+	LD	L, (IY+2)		; name
+	LD	H, (IY+3)
 
-	LD	E, (IX+6)		; value
-	LD	D, (IX+7)
+	LD	E, (IY+4)		; value
+	LD	D, (IY+5)
 
-	LD	B, (IX+8)		; size
+	LD	B, (IY+6)		; size
 
 	LD	C, $6B
 	CALL	BDOS
 	LD	L, A
 
-	POP	IX
 	RET
