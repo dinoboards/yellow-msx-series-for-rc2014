@@ -63,7 +63,7 @@ uint16_t testReadWrite(void) {
     if (error) {
       const char errorMessage[100];
       memset(errorMessage, 0, sizeof(errorMessage));
-      msxdosExplain(error, errorMessage);
+      msxdosExplainErrorCode(error, errorMessage);
       printf(errorMessage);
     }
   }
@@ -134,7 +134,7 @@ uint8_t main(const int argc, const unsigned char **argv) {
   if (result != 0) {
     const char errorMessage[100];
     memset(errorMessage, 0, sizeof(errorMessage));
-    msxdosExplain(result, errorMessage);
+    msxdosExplainErrorCode(result, errorMessage);
 
     printf("\r\nFailed %d: %s\r\n", result, errorMessage);
     return 255;

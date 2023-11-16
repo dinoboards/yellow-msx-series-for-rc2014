@@ -43,6 +43,7 @@
 #include "msxdos.h"
 #include "xymodem.h"
 #include <extbio.h>
+#include <msxbios.h>
 #include <system_vars.h>
 
 // Those won't change, so we won't waste memory and use global constants

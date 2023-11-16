@@ -1,9 +1,11 @@
 
 ./bin/cpusptst/main.c.asm: cpusptst/main.c
-./bin/dots.c.asm: dots.c config_request.h v9958.h libraries/msxdos/msxdos.h
+./bin/dots.c.asm: dots.c config_request.h v9958.h libraries/msxbios/msxbios.h \
+ libraries/msxdos/msxdos.h
 ./bin/extbio/main.c.asm: extbio/main.c libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
  xstdio.h libraries/msxbios/extbio.h
-./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxdos/msxdos.h
+./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxbios/msxbios.h \
+ libraries/msxdos/msxdos.h
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
  esp8266/esp8266.h print.h libraries/fossil/fossil.h \
  libraries/msx/libgen.h libraries/msxdos/msxdos.h \
@@ -32,7 +34,8 @@
  libraries/msxdos/partition.h libraries/msxdos/fat.h \
  libraries/fusion/io.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
-./bin/vramtest.c.asm: vramtest.c v9958.h libraries/msxdos/msxdos.h
+./bin/vramtest.c.asm: vramtest.c v9958.h libraries/msxbios/msxbios.h \
+ libraries/msxdos/msxdos.h
 ./bin/usbctrl/reporters.c.asm: usbctrl/reporters.c usbctrl/reporters.h \
  libraries/usb/protocol.h libraries/usb/ch376.h libraries/usb/ch376inc.h \
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
@@ -189,7 +192,8 @@
  libraries/usb/usb_trace.h libraries/usb/class_ufi.h
 ./bin/service/service.c.asm: service/service.c libraries/msxdos/msxdos.h
 ./bin/fdisk/screen_control.c.asm: fdisk/screen_control.c fdisk/screen_control.h \
- libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
+ libraries/msxdos/msxdos.h libraries/msxbios/msxbios.h \
+ libraries/msxbios/system_vars.h
 ./bin/fdisk/driver_selection.c.asm: fdisk/driver_selection.c fdisk/driver_selection.h \
  libraries/msxdos/msxdos.h fdisk/device_selection.h fdisk/key_inputs.h \
  fdisk/screen_control.h fdisk/string_helper.h fdisk/temp.h \
@@ -225,7 +229,7 @@
 ./bin/term/term.c.asm: term/term.c term/term.h libraries/fusion/msx_fusion.h \
  term/system-state.h term/ansi_codes.h term/ansiprint.h term/print.h \
  term/aofossilhelper.h term/arguments.h libraries/msxdos/msxdos.h \
- term/xymodem.h libraries/msxbios/extbio.h \
+ term/xymodem.h libraries/msxbios/extbio.h libraries/msxbios/msxbios.h \
  libraries/msxbios/system_vars.h
 ./bin/term/arguments.c.asm: term/arguments.c term/arguments.h term/system-state.h
 ./bin/term/aofossilhelper.c.asm: term/aofossilhelper.c term/aofossilhelper.h \
@@ -388,7 +392,8 @@
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h
 ./bin/siocfg/arguments.c.asm: siocfg/arguments.c siocfg/arguments.h
 ./bin/siocfg/siocfg.c.asm: siocfg/siocfg.c siocfg/arguments.h libraries/msxbios/extbio.h
-./bin/mbrot.c.asm: mbrot.c config_request.h libraries/msxdos/msxdos.h v9958.h
+./bin/mbrot.c.asm: mbrot.c config_request.h libraries/msxbios/msxbios.h \
+ libraries/msxdos/msxdos.h v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
 ./bin/config_request.c.asm: config_request.c v9958.h
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
@@ -461,19 +466,33 @@
 ./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_read_file.o: ./libraries/msxdos/msxdos_read_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_rejoin_parent_process.o: ./libraries/msxdos/msxdos_rejoin_parent_process.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_drv_dev_get_name.o: ./libraries/msxdos/msxdos_drv_dev_get_name.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxbios_break_x.o: ./libraries/msxdos/msxbios_break_x.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_gdrvr.o: ./libraries/msxdos/msxdos_gdrvr.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_dev_read.o: ./libraries/msxdos/msxdos_dev_read.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_time.o: ./libraries/msxdos/msxdos_get_time.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_gpart.o: ./libraries/msxdos/msxdos_gpart.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_dirio.o: ./libraries/msxdos/msxdos_dirio.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_find_environment.o: ./libraries/msxdos/msxdos_find_environment.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxbios_posit.o: ./libraries/msxdos/msxbios_posit.asm ./msx.inc
+./bin/libraries/msxdos/msxdos_callsub.o: ./libraries/msxdos/msxdos_callsub.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_terminate_with_error.o: ./libraries/msxdos/msxdos_terminate_with_error.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_write_file.o: ./libraries/msxdos/msxdos_write_file.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_dev_write.o: ./libraries/msxdos/msxdos_dev_write.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_drv_dev_logical_unit_count.o: ./libraries/msxdos/msxdos_drv_dev_logical_unit_count.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxbios_init_palette.o: ./libraries/msxdos/msxbios_init_palette.asm ./msx.inc
 ./bin/libraries/msxdos/msxdos_open_file.o: ./libraries/msxdos/msxdos_open_file.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_drv_lun_info.o: ./libraries/msxdos/msxdos_drv_lun_info.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_delete_file.o: ./libraries/msxdos/msxdos_delete_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_time.o: ./libraries/msxdos/msxdos_set_time.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_create_file.o: ./libraries/msxdos/msxdos_create_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_close_file.o: ./libraries/msxdos/msxdos_close_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_set_date.o: ./libraries/msxdos/msxdos_set_date.asm ./libraries/msxdos/msxdos.inc
+./bin/libraries/msxdos/msxdos_work_area.o: ./libraries/msxdos/msxdos_work_area.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/usb/ch376.o: ./libraries/usb/ch376.asm
 ./bin/libraries/sysload/sysload.o: ./libraries/sysload/sysload.asm ./msx.inc
+./bin/libraries/msxbios/msxbios_initxt.o: ./libraries/msxbios/msxbios_initxt.asm ./msx.inc
+./bin/libraries/msxbios/msxbios_init32.o: ./libraries/msxbios/msxbios_init32.asm ./msx.inc
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/sys/hello/body/crt.o: ./sys/hello/body/crt.asm
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc

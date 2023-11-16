@@ -1,6 +1,7 @@
 #include "config_request.h"
 #include "v9958.h"
 #include <conio.h>
+#include <msxbios.h>
 #include <msxdos.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +24,7 @@ RGB palette[16] = {
 
 void exit_cleanup(void) {
   msxbiosInitxt();
-  msxbiosInitPalette();
+  msxdbiosInitPalette();
 }
 
 void main(void) {

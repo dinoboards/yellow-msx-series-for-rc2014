@@ -148,7 +148,7 @@ void printDosErrorMessage(uint8_t code, char *header) {
   printCentered(header);
   newLine();
 
-  msxdosExplain(code, buffer);
+  msxdosExplainErrorCode(code, buffer);
   if (strlen(buffer) > currentScreenConfig.screenWidth) {
     printf(buffer);
   } else {

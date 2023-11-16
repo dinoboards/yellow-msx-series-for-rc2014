@@ -18,6 +18,7 @@ to see the file use external application ( graphic viewer)
 
 #include <conio.h>
 #include <math.h>
+#include <msxbios.h>
 #include <msxdos.h>
 #include <stdio.h>
 
@@ -54,7 +55,7 @@ uint8_t  iteration;
 
 void exit_cleanup(void) {
   msxbiosInitxt();
-  msxbiosInitPalette();
+  msxdbiosInitPalette();
 }
 
 void main(void) {

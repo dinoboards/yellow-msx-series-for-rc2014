@@ -1,4 +1,5 @@
 #include "screen_control.h"
+#include <msxbios.h>
 #include <stdio.h>
 #include <string.h>
 #include <system_vars.h>

@@ -139,7 +139,6 @@ extern uint8_t msxdosGpart(uint8_t    slotNumber,
                            uint8_t    extendedPartitionNumber,
                            bool       getSectorNumber,
                            GPartInfo *result);
-extern uint8_t msxdosExplain(uint8_t code, char *buffer);
 extern uint8_t msxdosDirio(uint8_t code) __z88dk_fastcall;
 
 extern uint16_t msxdosDrvDevLogicalUnitCount(uint8_t slotNumber, uint8_t deviceNumber, msxdosDeviceBasicInfo *pCount);
@@ -234,12 +233,10 @@ extern uint8_t  msxdosDeleteFile(const char *filename) __sdcccall(1);
 #define _IPART 0xB4
 
 // MSX BIOS functions
-extern void msxbiosInit32(void);
-extern void msxbiosInitxt(void);
 extern void _msxbiosPosit(uint16_t col_and_row) __z88dk_fastcall;
 #define msxbiosPosit(col, row) _msxbiosPosit(((uint16_t)(col)) * 256 + row)
 extern bool msxbiosBreakX(void);
-extern void msxbiosInitPalette(void);
+extern void msxdbiosInitPalette(void);
 
 /* MSX work area variables */
 
@@ -251,9 +248,6 @@ extern void msxbiosInitPalette(void);
 #define SCRMOD 0xFCAF
 #define EXPTBL 0xFCC1
 #define H_CHPH 0xFDA4
-
-extern uint8_t HOKVLD;
-extern uint8_t EXTBIO[5];
 
 #define RET_INSTRUCTION 0xC9
 

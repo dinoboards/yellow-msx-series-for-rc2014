@@ -1,4 +1,5 @@
 #include "v9958.h"
+#include <msxbios.h>
 #include <msxdos.h>
 #include <stdio.h>
 
@@ -10,7 +11,7 @@ uint8_t buffer3[BUFFER_SIZE];
 
 void setTextMode(void) {
   msxbiosInitxt();
-  msxbiosInitPalette();
+  msxdbiosInitPalette();
 }
 
 uint8_t conductTest(void) {
