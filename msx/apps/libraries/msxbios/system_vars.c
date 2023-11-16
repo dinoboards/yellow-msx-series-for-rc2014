@@ -76,3 +76,7 @@ uint16_t HIMEM_ADDR HIMEM;
 // called at start of interrupt subroutine, when it is clear that
 // the interrupt is from the VDP
 uint8_t H_TIMI_ADDR H_TIMI[5];
+
+uint8_t HOKVLD_ADDR HOKVLD;
+
+uint8_t EXTBIO_ADDR EXTBIO[5];

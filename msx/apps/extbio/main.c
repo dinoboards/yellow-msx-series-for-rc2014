@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <system_vars.h>
 
 bool hasRC2014;
 
@@ -59,27 +60,27 @@ void main(void) {
 
   const bool extendedBiosReady = HOKVLD & 1;
   if (!extendedBiosReady) {
-    xprintf("No bios extenstions installed\r\n");
+    printf("No bios extenstions installed\r\n");
     return;
   }
 
   const bool atLeastOneInstalled = EXTBIO[0] != RET_INSTRUCTION;
   if (!atLeastOneInstalled) {
-    xprintf("No bios extensions installed\r\n");
+    printf("No bios extensions installed\r\n");
     return;
   }
 
-  xprintf("\r\nInstalled Extended Bios Systems:\r\n");
-  xprintf("-----------------------------------\r\n");
+  printf("\r\nInstalled Extended Bios Systems:\r\n");
+  printf("-----------------------------------\r\n");
 
   const uint8_t slt = getSlotPage0(table);
 
-  xprintf("SLOT %02X for address %p\r\n", slt, table);
+  printf("SLOT %02X for address %p\r\n", slt, table);
 
   const uint8_t count = extbio_get_dev(table) - table;
 
   for (int i = 0; i < count; i++)
-    xprintf("%d: %s (%02X) (%02X)\r\n", i, extendedBiosName(table[i].deviceId), table[i].deviceId, table[i]._reserved);
+    printf("%d: %s (%02X) (%02X)\r\n", i, extendedBiosName(table[i].deviceId), table[i].deviceId, table[i]._reserved);
 
   const uint16_t reduced_mapper_table = 0;
   const uint8_t  number               = 0;
@@ -99,5 +100,5 @@ void main(void) {
   printf("    REDUCED TABLE @ %p\r\n", reduced_mapper_table);
   printf("    NUMBER OF ENTRIES %d\r\n", number);
 
-  xprintf("\r\n");
+  printf("\r\n");
 }

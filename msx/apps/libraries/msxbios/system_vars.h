@@ -24,6 +24,12 @@
 #define HIMEM_ADDR  __at(0xFC4A)
 #define H_TIMI_ADDR __at(0xFD9F)
 
+#define HOKVLD_ADDR __at(0xFB20)
+#define EXTBIO_ADDR __at(0xFFCA)
+
+extern uint8_t HOKVLD_ADDR HOKVLD;
+extern uint8_t EXTBIO_ADDR EXTBIO[5];
+
 // F417: switch indicating if hooked up printer is an MSX printer or not
 // values: 0: MSX-Printer, 1: no MSX-Printer
 // if the printer is no MSX-Printer, non-ASCII (>=128) characters are replaced
