@@ -3,3 +3,7 @@ _extbio
 _timi_next
 _timi
 _assigned_port_number
+_sio_buf
+_sio_data_count
+_sio_buf_head
+_sio_buf_tail

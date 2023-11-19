@@ -3,7 +3,7 @@
 ./bin/dots.c.asm: dots.c config_request.h v9958.h libraries/msxbios/msxbios.h \
  libraries/msxdos/msxdos.h
 ./bin/extbio/main.c.asm: extbio/main.c libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
- xstdio.h libraries/msxbios/extbio.h
+ xstdio.h libraries/msxbios/extbio.h libraries/msxbios/system_vars.h
 ./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxbios/msxbios.h \
  libraries/msxdos/msxdos.h
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
@@ -463,7 +463,6 @@
 ./bin/libraries/msxdos/msxdos_rename_file.o: ./libraries/msxdos/msxdos_rename_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_get_drive_letter_info.o: ./libraries/msxdos/msxdos_get_drive_letter_info.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_explain_error_code.o: ./libraries/msxdos/msxdos_explain_error_code.asm ./libraries/msxdos/msxdos.inc
-./bin/libraries/msxdos/msxdos.o: ./libraries/msxdos/msxdos.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_read_file.o: ./libraries/msxdos/msxdos_read_file.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_rejoin_parent_process.o: ./libraries/msxdos/msxdos_rejoin_parent_process.asm ./libraries/msxdos/msxdos.inc
 ./bin/libraries/msxdos/msxdos_drv_dev_get_name.o: ./libraries/msxdos/msxdos_drv_dev_get_name.asm ./libraries/msxdos/msxdos.inc
@@ -493,11 +492,18 @@
 ./bin/libraries/sysload/sysload.o: ./libraries/sysload/sysload.asm ./msx.inc
 ./bin/libraries/msxbios/msxbios_initxt.o: ./libraries/msxbios/msxbios_initxt.asm ./msx.inc
 ./bin/libraries/msxbios/msxbios_init32.o: ./libraries/msxbios/msxbios_init32.asm ./msx.inc
+./bin/libraries/msxbios/msxbios_soft_reset.o: ./libraries/msxbios/msxbios_soft_reset.asm ./msx.inc
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/sys/hello/body/crt.o: ./sys/hello/body/crt.asm
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
+./bin/sys/sio2/body/sio_out.o: ./sys/sio2/body/sio_out.asm ./msx.inc
+./bin/sys/sio2/body/sio_set_baud_rate.o: ./sys/sio2/body/sio_set_baud_rate.asm
 ./bin/sys/sio2/body/crt.o: ./sys/sio2/body/crt.asm
+./bin/sys/sio2/body/sio_in.o: ./sys/sio2/body/sio_in.asm ./msx.inc
+./bin/sys/sio2/body/data.o: ./sys/sio2/body/data.asm ./msx.inc
 ./bin/sys/sio2/body/sio2.o: ./sys/sio2/body/sio2.asm ./msx.inc
+./bin/sys/sio2/body/interrupt_handler.o: ./sys/sio2/body/interrupt_handler.asm ./msx.inc 
+./bin/sys/sio2/init/init.o: ./sys/sio2/init/init.asm ./msx.inc 
 ./bin/sys/sio2/init/probe.o: ./sys/sio2/init/probe.asm
 ./bin/sys/ftdi/body/crt.o: ./sys/ftdi/body/crt.asm
 ./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
