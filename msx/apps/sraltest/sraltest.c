@@ -117,6 +117,8 @@ uint8_t main(const int argc, const char *const argv[]) {
   buffer[0] = 'A';
   buffer[1] = 'B';
 
+  serial_set_baudrate(driver_id, 9600);
+
   while (true) {
     result = serial_write(driver_id, buffer, 2);
     printf("(%02X): serial_write_data %d\r\n", result, 2);
