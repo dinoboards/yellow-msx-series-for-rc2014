@@ -399,9 +399,9 @@
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
-./bin/ftditest/baud_rate_clock_calculator.c.asm: ftditest/baud_rate_clock_calculator.c \
- ftditest/baud_rate_clock_calculator.h
-./bin/ftditest/ftditest.c.asm: ftditest/ftditest.c ftditest/baud_rate_clock_calculator.h \
+./bin/sraltest/baud_rate_clock_calculator.c.asm: sraltest/baud_rate_clock_calculator.c \
+ sraltest/baud_rate_clock_calculator.h
+./bin/sraltest/sraltest.c.asm: sraltest/sraltest.c sraltest/baud_rate_clock_calculator.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h \
  libraries/extbio/serial.h libraries/msxdos/msxdos.h
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
@@ -502,8 +502,8 @@
 ./bin/sys/sio2/body/sio_in.o: ./sys/sio2/body/sio_in.asm ./msx.inc
 ./bin/sys/sio2/body/data.o: ./sys/sio2/body/data.asm ./msx.inc
 ./bin/sys/sio2/body/sio2.o: ./sys/sio2/body/sio2.asm ./msx.inc
-./bin/sys/sio2/body/interrupt_handler.o: ./sys/sio2/body/interrupt_handler.asm ./msx.inc 
-./bin/sys/sio2/init/init.o: ./sys/sio2/init/init.asm ./msx.inc 
+./bin/sys/sio2/body/interrupt_handler.o: ./sys/sio2/body/interrupt_handler.asm ./msx.inc
+./bin/sys/sio2/init/init.o: ./sys/sio2/init/init.asm ./msx.inc
 ./bin/sys/sio2/init/probe.o: ./sys/sio2/init/probe.asm
 ./bin/sys/ftdi/body/crt.o: ./sys/ftdi/body/crt.asm
 ./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
@@ -515,6 +515,6 @@
 ./bin/sys/prnt/body/prnt.o: ./sys/prnt/body/prnt.asm
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm
 ./bin/v9958.o: ./v9958.asm ./msx.inc
-./bin/romflash/flashloader.o: ./romflash/flashloader.asm 
-./bin/utils.o: ./utils.asm 
+./bin/romflash/flashloader.o: ./romflash/flashloader.asm
+./bin/utils.o: ./utils.asm
 ./bin/rs232.o: ./rs232.asm ./msx.inc

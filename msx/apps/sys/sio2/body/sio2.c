@@ -16,6 +16,25 @@ uint8_t _serial_get_driver_name(char *const driver_name) {
 
 uint8_t _serial_set_baudrate(const int32_t _baudrate) {
   baudrate = _baudrate;
+
+  switch(_baudrate) {
+    case 4800L:
+      sio_clock_divider =SIO_CLK_DIV_64;
+      break;
+
+    case 9600L:
+      sio_clock_divider =SIO_CLK_DIV_32;
+      break;
+
+    case 19200L:
+      sio_clock_divider =SIO_CLK_DIV_16;
+      break;
+
+    default:
+    return 255;
+  }
+
+  sio2_configure_port();
   return 0;
 }
 
