@@ -156,12 +156,12 @@ uint16_t main(const int argc, const char *argv[]) {
   const uint8_t flags           = sys_segment_head.sys[index]->flags;
 
   if (flags & REQUIRE_EXTBIO) {
-    *relocated(extbio_next)                       = (uint16_t)&sys_segment_head.original_extbio_hook;
+    *relocated(extbio_next)                       = (uint16_t)sys_segment_head.first_extbio_handler.address;
     sys_segment_head.first_extbio_handler.address = (sys_hook_fn)relocated(extbio);
   }
 
   if (flags & REQUIRE_TIMI) {
-    *relocated(timi_next)                       = (uint16_t)&sys_segment_head.original_timi_hook;
+    *relocated(timi_next)                       = (uint16_t)sys_segment_head.first_timi_handler.address;
     sys_segment_head.first_timi_handler.address = (sys_hook_fn)relocated(timi);
   }
 
