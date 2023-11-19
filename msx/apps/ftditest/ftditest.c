@@ -43,13 +43,47 @@ uint8_t read_data_chunk(uint8_t *const read_bytes) {
 //   return strtoul((char *)nptr, endptr, base);
 // }
 
+void list_serial_drivers(void) {
+  uint8_t port_count;
+  uint8_t result;
+  char    name[9];
+
+  port_count = 0;
+  result     = serial_get_available_ports(&port_count);
+  printf("(%02X): Port count: %d\r\n", result, port_count);
+
+  for (uint8_t i = 1; i <= port_count; i++) {
+    memset(name, 0, sizeof(name));
+    result = serial_get_driver_name(i, name);
+    printf("(%02X): Driver name (%d): '%s'\r\n", result, i, name);
+  }
+}
+
+uint8_t find_serial_driver(const char *driver_name) {
+  uint8_t port_count;
+  uint8_t result;
+  char    name[9];
+
+  port_count = 0;
+  result     = serial_get_available_ports(&port_count);
+
+  for (uint8_t i = 1; i <= port_count; i++) {
+    memset(name, 0, sizeof(name));
+    result = serial_get_driver_name(i, name);
+    if (strcmp(name, driver_name) == 0)
+      return i;
+  }
+
+  return 0;
+}
+
 uint8_t main(const int argc, const char *const argv[]) {
   (void)argc;
   (void)argv;
 
   uint8_t result;
-  uint8_t port_count;
-  char    name[9];
+  // uint8_t port_count;
+  // char    name[9];
   uint8_t buffer_size = BUF_SIZE;
   uint8_t buffer[BUF_SIZE];
   uint8_t id = 0;
@@ -72,91 +106,99 @@ uint8_t main(const int argc, const char *const argv[]) {
   // printf("Value: %04X\r\n", value);
   // printf("idx %04X,", idx);
 
-  port_count = 0;
-  result     = serial_get_available_ports(&port_count);
+  list_serial_drivers();
+  uint8_t driver_id = find_serial_driver("sio/2");
 
-  printf("(%02X): Port count: %d\r\n", result, port_count);
-  if (port_count < 1)
-    return 255;
+  printf("SIO/2 driver id: %d\r\n", driver_id);
 
-  memset(name, 0, sizeof(name));
-  result = serial_get_driver_name(port_count, name);
-  printf("(%02X): Driver name (1): '%s'\r\n", result, name);
+  if (driver_id == 0)
+    return 1;
 
-  if (strncmp(name, "ftdi", 4) != 0)
-    return 255;
+  buffer[0] = 'A';
+  buffer[1] = 'B';
 
-  result = serial_set_baudrate(1, 2400);
-  printf("(%02X): Set baudrate: %ld\r\n", result, 2400L);
-
-  // result = serial_set_flowctrl(1, SERIAL_FLOW_CTRL_RTS_CTS);
-  // printf("(%02X): Set flow control: %04X\r\n", result, SERIAL_FLOW_CTRL_RTS_CTS);
-
-  result = serial_set_protocol(1, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
-  printf("(%02X): Set protocol %04X\r\n", result, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
-
-  result = serial_purge_buffers(1);
-  printf("(%02X): Purge buffers\r\n", result);
-
-  uint8_t i = 0;
   while (true) {
-    if (msxbiosBreakX())
-      return 0;
+    result = serial_write(driver_id, buffer, 2);
+    printf("(%02X): serial_write_data %d\r\n", result, 2);
 
-    for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
-      buffer[buf_index] = id++;
-
-    result = serial_write(1, buffer, BUF_SIZE);
-    printf("(%02X): serial_write_data %d\r\n", result, BUF_SIZE);
-    if (result)
-      return result;
-
-    // result = serial_set_dtr_rts(1, SERIAL_SET_DTR_HIGH);
-    // printf("(%02X): Set DTR high\r\n", result);
-
-    // result = serial_set_dtr_rts(1, SERIAL_SET_DTR_LOW);
-    // printf("(%02X): Set DTR low\r\n", result);
-
-    // result = serial_set_dtr_rts(1, SERIAL_SET_RTS_HIGH);
-    // printf("(%02X): Set RTS high\r\n", result);
-
-    // result = serial_set_dtr_rts(1, SERIAL_SET_RTS_LOW);
-    // printf("(%02X): Set RTS low\r\n", result);
-
-    uint8_t  read_count;
-    uint8_t  total_read = 0;
-    uint16_t count      = 0;
-
-    int16_t timeout = get_future_time(from_ms(5000));
-    while (total_read < BUF_SIZE && !is_time_past(timeout)) {
+    int16_t x = get_future_time(from_ms(500));
+    while (!is_time_past(x)) {
       if (msxbiosBreakX())
         return 0;
-
-      result = read_data_chunk(&read_count);
-      total_read += read_count;
-      count++;
-      if (result)
-        return result;
     }
-
-    // if (total_read != BUF_SIZE) {
-    printf("\r\nserial_read returned %d bytes in %d chunks.  Expect %d bytes\r\n", total_read, count, BUF_SIZE);
-    // continue;
-    // }
-
-    printf("\r\n");
-    // do {
-    //   if (msxbiosBreakX())
-    //     return 0;
-
-    //   result = read_data_chunk(&read_count);
-    //   if (result)
-    //     return result;
-
-    //   if (read_count != 0)
-    //     printf("\r\nserial_read returned %d bytes.  Expected 0 bytes\r\n", read_count);
-    // } while (read_count != 0);
   }
+
+  // result = serial_set_baudrate(1, 2400);
+  // printf("(%02X): Set baudrate: %ld\r\n", result, 2400L);
+
+  // // result = serial_set_flowctrl(1, SERIAL_FLOW_CTRL_RTS_CTS);
+  // // printf("(%02X): Set flow control: %04X\r\n", result, SERIAL_FLOW_CTRL_RTS_CTS);
+
+  // result = serial_set_protocol(1, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
+  // printf("(%02X): Set protocol %04X\r\n", result, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
+
+  // result = serial_purge_buffers(1);
+  // printf("(%02X): Purge buffers\r\n", result);
+
+  // uint8_t i = 0;
+  // while (true) {
+  //   if (msxbiosBreakX())
+  //     return 0;
+
+  //   for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
+  //     buffer[buf_index] = id++;
+
+  //   result = serial_write(1, buffer, BUF_SIZE);
+  //   printf("(%02X): serial_write_data %d\r\n", result, BUF_SIZE);
+  //   if (result)
+  //     return result;
+
+  //   // result = serial_set_dtr_rts(1, SERIAL_SET_DTR_HIGH);
+  //   // printf("(%02X): Set DTR high\r\n", result);
+
+  //   // result = serial_set_dtr_rts(1, SERIAL_SET_DTR_LOW);
+  //   // printf("(%02X): Set DTR low\r\n", result);
+
+  //   // result = serial_set_dtr_rts(1, SERIAL_SET_RTS_HIGH);
+  //   // printf("(%02X): Set RTS high\r\n", result);
+
+  //   // result = serial_set_dtr_rts(1, SERIAL_SET_RTS_LOW);
+  //   // printf("(%02X): Set RTS low\r\n", result);
+
+  //   uint8_t  read_count;
+  //   uint8_t  total_read = 0;
+  //   uint16_t count      = 0;
+
+  //   int16_t timeout = get_future_time(from_ms(5000));
+  //   while (total_read < BUF_SIZE && !is_time_past(timeout)) {
+  //     if (msxbiosBreakX())
+  //       return 0;
+
+  //     result = read_data_chunk(&read_count);
+  //     total_read += read_count;
+  //     count++;
+  //     if (result)
+  //       return result;
+  //   }
+
+  //   // if (total_read != BUF_SIZE) {
+  //   printf("\r\nserial_read returned %d bytes in %d chunks.  Expect %d bytes\r\n", total_read, count, BUF_SIZE);
+  //   // continue;
+  //   // }
+
+  //   printf("\r\n");
+  //   // do {
+  //   //   if (msxbiosBreakX())
+  //   //     return 0;
+
+  //   //   result = read_data_chunk(&read_count);
+  //   //   if (result)
+  //   //     return result;
+
+  //   //   if (read_count != 0)
+  //   //     printf("\r\nserial_read returned %d bytes.  Expected 0 bytes\r\n", read_count);
+  //   // } while (read_count != 0);
+  // }
 }
 
 // printf("todo\r\n");
