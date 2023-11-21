@@ -115,4 +115,6 @@ extern uint8_t serial_set_flowctrl(const uint8_t port_number, const int8_t flowc
 
 extern uint8_t serial_set_dtr_rts(const uint8_t port_number, const int16_t dtr_rts_flags);
 
+extern uint8_t serial_get_diagnostics(const uint8_t port_number, void *p);
+
 #endif

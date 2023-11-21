@@ -11,12 +11,11 @@ extern uint8_t  sio_data_count;
 extern uint8_t  sio_buf[SIO_BUFSZ];
 extern uint8_t *sio_buf_head;
 extern uint8_t *sio_buf_tail;
-extern uint8_t sio_clock_divider;
+extern uint8_t  sio_clock_divider;
 
 #define SIO_CLK_DIV_64 0b11000000
 #define SIO_CLK_DIV_32 0b10000000
 #define SIO_CLK_DIV_16 0b01000000
-
 
 /**
  * @brief probes and identify presence of SIO/2 chip
@@ -29,5 +28,12 @@ extern void sio2_chip_init(void);
 
 extern void sio2_configure_port(void);
 
+typedef struct {
+  uint8_t *sio_buf;
+  uint8_t *sio_buf_head;
+  uint8_t *sio_buf_tail;
+  uint8_t  sio_data_count;
+  uint8_t  ch;
+} sio_diagnostic_t;
 
 #endif
