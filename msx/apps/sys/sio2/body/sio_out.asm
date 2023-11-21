@@ -6,8 +6,7 @@
 	PUBLIC	_sio_out
 
 _sio_out:
-	LD	C, RC_SIOB_CMD			; C => CMD, B => DAT PORTS
-	LD	B, RC_SIOB_DAT
+	LD	BC, RC_SIOB_DAT << 8 | RC_SIOB_CMD			; C => CMD, B => DAT PORTS
 	XOR	A				; SELECT READ REGISTER 0
 	DI
 	OUT	(C), A

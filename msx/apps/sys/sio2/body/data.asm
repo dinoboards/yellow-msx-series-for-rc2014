@@ -12,14 +12,15 @@ _sio_buf_tail:		DW	_sio_buf	; BUFFER TAIL POINTER
 
 	SECTION	DATA
 
-	PUBLIC	RS_FLAGS, _sio_clock_divider
+	PUBLIC	_sio_flags, _sio_clock_divider
 
 _sio_data_count:	DB	0		; RECEIVE DATA COUNT
-; RS_SIO_A_CMD:	DB	0
-; RS_SIO_B_CMD:	DB	0
-; RS_SIO_CLK_DIV:	DB 	0
-RS_FLAGS:	DB	0
-
+_sio_flags:		DB	0
 _sio_clock_divider:	DB	SIO_CLK_DIV_64
 
+; _sio_flags
+; | BIT |   SET   |   RES   |
+; |-----|---------|---------|
+; |  0  | NOT USED          |
+; |  1  | RTS ON | RTS OFF  |
 

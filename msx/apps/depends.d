@@ -396,14 +396,15 @@
  libraries/msxdos/msxdos.h v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
 ./bin/config_request.c.asm: config_request.c v9958.h
-./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
- libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h
 ./bin/sraltest/baud_rate_clock_calculator.c.asm: sraltest/baud_rate_clock_calculator.c \
  sraltest/baud_rate_clock_calculator.h
 ./bin/sraltest/sraltest.c.asm: sraltest/sraltest.c sraltest/baud_rate_clock_calculator.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h \
- libraries/extbio/serial.h libraries/msxdos/msxdos.h
+ libraries/extbio/serial.h libraries/msxdos/msxdos.h \
+ sraltest/../sys/sio2/sio2.h
+./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
+ libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
@@ -446,6 +447,7 @@
 ./bin/libraries/extbio/extbio_serial_get_available_ports.o: ./libraries/extbio/extbio_serial_get_available_ports.asm ./msx.inc
 ./bin/libraries/extbio/extbio_rc2014_get_version.o: ./libraries/extbio/extbio_rc2014_get_version.asm ./msx.inc
 ./bin/libraries/extbio/debug_break.o: ./libraries/extbio/debug_break.asm ./msx.inc
+./bin/libraries/extbio/extbio_serial_get_diagnostics.o: ./libraries/extbio/extbio_serial_get_diagnostics.asm ./msx.inc
 ./bin/libraries/extbio/extbio_sio_get_clock.o: ./libraries/extbio/extbio_sio_get_clock.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_read_data.o: ./libraries/extbio/extbio_usb_ftdi_read_data.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_purge_buffers.o: ./libraries/extbio/extbio_serial_purge_buffers.asm ./msx.inc
@@ -500,10 +502,11 @@
 ./bin/sys/sio2/body/sio_set_baud_rate.o: ./sys/sio2/body/sio_set_baud_rate.asm
 ./bin/sys/sio2/body/crt.o: ./sys/sio2/body/crt.asm
 ./bin/sys/sio2/body/sio_in.o: ./sys/sio2/body/sio_in.asm ./msx.inc
-./bin/sys/sio2/body/data.o: ./sys/sio2/body/data.asm ./msx.inc
+./bin/sys/sio2/body/data.o: ./sys/sio2/body/data.asm ./msx.inc 
 ./bin/sys/sio2/body/sio2.o: ./sys/sio2/body/sio2.asm ./msx.inc
-./bin/sys/sio2/body/interrupt_handler.o: ./sys/sio2/body/interrupt_handler.asm ./msx.inc
-./bin/sys/sio2/init/init.o: ./sys/sio2/init/init.asm ./msx.inc
+./bin/sys/sio2/body/sio_configure.o: ./sys/sio2/body/sio_configure.asm ./msx.inc 
+./bin/sys/sio2/body/interrupt_handler.o: ./sys/sio2/body/interrupt_handler.asm ./msx.inc 
+./bin/sys/sio2/init/init.o: ./sys/sio2/init/init.asm ./msx.inc 
 ./bin/sys/sio2/init/probe.o: ./sys/sio2/init/probe.asm
 ./bin/sys/ftdi/body/crt.o: ./sys/ftdi/body/crt.asm
 ./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
@@ -515,6 +518,6 @@
 ./bin/sys/prnt/body/prnt.o: ./sys/prnt/body/prnt.asm
 ./bin/rtccalb/mesaure.o: ./rtccalb/mesaure.asm
 ./bin/v9958.o: ./v9958.asm ./msx.inc
-./bin/romflash/flashloader.o: ./romflash/flashloader.asm
-./bin/utils.o: ./utils.asm
+./bin/romflash/flashloader.o: ./romflash/flashloader.asm 
+./bin/utils.o: ./utils.asm 
 ./bin/rs232.o: ./rs232.asm ./msx.inc

@@ -17,20 +17,20 @@ uint8_t _serial_get_driver_name(char *const driver_name) {
 uint8_t _serial_set_baudrate(const int32_t _baudrate) {
   baudrate = _baudrate;
 
-  switch(_baudrate) {
-    case 4800L:
-      sio_clock_divider =SIO_CLK_DIV_64;
-      break;
+  switch (_baudrate) {
+  case 4800L:
+    sio_clock_divider = SIO_CLK_DIV_64;
+    break;
 
-    case 9600L:
-      sio_clock_divider =SIO_CLK_DIV_32;
-      break;
+  case 9600L:
+    sio_clock_divider = SIO_CLK_DIV_32;
+    break;
 
-    case 19200L:
-      sio_clock_divider =SIO_CLK_DIV_16;
-      break;
+  case 19200L:
+    sio_clock_divider = SIO_CLK_DIV_16;
+    break;
 
-    default:
+  default:
     return 255;
   }
 
@@ -61,14 +61,23 @@ uint8_t _serial_read(uint8_t *buf, uint16_t *size) {
     remaining--;
   }
 
+  *size = *size - remaining;
+
   return 0;
 }
 
-uint8_t _serial_demand_read(uint8_t *const buf, uint16_t *size, const uint16_t timeout_ms) {
-  buf;
-  size;
+uint8_t _serial_demand_read(uint8_t *buf, uint16_t *size, const uint16_t timeout_ms) {
   timeout_ms;
-  return 1;
+  uint16_t remaining = *size;
+
+  while (remaining > 0 && sio_data_count > 0) {
+    *buf++ = sio_in();
+    remaining--;
+  }
+
+  *size = *size - remaining;
+
+  return 0;
 }
 
 uint8_t _serial_write(const uint8_t *buf, uint8_t size) {
@@ -83,6 +92,18 @@ uint8_t _serial_purge_buffers(void) {
 
   sio_buf_head = sio_buf_tail = sio_buf;
   sio_data_count              = 0;
+
+  return 0;
+}
+
+uint8_t _serial_get_diagnostics(void *p) {
+  sio_diagnostic_t *t = (sio_diagnostic_t *)p;
+
+  t->sio_buf        = sio_buf;
+  t->sio_buf_head   = sio_buf_head;
+  t->sio_buf_tail   = sio_buf_tail;
+  t->sio_data_count = sio_data_count;
+  t->ch             = *sio_buf_tail;
 
   return 0;
 }
