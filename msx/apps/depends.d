@@ -450,6 +450,7 @@
 ./bin/libraries/extbio/extbio_serial_get_diagnostics.o: ./libraries/extbio/extbio_serial_get_diagnostics.asm ./msx.inc
 ./bin/libraries/extbio/extbio_sio_get_clock.o: ./libraries/extbio/extbio_sio_get_clock.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_read_data.o: ./libraries/extbio/extbio_usb_ftdi_read_data.asm ./msx.inc
+./bin/libraries/extbio/extbio_serial_get_rx_buffer_size.o: ./libraries/extbio/extbio_serial_get_rx_buffer_size.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_purge_buffers.o: ./libraries/extbio/extbio_serial_purge_buffers.asm ./msx.inc
 ./bin/libraries/extbio/extbio_extbio_get_dev.o: ./libraries/extbio/extbio_extbio_get_dev.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_ftdi_set_baudrate.o: ./libraries/extbio/extbio_usb_ftdi_set_baudrate.asm ./msx.inc
