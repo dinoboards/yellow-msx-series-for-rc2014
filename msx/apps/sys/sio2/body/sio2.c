@@ -88,6 +88,8 @@ uint8_t _serial_write(const uint8_t *buf, uint8_t size) {
   return 0;
 }
 
+uint16_t _serial_get_rx_buffer_size(void) { return sio_data_count; }
+
 uint8_t _serial_purge_buffers(void) {
 
   sio_buf_head = sio_buf_tail = sio_buf;

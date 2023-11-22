@@ -23,6 +23,8 @@ uint8_t read_data_chunk(uint8_t *const read_bytes) {
 
   memset(buffer, 0, sizeof(buffer));
 
+  uint16_t pending_bytes = serial_get_rx_buffer_size(driver_id);
+
   result      = serial_demand_read(driver_id, buffer, &buffer_size, 1000);
   *read_bytes = buffer_size;
 
@@ -31,8 +33,12 @@ uint8_t read_data_chunk(uint8_t *const read_bytes) {
     return result;
   }
 
+  printf("%d bytes: ", pending_bytes);
+
   for (uint8_t i = 0; i < buffer_size; i++)
     printf("%02X  ", buffer[i]);
+
+  printf("\r\n");
 
   return 0;
 }
@@ -117,42 +123,15 @@ uint8_t main(const int argc, const char *const argv[]) {
     if (result)
       return result;
 
-    uint8_t  read_count;
-    uint8_t  total_read = 0;
-    uint16_t count      = 0;
+    uint8_t read_count;
 
-    int16_t timeout = get_future_time(from_ms(5000));
-    while (total_read < BUF_SIZE && !is_time_past(timeout)) {
-      if (msxbiosBreakX())
-        return 0;
+    result = read_data_chunk(&read_count);
 
-      // result = serial_get_diagnostics(driver_id, &d);
-      // printf("sio_buf %04X, ", d.sio_buf);
-      // printf("sio_buf_head %04X, ", d.sio_buf_head);
-      // printf("sio_buf_tail %04X, ", d.sio_buf_tail);
-      // printf("sio_data_count %02X, ", d.sio_data_count);
-      // printf("ch %02X\r\n", d.ch);
-
-      // const uint16_t mask = ((uint16_t)d.sio_buf_tail) & 0xFF00;
-
-      //   for(uint8_t i = 0; i < 16; i++) {
-      //     uint16_t x = mask | ((uint16_t)&d.sio_buf_tail[i]) & 0xFF;
-      //     uint8_t *y = (uint8_t*)x;
-      //     printf("%04X=%02X ", y, *y);
-      //   }
-
-      result = read_data_chunk(&read_count);
-      total_read += read_count;
-      count++;
-      if (result)
-        return result;
-    }
-
-    printf("\r\nserial_read returned %d bytes in %d chunks.  Expect %d bytes\r\n", total_read, count, BUF_SIZE);
+    printf("serial_read returned %d bytes.  Expect %d bytes\r\n", read_count, BUF_SIZE);
 
     printf("\r\n");
 
-    timeout = get_future_time(from_ms(2000));
+    const int16_t timeout = get_future_time(from_ms(2000));
     while (!is_time_past(timeout)) {
       if (msxbiosBreakX())
         return 0;

@@ -117,4 +117,12 @@ extern uint8_t serial_set_dtr_rts(const uint8_t port_number, const int16_t dtr_r
 
 extern uint8_t serial_get_diagnostics(const uint8_t port_number, void *p);
 
+/**
+ * @brief returns the number of bytes available in the RX buffer than can be read
+ *
+ * @param port_number
+ * @return uint16_t
+ */
+extern uint16_t serial_get_rx_buffer_size(const uint8_t port_number) __z88dk_fastcall;
+
 #endif
