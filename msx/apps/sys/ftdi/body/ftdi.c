@@ -43,3 +43,10 @@ uint8_t _serial_purge_buffers(void) {
 
   return ftdi_purge_rx_buffer(&_ftdi_config);
 }
+
+uint16_t _serial_get_rx_buffer_size(void) { return 0; }
+
+uint8_t _serial_get_diagnostics(void *p) {
+  p;
+  return 0xFF;
+}
