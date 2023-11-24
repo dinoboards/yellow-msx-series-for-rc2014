@@ -426,6 +426,7 @@
 ./bin/libraries/extbio/extbio_usb_get_present.o: ./libraries/extbio/extbio_usb_get_present.asm ./msx.inc
 ./bin/libraries/extbio/unapi_get_ram_helper.o: ./libraries/extbio/unapi_get_ram_helper.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_set_baudrate.o: ./libraries/extbio/extbio_serial_set_baudrate.asm ./msx.inc
+./bin/libraries/extbio/extbio_usb_ftdi_poll_modem_status.o: ./libraries/extbio/extbio_usb_ftdi_poll_modem_status.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_write.o: ./libraries/extbio/extbio_serial_write.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_set_dtr_rts.o: ./libraries/extbio/extbio_serial_set_dtr_rts.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_out_transfer.o: ./libraries/extbio/extbio_usb_data_out_transfer.asm ./msx.inc

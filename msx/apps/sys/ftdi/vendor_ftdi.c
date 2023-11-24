@@ -105,26 +105,21 @@ usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t
 usb_error __ftdi_read_packet(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *const size) __sdcccall(1) {
   usb_error result;
 
-  if (ftdi->hold_size > 0) {
-    memcpy(buf, &ftdi->hold.data, ftdi->hold_size);
-    *size           = ftdi->hold_size;
-    ftdi->hold_size = 0;
-    return USB_ERR_OK;
-  }
-
   if (*size > 62)
     return USB_ERR_BUFF_TO_LARGE;
 
-  CHECK(usbdev_bulk_in_transfer((device_config *)ftdi, ftdi->hold.status, &ftdi->hold_size));
+  if (ftdi->hold_size == 0) {
+    CHECK(usbdev_bulk_in_transfer((device_config *)ftdi, ftdi->hold.status, &ftdi->hold_size));
 
-  // ignore the first 2 status bytes
-  if (ftdi->hold_size <= 2) {
-    *size           = 0;
-    ftdi->hold_size = 0;
-    return USB_ERR_OK;
+    // ignore the first 2 status bytes
+    if (ftdi->hold_size <= 2) {
+      *size           = 0;
+      ftdi->hold_size = 0;
+      return USB_ERR_OK;
+    }
+
+    ftdi->hold_size -= 2;
   }
-
-  ftdi->hold_size -= 2;
 
   if (*size > ftdi->hold_size) {
     memcpy(buf, ftdi->hold.data, ftdi->hold_size);
@@ -272,4 +267,32 @@ usb_error ftdi_set_dtr_rts(device_config_ftdi *const ftdi, const uint16_t dtr_rt
   cmd.bValue[1]     = dtr_rts_flags >> 8;
 
   return usbdev_control_transfer((device_config *)ftdi, &cmd, NULL);
+}
+
+usb_error ftdi_poll_modem_status(device_config_ftdi *const ftdi, uint16_t *const status) {
+  setup_packet cmd;
+  memset(&cmd, 0, sizeof(setup_packet));
+  cmd.bmRequestType = FTDI_DEVICE_IN_REQTYPE;
+  cmd.bRequest      = SIO_POLL_MODEM_STATUS_REQUEST;
+  cmd.wLength       = 2;
+
+  return usbdev_control_transfer((device_config *)ftdi, &cmd, status);
+}
+
+uint8_t ftdi_get_rx_buffer_size(device_config_ftdi *const ftdi) __sdcccall(1) {
+  if (ftdi->hold_size > 0)
+    return ftdi->hold_size;
+
+  if (usbdev_bulk_in_transfer((device_config *)ftdi, ftdi->hold.status, &ftdi->hold_size) != 0)
+    return 0;
+
+  // ignore the first 2 status bytes
+  if (ftdi->hold_size <= 2) {
+    ftdi->hold_size = 0;
+    return 0;
+  }
+
+  ftdi->hold_size -= 2;
+
+  return ftdi->hold_size;
 }

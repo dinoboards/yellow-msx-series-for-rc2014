@@ -98,6 +98,10 @@ usb_error command_ftdi_check(const uint8_t last_device_address) __sdcccall(1) {
       break;
     }
 
+    uint16_t status = 0;
+    result          = ftdi_poll_modem_status(&ftdi_config, &status);
+    printf("ftdi_poll_modem_status: %04X\r\n", result);
+
     printf("ftdi_read_data: \r\n");
     uint8_t  read_count;
     uint8_t  total_read = 0;
