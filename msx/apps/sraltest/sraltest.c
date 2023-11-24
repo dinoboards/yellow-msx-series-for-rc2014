@@ -12,7 +12,7 @@
 
 uint32_t wanted_baud_rates[] = {300, 1200, 2400, 4800, 9600, 19200, 38400, 56700, 115200, 230400, 460800, 921600};
 
-#define BUF_SIZE 8
+#define BUF_SIZE 64
 
 uint8_t driver_id = 0;
 
@@ -33,12 +33,15 @@ uint8_t read_data_chunk(uint8_t *const read_bytes) {
     return result;
   }
 
-  printf("%d bytes: ", pending_bytes);
+  printf("%04X bytes: ", pending_bytes);
 
   for (uint8_t i = 0; i < buffer_size; i++)
     printf("%02X  ", buffer[i]);
 
   printf("\r\n");
+
+  pending_bytes = serial_get_rx_buffer_size(driver_id);
+  printf("Status: %04X\r\n", pending_bytes);
 
   return 0;
 }
@@ -90,15 +93,20 @@ uint8_t main(const int argc, const char *const argv[]) {
   uint8_t id = 0;
 
   list_serial_drivers();
-  driver_id = find_serial_driver("sio/2");
 
-  printf("SIO/2 driver id: %d\r\n", driver_id);
+  if (argc != 2) {
+    printf("Usage: sraltest <driver name>\r\n");
+    return 1;
+  }
+
+  driver_id = find_serial_driver(argv[1]);
+
+  printf("%s driver id: %d\r\n", argv[1], driver_id);
 
   if (driver_id == 0)
     return 1;
 
   result = serial_set_baudrate(driver_id, 4800);
-  ;
   printf("(%02X): Set baudrate: %ld\r\n", result, 4800L);
 
   // result = serial_set_flowctrl(1, SERIAL_FLOW_CTRL_RTS_CTS);
@@ -117,6 +125,9 @@ uint8_t main(const int argc, const char *const argv[]) {
 
     for (uint8_t buf_index = 0; buf_index < BUF_SIZE; buf_index++)
       buffer[buf_index] = id++;
+
+    uint16_t pending_bytes = serial_get_rx_buffer_size(driver_id);
+    printf("Status: %04X\r\n", pending_bytes);
 
     result = serial_write(driver_id, buffer, BUF_SIZE);
     printf("(%02X): serial_write_data %d\r\n", result, BUF_SIZE);

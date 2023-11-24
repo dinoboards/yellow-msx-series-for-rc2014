@@ -103,4 +103,8 @@ extern usb_error ftdi_purge_rx_buffer(device_config_ftdi *const ftdi);
 extern usb_error ftdi_set_flowctrl(device_config_ftdi *const ftdi, uint8_t flowctrl);
 extern usb_error ftdi_set_dtr_rts(device_config_ftdi *const ftdi, const uint16_t dtr_rts_flags);
 
+extern usb_error ftdi_poll_modem_status(device_config_ftdi *const ftdi, uint16_t *const status);
+
+extern uint8_t ftdi_get_rx_buffer_size(device_config_ftdi *const ftdi) __sdcccall(1);
+
 #endif
