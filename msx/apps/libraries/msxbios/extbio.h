@@ -24,11 +24,16 @@ typedef struct {
 } rs232_extbio_info;
 
 typedef struct {
-  uint8_t slot_id;
-  void   *jump_table;
-  uint8_t number_of_free_segments;
-  uint8_t number_of_segments;
-  uint8_t reserved[3];
+  uint8_t  call_opcode;
+  uint16_t address;
+} jump_table_entry;
+
+typedef struct {
+  uint8_t           slot_id;
+  jump_table_entry *jump_table;
+  uint8_t           number_of_free_segments;
+  uint8_t           number_of_segments;
+  uint8_t           reserved[3];
 } memmap_extbio_info;
 
 typedef struct {
@@ -38,11 +43,6 @@ typedef struct {
 
 extern void                 extbio_get_dev_info_table(uint8_t device_id, void *info_table);
 extern extbio_device_table *extbio_get_dev(extbio_device_table *table) __z88dk_fastcall;
-
-typedef struct {
-  uint8_t  call_opcode;
-  uint16_t address;
-} jump_table_entry;
 
 // UNAPI
 extern jump_table_entry *unapi_get_ram_helper(void *reduced_mapper_table, uint8_t *number_of_entries) __sdcccall(1);
@@ -75,7 +75,7 @@ extern uint16_t rs232_getchr(void);
 extern uint16_t rs232_loc(void);
 
 // memory mapper
-extern void memmap_link(memmap_extbio_info *p) __z88dk_fastcall;
+extern void memmap_link(jump_table_entry *p) __z88dk_fastcall;
 
 #define MEMMAP_USER     0
 #define MEMMAP_SYSTEM   1

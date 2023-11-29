@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2)) $(addsuffix .com,$(addprefix $(BIN),fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon xrecv2 rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2)) $(addsuffix .com,$(addprefix $(BIN),fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -33,11 +33,11 @@ CONFIG_REQUEST_LIB := $(addprefix $(BIN),config_request.c.lib)
 SYSTEM_VARS_LIB := $(addprefix $(BIN)libraries/msxbios/,system_vars.c.lib)
 MSXBIOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxbios/*.asm)))
 MSXDOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxdos/*.asm))) $(MSXBIOS_LIB)
-EXTBIO_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/extbio/*.asm)))
+EXTBIO_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/extbio/*.asm))) $(addprefix $(BIN),$(patsubst %.c,%.c.lib,$(wildcard libraries/extbio/*.c)))
 EXTBIO_USB_LIB :=  $(addprefix $(BIN)libraries/extbio/,extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer_n.lib extbio_usb_data_in_transfer.lib)
 FOSSIL_LIB := $(addprefix $(BIN)libraries/fossil/,fossil.lib fossil.c.lib)
 DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
-XMODEM_LIB :=  $(addprefix $(BIN)libraries/xmodem/,xmodem.c.lib crc16.c.lib serial.c.lib utils.c.lib)
+XMODEM_LIB :=  $(addprefix $(BIN)libraries/xmodem/,xmodem.c.lib crc16.c.lib utils.c.lib)
 
 USB_KERNEL_LIB := $(addprefix $(BIN)libraries/usb/,ch376.lib usb_state.c.lib ch376.c.lib transfers.c.lib dev_transfers.c.lib enumerate_storage.c.lib enumerate.c.lib enumerate_hub.c.lib)
 USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib find_device.c.lib)
@@ -83,7 +83,7 @@ memory_files = $(call app_file,memory)
 $(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 memory.com.crt_enable_commandline:=1
 
-helloworld_files = $(call app_file,helloworld)
+helloworld_files = ./helloworld.c.o
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
@@ -134,7 +134,7 @@ fossilon_files = $(call app_file,fossilon)
 $(BIN)fossilon.com: $(addprefix $(BIN),$(fossilon_files)) $(EXTBIO_LIB) $(GETSLT_LIB)
 
 term_files = $(call app_files,term,memmap-override.asm)
-$(BIN)term.com: $(addprefix $(BIN),$(term_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB)
+$(BIN)term.com: $(addprefix $(BIN),$(term_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB)
 term.com.crt_enable_commandline:=1
 
 xrecv2_files = $(call app_files,xrecv2,memmap-override.asm print.c)
@@ -145,8 +145,8 @@ rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c)
 $(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files)) $(MSXDOS_LIB)
 rtccalb.com.crt_enable_commandline:=1
 
-esp8266_files = $(call app_file,esp8266)
-$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(FOSSIL_LIB) $(EXTBIO_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
+esp8266_files = $(call app_files,esp8266,memmap-override.asm)
+$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(EXTBIO_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
 esp8266.com.crt_enable_commandline:=1
 
 siocfg_files = $(call app_files,siocfg,memmap-override.asm)

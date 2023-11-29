@@ -1,3 +1,6 @@
 
 	SECTION BSS
-	org 0xA000
+
+	IF $ < 0x8000
+	ORG 0x8000
+	ENDIF

@@ -106,57 +106,57 @@ uint8_t arg_baud_rate(const uint8_t i, const char **argv) {
 
 process_baud_rate:
   if (strcmp(arg_value, "75") == 0) {
-    baud_rate = 0;
+    baud_rate = 75;
     return i + 1;
   }
 
   if (strcmp(arg_value, "300") == 0) {
-    baud_rate = 1 * 256 + 1;
+    baud_rate = 300;
     return i + 1;
   }
 
   if (strcmp(arg_value, "600") == 0) {
-    baud_rate = 2 * 256 + 2;
+    baud_rate = 600;
     return i + 1;
   }
 
   if (strcmp(arg_value, "1200") == 0) {
-    baud_rate = 3 * 256 + 3;
+    baud_rate = 1200;
     return i + 1;
   }
 
   if (strcmp(arg_value, "2400") == 0) {
-    baud_rate = 4 * 256 + 4;
+    baud_rate = 2400;
     return i + 1;
   }
 
   if (strcmp(arg_value, "4800") == 0) {
-    baud_rate = 5 * 256 + 5;
+    baud_rate = 4800;
     return i + 1;
   }
 
   if (strcmp(arg_value, "9600") == 0) {
-    baud_rate = 6 * 256 + 6;
+    baud_rate = 9600;
     return i + 1;
   }
 
   if (strcmp(arg_value, "19200") == 0) {
-    baud_rate = 7 * 256 + 7;
+    baud_rate = 19200;
     return i + 1;
   }
 
   if (strcmp(arg_value, "38400") == 0) {
-    baud_rate = 8 * 256 + 8;
+    baud_rate = 38400;
     return i + 1;
   }
 
   if (strcmp(arg_value, "57600") == 0) {
-    baud_rate = 9 * 256 + 9;
+    baud_rate = 57600;
     return i + 1;
   }
 
   if (strcmp(arg_value, "115200") == 0) {
-    baud_rate = 11 * 256 + 11;
+    baud_rate = 115200;
     return i + 1;
   }
 

@@ -98,7 +98,7 @@ unsigned char TxByte(unsigned char uchByte);
 // Will try to send uiDataSize bytes from lpucData
 //
 // Return ERR_OK if success
-unsigned char TxData(const unsigned char *lpucData, unsigned int uiDataSize);
+// unsigned char TxData(const unsigned char *lpucData, unsigned int uiDataSize);
 
 // TXUnsafeData
 //

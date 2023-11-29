@@ -5,13 +5,17 @@
 #include "wget.h"
 #include <delay.h>
 #include <extbio.h>
-#include <fossil.h>
+// #include <fossil.h>
+#include <extbio/serial-helpers.h>
+#include <extbio/serial.h>
 #include <msxdos.h>
 #include <stdio.h>
 #include <string.h>
 #include <system_vars.h>
 
 unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
+uint16_t      size;
+uint8_t       port_number = 1;
 
 void abortWithError(const char *pMessage) __z88dk_fastcall {
   if (pMessage) {
@@ -22,37 +26,31 @@ void abortWithError(const char *pMessage) __z88dk_fastcall {
   exit(1);
 }
 
-void fossil_rs_flush_with_log(void) {
-  int16_t timeout = get_future_time(from_ms(5000));
-
-  while (!is_time_past(timeout)) {
-    while (fossil_rs_in_stat() != 0) {
-      unsigned char c = fossil_rs_in();
-      printf("%c", c);
-      timeout = get_future_time(from_ms(5000));
-    }
-  }
-}
-
-bool fossil_rs_read_line(const bool withLogging) __z88dk_fastcall {
+bool serial_read_line(const bool withLogging) __z88dk_fastcall {
+  withLogging;
   uint8_t        length  = 0;
   int16_t        timeout = get_future_time(from_ms(5000));
   unsigned char *pBuffer = responseStr;
 
   while (length < MAX_RESPONSE_STRING_LEN && !is_time_past(timeout)) {
-    if (fossil_rs_in_stat() != 0) {
-      timeout               = get_future_time(from_ms(5000));
-      const unsigned char t = fossil_rs_in();
-      if (withLogging)
-        fputc_cons(t);
+    if (serial_get_rx_buffer_size(port_number) != 0) {
+      timeout         = get_future_time(from_ms(5000));
+      unsigned char t = 0;
+      size            = 1;
+      serial_read(port_number, &t, &size);
+      if (size) {
+        // if (withLogging)
+        if (t >= 32 && t < 128) {
+          printf("%c", t);
 
-      if (t >= 32 && t < 128) {
-        *pBuffer++ = t;
-        length++;
+          *pBuffer++ = t;
+          length++;
+        } else
+          printf("(%02X)", t);
+
+        if (t == '\n')
+          break;
       }
-
-      if (t == '\n')
-        break;
     }
   }
 
@@ -68,7 +66,7 @@ bool read_until_ok_or_error(void) {
   responseStr[0] = 0;
 
   while (true) {
-    if (lineReceived = fossil_rs_read_line(true)) {
+    if (lineReceived = serial_read_line(true)) {
       timeout = get_future_time(from_ms(2000));
       continue;
     }
@@ -83,12 +81,16 @@ bool read_until_ok_or_error(void) {
 }
 
 void subCommandTimeSync(void) {
-  fossil_rs_flush();
-  fossil_rs_string("\r\nAT+time?\r\n");
-  if (fossil_rs_read_line(false)) {
+  serial_purge_buffers(port_number);
+  printf("sending time request\r\n");
+  serial_write_bytes("\r\nAT+time?\r\n", 12);
+  printf("Sent. waiting for response\r\n");
+  if (serial_read_line(false)) {
     print_str("Error getting time\r\n");
     return;
   }
+
+  printf("Read\r\n");
 
   if (strlen(responseStr) != 24) {
     print_str("Invalid time string received ");
@@ -119,12 +121,12 @@ void subCommandTimeSync(void) {
 }
 
 void subCommandSetTimeZone(void) {
-  fossil_rs_flush();
-  fossil_rs_string("\r\nat+locale=");
-  fossil_rs_string(pNewTimeZone);
-  fossil_rs_string("\r\n");
+  serial_purge_buffers(port_number);
+  serial_write_bytes("\r\nat+locale=", 12);
+  serial_write_string(pNewTimeZone);
+  serial_write_bytes("\r\n", 2);
 
-  if (fossil_rs_read_line(false)) {
+  if (serial_read_line(false)) {
     print_str("Error setting timezone\r\n");
     return;
   }
@@ -140,56 +142,42 @@ void subCommandSetTimeZone(void) {
 }
 
 void subCommandSetWiFi(void) {
-  fossil_rs_flush();
-  fossil_rs_string("\r\nat+cwjap=");
-  fossil_rs_string(pNewSSID);
-  fossil_rs_string(",");
-  fossil_rs_string(pNewPassword);
-  fossil_rs_string("\r\n");
+  serial_purge_buffers(port_number);
+  serial_write_bytes("\r\nat+cwjap=", 11);
+  serial_write_string(pNewSSID);
+  serial_write_char(',');
+  serial_write_string(pNewPassword);
+  serial_write_bytes("\r\n", 2);
 
   read_until_ok_or_error();
 }
 
 void resetModem(void) {
   delay(ONE_SECOND);
-  fossil_rs_string("+++");
+  serial_write_bytes("+++", 3);
   delay(ONE_SECOND);
-  fossil_rs_string("\r\nATH\r\n"); // hang up
-  fossil_rs_read_line(false);
-  fossil_rs_string("\r\nATE0\r\n"); // echo off
-  fossil_rs_read_line(false);
+  serial_write_bytes("\r\nATH\r\n", 7); // hang up
+  serial_read_line(false);
+  serial_write_bytes("\r\nATE0\r\n", 8); // echo off
+  serial_read_line(false);
 }
 
 uint8_t main(const int argc, const char *argv[]) {
-  if (!fossil_link()) {
-    extbio_fossil_install();
-
-    if (!fossil_link()) {
-      print_str("Fossil driver not found\r\n");
-      exit(1);
-    }
-  }
-
+  // TODO: find portnumber for supplied driver  name
   process_cli_arguments(argv, argc);
 
-  uint16_t actual_baud_rate = fossil_set_baud(baud_rate);
-  if (actual_baud_rate != baud_rate) {
-    print_str("Actual Baud Rate: ");
-    print_str(fossil_rate_to_string(actual_baud_rate));
-    print_str("\r\n");
-  }
-  fossil_set_protocol(7); // 8N1
-  fossil_init();
+  serial_set_baudrate(port_number, baud_rate);
+  serial_set_protocol(port_number, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
 
   if (subCommand == SUB_COMMAND_HANGUP) {
     delay(ONE_SECOND);
-    fossil_rs_string("+++");
+    serial_write_bytes("+++", 3);
     delay(ONE_SECOND);
-    fossil_rs_string("\r\nATH\r\n"); // hang up
+    serial_write_bytes("\r\nATH\r\n", 7); // hang up
     goto done;
   }
 
-  fossil_rs_string("\r\nATE0\r\n"); // echo off
+  serial_write_bytes("\r\nATE0\r\n", 8); // echo off
 
   if (subCommand == SUB_COMMAND_TIME_SYNC) {
     subCommandTimeSync();
@@ -217,7 +205,5 @@ uint8_t main(const int argc, const char *argv[]) {
   }
 
 done:
-  fossil_deinit();
-
   return 0;
 }

@@ -7,10 +7,10 @@
 ./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxbios/msxbios.h \
  libraries/msxdos/msxdos.h
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
- esp8266/esp8266.h print.h libraries/fossil/fossil.h \
- libraries/msx/libgen.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h libraries/xmodem/utils.h \
- libraries/xmodem/xmodem.h
+ esp8266/esp8266.h print.h libraries/extbio/serial-helpers.h \
+ libraries/extbio/serial.h libraries/msx/libgen.h \
+ libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h \
+ libraries/xmodem/utils.h libraries/xmodem/xmodem.h
 ./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
 ./bin/esp8266/msxhub.c.asm: esp8266/msxhub.c esp8266/msxhub.h esp8266/arguments.h \
  esp8266/esp8266.h print.h esp8266/wget.h libraries/xmodem/xmodem.h
@@ -18,7 +18,8 @@
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/esp8266.h esp8266/arguments.h \
  esp8266/msxhub.h print.h esp8266/wget.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
- libraries/fossil/fossil.h libraries/msxdos/msxdos.h
+ libraries/extbio/serial-helpers.h libraries/extbio/serial.h \
+ libraries/msxdos/msxdos.h
 ./bin/memory/memory.c.asm: memory/memory.c memory/memory.h libraries/msxbios/extbio.h \
  libraries/msxbios/system_vars.h libraries/msxdos/msxdos.h
 ./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h print.h
@@ -233,10 +234,9 @@
  libraries/msxbios/system_vars.h
 ./bin/term/arguments.c.asm: term/arguments.c term/arguments.h term/system-state.h
 ./bin/term/aofossilhelper.c.asm: term/aofossilhelper.c term/aofossilhelper.h \
- term/arguments.h libraries/fossil/fossil.h term/msx2ansi.h \
- libraries/fusion/msx_fusion.h term/print.h term/system-state.h
-./bin/term/fossil_interface.c.asm: term/fossil_interface.c libraries/fossil/fossil.h \
- libraries/fusion/msx_fusion.h
+ term/arguments.h term/msx2ansi.h libraries/fusion/msx_fusion.h \
+ term/print.h term/system-state.h libraries/extbio/serial.h
+./bin/term/fossil_interface.c.asm: term/fossil_interface.c libraries/fusion/msx_fusion.h
 ./bin/term/ansiprint.c.asm: term/ansiprint.c term/ansiprint.h term/print.h \
  term/msx2ansi.h
 ./bin/term/system-state.c.asm: term/system-state.c term/system-state.h
@@ -246,18 +246,31 @@
 ./bin/muflash/arguments.c.asm: muflash/arguments.c muflash/arguments.h print.h
 ./bin/muflash/main.c.asm: muflash/main.c muflash/arguments.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
+./bin/libraries/extbio/serial-helper-write-bytes.c.asm: libraries/extbio/serial-helper-write-bytes.c \
+ libraries/msxdos/msxdos.h libraries/extbio/serial-helpers.h \
+ libraries/extbio/serial.h libraries/msxbios/system_vars.h \
+ libraries/z80.h
+./bin/libraries/extbio/serial-helper-read-char.c.asm: libraries/extbio/serial-helper-read-char.c \
+ libraries/msxdos/msxdos.h libraries/extbio/serial-helpers.h \
+ libraries/extbio/serial.h libraries/msxbios/system_vars.h \
+ libraries/z80.h
+./bin/libraries/extbio/serial-helper-write-string.c.asm: \
+ libraries/extbio/serial-helper-write-string.c libraries/msxdos/msxdos.h \
+ libraries/extbio/serial-helpers.h libraries/extbio/serial.h \
+ libraries/msxbios/system_vars.h libraries/z80.h
+./bin/libraries/extbio/serial-helper-write-char.c.asm: libraries/extbio/serial-helper-write-char.c \
+ libraries/msxdos/msxdos.h libraries/extbio/serial-helpers.h \
+ libraries/extbio/serial.h libraries/msxbios/system_vars.h \
+ libraries/z80.h
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
 ./bin/libraries/fusion/fprintf.c.asm: libraries/fusion/fprintf.c libraries/fusion/fusion_ext.h \
  libraries/fusion/io.h
 ./bin/libraries/msxdos/rename.c.asm: libraries/msxdos/rename.c
 ./bin/libraries/xmodem/crc16.c.asm: libraries/xmodem/crc16.c libraries/xmodem/crc16.h
 ./bin/libraries/xmodem/xmodem.c.asm: libraries/xmodem/xmodem.c libraries/xmodem/xmodem.h \
- libraries/xmodem/crc16.h libraries/xmodem/serial.h \
- libraries/fossil/fossil.h libraries/msxbios/system_vars.h \
+ libraries/xmodem/crc16.h libraries/extbio/serial-helpers.h \
+ libraries/extbio/serial.h libraries/msxbios/system_vars.h \
  libraries/z80.h
-./bin/libraries/xmodem/serial.c.asm: libraries/xmodem/serial.c libraries/xmodem/serial.h \
- libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h libraries/z80.h
 ./bin/libraries/xmodem/utils.c.asm: libraries/xmodem/utils.c libraries/xmodem/utils.h
 ./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
@@ -350,7 +363,7 @@
  libraries/msxbios/extbio.h
 ./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
  libraries/sysload/sys.h
-./bin/sys/sio2/body/sio2.c.asm: sys/sio2/body/sio2.c sys/sio2/body/../sio2.h
+./bin/sys/sio2/body/sio2.c.asm: sys/sio2/body/sio2.c sys/sio2/body/../sio2.h libraries/z80.h
 ./bin/sys/sio2/init/sio2.c.asm: sys/sio2/init/sio2.c sys/sio2/init/../sio2.h \
  libraries/extbio/serial.h libraries/sysload/sysload.h \
  libraries/sysload/sys.h
@@ -408,6 +421,7 @@
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
+./bin/memmap-data-at-8000.o: ./memmap-data-at-8000.asm
 ./bin/usbctrl/floopy_boot_code.o: ./usbctrl/floopy_boot_code.asm
 ./bin/usbtst/print.o: ./usbtst/print.asm
 ./bin/romflashwriter/romflashwriter.o: ./romflashwriter/romflashwriter.asm

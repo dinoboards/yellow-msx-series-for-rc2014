@@ -16,7 +16,7 @@ uint32_t wanted_baud_rates[] = {300, 1200, 2400, 4800, 9600, 19200, 38400, 56700
 
 uint8_t driver_id = 0;
 
-uint8_t read_data_chunk(uint8_t *const read_bytes) {
+uint8_t read_data_chunk(uint16_t *const read_bytes) {
   uint8_t  result;
   uint8_t  buffer[BUF_SIZE];
   uint16_t buffer_size = BUF_SIZE;
@@ -87,10 +87,11 @@ uint8_t main(const int argc, const char *const argv[]) {
   sio_diagnostic_t d;
   memset(&d, 0, sizeof(d));
 
-  uint8_t result;
-  uint8_t buffer_size = BUF_SIZE;
-  uint8_t buffer[BUF_SIZE];
-  uint8_t id = 0;
+  uint8_t  result;
+  uint8_t  buffer_size = BUF_SIZE;
+  uint8_t  buffer[BUF_SIZE];
+  uint8_t  id = 0;
+  uint16_t read_count;
 
   list_serial_drivers();
 
@@ -106,8 +107,12 @@ uint8_t main(const int argc, const char *const argv[]) {
   if (driver_id == 0)
     return 1;
 
-  result = serial_set_baudrate(driver_id, 4800);
-  printf("(%02X): Set baudrate: %ld\r\n", result, 4800L);
+  result = serial_demand_read(driver_id, buffer, &read_count, 1000);
+
+  printf("(%02X): serial_read(2nd) returned %d bytes.  Expect 0 bytes\r\n", result, read_count);
+
+  result = serial_set_baudrate(driver_id, 19200);
+  printf("(%02X): Set baudrate: %ld\r\n", result, 19200L);
 
   // result = serial_set_flowctrl(1, SERIAL_FLOW_CTRL_RTS_CTS);
   // printf("(%02X): Set flow control: %04X\r\n", result, SERIAL_FLOW_CTRL_RTS_CTS);
@@ -129,16 +134,20 @@ uint8_t main(const int argc, const char *const argv[]) {
     uint16_t pending_bytes = serial_get_rx_buffer_size(driver_id);
     printf("Status: %04X\r\n", pending_bytes);
 
-    result = serial_write(driver_id, buffer, BUF_SIZE);
-    printf("(%02X): serial_write_data %d\r\n", result, BUF_SIZE);
+    result = serial_write(driver_id, "\r\nAT\r\n", 6);
+    printf("(%02X): serial_write_data %d\r\n", result, 6);
     if (result)
       return result;
 
-    uint8_t read_count;
-
     result = read_data_chunk(&read_count);
 
-    printf("serial_read returned %d bytes.  Expect %d bytes\r\n", read_count, BUF_SIZE);
+    printf("(%02X): serial_read returned %d bytes.  Expect %d bytes\r\n", result, read_count, BUF_SIZE);
+
+    printf("\r\n");
+
+    result = serial_demand_read(driver_id, buffer, &read_count, 1000);
+
+    printf("(%02X): serial_read(2nd) returned %d bytes.  Expect 0 bytes\r\n", result, read_count);
 
     printf("\r\n");
 

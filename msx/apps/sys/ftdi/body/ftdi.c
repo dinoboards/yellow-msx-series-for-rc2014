@@ -30,7 +30,7 @@ uint8_t _serial_set_protocol(const uint16_t protocol) {
 
 uint8_t _serial_read(uint8_t *const buf, uint16_t *size) { return ftdi_read_data(&_ftdi_config, buf, size); }
 
-uint8_t _serial_demand_read(uint8_t *const buf, uint16_t *size, const uint16_t timeout_ms) {
+uint8_t _serial_demand_read(uint8_t *const buf, uint16_t *const size, const uint16_t timeout_ms) {
   return ftdi_demand_read_data(&_ftdi_config, buf, size, timeout_ms);
 }
 

@@ -35,7 +35,7 @@
 --
 */
 
-#include "fossil.h"
+// #include "fossil.h"
 #include "msx_fusion.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -46,16 +46,4 @@
 inline uint8_t bcd_to_decimal(unsigned char x) { return x - 6 * (x >> 4); }
 
 // Show info contained in the info block returned by Fossil_get_info
-void show_info(void) {
-  const fossil_info *info = fossil_get_info();
-  printf("Driver Version: %d.%d\r\n", bcd_to_decimal(info->version_number >> 8), bcd_to_decimal(info->version_number & 255));
-  printf("RX Speed: %d\r\n", info->rx_speed_index);
-  printf("TX Speed: %d\r\n", info->tx_speed_index);
-  printf("Protocol: %d\r\n", info->protocol);
-  printf("ChPut_hook: %d\r\n", info->chput_hook_status);
-  printf("Keyboard_hook: %d\r\n", info->keyb_hook_status);
-  printf("RTS Status: %d\r\n", info->rts_status);
-  printf("DTR Status: %d\r\n", info->dtr_status);
-  printf("Current Channel: %d\r\n", info->channel);
-  printf("Hardware info: %d\r\n", info->hardware);
-}
+void show_info(void) {}

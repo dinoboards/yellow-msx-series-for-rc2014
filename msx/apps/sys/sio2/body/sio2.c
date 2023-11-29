@@ -1,5 +1,6 @@
 #include "../sio2.h"
 #include <string.h>
+#include <z80.h>
 
 uint8_t assigned_port_number;
 
@@ -92,8 +93,10 @@ uint16_t _serial_get_rx_buffer_size(void) { return sio_data_count; }
 
 uint8_t _serial_purge_buffers(void) {
 
+  DI;
   sio_buf_head = sio_buf_tail = sio_buf;
   sio_data_count              = 0;
+  EI;
 
   return 0;
 }

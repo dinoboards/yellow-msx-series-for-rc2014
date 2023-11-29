@@ -105,8 +105,10 @@ usb_error ftdi_set_line_property2(device_config_ftdi *const ftdi, const uint16_t
 usb_error __ftdi_read_packet(device_config_ftdi *const ftdi, uint8_t *const buf, uint8_t *const size) __sdcccall(1) {
   usb_error result;
 
-  if (*size > 62)
+  if (*size > 62) {
+    *size = 0;
     return USB_ERR_BUFF_TO_LARGE;
+  }
 
   if (ftdi->hold_size == 0) {
     CHECK(usbdev_bulk_in_transfer((device_config *)ftdi, ftdi->hold.status, &ftdi->hold_size));
@@ -173,20 +175,23 @@ usb_error ftdi_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint16_t 
  */
 usb_error ftdi_demand_read_data(device_config_ftdi *const ftdi, uint8_t *buf, uint16_t *const size, const uint16_t timeout_ms)
     __sdcccall(1) {
-  usb_error result;
-  uint8_t   pck_size;
-  uint16_t  actual_size = 0;
+  usb_error      result;
+  uint8_t        pck_size;
+  uint16_t       actual_size  = 0;
+  const uint16_t request_size = *size;
 
-  int16_t timeout = get_future_time(from_ms(timeout_ms));
+  *size = 0;
+
+  const int16_t timeout = get_future_time(from_ms(timeout_ms));
   do {
     EI;
-    pck_size = *size - actual_size;
+    pck_size = request_size - actual_size;
     if (pck_size > 62)
       pck_size = 62;
     CHECK(__ftdi_read_packet(ftdi, buf, &pck_size));
     actual_size += pck_size;
     buf += pck_size;
-  } while (actual_size < *size && !is_time_past(timeout));
+  } while (actual_size < request_size && !is_time_past(timeout));
 
   *size = actual_size;
 
