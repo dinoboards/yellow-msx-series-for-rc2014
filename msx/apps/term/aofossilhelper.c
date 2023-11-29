@@ -35,91 +35,64 @@
 */
 #include "aofossilhelper.h"
 #include "arguments.h"
-#include "fossil.h"
+// #include "fossil.h"
 #include "msx2ansi.h"
 #include "msx_fusion.h"
 #include "print.h"
 #include "system-state.h"
+#include <extbio/serial.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-char          chHelperString[128];
-unsigned char ucFossilUnsafeDataTXBuffer[128];
+// char          chHelperString[128];
+// unsigned char ucFossilUnsafeDataTXBuffer[128];
 // const char    modem_atz[] = "ATZ\r\n";
 // const char    modem_cmd[] = "+++";
 // const char    modem_disc[] = "ATH\r\n";
-unsigned char cmdline[134];
+// unsigned char cmdline[134];
+
+uint8_t port_number = 1;
 
 void Breath(void) { return; }
 
 unsigned char InitializeTCPIP(void) {
-  if (!fossil_link())
-    return 0;
-
-  const uint16_t actual_baud_rate = fossil_set_baud(baud_rate);
-  AnsiPrint("Baud Rate:");
-  AnsiPrint(fossil_rate_to_string(actual_baud_rate));
+  uint8_t buffer[32];
+  serial_set_baudrate(port_number, baud_rate);
+  sprintf(buffer, "%ld", baud_rate);
+  AnsiPrint("Baud Rate: ");
+  AnsiPrint(buffer);
   AnsiPrint("\r\n");
 
-  fossil_set_protocol(7); // 8N1
-  fossil_init();
+  serial_set_protocol(port_number, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
+
+  serial_purge_buffers(port_number);
   return 1;
 }
 
-void CloseConnection(void) {
-  unsigned char ucCount = 0;
-
-  do {
-    __asm halt __endasm;
-
-    ++ucCount;
-  } while (ucCount < 20);
-  fossil_deinit();
-}
+void CloseConnection(void) {}
 
 // This routine retrieves as much as bytes as indicated in uiSize
 // Note that uiSize=1024 in normal characters receiving mode (RcvMemorySize=1024 in term.h)
 // Receives up to uiSize bytes
 // Number of bytes retrieved from serial port are returned into uiSize
 unsigned char RXData(unsigned char *ucBuffer, unsigned int *uiSize, unsigned char ucWaitAllDataReceived) {
-  unsigned char ucRet  = 0;
-  unsigned int  nbytes = 0;
-  unsigned int  tbytes = *uiSize;
+  (void)ucWaitAllDataReceived;
 
-  if (ucWaitAllDataReceived) {
-    // While bytes are available and we have received less bytes than requested...
-    while ((fossil_rs_in_stat() != 0) && (nbytes < *uiSize)) {
-      ucRet = 1;
-      fossil_rs_in_stat();
-      ucBuffer[nbytes] = fossil_rs_in();
-      nbytes++;
-    }
-    *uiSize = nbytes;
-  } else {
-    if (fossil_rs_in_stat() != 0) {
-      ucRet   = 1;
-      *uiSize = fossil_chars_in_buf();
-      for (int i = 0; i < *uiSize; i++) {
-        fossil_rs_in_stat();
-        ucBuffer[i] = fossil_rs_in();
-      }
-    } else
-      *uiSize = 0;
-  }
-  return ucRet;
+  if (ucWaitAllDataReceived)
+    serial_demand_read(port_number, ucBuffer, uiSize, 1000);
+  else
+    serial_read(port_number, ucBuffer, uiSize);
+
+  return uiSize != 0;
+}
+
+// The same as TxUnsafeData but without page 3 buffer addressing
+unsigned char TxData(const unsigned char *lpucData, unsigned int uiDataSize) {
+  return serial_write(port_number, lpucData, uiDataSize);
 }
 
 // This routine sends only one byte
 unsigned char TxByte(unsigned char uchByte) { return TxData(&uchByte, 1); }
 
 unsigned char TxUnsafeData(const unsigned char *lpucData, unsigned int uiDataSize) { return TxData(lpucData, uiDataSize); }
-
-// The same as TxUnsafeData but without page 3 buffer addressing
-unsigned char TxData(const unsigned char *lpucData, unsigned int uiDataSize) {
-  for (int i = 0; i < uiDataSize; i++) {
-    fossil_rs_out(*lpucData);
-    *lpucData++;
-  }
-  return ERR_OK;
-}

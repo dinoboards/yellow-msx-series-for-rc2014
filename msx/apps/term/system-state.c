@@ -16,4 +16,4 @@ unsigned char ucRcvData[128];
 unsigned char ucRcvDataMemory[RcvMemorySize];
 unsigned int  uiGetSize;
 
-uint16_t baud_rate = 7 * 256 + 7; // 19200
+uint32_t baud_rate = 19200L;

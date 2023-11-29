@@ -1,7 +1,9 @@
 #include "xmodem.h"
 #include "crc16.h"
-#include "serial.h"
+#include <extbio/serial-helpers.h>
+#include <extbio/serial.h>
 #include <stdio.h>
+#include <string.h>
 #include <system_vars.h>
 #include <z80.h>
 
@@ -14,11 +16,15 @@
 #define CTRLZ 0x1A
 #define RS    0x1e
 
+static const char three_can_bytes[] = {CAN, CAN, CAN};
+
 #define DLY_1S     (VDP_FREQUENCY * 2)
 #define MAXRETRANS 25
 #define TRANSMIT_XMODEM_1K
 
 #define FOR_SIGNAL(mask) if (signal & (mask))
+
+extern uint8_t port_number;
 
 struct xmodemState xmodemState;
 unsigned char      packetno = 1;
@@ -64,48 +70,37 @@ static bool check_sum(void) {
   return (cks == *buf);
 }
 
-static void flush_input(void) { fossil_flush_input((DLY_1S * 3) >> 1); }
-
-static uint16_t expected_size;
-
 bool read_packet_crc(void) {
-  unsigned char *p = xmodemState.packetBuffer;
+  unsigned char *p = xmodemState.packetBuffer + 1;
 
-  expected_size = xmodemState.currentPacketSize + 1 + 3;
-  p++;
-  for (i = expected_size; i > 0; i--) {
-    if (!wait_for_byte(DLY_1S))
-      return false;
+  const uint16_t expected_size = xmodemState.currentPacketSize + 1 + 3;
+  uint16_t       actual_size   = expected_size;
 
-    *p++ = fossil_rs_in();
-  }
+  serial_demand_read(port_number, p, &actual_size, 1000);
 
-  return true;
+  return expected_size == actual_size;
 }
 
 bool read_packet_sum(void) {
-  unsigned char *p = xmodemState.packetBuffer;
+  unsigned char *p = xmodemState.packetBuffer + 1;
 
-  p++;
-  for (i = 0; i < (xmodemState.currentPacketSize + 0 + 3); ++i) {
-    if (!wait_for_byte(DLY_1S)) {
-      return false;
-    }
-    *p++ = fossil_rs_in();
-  }
+  const uint16_t expected_size = xmodemState.currentPacketSize + 0 + 3;
+  uint16_t       actual_size   = expected_size;
 
-  return true;
+  serial_demand_read(port_number, p, &actual_size, DLY_1S);
+
+  return expected_size == actual_size;
 }
 
 XMODEM_SIGNAL read_first_header(void) {
   packetno = 1;
   retry = retrans = MAXRETRANS;
 
-  fossil_rs_out('C');
+  serial_write_char('C');
 
-  if (wait_for_byte(DLY_1S * 10)) {
-    uint8_t x = fossil_rs_in();
+  uint8_t x;
 
+  if ((serial_read_char(&x) == 0))
     switch (x) {
     case SOH:
       xmodemState.currentPacketSize = 128;
@@ -116,22 +111,23 @@ XMODEM_SIGNAL read_first_header(void) {
       return READ_CRC | READ_1024;
 
     case EOT:
-      fossil_rs_out(ACK);
+      serial_write_char(ACK);
       return END_OF_STREAM;
 
     case CAN:
-      flush_input();
-      fossil_rs_out(ACK);
+      serial_purge_buffers(port_number);
+      serial_write_char(ACK);
       return UPSTREAM_CANCELLED;
     }
-  }
 
   return delay_start(DLY_1S * 4, TRY_AGAIN);
 }
 
 XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  if (wait_for_byte(DLY_1S * 10)) {
-    switch (fossil_rs_in()) {
+  uint8_t x = 0;
+
+  if (serial_read_char(&x) == 0) {
+    switch (x) {
     case SOH:
       xmodemState.currentPacketSize = 128;
       return signal | READ_128;
@@ -146,15 +142,15 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     case EOT:
       if (supportExtendedInfoPacket) {
         packetno = 0;
-        fossil_rs_out(ACK);
+        serial_write_char(ACK);
         return read_header(signal & (READ_CRC | READ_CHECKSUM));
       }
-      fossil_rs_out(ACK);
+      serial_write_char(ACK);
       return END_OF_STREAM;
 
     case CAN:
-      flush_input();
-      fossil_rs_out(ACK);
+      serial_purge_buffers(port_number);
+      serial_write_char(ACK);
       return UPSTREAM_CANCELLED;
     }
   }
@@ -167,14 +163,13 @@ XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT | STREAM_ERROR);
 
   if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) &&
-      check_crc())
+      check_crc()) {
     return signal | SAVE_PACKET;
+  }
 
   if (--retrans <= 0) {
-    flush_input();
-    fossil_rs_out(CAN);
-    fossil_rs_out(CAN);
-    fossil_rs_out(CAN);
+    serial_purge_buffers(port_number);
+    serial_write_bytes(three_can_bytes, 3);
     return TOO_MANY_ERRORS;
   }
 
@@ -190,10 +185,8 @@ XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcal
     return signal | SAVE_PACKET;
 
   if (--retrans <= 0) {
-    flush_input();
-    fossil_rs_out(CAN);
-    fossil_rs_out(CAN);
-    fossil_rs_out(CAN);
+    serial_purge_buffers(port_number);
+    serial_write_bytes(three_can_bytes, 3);
     return TOO_MANY_ERRORS;
   }
 
@@ -201,19 +194,19 @@ XMODEM_SIGNAL start_receive_checksum(const XMODEM_SIGNAL signal) __z88dk_fastcal
 }
 
 XMODEM_SIGNAL xmodem_tryagain(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  flush_input();
+  serial_purge_buffers(port_number);
 
   if (retry++ >= 5)
     return TOO_MANY_ERRORS;
 
   fputc_cons('.');
-  fossil_rs_out(NAK);
+  serial_write_char(NAK);
   retry++;
   return signal | READ_HEADER;
 }
 
 XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  fossil_rs_out(ACK);
+  serial_write_char(ACK);
   ++packetno;
   retrans = MAXRETRANS + 1;
   retry   = 0;
@@ -221,10 +214,8 @@ XMODEM_SIGNAL xmodem_packet_save(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 }
 
 XMODEM_SIGNAL xmodem_too_many_errors(void) __z88dk_fastcall {
-  flush_input();
-  fossil_rs_out(CAN);
-  fossil_rs_out(CAN);
-  fossil_rs_out(CAN);
+  serial_purge_buffers(port_number);
+  serial_write_bytes(three_can_bytes, 3);
   xmodemState.finish_reason = TOO_MANY_ERRORS;
   return FINISHED;
 }
@@ -249,7 +240,8 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 
   FOR_SIGNAL(INFO_PACKET) {
     FOR_SIGNAL(SAVE_PACKET) {
-      fossil_rs_out(ACK);
+      serial_write_char(ACK);
+
       return INFO_PACKET | END_OF_STREAM;
     }
   }
@@ -261,109 +253,3 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   xmodemState.finish_reason = signal;
   return FINISHED;
 }
-
-// int xmodemTransmit()
-// {
-//   const int srcsz = 10;
-
-// 	unsigned char xmodemState.packetBuffer[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
-// 	int xmodemState.currentPacketSize, crc = -1;
-// 	unsigned char packetno = 1;
-// 	int i, c, len = 0;
-// 	int retry;
-
-// 	for(;;) {
-// 		for( retry = 0; retry < 16; ++retry) {
-// 			if ((c = _inbyte((DLY_1S)<<1)) >= 0) {
-// 				switch (c) {
-// 				case 'C':
-// 					crc = 1;
-// 					goto start_trans;
-// 				case NAK:
-// 					crc = 0;
-// 					goto start_trans;
-// 				case CAN:
-// 					if ((c = _inbyte(DLY_1S)) == CAN) {
-// 						fossil_rs_out(ACK);
-// 						flush_input();
-// 						return -1; /* canceled by remote */
-// 					}
-// 					break;
-// 				default:
-// 					break;
-// 				}
-// 			}
-// 		}
-// 		fossil_rs_out(CAN);
-// 		fossil_rs_out(CAN);
-// 		fossil_rs_out(CAN);
-// 		flush_input();
-// 		return -2; /* no sync */
-
-// 		for(;;) {
-// 		start_trans:
-// #ifdef TRANSMIT_XMODEM_1K
-// 			xmodemState.packetBuffer[0] = STX; xmodemState.currentPacketSize = 1024;
-// #else
-// 			xmodemState.packetBuffer[0] = SOH; xmodemState.currentPacketSize = 128;
-// #endif
-// 			xmodemState.packetBuffer[1] = packetno;
-// 			xmodemState.packetBuffer[2] = ~packetno;
-// 			c = srcsz - len;
-// 			if (c > xmodemState.currentPacketSize) c = xmodemState.currentPacketSize;
-// 			if (c > 0) {
-// 				// memset (&xmodemState.packetBuffer[3], 0, xmodemState.currentPacketSize);
-// 				// memcpy (&xmodemState.packetBuffer[3], &src[len], c);
-// 				if (c < xmodemState.currentPacketSize) xmodemState.packetBuffer[3+c] = CTRLZ;
-// 				if (crc) {
-// 					unsigned short ccrc = crc16_ccitt(&xmodemState.packetBuffer[3],
-// xmodemState.currentPacketSize); 					xmodemState.packetBuffer[xmodemState.currentPacketSize+3] =
-// (ccrc>>8) & 0xFF; 					xmodemState.packetBuffer[xmodemState.currentPacketSize+4] = ccrc & 0xFF;
-// 				}
-// 				else {
-// 					unsigned char ccks = 0;
-// 					for (i = 3; i < xmodemState.currentPacketSize+3; ++i) {
-// 						ccks += xmodemState.packetBuffer[i];
-// 					}
-// 					xmodemState.packetBuffer[xmodemState.currentPacketSize+3] = ccks;
-// 				}
-// 				for (retry = 0; retry < MAXRETRANS; ++retry) {
-// 					for (i = 0; i < xmodemState.currentPacketSize+4+(crc?1:0); ++i) {
-// 						fossil_rs_out(xmodemState.packetBuffer[i]);
-// 					}
-// 					if ((c = _inbyte(DLY_1S)) >= 0 ) {
-// 						switch (c) {
-// 						case ACK:
-// 							++packetno;
-// 							len += xmodemState.currentPacketSize;
-// 							goto start_trans;
-// 						case CAN:
-// 							if ((c = _inbyte(DLY_1S)) == CAN) {
-// 								fossil_rs_out(ACK);
-// 								flush_input();
-// 								return -1; /* canceled by remote */
-// 							}
-// 							break;
-// 						case NAK:
-// 						default:
-// 							break;
-// 						}
-// 					}
-// 				}
-// 				fossil_rs_out(CAN);
-// 				fossil_rs_out(CAN);
-// 				fossil_rs_out(CAN);
-// 				flush_input();
-// 				return -4; /* xmit error */
-// 			}
-// 			else {
-// 				for (retry = 0; retry < 10; ++retry) {
-// 					fossil_rs_out(EOT);
-// 					if ((c = _inbyte((DLY_1S)<<1)) == ACK) break;
-// 				}
-// 				flush_input();
-// 				return (c == ACK)?len:-5;
-// 			}
-// 		}
-// 	}
-// }

@@ -2,6 +2,7 @@
 #define __ESP8266
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #define ERASE_LINE              "\x1B\x6C\r"
 #define CTRLZ                   0x1A
@@ -11,10 +12,12 @@
 extern unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
 extern void fossil_rs_flush_with_log(void);
-extern bool fossil_rs_read_line(const bool withLogging) __z88dk_fastcall;
+extern bool serial_read_line(const bool withLogging) __z88dk_fastcall;
 
 extern void resetModem(void);
 
 extern void abortWithError(const char *pMessage) __z88dk_fastcall;
+
+extern uint8_t port_number;
 
 #endif

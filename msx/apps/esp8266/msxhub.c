@@ -78,7 +78,7 @@ int8_t getNumberOfPages(void) {
 
   wget();
 
-  return atoi(lastCapturedPacket);
+  return atoi(backupPacket);
 }
 
 void getFileListForPage(int8_t i) __z88dk_fastcall {
@@ -109,10 +109,10 @@ const char *getInstallDirectory(void) {
 
   wget();
 
-  char *stringEndPtr = (char *)memchr(lastCapturedPacket, CTRLZ, 1024);
+  char *stringEndPtr = (char *)memchr(backupPacket, CTRLZ, 1024);
   *stringEndPtr      = 0;
 
-  return lastCapturedPacket + 1; // skip leading slash
+  return backupPacket + 1; // skip leading slash
 }
 
 void createInstallDirectory(const char *installDir) __z88dk_fastcall {
@@ -150,7 +150,7 @@ void subCommandMsxHub(void) {
   for (int i = 0; i < p; i++) {
     getFileListForPage(i + 1);
 
-    memcpy(fileNames, lastCapturedPacket, 1024);
+    memcpy(fileNames, backupPacket, 1024);
 
     int ii = 20;
     for (char *line = eachLine(fileNames); line = currentLine(); nextLine()) {

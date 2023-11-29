@@ -3,7 +3,9 @@
 #include "arguments.h"
 #include "esp8266.h"
 #include "print.h"
-#include <fossil.h>
+// #include <fossil.h>
+#include <extbio/serial-helpers.h>
+#include <extbio/serial.h>
 #include <msx/libgen.h>
 #include <msxdos.h>
 #include <stdbool.h>
@@ -19,9 +21,12 @@ const unsigned char rotatingChar[4][5]      = {"\x01\x56\x1B\x44", "\x01\x5D\x1B
 uint8_t             rotatingIndex           = 0;
 const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
 char               *waitForMessage          = NULL;
-char                backupPacket[1025];
-int16_t             backupPacketSize;
 bool                firstPacket;
+
+char    backupPacket[1025];
+int16_t backupPacketSize;
+
+char serial_write_temp_buffer[256];
 
 char *strnstr(const char *haystack, const char *needle, size_t len) {
   int    i;
@@ -65,28 +70,28 @@ void wget(void) {
   totalFileSize = 0;
   print_str(ERASE_LINE "Connecting ...");
 
-  fossil_rs_flush();
-  fossil_rs_string("\r\nat+wget");
+  serial_purge_buffers(port_number);
+  serial_write_string("\r\nat+wget");
   if (requestLargePacket)
-    fossil_rs_string("1");
-  fossil_rs_string(pWgetUrl);
-  fossil_rs_string("\r\n");
+    serial_write_string("1");
+  serial_write_string(pWgetUrl);
+  serial_write_string("\r\n");
 
-  if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
+  if (serial_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
     print_str(ERASE_LINE "Resetting modem ...");
     resetModem();
 
-    fossil_rs_flush();
-    fossil_rs_string("\r\nat+wget");
+    serial_purge_buffers(port_number);
+    serial_write_string("\r\nat+wget");
     if (requestLargePacket)
-      fossil_rs_string("1");
-    fossil_rs_string(pWgetUrl);
-    fossil_rs_string("\r\n");
+      serial_write_string("1");
+    serial_write_string(pWgetUrl);
+    serial_write_string("\r\n");
 
-    if (fossil_rs_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
+    if (serial_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
       print_str("\r\nError requesting file:\r\n");
       print_str(responseStr);
-      fossil_rs_flush_with_log();
+      serial_purge_buffers(port_number);
       print_str("\r\n");
       abortWithError(NULL);
       return;

@@ -4,6 +4,7 @@
 // Common interface for accessing serial devices such as SIO/2 and USB FTDI
 
 #include <stdint.h>
+#include <string.h>
 
 #define SERIAL_BITS_7 7
 #define SERIAL_BITS_8 8

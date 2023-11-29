@@ -18,7 +18,7 @@ extern const char *pNewSSID;
 extern const char *pNewPassword;
 extern const char *pWgetUrl;
 extern const char *pFilePathName;
-extern uint16_t    baud_rate;
+extern uint32_t    baud_rate;
 extern const char *pMsxHubPackageName;
 extern uint8_t     requestLargePacket;
 

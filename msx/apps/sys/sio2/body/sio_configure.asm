@@ -48,7 +48,7 @@ SIO_CONFIG_PORT:
 	; WR5: DTR, 8
 	LD	A, 5
 	OUT	(C), A
-	LD	A, SIO_RTSOFF
+	LD	A, SIO_RTSON
 	OUT	(C), A
 
 	RET

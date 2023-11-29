@@ -17,10 +17,10 @@ extern unsigned char ucStandardDataTransfer; // Is this telnet server proper and
 // For data receive parsing
 extern unsigned char ucRcvData[128];
 
-#define RcvMemorySize 1024
+#define RcvMemorySize 60
 extern unsigned char ucRcvDataMemory[RcvMemorySize];
 extern unsigned int  uiGetSize;
 
-extern uint16_t baud_rate;
+extern uint32_t baud_rate;
 
 #endif
