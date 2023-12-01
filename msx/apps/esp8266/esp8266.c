@@ -39,14 +39,13 @@ bool serial_read_line(const bool withLogging) __z88dk_fastcall {
       size            = 1;
       serial_read(port_number, &t, &size);
       if (size) {
-        // if (withLogging)
         if (t >= 32 && t < 128) {
-          printf("%c", t);
+          // printf("%c", t);
 
           *pBuffer++ = t;
           length++;
-        } else
-          printf("(%02X)", t);
+        } // else
+          // printf("(%02X)", t);
 
         if (t == '\n')
           break;

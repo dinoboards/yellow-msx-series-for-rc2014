@@ -92,6 +92,10 @@ RS_HOKVLD:	EQU	$FB20		; (1 BYTE)  BIT 0 - EXTENDED BIOS INSTALLED
 ; the interrupt is from the VDP
 H_TIMI:         equ     $FD9F
 
+; called at start of interrupt subroutine, before it has been checked if
+; the interrupt was from VDP; used by e.g. RS232
+H_KEYI:         equ     $FD9A
+
 ; allows for installation of expansion devices that contain extra OS subroutines
 H_BEXT:         equ     $FFCA
 

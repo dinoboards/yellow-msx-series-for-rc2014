@@ -99,7 +99,6 @@ XMODEM_SIGNAL read_first_header(void) {
   serial_write_char('C');
 
   uint8_t x;
-
   if ((serial_read_char(&x) == 0))
     switch (x) {
     case SOH:
@@ -110,21 +109,23 @@ XMODEM_SIGNAL read_first_header(void) {
       xmodemState.currentPacketSize = 1024;
       return READ_CRC | READ_1024;
 
-    case EOT:
+    case EOT: {
       serial_write_char(ACK);
       return END_OF_STREAM;
+    }
 
-    case CAN:
+    case CAN: {
       serial_purge_buffers(port_number);
       serial_write_char(ACK);
       return UPSTREAM_CANCELLED;
     }
+    }
 
-  return delay_start(DLY_1S * 4, TRY_AGAIN);
+  return delay_start(DLY_1S * 4, READ_FIRST_HEADER | TRY_AGAIN);
 }
 
 XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  uint8_t x = 0;
+  uint8_t x;
 
   if (serial_read_char(&x) == 0) {
     switch (x) {
@@ -139,7 +140,7 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
     case RS:
       return signal | READ_128 | INFO_PACKET;
 
-    case EOT:
+    case EOT: {
       if (supportExtendedInfoPacket) {
         packetno = 0;
         serial_write_char(ACK);
@@ -147,11 +148,13 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
       }
       serial_write_char(ACK);
       return END_OF_STREAM;
+    }
 
-    case CAN:
+    case CAN: {
       serial_purge_buffers(port_number);
       serial_write_char(ACK);
       return UPSTREAM_CANCELLED;
+    }
     }
   }
 
@@ -159,13 +162,11 @@ XMODEM_SIGNAL read_header(const XMODEM_SIGNAL signal) __z88dk_fastcall {
 }
 
 XMODEM_SIGNAL start_receive_crc(const XMODEM_SIGNAL signal) __z88dk_fastcall {
-  if (!read_packet_crc())
-    return delay_start(DLY_1S * 4, signal | PACKET_TIMEOUT | STREAM_ERROR);
-
-  if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) &&
-      check_crc()) {
-    return signal | SAVE_PACKET;
-  }
+  if (read_packet_crc())
+    if (xmodemState.packetBuffer[1] == (unsigned char)(~xmodemState.packetBuffer[2]) && (xmodemState.packetBuffer[1] == packetno) &&
+        check_crc()) {
+      return signal | SAVE_PACKET;
+    }
 
   if (--retrans <= 0) {
     serial_purge_buffers(port_number);
@@ -241,7 +242,6 @@ XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
   FOR_SIGNAL(INFO_PACKET) {
     FOR_SIGNAL(SAVE_PACKET) {
       serial_write_char(ACK);
-
       return INFO_PACKET | END_OF_STREAM;
     }
   }
