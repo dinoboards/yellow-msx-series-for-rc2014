@@ -134,7 +134,7 @@ uint8_t main(const int argc, const char *const argv[]) {
     uint16_t pending_bytes = serial_get_rx_buffer_size(driver_id);
     printf("Status: %04X\r\n", pending_bytes);
 
-    result = serial_write(driver_id, "\r\nAT\r\n", 6);
+    result = serial_write(driver_id, "\r\nAT+msxrc2014\r\n", 6);
     printf("(%02X): serial_write_data %d\r\n", result, 6);
     if (result)
       return result;
