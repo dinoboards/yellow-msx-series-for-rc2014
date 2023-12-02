@@ -1,5 +1,6 @@
 #include "xmodem.h"
 #include "crc16.h"
+#include <delay.h>
 #include <extbio/serial-helpers.h>
 #include <extbio/serial.h>
 #include <stdio.h>
@@ -56,6 +57,7 @@ static bool check_crc(void) {
     crc = (crc << 8) ^ crc16tab[((crc >> 8) ^ *buf++) & 0x00FF];
 
   const uint16_t tcrc = (*buf++ << 8) + *buf;
+
   return (crc == tcrc);
 }
 
@@ -74,9 +76,16 @@ bool read_packet_crc(void) {
   unsigned char *p = xmodemState.packetBuffer + 1;
 
   const uint16_t expected_size = xmodemState.currentPacketSize + 1 + 3;
-  uint16_t       actual_size   = expected_size;
+  uint16_t       actual_size   = 0;
+  uint8_t        count         = 20;
 
-  serial_demand_read(port_number, p, &actual_size, 1000);
+
+  while (actual_size != expected_size && count-- != 0) {
+    uint16_t size = serial_get_rx_buffer_size(port_number);
+    uint8_t r = serial_read(port_number, p, &size);
+    p += size;
+    actual_size += size;
+  }
 
   return expected_size == actual_size;
 }
@@ -97,6 +106,7 @@ XMODEM_SIGNAL read_first_header(void) {
   retry = retrans = MAXRETRANS;
 
   serial_write_char('C');
+  EI;
 
   uint8_t x;
   if ((serial_read_char(&x) == 0))
@@ -222,6 +232,7 @@ XMODEM_SIGNAL xmodem_too_many_errors(void) __z88dk_fastcall {
 }
 
 XMODEM_SIGNAL xmodem_receive(const XMODEM_SIGNAL signal) __z88dk_fastcall {
+  EI;
   FOR_SIGNAL(READ_128 | READ_1024) {
     FOR_SIGNAL(READ_CRC) { return start_receive_crc(signal & ~(READ_128 | READ_1024)); }
     else {

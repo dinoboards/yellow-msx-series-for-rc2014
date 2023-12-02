@@ -5,9 +5,9 @@
 
 uint8_t assigned_port_number;
 
-extern uint8_t sio_data_count;
-extern uint8_t sio_in(void);
-extern void    sio_out(uint8_t data) __z88dk_fastcall;
+extern uint8_t  sio_data_count;
+extern uint16_t sio_in(void);
+extern void     sio_out(uint8_t data) __z88dk_fastcall;
 
 uint32_t baudrate = 19200;
 
@@ -57,32 +57,40 @@ uint8_t _serial_set_protocol(const uint16_t protocol) {
 
 uint8_t _serial_read(uint8_t *buf, uint16_t *size) {
   uint16_t remaining = *size;
+  uint16_t count     = 0;
 
   EI;
-  while (remaining > 0 && sio_data_count > 0) {
-    *buf++ = sio_in();
-    remaining--;
+  while (remaining > 0) {
+    const uint16_t hl = sio_in();
+    if (hl >> 8 == 0) {
+      *buf++ = (hl & 0xFF);
+      remaining--;
+      count++;
+    } else
+      break;
   }
 
-  *size = *size - remaining;
+  *size = count;
 
   return 0;
 }
 
 uint8_t _serial_demand_read(uint8_t *buf, uint16_t *size, const uint16_t timeout_ms) {
-  timeout_ms;
   uint16_t      remaining = *size;
   const int16_t timeout   = get_future_time(from_ms(timeout_ms));
+  uint16_t      count     = 0;
 
   EI;
   while (remaining > 0 && !is_time_past(timeout)) {
-    if (sio_data_count > 0) {
-      *buf++ = sio_in();
+    const uint16_t hl = sio_in();
+    if (hl >> 8 == 0) {
+      *buf++ = (hl & 0xFF);
       remaining--;
+      count++;
     }
   }
 
-  *size = *size - remaining;
+  *size = count;
 
   return 0;
 }
@@ -100,8 +108,10 @@ uint16_t _serial_get_rx_buffer_size(void) { return sio_data_count; }
 uint8_t _serial_purge_buffers(void) {
 
   DI;
+  sio2_configure_port();
   sio_buf_head = sio_buf_tail = sio_buf;
   sio_data_count              = 0;
+
   EI;
 
   return 0;

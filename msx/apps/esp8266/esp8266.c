@@ -81,15 +81,11 @@ bool read_until_ok_or_error(void) {
 
 void subCommandTimeSync(void) {
   serial_purge_buffers(port_number);
-  printf("sending time request\r\n");
   serial_write_bytes("\r\nAT+time?\r\n", 12);
-  printf("Sent. waiting for response\r\n");
   if (serial_read_line(false)) {
     print_str("Error getting time\r\n");
     return;
   }
-
-  printf("Read\r\n");
 
   if (strlen(responseStr) != 24) {
     print_str("Invalid time string received ");
@@ -167,6 +163,7 @@ uint8_t main(const int argc, const char *argv[]) {
 
   serial_set_baudrate(port_number, baud_rate);
   serial_set_protocol(port_number, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
+  serial_purge_buffers(port_number);
 
   if (subCommand == SUB_COMMAND_HANGUP) {
     delay(ONE_SECOND);

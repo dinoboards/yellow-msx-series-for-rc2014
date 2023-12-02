@@ -24,8 +24,6 @@ extern uint8_t  sio_clock_divider;
  */
 extern uint8_t sio_probe(void);
 
-extern void sio2_chip_init(void);
-
 extern void sio2_configure_port(void);
 
 typedef struct {

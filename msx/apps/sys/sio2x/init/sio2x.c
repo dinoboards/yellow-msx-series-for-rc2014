@@ -123,10 +123,13 @@ uint8_t main(const int argc, const char *argv[]) {
   uint8_t sio_detected = sio_probe();
   if (sio_detected == 0) {
     printf("SIO/2:           NOT PRESENT\r\n");
-    // return 1;
+    return 1;
   }
 
+  printf("RTS OFF\r\n");
   sio2_chip_init();
+  sio2_chip_spike();
+  printf("RTS ON\r\n");
 
   uint16_t driver_length = sys_end - sys_start;
 

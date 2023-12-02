@@ -64,6 +64,8 @@ char     fileNameBuffer[256];
 char     pTempFileName[256];
 
 void wget(void) {
+  memset(&xmodemState, 0, sizeof(xmodemState));
+
   xmodem_enable_extended_info_packet_support();
   firstPacket   = true;
   started       = false;
