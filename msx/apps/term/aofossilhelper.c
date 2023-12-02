@@ -57,14 +57,13 @@ uint8_t port_number = 1;
 void Breath(void) { return; }
 
 unsigned char InitializeTCPIP(void) {
-  uint8_t buffer[32];
-  serial_set_baudrate(port_number, baud_rate);
-  sprintf(buffer, "%ld", baud_rate);
-  AnsiPrint("Baud Rate: ");
-  AnsiPrint(buffer);
-  AnsiPrint("\r\n");
+  uint8_t buffer[64];
 
   serial_set_protocol(port_number, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
+
+  uint8_t result = serial_set_baudrate(port_number, baud_rate);
+  sprintf(buffer, "Baud Rate: %ld (%02X)\r\n", baud_rate, result);
+  AnsiPrint(buffer);
 
   serial_purge_buffers(port_number);
   return 1;

@@ -94,7 +94,7 @@ helloworld_files = ./helloworld.c.o
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
-sraltest_files = $(call app_file,sraltest)
+sraltest_files = $(call app_file,sraltest,memmap-override.asm)
 $(BIN)sraltest.com: $(addprefix $(BIN),$(sraltest_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 sraltest.com.crt_enable_commandline:=1
 

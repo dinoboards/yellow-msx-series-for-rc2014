@@ -268,9 +268,9 @@
 ./bin/libraries/msxdos/rename.c.asm: libraries/msxdos/rename.c
 ./bin/libraries/xmodem/crc16.c.asm: libraries/xmodem/crc16.c libraries/xmodem/crc16.h
 ./bin/libraries/xmodem/xmodem.c.asm: libraries/xmodem/xmodem.c libraries/xmodem/xmodem.h \
- libraries/xmodem/crc16.h libraries/extbio/serial-helpers.h \
- libraries/extbio/serial.h libraries/msxbios/system_vars.h \
- libraries/z80.h
+ libraries/xmodem/crc16.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h libraries/extbio/serial-helpers.h \
+ libraries/extbio/serial.h libraries/z80.h
 ./bin/libraries/xmodem/utils.c.asm: libraries/xmodem/utils.c libraries/xmodem/utils.h
 ./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
@@ -417,17 +417,16 @@
 ./bin/config_request.c.asm: config_request.c v9958.h
 ./bin/sraltest/baud_rate_clock_calculator.c.asm: sraltest/baud_rate_clock_calculator.c \
  sraltest/baud_rate_clock_calculator.h
-./bin/sraltest/sraltest.c.asm: sraltest/sraltest.c sraltest/baud_rate_clock_calculator.h \
- libraries/delay/delay.h libraries/msxbios/system_vars.h \
- libraries/extbio/serial.h libraries/msxdos/msxdos.h \
- sraltest/../sys/sio2/sio2.h
+./bin/sraltest/sraltest.c.asm: sraltest/sraltest.c sraltest/../sys/sio2/sio2.h \
+ sraltest/baud_rate_clock_calculator.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h libraries/extbio/serial-helpers.h \
+ libraries/extbio/serial.h libraries/msxdos/msxdos.h
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
 ./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
-./bin/memmap-data-at-8000.o: ./memmap-data-at-8000.asm
 ./bin/usbctrl/floopy_boot_code.o: ./usbctrl/floopy_boot_code.asm
 ./bin/usbtst/print.o: ./usbtst/print.asm
 ./bin/romflashwriter/romflashwriter.o: ./romflashwriter/romflashwriter.asm
