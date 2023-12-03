@@ -9,12 +9,12 @@
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
  esp8266/esp8266.h print.h libraries/extbio/serial-helpers.h \
  libraries/extbio/serial.h libraries/msx/libgen.h \
- libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h \
- libraries/xmodem/utils.h libraries/xmodem/xmodem.h
+ libraries/msxbios/msxbios.h libraries/msxdos/msxdos.h \
+ libraries/msxbios/system_vars.h libraries/xmodem/utils.h \
+ libraries/xmodem/xmodem.h
 ./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
 ./bin/esp8266/msxhub.c.asm: esp8266/msxhub.c esp8266/msxhub.h esp8266/arguments.h \
  esp8266/esp8266.h print.h esp8266/wget.h libraries/xmodem/xmodem.h
-./bin/esp8266/print.c.asm: esp8266/print.c
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/esp8266.h esp8266/arguments.h \
  esp8266/msxhub.h print.h esp8266/wget.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
