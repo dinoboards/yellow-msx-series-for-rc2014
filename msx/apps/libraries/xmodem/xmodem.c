@@ -79,10 +79,9 @@ bool read_packet_crc(void) {
   uint16_t       actual_size   = 0;
   uint8_t        count         = 20;
 
-
   while (actual_size != expected_size && count-- != 0) {
     uint16_t size = serial_get_rx_buffer_size(port_number);
-    uint8_t r = serial_read(port_number, p, &size);
+    uint8_t  r    = serial_read(port_number, p, &size);
     p += size;
     actual_size += size;
   }

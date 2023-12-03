@@ -363,7 +363,8 @@
  libraries/msxbios/extbio.h
 ./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
  libraries/sysload/sys.h
-./bin/sys/sio2/body/sio2.c.asm: sys/sio2/body/sio2.c sys/sio2/body/../sio2.h libraries/z80.h
+./bin/sys/sio2/body/sio2.c.asm: sys/sio2/body/sio2.c sys/sio2/body/../sio2.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h libraries/z80.h
 ./bin/sys/sio2/init/sio2.c.asm: sys/sio2/init/sio2.c sys/sio2/init/../sio2.h \
  libraries/extbio/serial.h libraries/sysload/sysload.h \
  libraries/sysload/sys.h
@@ -520,7 +521,6 @@
 ./bin/sys/hello/body/crt.o: ./sys/hello/body/crt.asm
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
 ./bin/sys/sio2/body/sio_out.o: ./sys/sio2/body/sio_out.asm ./msx.inc
-./bin/sys/sio2/body/sio_set_baud_rate.o: ./sys/sio2/body/sio_set_baud_rate.asm
 ./bin/sys/sio2/body/crt.o: ./sys/sio2/body/crt.asm
 ./bin/sys/sio2/body/sio_in.o: ./sys/sio2/body/sio_in.asm ./msx.inc
 ./bin/sys/sio2/body/data.o: ./sys/sio2/body/data.asm ./msx.inc 

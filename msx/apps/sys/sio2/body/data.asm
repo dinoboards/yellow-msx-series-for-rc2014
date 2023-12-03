@@ -2,7 +2,7 @@
 	include "../sio.inc"
 
 	SECTION	SIO_BUFFER
-	ALIGN   256
+	ALIGN   SIO_BUFSZ
 	PUBLIC	_sio_buf, _sio_buf_head, _sio_buf_tail, _sio_data_count
 
 _sio_buf:		DS	SIO_BUFSZ, $00	; RECEIVE RING BUFFER

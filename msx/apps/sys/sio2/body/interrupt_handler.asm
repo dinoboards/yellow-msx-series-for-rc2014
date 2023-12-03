@@ -6,10 +6,13 @@
 
 	EXTERN	_sio_data_count
 	EXTERN	_sio_buf_head
+	EXTERN	_sio_buf
 	EXTERN	_sio_flags
 
 _keyi:
 sio_interrupt:
+	ld b,b
+	jr $+2
 	DI
 	LD	C, RC_SIOB_CMD
 	XOR	A			; READ REGISTER 0
@@ -20,7 +23,7 @@ sio_interrupt:
 
 	EXX
 	LD	HL, _sio_data_count
-	LD	D, 50			; BUFFER HIGH MARK
+	LD	D, 48			; BUFFER HIGH MARK
 	EXX
 
 	LD	DE, RC_SIOB_DAT << 8 | RC_SIOB_CMD		; E => CMD, D => DAT
@@ -51,6 +54,10 @@ SIO_INTRCV1:
 SIO_INTRCV2:
 	LD	(HL), B			; SAVE CHARACTER RECEIVED IN BUFFER AT HEAD
 	INC	L			; BUMP HEAD POINTER
+	LD	A, SIO_BUFSZ-1		; MASK TO BUF SIZE -1
+	AND	L
+	OR	_sio_buf & (256-SIO_BUFSZ)
+	LD	L, A
 
 SIO_INTRCV3:
 	; CHECK FOR MORE PENDING...
