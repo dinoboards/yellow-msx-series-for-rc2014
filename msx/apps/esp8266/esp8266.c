@@ -15,7 +15,6 @@
 
 unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 uint16_t      size;
-uint8_t       port_number = 1;
 
 void abortWithError(const char *pMessage) __z88dk_fastcall {
   if (pMessage) {

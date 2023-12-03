@@ -12,7 +12,8 @@
  libraries/msxbios/msxbios.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h libraries/xmodem/utils.h \
  libraries/xmodem/xmodem.h
-./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h
+./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h \
+ libraries/extbio/serial-helpers.h libraries/extbio/serial.h
 ./bin/esp8266/msxhub.c.asm: esp8266/msxhub.c esp8266/msxhub.h esp8266/arguments.h \
  esp8266/esp8266.h print.h esp8266/wget.h libraries/xmodem/xmodem.h
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/esp8266.h esp8266/arguments.h \
@@ -262,6 +263,8 @@
  libraries/msxdos/msxdos.h libraries/extbio/serial-helpers.h \
  libraries/extbio/serial.h libraries/msxbios/system_vars.h \
  libraries/z80.h
+./bin/libraries/extbio/serial-helper-find-driver.c.asm: libraries/extbio/serial-helper-find-driver.c \
+ libraries/extbio/serial-helpers.h libraries/extbio/serial.h
 ./bin/libraries/fusion/width.c.asm: libraries/fusion/width.c libraries/fusion/msx_fusion.h
 ./bin/libraries/fusion/fprintf.c.asm: libraries/fusion/fprintf.c libraries/fusion/fusion_ext.h \
  libraries/fusion/io.h

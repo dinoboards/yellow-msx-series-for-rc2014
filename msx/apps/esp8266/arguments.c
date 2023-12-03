@@ -1,5 +1,6 @@
 #include "arguments.h"
 #include "print.h"
+#include <extbio/serial-helpers.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,6 +13,7 @@ const char *pWgetUrl;
 const char *pFilePathName;
 uint32_t    baud_rate = 19200L;
 const char *pMsxHubPackageName;
+uint8_t     port_number = 1;
 
 const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",    "4800",
                                     "9600", "19200", "38400", "57600", "unknown", "115200"};
@@ -19,6 +21,8 @@ const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",  
 uint8_t abort_with_help(void) {
   printf("Usage:  esp8266 <options> <subcommand>\r\n\r\n"
          "Utility to manage RC2014 Wifi Module\r\n\r\n"
+         "  /p<port>, /port=<port>\r\n"
+         "    The port number of name to use\r\n"
          "  /b<rate>, /baud=<rate>\r\n"
          "    The desired tx/rx baud <rate>\r\n"
          "  hangup\r\n"
@@ -124,6 +128,43 @@ uint8_t abort_with_missing_sub_command_msg(void) {
   return abort_with_help();
 }
 
+uint8_t arg_port(const uint8_t i, const char **argv) {
+  const char *arg_switch = argv[i];
+  const char *arg_value;
+  if (strncasecmp(arg_switch, "/port", 5) == 0) {
+    if (arg_switch[5] != '=') {
+      printf("Invalid port switch - use /port=<port>\r\n");
+      return abort_with_help();
+    }
+
+    arg_value = arg_switch + 6;
+    goto process_port;
+  } else if (strncmp(arg_switch, "/p", 2) == 0) {
+    arg_value = arg_switch + 2;
+    goto process_port;
+  } else
+    return i;
+
+process_port:
+  port_number = 0;
+  int r       = sscanf((char *)arg_value, "%d", &port_number);
+
+  if (port_number > 0) {
+    printf("Port number %d\r\n", port_number);
+    return i + 1;
+  }
+
+  port_number = find_serial_driver(arg_value);
+  if (port_number > 0) {
+    printf("Port number %d\r\n", port_number);
+    return i + 1;
+  }
+
+  printf("Invalid port -  '%s' is not a positive number or known driver name\r\n", arg_value);
+  exit(1);
+  return 255;
+}
+
 uint8_t arg_baud_rate(const uint8_t i, const char **argv) {
   const char *arg_switch = argv[i];
   const char *arg_value;
@@ -220,6 +261,10 @@ void process_cli_arguments(const char **argv, const int argc) {
       i++;
       continue;
     }
+
+    i = arg_port(i, argv);
+    if (current_i != i)
+      continue;
 
     i = arg_baud_rate(i, argv);
     if (current_i != i)

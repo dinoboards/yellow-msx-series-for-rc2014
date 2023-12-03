@@ -23,10 +23,6 @@ const unsigned char rotatingChar[4][5]      = {CHAR_VERT_BAR CURSOR_MOVE_LEFT, C
 uint8_t             rotatingIndex           = 0;
 const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
 char               *waitForMessage          = NULL;
-bool                firstPacket;
-
-char    backupPacket[1025];
-int16_t backupPacketSize;
 
 char serial_write_temp_buffer[256];
 
@@ -69,7 +65,6 @@ void wget(void) {
   memset(&xmodemState, 0, sizeof(xmodemState));
 
   xmodem_enable_extended_info_packet_support();
-  firstPacket   = true;
   started       = false;
   totalFileSize = 0;
   printf(ERASE_LINE "Connecting ...");
@@ -140,8 +135,15 @@ void wget(void) {
       goto abort;
 
     if (sig & SAVE_PACKET && !(sig & INFO_PACKET)) {
-      if (!firstPacket && pFilePathName) {
-        error = msxdosWriteFile(fptr, backupPacket, backupPacketSize);
+
+      if (!started) {
+        printf(downloadMessage);
+        printf(sig & READ_CHECKSUM ? "(chksum) ... " : "(crc) ... ");
+        started = true;
+      }
+
+      if (pFilePathName) {
+        error = msxdosWriteFile(fptr, packetBody, packetBodySize);
         if (error) {
           char error_description[64];
           memset(error_description, 0, sizeof(error_description));
@@ -149,15 +151,9 @@ void wget(void) {
           printf("%s (%02X): %s.\r\n", error_description, error, pFilePathName);
           return;
         }
-      } else {
-        printf(downloadMessage);
-        printf(sig & READ_CHECKSUM ? "(chksum) ... " : "(crc) ... ");
       }
 
-      firstPacket      = false;
-      backupPacketSize = xmodemState.currentPacketSize;
-      memcpy(backupPacket, xmodemState.packetBuffer + 3, backupPacketSize);
-      totalFileSize += backupPacketSize;
+      totalFileSize += packetBodySize;
       printf(rotatingChar[rotatingIndex]);
       rotatingIndex = (rotatingIndex + 1) & 3;
     }
@@ -193,13 +189,13 @@ void wget(void) {
     if (lengthPtr) {
       const int32_t length = atol(lengthPtr + 4);
 
-      backupPacketSize = length - (totalFileSize - backupPacketSize);
-      totalFileSize    = length;
+      packetBodySize = length - (totalFileSize - packetBodySize);
+      totalFileSize  = length;
     }
   }
 
   if (pFilePathName) {
-    msxdosWriteFile(fptr, backupPacket, backupPacketSize);
+    msxdosWriteFile(fptr, packetBody, packetBodySize);
     printf(ERASE_LINE "Saving file...");
   }
 
