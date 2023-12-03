@@ -160,6 +160,6 @@ void subCommandMsxHub(void) {
         break;
     }
 
-    print_str("\r\n");
+    printf("\r\n");
   }
 }

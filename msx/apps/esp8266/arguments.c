@@ -18,33 +18,33 @@ const char *pFossilBaudRates[12] = {"75",   "300",   "600",   "1200",  "2400",  
                                     "9600", "19200", "38400", "57600", "unknown", "115200"};
 
 uint8_t abort_with_help(void) {
-  print_str("Usage:  esp8266 <options> <subcommand>\r\n\r\n"
-            "Utility to manage RC2014 Wifi Module\r\n\r\n"
-            "  /b<rate>, /baud=<rate>\r\n"
-            "    The desired tx/rx baud <rate>\r\n"
-            "  hangup\r\n"
-            "    Issue command to hangup\r\n"
-            "  time-sync\r\n"
-            "    Sync the MSX RTC\r\n"
-            "  set-timezone <zone>\r\n"
-            "    Set timezone\r\n"
-            "  set-wifi <ssid> <password>\r\n"
-            "    Set wifi credentials\r\n"
-            "  wget [1k] <url> <localfile>\r\n"
-            "    Retrieve with http/https"
-            "\r\n");
+  printf("Usage:  esp8266 <options> <subcommand>\r\n\r\n"
+         "Utility to manage RC2014 Wifi Module\r\n\r\n"
+         "  /b<rate>, /baud=<rate>\r\n"
+         "    The desired tx/rx baud <rate>\r\n"
+         "  hangup\r\n"
+         "    Issue command to hangup\r\n"
+         "  time-sync\r\n"
+         "    Sync the MSX RTC\r\n"
+         "  set-timezone <zone>\r\n"
+         "    Set timezone\r\n"
+         "  set-wifi <ssid> <password>\r\n"
+         "    Set wifi credentials\r\n"
+         "  wget [1k] <url> <localfile>\r\n"
+         "    Retrieve with http/https"
+         "\r\n");
   exit(1);
 
   return 255;
 }
 
 uint8_t abort_with_invalid_options(void) {
-  print_str("Invalid usage\r\n");
+  printf("Invalid usage\r\n");
   return abort_with_help();
 }
 
 uint8_t abort_with_invalid_package_name(void) {
-  print_str("msxhub package name is invalid.  Must be 8 or less characters\r\n");
+  printf("msxhub package name is invalid.  Must be 8 or less characters\r\n");
   return 255;
 }
 
@@ -121,14 +121,14 @@ uint8_t arg_help_msg(const uint8_t i, const char **argv) {
 }
 
 uint8_t abort_with_invalid_arg_msg(const uint8_t i, const char **argv) {
-  print_str("Invalid command line option '");
-  print_str((char *)argv[i]);
-  print_str("'\r\n\r\n");
+  printf("Invalid command line option '");
+  printf((char *)argv[i]);
+  printf("'\r\n\r\n");
   return abort_with_help();
 }
 
 uint8_t abort_with_missing_sub_command_msg(void) {
-  print_str("Missing subcommand argument.\r\n\r\n");
+  printf("Missing subcommand argument.\r\n\r\n");
   return abort_with_help();
 }
 
@@ -137,7 +137,7 @@ uint8_t arg_baud_rate(const uint8_t i, const char **argv) {
   const char *arg_value;
   if (strncasecmp(arg_switch, "/baud", 5) == 0) {
     if (arg_switch[5] != '=') {
-      print_str("Invalid baud switch - use /baud=<rate>\r\n");
+      printf("Invalid baud switch - use /baud=<rate>\r\n");
       return abort_with_help();
     }
 
@@ -205,9 +205,9 @@ process_baud_rate:
     return i + 1;
   }
 
-  print_str("Invalid baud rate setting '");
-  print_str(arg_value);
-  print_str("'\r\n");
+  printf("Invalid baud rate setting '");
+  printf(arg_value);
+  printf("'\r\n");
   exit(1);
 
   return 255;

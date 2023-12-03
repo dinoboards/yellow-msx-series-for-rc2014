@@ -7,6 +7,7 @@
 #include <extbio/serial-helpers.h>
 #include <extbio/serial.h>
 #include <msx/libgen.h>
+#include <msxbios/msxbios.h>
 #include <msxdos.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -17,7 +18,8 @@
 
 bool                started;
 uint32_t            totalFileSize;
-const unsigned char rotatingChar[4][5]      = {"\x01\x56\x1B\x44", "\x01\x5D\x1B\x44", "\x01\x57\x1B\x44", "\x01\x5E\x1B\x44"};
+const unsigned char rotatingChar[4][5]      = {CHAR_VERT_BAR CURSOR_MOVE_LEFT, CHAR_FOWARD_SLASH CURSOR_MOVE_LEFT,
+                                               CHAR_DASH CURSOR_MOVE_LEFT, CHAR_BACK_SLASH CURSOR_MOVE_LEFT};
 uint8_t             rotatingIndex           = 0;
 const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
 char               *waitForMessage          = NULL;
@@ -45,11 +47,11 @@ char *strnstr(const char *haystack, const char *needle, size_t len) {
 }
 
 void subCommandWGet(void) {
-  print_str("Attempting to retrieve file ");
-  print_str(pFilePathName);
-  print_str(" from ");
-  print_str(pWgetUrl);
-  print_str("\r\n");
+  printf("Attempting to retrieve file ");
+  printf(pFilePathName);
+  printf(" from ");
+  printf(pWgetUrl);
+  printf("\r\n");
 
   waitForMessage = (char *)defaultWaitForMessage;
 
@@ -70,7 +72,7 @@ void wget(void) {
   firstPacket   = true;
   started       = false;
   totalFileSize = 0;
-  print_str(ERASE_LINE "Connecting ...");
+  printf(ERASE_LINE "Connecting ...");
 
   serial_purge_buffers(port_number);
   serial_write_string("\r\nat+wget");
@@ -80,7 +82,7 @@ void wget(void) {
   serial_write_string("\r\n");
 
   if (serial_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
-    print_str(ERASE_LINE "Resetting modem ...");
+    printf(ERASE_LINE "Resetting modem ...");
     resetModem();
 
     serial_purge_buffers(port_number);
@@ -91,16 +93,16 @@ void wget(void) {
     serial_write_string("\r\n");
 
     if (serial_read_line(false) || strncmp(responseStr, "OK", 2) != 0) {
-      print_str("\r\nError requesting file:\r\n");
-      print_str(responseStr);
+      printf("\r\nError requesting file:\r\n");
+      printf(responseStr);
       serial_purge_buffers(port_number);
-      print_str("\r\n");
+      printf("\r\n");
       abortWithError(NULL);
       return;
     }
   }
 
-  print_str(waitForMessage);
+  printf(waitForMessage);
 
   char downloadMessage[3 + 13 + 1];
   strcpy(downloadMessage, ERASE_LINE);
@@ -135,6 +137,8 @@ void wget(void) {
   const int16_t startTime = JIFFY;
 
   XMODEM_SIGNAL sig = READ_FIRST_HEADER;
+
+  printf(CURSOR_OFF);
   while (sig = xmodem_receive(sig)) {
     if (msxbiosBreakX())
       goto abort;
@@ -149,16 +153,16 @@ void wget(void) {
           printf("%s (%02X): %s.\r\n", error_description, error, pFilePathName);
           return;
         }
+      } else {
+        printf(downloadMessage);
+        printf(sig & READ_CHECKSUM ? "(chksum) ... " : "(crc) ... ");
       }
-
-      print_str(downloadMessage);
-      print_str(sig & READ_CHECKSUM ? "(chksum) ... " : "(crc) ... ");
 
       firstPacket      = false;
       backupPacketSize = xmodemState.currentPacketSize;
       memcpy(backupPacket, xmodemState.packetBuffer + 3, backupPacketSize);
       totalFileSize += backupPacketSize;
-      print_str(rotatingChar[rotatingIndex]);
+      printf(rotatingChar[rotatingIndex]);
       rotatingIndex = (rotatingIndex + 1) & 3;
     }
 
@@ -184,7 +188,7 @@ void wget(void) {
   }
 
   if (!(xmodemState.finish_reason | END_OF_STREAM)) {
-    print_str(ERASE_LINE "Error receiving file\r\n");
+    printf(ERASE_LINE "Error receiving file\r\n");
     goto abort;
   }
 
@@ -200,7 +204,7 @@ void wget(void) {
 
   if (pFilePathName) {
     msxdosWriteFile(fptr, backupPacket, backupPacketSize);
-    print_str(ERASE_LINE "Saving file...");
+    printf(ERASE_LINE "Saving file...");
   }
 
   if (pFilePathName) {
@@ -212,11 +216,11 @@ void wget(void) {
     msxdosDeleteFile(pFilePathName);
     msxdosRenameFile(pFilePathName, pTempFileName);
 
-    print_str(ERASE_LINE);
+    printf(ERASE_LINE);
     if (pFilePathName)
-      print_str(pFilePathName);
+      printf(pFilePathName);
     else
-      print_str("Downloaded");
+      printf("Downloaded");
 
     printf(" %ld bytes in %d seconds (%d b/s)\r\n", totalFileSize, (int)totalTime, (int)rate);
   }

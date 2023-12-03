@@ -19,9 +19,9 @@ uint8_t       port_number = 1;
 
 void abortWithError(const char *pMessage) __z88dk_fastcall {
   if (pMessage) {
-    print_str("\r\n");
-    print_str(pMessage);
-    print_str("\r\n");
+    printf("\r\n");
+    printf(pMessage);
+    printf("\r\n");
   }
   exit(1);
 }
@@ -40,12 +40,9 @@ bool serial_read_line(const bool withLogging) __z88dk_fastcall {
       serial_read(port_number, &t, &size);
       if (size) {
         if (t >= 32 && t < 128) {
-          // printf("%c", t);
-
           *pBuffer++ = t;
           length++;
-        } // else
-          // printf("(%02X)", t);
+        }
 
         if (t == '\n')
           break;
@@ -83,14 +80,14 @@ void subCommandTimeSync(void) {
   serial_purge_buffers(port_number);
   serial_write_bytes("\r\nAT+time?\r\n", 12);
   if (serial_read_line(false)) {
-    print_str("Error getting time\r\n");
+    printf("Error getting time\r\n");
     return;
   }
 
   if (strlen(responseStr) != 24) {
-    print_str("Invalid time string received ");
-    print_str(responseStr);
-    print_str("\r\n");
+    printf("Invalid time string received ");
+    printf(responseStr);
+    printf("\r\n");
     return;
   }
 
@@ -122,7 +119,7 @@ void subCommandSetTimeZone(void) {
   serial_write_bytes("\r\n", 2);
 
   if (serial_read_line(false)) {
-    print_str("Error setting timezone\r\n");
+    printf("Error setting timezone\r\n");
     return;
   }
 
@@ -131,9 +128,9 @@ void subCommandSetTimeZone(void) {
     return;
   }
 
-  print_str("Error setting timezone: ");
-  print_str(responseStr);
-  print_str("\r\n");
+  printf("Error setting timezone: ");
+  printf(responseStr);
+  printf("\r\n");
 }
 
 void subCommandSetWiFi(void) {
