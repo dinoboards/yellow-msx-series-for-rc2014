@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2)) $(addsuffix .com,$(addprefix $(BIN),fdisk sio2x fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2)) $(addsuffix .com,$(addprefix $(BIN),fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -59,7 +59,6 @@ sio2.body := $(addprefix $(BIN),$(call app_file,sys/sio2/body)) $(EXTBIO_LIB) $(
 sio2.init := $(addprefix $(BIN),$(call app_file,sys/sio2/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB)
 $(eval $(call relocatable,sio2))
 
-
 hello.body := $(addprefix $(BIN),$(call app_file,sys/hello/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 hello.init := $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB)
 $(eval $(call relocatable,hello))
@@ -74,13 +73,6 @@ $(BIN)fossil.com: $(BIN)fossil.sys
 fossil.body := $(addprefix $(BIN),$(call app_file,sys/fossil/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 fossil.init := $(addprefix $(BIN),$(call app_file,sys/fossil/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,fossil))
-
-$(BIN)sio2x.com: $(BIN)sio2x.sys
-	@cp $< $@
-
-sio2x.body := $(addprefix $(BIN),$(call app_file,sys/sio2x/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-sio2x.init := $(addprefix $(BIN),$(call app_file,sys/sio2x/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
-$(eval $(call relocatable,sio2x))
 
 service_files = $(call app_file,service)
 $(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
