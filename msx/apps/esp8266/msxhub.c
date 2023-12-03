@@ -71,10 +71,9 @@ int8_t getNumberOfPages(void) {
   p            = str_append_upper(p, pMsxHubPackageName);
   p            = str_append(p, "/latest/pages");
 
-  pWgetUrl           = msxHubUrl;
-  pFilePathName      = NULL;
-  requestLargePacket = false;
-  waitForMessage     = (char *)(ERASE_LINE "Retreiving file list");
+  pWgetUrl       = msxHubUrl;
+  pFilePathName  = NULL;
+  waitForMessage = (char *)(ERASE_LINE "Retreiving file list");
 
   wget();
 
@@ -88,10 +87,9 @@ void getFileListForPage(int8_t i) __z88dk_fastcall {
   p            = str_append(p, "/latest/files/");
   sprintf(p, "%d", i);
 
-  pWgetUrl           = msxHubUrl;
-  pFilePathName      = NULL;
-  requestLargePacket = true;
-  waitForMessage     = (char *)(ERASE_LINE "Retreiving file list page");
+  pWgetUrl       = msxHubUrl;
+  pFilePathName  = NULL;
+  waitForMessage = (char *)(ERASE_LINE "Retreiving file list page");
 
   wget();
 }
@@ -102,10 +100,9 @@ const char *getInstallDirectory(void) {
   p            = str_append_upper(p, pMsxHubPackageName);
   str_append(p, "/latest/installdir");
 
-  pWgetUrl           = msxHubUrl;
-  pFilePathName      = NULL;
-  requestLargePacket = false;
-  waitForMessage     = (char *)(ERASE_LINE "Retrieving installdir name");
+  pWgetUrl       = msxHubUrl;
+  pFilePathName  = NULL;
+  waitForMessage = (char *)(ERASE_LINE "Retrieving installdir name");
 
   wget();
 
@@ -133,10 +130,9 @@ void downloadFile(const char *fileName) __z88dk_fastcall {
   p            = str_append(p, "/");
   str_append(p, fileName);
 
-  pWgetUrl           = msxHubUrl;
-  pFilePathName      = fileName;
-  requestLargePacket = false;
-  waitForMessage     = (char *)(ERASE_LINE "Retrieving 12345678.123  ");
+  pWgetUrl       = msxHubUrl;
+  pFilePathName  = fileName;
+  waitForMessage = (char *)(ERASE_LINE "Retrieving 12345678.123  ");
   sprintf(waitForMessage + 3 + 11, fileName);
   wget();
 }
