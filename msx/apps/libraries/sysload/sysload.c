@@ -19,6 +19,8 @@ extern uint16_t extbio_next;
 extern uint16_t extbio;
 extern uint16_t timi_next;
 extern uint16_t timi;
+extern uint16_t keyi_next;
+extern uint16_t keyi;
 #define relocated(x) ((uint16_t *)((uint16_t)(&x) + (uint16_t)(sys_segment_head.sys[index])))
 
 #define relocation_table_size (((uint16_t)relocation_table_end - (uint16_t)relocation_table_start) / 2)
@@ -63,6 +65,7 @@ void create(void) {
 
   install_extbio_hook();
   install_timi_hook();
+  install_keyi_hook();
 
   memmap_put_page_1(current_segment);
 
@@ -163,6 +166,11 @@ uint16_t main(const int argc, const char *argv[]) {
   if (flags & REQUIRE_TIMI) {
     *relocated(timi_next)                       = (uint16_t)sys_segment_head.first_timi_handler.address;
     sys_segment_head.first_timi_handler.address = (sys_hook_fn)relocated(timi);
+  }
+
+  if (flags & REQUIRE_KEYI) {
+    *relocated(keyi_next)                       = (uint16_t)sys_segment_head.first_keyi_handler.address;
+    sys_segment_head.first_keyi_handler.address = (sys_hook_fn)relocated(keyi);
   }
 
 finally_memmap:

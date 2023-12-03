@@ -11,6 +11,5 @@
 extern uint8_t sio_probe(void);
 
 extern void sio2_chip_init(void);
-extern void sio2_chip_spike(void);
 
 #endif
