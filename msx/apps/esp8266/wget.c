@@ -49,7 +49,7 @@ char *strnstr(const char *haystack, const char *needle, size_t len) {
 void subCommandWGet(void) {
   printf("Attempting to retrieve file ");
   printf(pFilePathName);
-  printf(" from ");
+  printf(" from:\r\n");
   printf(pWgetUrl);
   printf("\r\n");
 
@@ -76,8 +76,6 @@ void wget(void) {
 
   serial_purge_buffers(port_number);
   serial_write_string("\r\nat+wget");
-  if (requestLargePacket)
-    serial_write_string("1");
   serial_write_string(pWgetUrl);
   serial_write_string("\r\n");
 
@@ -87,8 +85,6 @@ void wget(void) {
 
     serial_purge_buffers(port_number);
     serial_write_string("\r\nat+wget");
-    if (requestLargePacket)
-      serial_write_string("1");
     serial_write_string(pWgetUrl);
     serial_write_string("\r\n");
 
