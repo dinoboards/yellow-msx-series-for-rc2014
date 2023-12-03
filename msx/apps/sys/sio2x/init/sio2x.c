@@ -126,10 +126,7 @@ uint8_t main(const int argc, const char *argv[]) {
     return 1;
   }
 
-  printf("RTS OFF\r\n");
   sio2_chip_init();
-  sio2_chip_spike();
-  printf("RTS ON\r\n");
 
   uint16_t driver_length = sys_end - sys_start;
 

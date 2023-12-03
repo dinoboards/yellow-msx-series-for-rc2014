@@ -1,8 +1,15 @@
 
 REQUIRE_EXTBIO	EQU	1
 REQUIRE_TIMI	EQU	2
+REQUIRE_KEYI	EQU	4
 
 	SECTION	TSR_HEADER
+
+	PUBLIC	_keyi_next
+	PUBLIC	_keyi
+
+defc	_keyi_next = 0
+defc	_keyi = 0
 
 	DB	"hello   "
 	DB 	REQUIRE_EXTBIO | REQUIRE_TIMI

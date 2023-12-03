@@ -1,25 +1,26 @@
 	include "msx.inc"
 	include "../sio.inc"
 
-	PUBLIC	_timi
-	PUBLIC	_timi_next
+	PUBLIC	_keyi
+	PUBLIC	_keyi_next
 
 	EXTERN	_sio_data_count
 	EXTERN	_sio_buf_head
 	EXTERN	_sio_flags
 
-_timi:
+_keyi:
 sio_interrupt:
+	DI
 	LD	C, RC_SIOB_CMD
 	XOR	A			; READ REGISTER 0
 	OUT	(C), A
 	IN	A, (C)
-	AND	$01			; ISOLATE RECEIVE READY BIT
-	JP	Z, SIO_INT_NEXT		; NOTHING AVAILABLE ON CURRENT CHANNEL
+	RRA				; ISOLATE RECEIVE READY BIT
+	JR	NC, SIO_INT_NEXT	; NOTHING AVAILABLE ON CURRENT CHANNEL
 
 	EXX
-	LD	HL, _sio_data_count	; buffer size ptr
-	LD	D, SIO_BUFSZ-10		; buffer high mark
+	LD	HL, _sio_data_count
+	LD	D, 50			; BUFFER HIGH MARK
 	EXX
 
 	LD	DE, RC_SIOB_DAT << 8 | RC_SIOB_CMD		; E => CMD, D => DAT
@@ -65,7 +66,7 @@ SIO_INTRCV3:
 	JR	Z, SIO_UPDATE_HEAD_PTR	; ABORT NOW IF RTS IS OFF
 
 	; TEST FOR NEW BYTES FOR A SHORT PERIOD OF TIME
-	LD	B, 0
+	LD	B, 95
 SIO_MORE:
 	IN	A, (C)			; C IS CMD PORT
 	RRA				; READY BIT TO CF
@@ -85,8 +86,9 @@ SIO_INTRCV4:
 	LD	A, COMMAND_RETURN_FROM_INT
 	OUT	(C), A
 
+	RET
 
 SIO_INT_NEXT:
 	DB	$C3	; JP opcode
-_timi_next:
+_keyi_next:
 	DW	0
