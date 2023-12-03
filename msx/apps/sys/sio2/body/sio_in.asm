@@ -3,6 +3,7 @@
 
 	SECTION	CODE
 	EXTERN	_sio_buf_tail
+	EXTERN	_sio_buf
 	EXTERN 	_sio_data_count
 	EXTERN	RS_SIO_B_CMD, _sio_flags
 	PUBLIC	_sio_in
@@ -15,14 +16,18 @@ _sio_in:
 	JP	Z, NO_DATA_ERR				; IF (_sio_data_count == 0) RETURN
 	DEC	A
 	LD	(HL), A
-	CP	20					; BUFFER LOW THRESHOLD
+	CP	16					; BUFFER LOW THRESHOLD
 	JR	Z, segment1_rs_in_set_rts		; YES, SET RTS
 
 SIO_IN1:
 	LD	HL, (_sio_buf_tail)
 	LD	C, (HL)					; C := CHAR TO BE RETURNED
 	INC	L					; BUMP TAIL PTR
-	LD	(_sio_buf_tail), HL			; SAVE UPDATED TAIL PTR
+	LD	A, SIO_BUFSZ-1				; MASK TO BUF SIZE -1
+	AND	L
+	OR	_sio_buf & (256-SIO_BUFSZ)
+	LD	L, A
+	LD	(_sio_buf_tail), A			; SAVE UPDATED TAIL PTR
 	EI
 	LD	L, C
 	LD	H, 0

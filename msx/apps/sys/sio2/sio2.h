@@ -5,7 +5,7 @@
 
 extern uint8_t assigned_port_number;
 
-#define SIO_BUFSZ 256
+#define SIO_BUFSZ 64
 
 extern uint8_t  sio_data_count;
 extern uint8_t  sio_buf[SIO_BUFSZ];
