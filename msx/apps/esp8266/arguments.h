@@ -20,6 +20,7 @@ extern const char *pWgetUrl;
 extern const char *pFilePathName;
 extern uint32_t    baud_rate;
 extern const char *pMsxHubPackageName;
+extern uint8_t     port_number;
 
 void process_cli_arguments(const char **argv, const int argc);
 

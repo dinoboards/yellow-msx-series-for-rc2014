@@ -18,6 +18,4 @@ extern void resetModem(void);
 
 extern void abortWithError(const char *pMessage) __z88dk_fastcall;
 
-extern uint8_t port_number;
-
 #endif
