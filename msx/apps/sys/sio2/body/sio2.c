@@ -56,15 +56,16 @@ uint8_t _serial_set_protocol(const uint16_t protocol) {
 }
 
 uint8_t _serial_read(uint8_t *buf, uint16_t *size) {
-  uint16_t remaining = *size;
+  uint16_t requested = *size;
   uint16_t count     = 0;
 
   EI;
-  while (remaining > 0) {
+  while (requested != count) {
     const uint16_t hl = sio_in();
-    if (hl >> 8 == 0) {
-      *buf++ = (hl & 0xFF);
-      remaining--;
+    const uint8_t  h  = hl >> 8;
+    const uint8_t  l  = hl & 0xFF;
+    if (h == 0) {
+      *buf++ = l;
       count++;
     } else
       break;
@@ -75,22 +76,27 @@ uint8_t _serial_read(uint8_t *buf, uint16_t *size) {
   return 0;
 }
 
-uint8_t _serial_demand_read(uint8_t *buf, uint16_t *size, const uint16_t timeout_ms) {
-  uint16_t      remaining = *size;
-  const int16_t timeout   = get_future_time(from_ms(timeout_ms));
-  uint16_t      count     = 0;
+uint16_t __serial_demand_read(uint8_t *buf, const uint16_t requested, const int16_t timeout) __sdcccall(1) {
+  uint16_t count = 0;
 
   EI;
-  while (remaining > 0 && !is_time_past(timeout)) {
+  while (requested != count && !is_time_past(timeout)) {
     const uint16_t hl = sio_in();
-    if (hl >> 8 == 0) {
-      *buf++ = (hl & 0xFF);
-      remaining--;
+    const uint8_t  h  = hl >> 8;
+    const uint8_t  l  = hl & 0xFF;
+    if (h == 0) {
+      *buf++ = l;
       count++;
     }
   }
 
-  *size = count;
+  return count;
+}
+
+uint8_t _serial_demand_read(uint8_t *buf, uint16_t *size, const uint16_t timeout_ms) {
+  const int16_t timeout = get_future_time(from_ms(timeout_ms));
+
+  *size = __serial_demand_read(buf, *size, timeout);
 
   return 0;
 }

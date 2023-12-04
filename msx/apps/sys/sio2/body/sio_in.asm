@@ -10,7 +10,7 @@
 
 _sio_in:
 	LD	HL, _sio_data_count
-	DI						; ATOMIC DEC (_sio_data_count)
+	DI
 	LD	A, (HL)
 	OR	A
 	JP	Z, NO_DATA_ERR				; IF (_sio_data_count == 0) RETURN

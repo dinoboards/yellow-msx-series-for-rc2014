@@ -11,8 +11,6 @@
 
 _keyi:
 sio_interrupt:
-	ld b,b
-	jr $+2
 	DI
 	LD	C, RC_SIOB_CMD
 	XOR	A			; READ REGISTER 0

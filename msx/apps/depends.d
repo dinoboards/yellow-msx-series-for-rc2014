@@ -388,12 +388,6 @@
  libraries/sysload/sysload.h libraries/sysload/sys.h \
  libraries/usb/find_device.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/protocol.h
-./bin/sys/sio2x/body/sio2x.c.asm: sys/sio2x/body/sio2x.c sys/sio2x/body/../sio2.h \
- libraries/delay/delay.h libraries/msxbios/system_vars.h libraries/z80.h
-./bin/sys/sio2x/init/sio2x.c.asm: sys/sio2x/init/sio2x.c sys/sio2x/init/sio2x.h \
- libraries/fossil/fossil.h libraries/extbio/serial.h \
- libraries/msxbios/system_vars.h libraries/msxdos/msxdos.h \
- libraries/z80.h
 ./bin/sys/fossil/body/fossil-drv.c.asm: sys/fossil/body/fossil-drv.c libraries/extbio/serial.h \
  libraries/z80.h
 ./bin/sys/fossil/init/fossil.c.asm: sys/fossil/init/fossil.c sys/fossil/init/fossil.h \
@@ -535,18 +529,6 @@
 ./bin/sys/ftdi/body/crt.o: ./sys/ftdi/body/crt.asm
 ./bin/sys/ftdi/body/ftdi.o: ./sys/ftdi/body/ftdi.asm ./msx.inc
 ./bin/sys/ftdi/init/init.o: ./sys/ftdi/init/init.asm
-./bin/sys/sio2x/body/sio_out.o: ./sys/sio2x/body/sio_out.asm ./msx.inc
-./bin/sys/sio2x/body/sio_set_baud_rate.o: ./sys/sio2x/body/sio_set_baud_rate.asm
-./bin/sys/sio2x/body/crt.o: ./sys/sio2x/body/crt.asm
-./bin/sys/sio2x/body/sio_in.o: ./sys/sio2x/body/sio_in.asm ./msx.inc
-./bin/sys/sio2x/body/data.o: ./sys/sio2x/body/data.asm ./msx.inc 
-./bin/sys/sio2x/body/sio_configure.o: ./sys/sio2x/body/sio_configure.asm ./msx.inc 
-./bin/sys/sio2x/body/interrupt_handler.o: ./sys/sio2x/body/interrupt_handler.asm ./msx.inc 
-./bin/sys/sio2x/body/sio2x.o: ./sys/sio2x/body/sio2x.asm ./msx.inc
-./bin/sys/sio2x/init/init.o: ./sys/sio2x/init/init.asm ./msx.inc 
-./bin/sys/sio2x/init/transition.o: ./sys/sio2x/init/transition.asm
-./bin/sys/sio2x/init/probe.o: ./sys/sio2x/init/probe.asm
-./bin/sys/sio2x/init/sio2x.o: ./sys/sio2x/init/sio2x.asm ./msx.inc
 ./bin/sys/fossil/body/crt.o: ./sys/fossil/body/crt.asm
 ./bin/sys/fossil/body/fossil-drv.o: ./sys/fossil/body/fossil-drv.asm ./msx.inc
 ./bin/sys/fossil/init/transition.o: ./sys/fossil/init/transition.asm
