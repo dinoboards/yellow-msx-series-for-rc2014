@@ -240,7 +240,6 @@ extern void msxdbiosInitPalette(void);
 
 /* MSX work area variables */
 
-#define LINL32 0xF3AF
 #define CRTCNT 0xF3B1
 #define CNSDFG 0xF3DE
 #define VALTYP 0xF663

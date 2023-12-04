@@ -51,6 +51,9 @@ uint8_t CSRSW_ADDR CSRSW;
 // F3AE: # of positions on a line in SCREEN 0 (ini:39)
 uint8_t LINL40_ADDR LINL40;
 
+// F3AF: # of positions on a line in SCREEN 1 (ini:29)
+uint8_t LINL32_ADDR LINL32;
+
 // FFE7-FFF6: storage of VDP 8-23
 uint8_t RG8SAV_ADDR RG8SAV[23 - 8];
 
