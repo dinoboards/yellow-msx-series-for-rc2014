@@ -14,6 +14,7 @@
 #define LINLEN_ADDR __at(0xF3B0)
 #define CSRSW_ADDR  __at(0xFCA9)
 #define LINL40_ADDR __at(0xF3AE)
+#define LINL32_ADDR __at(0xF3AF)
 #define RG8SAV_ADDR __at(0xFFE7)
 #define LOWLIM_ADDR __at(0xFCA4)
 #define WINWID_ADDR __at(0xFCA5)
@@ -79,6 +80,9 @@ extern uint8_t CSRSW_ADDR CSRSW;
 
 // F3AE: # of positions on a line in SCREEN 0 (ini:39)
 extern uint8_t LINL40_ADDR LINL40;
+
+// F3AF: # of positions on a line in SCREEN 1 (ini:29)
+extern uint8_t LINL32_ADDR LINL32;
 
 // keyboard buffer; each char entered via the keyboard ends up here
 extern char KEYBUF_ADDR KEYBUF[240];

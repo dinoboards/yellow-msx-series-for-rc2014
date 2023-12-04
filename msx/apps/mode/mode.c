@@ -1,5 +1,7 @@
 #include <ctype.h>
 #include <extbio/serial.h>
+#include <msxbios/msxbios.h>
+#include <msxbios/system_vars.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -27,11 +29,17 @@ STOP=s
     s.
 
 */
+
+typedef enum { SET_COM = 1, SET_WIDTH = 2 } command_mode_t;
+
 uint32_t baud_rate;
 uint16_t parity; // one of SERIAL_PARITY_NONE, SERIAL_PARITY_ODD, SERIAL_PARITY_EVEN, SERIAL_PARITY_MARK, SERIAL_PARITY_SPACE
 uint16_t stop_bit_count; // one of SERIAL_STOPBITS_1, SERIAL_STOPBITS_15, SERIAL_STOPBITS_2
 uint8_t  com_port;
 uint8_t  data_bits;
+uint16_t col_width;
+
+command_mode_t command_mode;
 
 void upcase_string(char *str) {
   for (int i = 0; str[i]; i++) {
@@ -116,17 +124,17 @@ uint8_t process_com_port_baud(const char *argv) {
 }
 
 uint8_t process_com_port(const int argc, char **argv) {
+  command_mode = SET_COM;
 
-  for (int i = 1; i < argc; i++) {
-    if (strncmp(argv[i], "COM", 3) == 0) {
-      com_port = argv[i][3] - '0';
-      if (com_port < 1 || com_port > 4) {
-        printf("Invalid COM port number. It must be between 1 and 4.\r\n");
-        return 255;
-      }
-      continue;
+  if (strncmp(argv[1], "COM", 3) == 0) {
+    com_port = argv[1][3] - '0';
+    if (com_port < 1 || com_port > 4) {
+      printf("Invalid COM port number. It must be between 1 and 4.\r\n");
+      return 255;
     }
+  }
 
+  for (int i = 2; i < argc; i++) {
     if (process_com_port_optional_args(argv[i])) {
       printf("Usage: mode COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s] [RETRY=r]\r\n");
 
@@ -142,6 +150,22 @@ uint8_t process_com_port(const int argc, char **argv) {
   return 0;
 }
 
+uint8_t process_con_width(const int argc, char **argv) {
+  command_mode = SET_WIDTH;
+
+  if (argc == 2) {
+    if (sscanf(argv[1], "%d", &col_width) == 1) { // If conversion was successful
+      if (col_width >= 1 && col_width <= 80)
+        return 0;
+
+      printf("Width must be between 1 and 80\r\n");
+      return 255;
+    }
+  }
+
+  return 0;
+}
+
 uint8_t process_cli_arguments(const int argc, char **argv) {
   if (argc < 2) {
     printf("Usage: mode COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s] [RETRY=r]\r\n");
@@ -151,9 +175,11 @@ uint8_t process_cli_arguments(const int argc, char **argv) {
   for (int i = 1; i < argc; i++)
     upcase_string(argv[i]);
 
-  if (strncmp(argv[1], "COM", 3) == 0) {
+  if (strncmp(argv[1], "COM", 3) == 0)
     return process_com_port(argc, argv);
-  }
+
+  if (process_con_width(argc, argv) == 0)
+    return 0;
 
   printf("Usage: mode COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s] [RETRY=r]\r\n");
   return 255;
@@ -164,5 +190,24 @@ uint8_t main(const int argc, char *argv[]) {
 
   printf("Result %d\r\n", result);
 
-  return result;
+  if (result)
+    return result;
+
+  switch (command_mode) {
+  case SET_COM:
+    printf("Setting COM port\r\n");
+    break;
+  case SET_WIDTH: {
+    if (col_width >= 33) {
+      LINL40 = col_width;
+      msxbiosInitxt();
+    } else {
+      LINL32 = col_width;
+      msxbiosInit32();
+    }
+    break;
+  }
+  }
+
+  return 0;
 }
