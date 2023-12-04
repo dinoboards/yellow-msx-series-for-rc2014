@@ -419,7 +419,17 @@
  sraltest/baud_rate_clock_calculator.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/extbio/serial-helpers.h \
  libraries/extbio/serial.h libraries/msxdos/msxdos.h
-./bin/mode/mode.c.asm: mode/mode.c libraries/extbio/serial.h libraries/msxbios/msxbios.h \
+./bin/mode/argument_width.c.asm: mode/argument_width.c mode/argument_width.h \
+ mode/argument.h
+./bin/mode/argument_com.c.asm: mode/argument_com.c mode/argument.h \
+ libraries/extbio/serial.h
+./bin/mode/mode.c.asm: mode/mode.c mode/apply_com.h mode/apply_width.h mode/argument.h
+./bin/mode/apply_com.c.asm: mode/apply_com.c mode/argument.h mode/argument_com.h \
+ libraries/extbio/serial.h
+./bin/mode/argument.c.asm: mode/argument.c mode/argument.h mode/argument_com.h \
+ mode/argument_width.h
+./bin/mode/apply_width.c.asm: mode/apply_width.c mode/apply_width.h \
+ mode/argument_width.h libraries/msxbios/msxbios.h \
  libraries/msxbios/system_vars.h
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
