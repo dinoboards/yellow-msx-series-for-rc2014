@@ -419,6 +419,7 @@
  sraltest/baud_rate_clock_calculator.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/extbio/serial-helpers.h \
  libraries/extbio/serial.h libraries/msxdos/msxdos.h
+./bin/mode/mode.c.asm: mode/mode.c libraries/extbio/serial.h
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
