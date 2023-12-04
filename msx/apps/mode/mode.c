@@ -35,7 +35,7 @@ typedef enum { SET_COM = 1, SET_WIDTH = 2 } command_mode_t;
 uint32_t baud_rate;
 uint16_t parity; // one of SERIAL_PARITY_NONE, SERIAL_PARITY_ODD, SERIAL_PARITY_EVEN, SERIAL_PARITY_MARK, SERIAL_PARITY_SPACE
 uint16_t stop_bit_count; // one of SERIAL_STOPBITS_1, SERIAL_STOPBITS_15, SERIAL_STOPBITS_2
-uint8_t  com_port;
+uint8_t  port_number;
 uint8_t  data_bits;
 uint16_t col_width;
 
@@ -47,14 +47,23 @@ void upcase_string(char *str) {
   }
 }
 
-#define process_com_port_optional_args process_com_port_baud
+const unsigned char *usage_message = "Configures system devices.\r\n\n"
+                                     "Serial port:   MODE COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s]\r\n"
+                                     "Device Status: MODE [device] [/STATUS]\r\n"
+                                     "Redirect:      MODE [device]=[device]\r\n"
+                                     "Display mode:  MODE CON[:] [COLS=c] [LINES=n]\r\n"
+                                     "Display width: MODE <cols>\r\n";
+
+void show_help_message(void) { printf(usage_message); }
+
+#define process_port_optional_args process_port_baud
 
 uint8_t process_unknown_arg(const char *argv) {
   printf("Unknown argument: %s\r\n", argv);
   return 255;
 }
 
-uint8_t process_com_port_stop(const char *argv) {
+uint8_t process_port_stop(const char *argv) {
   if (strncmp(argv, "STOP=", 5) != 0)
     return process_unknown_arg(argv);
 
@@ -77,7 +86,7 @@ uint8_t process_com_port_stop(const char *argv) {
   return 255;
 }
 
-uint8_t process_com_port_data(const char *argv) {
+uint8_t process_port_data(const char *argv) {
   if (strncmp(argv, "DATA=", 5) == 0) {
     data_bits = atoi(argv + 5);
     if (data_bits < 5 || data_bits > 8) {
@@ -87,10 +96,10 @@ uint8_t process_com_port_data(const char *argv) {
     return 0;
   }
 
-  return process_com_port_stop(argv);
+  return process_port_stop(argv);
 }
 
-uint8_t process_com_port_parity(const char *argv) {
+uint8_t process_port_parity(const char *argv) {
   if (strncmp(argv, "PARITY=", 7) == 0) {
     const char *parity_value = argv + 7;
     if (strcmp(parity_value, "N") == 0 || strcmp(parity_value, "NONE") == 0) {
@@ -111,38 +120,38 @@ uint8_t process_com_port_parity(const char *argv) {
     return 0;
   }
 
-  return process_com_port_data(argv);
+  return process_port_data(argv);
 }
 
-uint8_t process_com_port_baud(const char *argv) {
+uint8_t process_port_baud(const char *argv) {
   if (strncmp(argv, "BAUD=", 5) == 0) {
     baud_rate = atol(argv + 5);
     return 0;
   }
 
-  return process_com_port_parity(argv);
+  return process_port_parity(argv);
 }
 
-uint8_t process_com_port(const int argc, char **argv) {
+uint8_t process_port(const int argc, char **argv) {
   command_mode = SET_COM;
 
   if (strncmp(argv[1], "COM", 3) == 0) {
-    com_port = argv[1][3] - '0';
-    if (com_port < 1 || com_port > 4) {
-      printf("Invalid COM port number. It must be between 1 and 4.\r\n");
+    port_number = argv[1][3] - '0';
+    if (port_number < 1 || port_number > 4) {
+      printf("Invalid COM port_number number. It must be between 1 and 4.\r\n");
       return 255;
     }
   }
 
   for (int i = 2; i < argc; i++) {
-    if (process_com_port_optional_args(argv[i])) {
+    if (process_port_optional_args(argv[i])) {
       printf("Usage: mode COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s] [RETRY=r]\r\n");
 
       return 255;
     }
   }
 
-  printf("COM port number: %d\r\n", com_port);
+  printf("COM port_number number: %d\r\n", port_number);
   printf("Baud rate: %ld\r\n", baud_rate);
   printf("Parity: %04X\r\n", parity);
   printf("Stop bit count: %04X\r\n", stop_bit_count);
@@ -168,7 +177,7 @@ uint8_t process_con_width(const int argc, char **argv) {
 
 uint8_t process_cli_arguments(const int argc, char **argv) {
   if (argc < 2) {
-    printf("Usage: mode COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s] [RETRY=r]\r\n");
+    show_help_message();
     return 255;
   }
 
@@ -176,27 +185,39 @@ uint8_t process_cli_arguments(const int argc, char **argv) {
     upcase_string(argv[i]);
 
   if (strncmp(argv[1], "COM", 3) == 0)
-    return process_com_port(argc, argv);
+    return process_port(argc, argv);
 
   if (process_con_width(argc, argv) == 0)
     return 0;
 
-  printf("Usage: mode COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s] [RETRY=r]\r\n");
+  show_help_message();
   return 255;
 }
 
 uint8_t main(const int argc, char *argv[]) {
   uint8_t result = process_cli_arguments(argc, argv);
 
-  printf("Result %d\r\n", result);
-
   if (result)
     return result;
 
   switch (command_mode) {
-  case SET_COM:
-    printf("Setting COM port\r\n");
+  case SET_COM: {
+    uint8_t available_ports = 0;
+    serial_get_available_ports(&available_ports);
+
+    printf("Available ports: %d\r\n", available_ports);
+    if (port_number > available_ports) {
+      printf("Invalid port_number number. Number of available ports are: %d\r\n", available_ports);
+      return 255;
+    }
+
+    if (baud_rate) {
+      printf("port_number %d assigned baud rate of %ld\r\n", port_number, baud_rate);
+      uint8_t result = serial_set_baudrate(port_number, baud_rate);
+      printf("Result %02X\r\n", result);
+    }
     break;
+  }
   case SET_WIDTH: {
     if (col_width >= 33) {
       LINL40 = col_width;

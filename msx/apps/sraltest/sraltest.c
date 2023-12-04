@@ -113,8 +113,8 @@ uint8_t main(const int argc, const char *const argv[]) {
 
   printf("(%02X): serial_read(2nd) returned %d bytes.  Expect 0 bytes\r\n", result, read_count);
 
-  result = serial_set_baudrate(port_number, 19200);
-  printf("(%02X): Set baudrate: %ld\r\n", result, 19200L);
+  // result = serial_set_baudrate(port_number, 19200);
+  // printf("(%02X): Set baudrate: %ld\r\n", result, 19200L);
 
   result = serial_set_protocol(port_number, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
   printf("(%02X): Set protocol %04X\r\n", result, SERIAL_PARITY_NONE | SERIAL_STOPBITS_1 | SERIAL_BITS_8 | SERIAL_BREAK_OFF);
