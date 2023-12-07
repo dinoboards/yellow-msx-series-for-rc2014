@@ -412,6 +412,8 @@
 ./bin/mbrot.c.asm: mbrot.c config_request.h libraries/msxbios/msxbios.h \
  libraries/msxdos/msxdos.h v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
+./bin/ctty/ctty.c.asm: ctty/ctty.c ctty/argument.h
+./bin/ctty/argument.c.asm: ctty/argument.c ctty/argument.h
 ./bin/config_request.c.asm: config_request.c v9958.h
 ./bin/sraltest/baud_rate_clock_calculator.c.asm: sraltest/baud_rate_clock_calculator.c \
  sraltest/baud_rate_clock_calculator.h
