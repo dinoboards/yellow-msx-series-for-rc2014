@@ -67,19 +67,19 @@ uint16_t init(installed_sys_t *my_header) __z88dk_fastcall {
   if (result == 0) {
     if (install_printer((uint16_t)relocated2(lpt_output))) {
       printf("Failed to install usb printer driver due to lack of jump hooks\r\n");
-      return 255;
+      return 0;
     }
 
     printf("USB/PRINTER:     INSTALLED\r\n");
-    return 0;
+    return INSTALL_SERVICE | REQUIRE_TIMI;
   }
 
   if (result != 255) {
     printf("USB error %02x\r\n", result);
-    return result;
+    return 0;
   }
 
   printf("USB/PRINTER:     NOT PRESENT\r\n");
 
-  return 255;
+  return 0;
 }

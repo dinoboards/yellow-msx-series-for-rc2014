@@ -11,7 +11,7 @@ uint16_t init(installed_sys_t *my_header) __z88dk_fastcall {
   uint8_t sio_detected = sio_probe();
   if (sio_detected == 0) {
     printf("SIO/2:           NOT PRESENT\r\n");
-    return 1;
+    return 0;
   }
 
   uint8_t *const relocated_assigned_port_number = &relocated2(&assigned_port_number);
@@ -22,5 +22,5 @@ uint16_t init(installed_sys_t *my_header) __z88dk_fastcall {
 
   sio2_chip_init();
 
-  return 0;
+  return INSTALL_SERVICE | REQUIRE_EXTBIO | REQUIRE_KEYI;
 }

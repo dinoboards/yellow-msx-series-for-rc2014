@@ -12,8 +12,7 @@ defc	_keyi_next = 0
 defc	_keyi = 0
 
 	DB	"hello   "
-	DB 	REQUIRE_EXTBIO | REQUIRE_TIMI
-	DB	0
+	DS 	8
 
 	SECTION	CODE
 	SECTION	code_crt_init

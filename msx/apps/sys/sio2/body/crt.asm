@@ -12,8 +12,7 @@ defc	_timi_next = 0
 defc	_timi = 0
 
 	DB	"sio/2   "
-	DB 	REQUIRE_EXTBIO | REQUIRE_KEYI
-	DB	0
+	DS 	8
 
 	SECTION	CODE
 	SECTION	code_crt_init

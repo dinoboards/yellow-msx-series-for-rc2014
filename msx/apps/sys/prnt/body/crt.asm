@@ -17,8 +17,7 @@ defc	_keyi = 0
 
 
 	DB	"usb-prnt"
-	DB 	REQUIRE_TIMI
-	DB	0
+	DS 	8
 
 	SECTION	CODE
 	SECTION	code_crt_init
