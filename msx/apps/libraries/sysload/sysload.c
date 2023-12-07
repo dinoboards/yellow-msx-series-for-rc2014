@@ -149,14 +149,13 @@ uint16_t main(const int argc, const char *argv[]) {
     *p += offset;
   }
 
-  result = init(sys_segment_head.sys[index]);
+  const uint8_t flags = init(sys_segment_head.sys[index]);
 
-  if (result)
+  if (flags == 0)
     goto finally_memmap;
 
   sys_segment_head.count++;
   sys_segment_head.next_address = (uint8_t *)to_next_page(sys_segment_head.next_address + sys_end - sys_start);
-  const uint8_t flags           = sys_segment_head.sys[index]->flags;
 
   if (flags & REQUIRE_EXTBIO) {
     *relocated(extbio_next)                       = (uint16_t)sys_segment_head.first_extbio_handler.address;

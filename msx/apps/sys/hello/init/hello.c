@@ -8,5 +8,5 @@ extern const char *helloworld;
 uint16_t init(installed_sys_t *my_header) __z88dk_fastcall {
   printf("my_header: %p\r\n", my_header);
   printf("string: %s", relocated(helloworld));
-  return 0;
+  return INSTALL_SERVICE | REQUIRE_EXTBIO | REQUIRE_TIMI;
 }

@@ -32,15 +32,15 @@ uint16_t init(installed_sys_t *const my_header) __z88dk_fastcall {
 
     printf("USB/FTDI:        INSTALLED (COM%d)\r\n", *relocated_assigned_port_number);
 
-    return 0;
+    return INSTALL_SERVICE | REQUIRE_EXTBIO;
   }
 
   if (result != 255) {
     printf("USB error %02x\r\n", result);
-    return result;
+    return 0;
   }
 
   printf("USB/FTDI:        NOT PRESENT\r\n");
 
-  return 255;
+  return 0;
 }

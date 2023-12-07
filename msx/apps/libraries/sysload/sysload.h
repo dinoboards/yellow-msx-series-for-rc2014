@@ -12,14 +12,14 @@ typedef struct installed_sys_struct installed_sys_t;
 typedef uint16_t (*sys_init_fn)(installed_sys_t *my_header) __z88dk_fastcall;
 typedef void (*sys_hook_fn)(void) __z88dk_fastcall;
 
-#define REQUIRE_EXTBIO 1
-#define REQUIRE_TIMI   2
-#define REQUIRE_KEYI   4
+#define REQUIRE_EXTBIO  1
+#define REQUIRE_TIMI    2
+#define REQUIRE_KEYI    4
+#define INSTALL_SERVICE 0x8000
 
 typedef struct installed_sys_struct {
   char    name[8]; /* name of the service */
-  uint8_t flags;
-  uint8_t reserved;
+  uint8_t reserved[8];
 } installed_sys_t;
 
 typedef struct {
