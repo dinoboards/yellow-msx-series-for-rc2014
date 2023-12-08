@@ -76,13 +76,11 @@ uint16_t BOTTOM_ADDR BOTTOM;
 // initialized at startup and not changed normally
 uint16_t HIMEM_ADDR HIMEM;
 
-// called at start of interrupt subroutine, when it is clear that
-// the interrupt is from the VDP
-uint8_t H_TIMI_ADDR H_TIMI[5];
-
 // F3F6: VDP-interupt counter that counts from 3 to 0, when it reaches zero, the
 // keyboard matrix is scanned, and the counters is reset at 3
 uint8_t SCNCNT_ADDR SCNCNT;
+
+uint8_t SCRMOD_ADDR SCRMOD;
 
 uint8_t HOKVLD_ADDR HOKVLD;
 

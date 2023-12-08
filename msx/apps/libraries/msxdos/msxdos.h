@@ -244,7 +244,6 @@ extern void msxdbiosInitPalette(void);
 #define CNSDFG 0xF3DE
 #define VALTYP 0xF663
 #define DAC    0xF7F6
-#define SCRMOD 0xFCAF
 #define EXPTBL 0xFCC1
 #define H_CHPH 0xFDA4
 

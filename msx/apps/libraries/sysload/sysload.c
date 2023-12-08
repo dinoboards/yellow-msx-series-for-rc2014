@@ -186,19 +186,19 @@ uint8_t allocate_a_segment_hook(void) {
   return 0;
 }
 
-uint8_t install_segment_hook(const uint16_t fn_address, call_mapi_jump_hook_t *const hook) {
-  const uint8_t slot_index = allocate_a_segment_hook();
+uint8_t install_segment_hook(const uint16_t fn_address, jump_hook_t *const hook) {
+  const uint8_t segment_hook_index = allocate_a_segment_hook();
 
-  if (slot_index == 0)
+  if (segment_hook_index == 0)
     return 0;
 
   hook->callmapi.jump_op_code = 0xCD; // call
   hook->callmapi.address      = (sys_hook_fn)call_mapi;
-  hook->slot                  = slot_index;
+  hook->slot                  = segment_hook_index;
   hook->segment               = allocated_segment;
 
-  sys_segment_head.jump_hooks[slot_index - FIRST_SYS_JUMP_HOOK].jump_op_code = 0xC3; // jump
-  sys_segment_head.jump_hooks[slot_index - FIRST_SYS_JUMP_HOOK].address      = (sys_hook_fn)fn_address;
+  sys_segment_head.jump_hooks[segment_hook_index - FIRST_SYS_JUMP_HOOK].jump_op_code = 0xC3; // jump
+  sys_segment_head.jump_hooks[segment_hook_index - FIRST_SYS_JUMP_HOOK].address      = (sys_hook_fn)fn_address;
 
-  return slot_index;
+  return segment_hook_index;
 }

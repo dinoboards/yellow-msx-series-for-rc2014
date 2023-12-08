@@ -26,21 +26,12 @@ bool is_printer(const device_descriptor *const device_descriptor, const interfac
   return (interface->bInterfaceClass == 7);
 }
 
-#define H_LPTS_ADDR __at 0xFFBB
-#define H_LPTO_ADDR __at 0xFFB6
-#define RST_30      0xF7
+#define RST_30 0xF7
 
 #define POP_IX_1 0xDD
 #define POP_IX_2 0xE1
 #define OR       0xF6
 #define RET      0xC9
-
-typedef struct {
-  uint8_t bytes[5];
-} jump_hook_disable;
-
-call_mapi_jump_hook_t H_LPTO_ADDR H_LPTO;
-jump_hook_disable H_LPTS_ADDR     H_LPTS;
 
 uint8_t install_printer(const uint16_t lpt_output) {
   if (install_segment_hook(lpt_output, &H_LPTO) == 0)

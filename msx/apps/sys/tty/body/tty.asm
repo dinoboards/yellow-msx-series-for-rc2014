@@ -40,12 +40,13 @@ EXTBIO_UNKNOWN_SUB:
 	PUBLIC	_timi_next
 
 	EXTERN	_map_serial_to_keyboard
-	EXTERN	_activated_port_number
-
+	EXTERN	_activate_stdin_port_number
+	EXTERN	_activate_stdout_port_number
+	EXTERN	__timi
 _timi:
-	LD	A, (_activated_port_number)
-	OR	A
-	CALL	NZ, _map_serial_to_keyboard
+	; LD	A, (_activate_stdin_port_number)
+	; OR	A
+	CALL	__timi
 
 	DB	$C3	; JP opcode
 _timi_next:
@@ -66,6 +67,40 @@ _serial_read_di:
 	CALL	EXTBIO						; RETURN L
 	POP	IX
 	RET
+
+;
+; extern uint8_t serial_write_di(const uint8_t port_number, const uint8_t *const buf, const uint8_t size);
+;
+	PUBLIC	_serial_write_di:
+_serial_write_di:
+	PUSH	IX
+	LD	DE, EXTBIO_RC2014 << 8 | EXTBIO_RC2014_SERIAL_FN
+	LD	C, EXTBIO_RC2014_SERIAL_WRITE_SUB_FN
+	LD	HL, 4
+	ADD	HL, SP						; ARGS @ HL
+	LD	B, (HL)
+	INC	HL
+	CALL	EXTBIO						; RETURN HL
+	POP	IX
+	RET
+
+
+	PUBLIC	_chput
+	EXTERN	_original_hchpu
+	EXTERN	_chput_to_serial
+	EXTERN	_activate_crt
+
+_chput:
+	PUSH	AF
+	LD	L, A
+	LD	A, (_activate_stdout_port_number)
+	OR	A
+	CALL	NZ, _chput_to_serial
+
+	POP	AF
+_original_hchpu:
+	DS	5
+
 
 	SECTION	DATA
 
