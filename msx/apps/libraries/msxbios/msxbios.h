@@ -1,6 +1,8 @@
 #ifndef _MSXBIOS_H_
 #define _MSXBIOS_H_
 
+#include <stdint.h>
+
 extern void msxbiosInit32(void);
 extern void msxbiosInitxt(void);
 

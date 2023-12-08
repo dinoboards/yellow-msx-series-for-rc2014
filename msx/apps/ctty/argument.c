@@ -115,6 +115,10 @@ uint8_t process_cli_arguments(const int argc, char **argv) {
       continue;
     }
 
+    if (strcmp(argv[i], "NULL") == 0) {
+      continue;
+    }
+
     if (map_com_port(argv[i], port_count, 1)) {
       continue;
     }

@@ -356,25 +356,32 @@
 ./bin/libraries/usb/format_mapping.c.asm: libraries/usb/format_mapping.c \
  libraries/usb/format_mapping.h
 ./bin/libraries/sysload/sysload.c.asm: libraries/sysload/sysload.c libraries/sysload/sysload.h \
- libraries/sysload/sys.h libraries/msxbios/extbio.h libraries/fusion/io.h \
- libraries/msxdos/msxdos.h
+ libraries/sysload/sys.h libraries/msxbios/msxbios.h \
+ libraries/msxbios/hooks.h libraries/z80.h libraries/msxbios/extbio.h \
+ libraries/fusion/io.h libraries/msxdos/msxdos.h
 ./bin/libraries/msxbios/system_vars.c.asm: libraries/msxbios/system_vars.c \
  libraries/msxbios/system_vars.h
+./bin/libraries/msxbios/hooks.c.asm: libraries/msxbios/hooks.c libraries/msxbios/hooks.h \
+ libraries/z80.h
 ./bin/libraries/fossil/fossil.c.asm: libraries/fossil/fossil.c libraries/fossil/fossil.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h
 ./bin/fossilon.c.asm: fossilon.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
-./bin/sys/tty/body/tty.c.asm: sys/tty/body/tty.c sys/tty/body/../tty.h \
+./bin/sys/tty/body/tty.c.asm: sys/tty/body/tty.c sys/tty/body/../tty.h libraries/extbio/serial.h \
+ libraries/msxbios/hooks.h libraries/z80.h \
  libraries/msxbios/system_vars.h
 ./bin/sys/tty/init/tty.c.asm: sys/tty/init/tty.c libraries/sysload/sysload.h \
- libraries/sysload/sys.h
+ libraries/sysload/sys.h libraries/msxbios/msxbios.h \
+ libraries/msxbios/hooks.h libraries/z80.h
 ./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
- libraries/sysload/sys.h
+ libraries/sysload/sys.h libraries/msxbios/msxbios.h \
+ libraries/msxbios/hooks.h libraries/z80.h
 ./bin/sys/sio2/body/sio2.c.asm: sys/sio2/body/sio2.c sys/sio2/body/../sio2.h \
  libraries/delay/delay.h libraries/msxbios/system_vars.h libraries/z80.h
 ./bin/sys/sio2/init/sio2.c.asm: sys/sio2/init/sio2.c sys/sio2/init/../sio2.h \
  libraries/extbio/serial.h libraries/sysload/sysload.h \
- libraries/sysload/sys.h
+ libraries/sysload/sys.h libraries/msxbios/msxbios.h \
+ libraries/msxbios/hooks.h libraries/z80.h
 ./bin/sys/ftdi/body/ftdi.c.asm: sys/ftdi/body/ftdi.c sys/ftdi/body/../ftdi.h \
  sys/ftdi/body/../vendor_ftdi.h libraries/usb/ch376.h \
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
@@ -390,6 +397,7 @@
  libraries/usb/ch376inc.h libraries/usb/dev_transfers.h \
  libraries/usb/ch376.h libraries/usb/transfers.h \
  libraries/sysload/sysload.h libraries/sysload/sys.h \
+ libraries/msxbios/msxbios.h libraries/msxbios/hooks.h libraries/z80.h \
  libraries/usb/find_device.h libraries/usb/protocol.h \
  libraries/usb/dev_transfers.h libraries/usb/protocol.h
 ./bin/sys/fossil/body/fossil-drv.c.asm: sys/fossil/body/fossil-drv.c libraries/extbio/serial.h \
@@ -407,6 +415,7 @@
  libraries/usb/dev_transfers.h libraries/usb/transfers.h \
  libraries/fusion/msx_fusion.h libraries/sysload/sys.h \
  libraries/sysload/sysload.h libraries/sysload/sys.h \
+ libraries/msxbios/msxbios.h libraries/msxbios/hooks.h libraries/z80.h \
  libraries/msxbios/system_vars.h libraries/usb/class_printer.h \
  libraries/usb/protocol.h libraries/usb/find_device.h
 ./bin/fosiltst.c.asm: fosiltst.c libraries/fossil/fossil.h \

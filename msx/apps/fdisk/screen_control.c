@@ -9,7 +9,7 @@ static screenConfiguration originalScreenConfig;
 uint8_t                    screenLinesCount;
 
 void saveOriginalScreenConfiguration(void) {
-  originalScreenConfig.screenMode          = *(uint8_t *)SCRMOD;
+  originalScreenConfig.screenMode          = SCRMOD;
   originalScreenConfig.screenWidth         = LINLEN;
   originalScreenConfig.functionKeysVisible = (*(uint8_t *)CNSDFG != 0);
 }

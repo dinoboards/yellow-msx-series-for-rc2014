@@ -30,8 +30,7 @@ zcchelp:
 LIBGEN_LIB := $(addprefix $(BIN)libraries/msx/libgen/,basename.c.lib dirname.c.lib)
 GETSLT_LIB := $(addprefix $(BIN),getslt.lib)
 CONFIG_REQUEST_LIB := $(addprefix $(BIN),config_request.c.lib)
-SYSTEM_VARS_LIB := $(addprefix $(BIN)libraries/msxbios/,system_vars.c.lib)
-MSXBIOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxbios/*.asm)))
+MSXBIOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxbios/*.asm))) $(addprefix $(BIN),$(patsubst %.c,%.c.lib,$(wildcard libraries/msxbios/*.c)))
 MSXDOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxdos/*.asm))) $(MSXBIOS_LIB)
 EXTBIO_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/extbio/*.asm))) $(addprefix $(BIN),$(patsubst %.c,%.c.lib,$(wildcard libraries/extbio/*.c)))
 EXTBIO_USB_LIB :=  $(addprefix $(BIN)libraries/extbio/,extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer_n.lib extbio_usb_data_in_transfer.lib)
@@ -51,71 +50,71 @@ list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 
-ftdi.body := $(addprefix $(BIN),$(call app_file,sys/ftdi/body)) $(BIN)sys/ftdi/vendor_ftdi.c.lib $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB) $(USB_KERNEL_LIB) $(DELAY_LIB)
-ftdi.init := $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
+ftdi.body := $(addprefix $(BIN),$(call app_file,sys/ftdi/body)) $(BIN)sys/ftdi/vendor_ftdi.c.lib $(GETSLT_LIB) $(MSXDOS_LIB) $(USB_USER_LIB) $(USB_KERNEL_LIB) $(DELAY_LIB)
+ftdi.init := $(addprefix $(BIN),$(call app_file,sys/ftdi/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,ftdi))
 
-sio2.body := $(addprefix $(BIN),$(call app_file,sys/sio2/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-sio2.init := $(addprefix $(BIN),$(call app_file,sys/sio2/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB)
+sio2.body := $(addprefix $(BIN),$(call app_file,sys/sio2/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB)
+sio2.init := $(addprefix $(BIN),$(call app_file,sys/sio2/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB)
 $(eval $(call relocatable,sio2))
 
-hello.body := $(addprefix $(BIN),$(call app_file,sys/hello/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-hello.init := $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB)
+hello.body := $(addprefix $(BIN),$(call app_file,sys/hello/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB)
+hello.init := $(addprefix $(BIN),$(call app_file,sys/hello/init)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB)
 $(eval $(call relocatable,hello))
 
-prnt.body := $(addprefix $(BIN),$(call app_file,sys/prnt/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-prnt.init := $(addprefix $(BIN),$(call app_file,sys/prnt/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
+prnt.body := $(addprefix $(BIN),$(call app_file,sys/prnt/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB)
+prnt.init := $(addprefix $(BIN),$(call app_file,sys/prnt/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,prnt))
 
-tty.body := $(addprefix $(BIN),$(call app_file,sys/tty/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-tty.init := $(addprefix $(BIN),$(call app_file,sys/tty/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
+tty.body := $(addprefix $(BIN),$(call app_file,sys/tty/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB)
+tty.init := $(addprefix $(BIN),$(call app_file,sys/tty/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,tty))
 
 $(BIN)fossil.com: $(BIN)fossil.sys
 	@cp $< $@
 
-fossil.body := $(addprefix $(BIN),$(call app_file,sys/fossil/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
-fossil.init := $(addprefix $(BIN),$(call app_file,sys/fossil/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
+fossil.body := $(addprefix $(BIN),$(call app_file,sys/fossil/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB)
+fossil.init := $(addprefix $(BIN),$(call app_file,sys/fossil/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,fossil))
 
 
 service_files = $(call app_file,service)
-$(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB)
 service.com.crt_enable_commandline:=1
 
 memory_files = $(call app_file,memory)
-$(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 memory.com.crt_enable_commandline:=1
 
 helloworld_files = ./helloworld.c.o
-$(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(LIBGEN_LIB) $(MSXDOS_LIB)
 helloworld.com.crt_enable_commandline:=1
 
 ctty_files = $(call app_file,ctty,memmap-override.asm)
-$(BIN)ctty.com: $(addprefix $(BIN),$(ctty_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)ctty.com: $(addprefix $(BIN),$(ctty_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(MSXDOS_LIB)
 ctty.com.crt_enable_commandline:=1
 
 mode_files = $(call app_file,mode,memmap-override.asm)
-$(BIN)mode.com: $(addprefix $(BIN),$(mode_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)mode.com: $(addprefix $(BIN),$(mode_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(MSXDOS_LIB)
 mode.com.crt_enable_commandline:=1
 
 sraltest_files = $(call app_file,sraltest,memmap-override.asm)
-$(BIN)sraltest.com: $(addprefix $(BIN),$(sraltest_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)sraltest.com: $(addprefix $(BIN),$(sraltest_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(MSXDOS_LIB)
 sraltest.com.crt_enable_commandline:=1
 
 fdisk_files = $(call app_files,fdisk,memmap-override.asm)
-$(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)fdisk.com: $(addprefix $(BIN),$(fdisk_files)) $(MSXDOS_LIB)
 
 clrdir_files = $(call app_file,clrdir)
-$(BIN)clrdir.com: $(addprefix $(BIN),$(clrdir_files)) $(MSXDOS_LIB) $(FUSION_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)clrdir.com: $(addprefix $(BIN),$(clrdir_files)) $(MSXDOS_LIB) $(FUSION_LIB)
 clrdir.com.crt_enable_commandline:=1
 
 usbctrl_files = $(call app_file,usbctrl)
-$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(USB_USER_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)usbctrl.com: $(addprefix $(BIN),$(usbctrl_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(FUSION_LIB) $(USB_USER_LIB)
 usbctrl.com.crt_enable_commandline:=1
 
 usbtst_files = $(call app_file,usbtst)
-$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(BIN)sys/ftdi/vendor_ftdi.c.lib $(MSXDOS_LIB) $(USB_USER_LIB) $(USB_KERNEL_LIB)  $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(EXTBIO_LIB)
+$(BIN)usbtst.com: $(addprefix $(BIN),$(usbtst_files)) $(BIN)sys/ftdi/vendor_ftdi.c.lib $(MSXDOS_LIB) $(USB_USER_LIB) $(USB_KERNEL_LIB)  $(DELAY_LIB) $(EXTBIO_LIB)
 usbtst.com.crt_enable_commandline:=1
 
 dots_files = $(call app_file,dots)
@@ -134,23 +133,23 @@ cpusptst_files = $(call app_file,cpusptst)
 $(BIN)cpusptst.com: $(addprefix $(BIN),$(cpusptst_files))
 
 extbio_files = $(call app_file,extbio)
-$(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(SYSTEM_VARS_LIB)
+$(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 
 rs232tst_files = $(call app_files,rs232tst,rs232.asm)
-$(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(BIN)rs232tst.com: $(addprefix $(BIN),$(rs232tst_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 
 fosiltst_files = $(call app_files,fosiltst,xstdio.asm)
-$(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
+$(BIN)fosiltst.com: $(addprefix $(BIN),$(fosiltst_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 
 fossilon_files = $(call app_file,fossilon)
 $(BIN)fossilon.com: $(addprefix $(BIN),$(fossilon_files)) $(EXTBIO_LIB) $(GETSLT_LIB)
 
 term_files = $(call app_files,term,memmap-override.asm)
-$(BIN)term.com: $(addprefix $(BIN),$(term_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB)
+$(BIN)term.com: $(addprefix $(BIN),$(term_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB)
 term.com.crt_enable_commandline:=1
 
 xrecv2_files = $(call app_files,xrecv2,memmap-override.asm print.c)
-$(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(DELAY_LIB) $(SYSTEM_VARS_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
+$(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(DELAY_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
 xrecv2.com.crt_enable_commandline:=1
 
 rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c)
@@ -158,7 +157,7 @@ $(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files)) $(MSXDOS_LIB)
 rtccalb.com.crt_enable_commandline:=1
 
 esp8266_files = $(call app_files,esp8266,memmap-override.asm)
-$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(EXTBIO_LIB) $(SYSTEM_VARS_LIB) $(DELAY_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
+$(BIN)esp8266.com: $(addprefix $(BIN),$(esp8266_files)) $(LIBGEN_LIB) $(MSXDOS_LIB) $(EXTBIO_LIB) $(DELAY_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
 esp8266.com.crt_enable_commandline:=1
 
 siocfg_files = $(call app_files,siocfg,memmap-override.asm)
@@ -171,8 +170,6 @@ $(BIN)romflashwriter/romflashwriter.bin: ./romflashwriter/romflashwriter.asm
 	zcc +z80 -startup=0 -SO3 -clib=sdcc_iy --no-crt -nostdlib -create-app -pragma-define:CRT_ORG_CODE=0x0C000 ./romflashwriter/romflashwriter.asm -o ./bin/romflashwriter/romflashwriter.bin
 	echo "Assembled $< to romflashwriter.bin"
 
-#-pragma-define:CRT_ORG_CODE=0x0C000
-
 $(BIN)romflashwriter/romflashwriter.inc: $(BIN)romflashwriter/romflashwriter.bin
 	@./romflashwriter/export.sh $(BIN)romflashwriter/romflashwriter.bin $(BIN)romflashwriter/romflashwriter.inc
 	echo "exported romflashwriter.bin to romflashwriter.inc"
@@ -184,7 +181,7 @@ $(BIN)romflash.com: $(BIN)romflashwriter/romflashwriter.inc $(addprefix $(BIN),$
 romflash.com.crt_enable_commandline:=1
 
 muflash_files = $(call app_file,muflash)
-$(BIN)muflash.com: $(addprefix $(BIN),$(muflash_files)) $(SYSTEM_VARS_LIB)
+$(BIN)muflash.com: $(addprefix $(BIN),$(muflash_files)) $(MSXBIOS_LIB)
 muflash.com.crt_enable_commandline:=1
 
 .PHONY: bin/chip8.com

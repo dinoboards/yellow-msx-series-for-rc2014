@@ -61,7 +61,6 @@
 #define FCB_ATTR_DIR      0x10 /* MSX-DOS2 */
 #define FCB_ATTR_ARCHIVE  0x20 /* MSX-DOS2 */
 
-#define SCRMOD 0xFCAF /* current screen mode */
 #define ACPAGE 0xFAF6 /* active page number */
 #define DPPAGE 0xFAF5 /* display page number */
 #define ATRBAS 0xF928 /* sprite attribute table base address */
