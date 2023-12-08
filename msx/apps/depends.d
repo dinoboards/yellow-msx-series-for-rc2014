@@ -364,6 +364,10 @@
  libraries/delay/delay.h libraries/msxbios/system_vars.h
 ./bin/fossilon.c.asm: fossilon.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
+./bin/sys/tty/body/tty.c.asm: sys/tty/body/tty.c sys/tty/body/../tty.h \
+ libraries/msxbios/system_vars.h
+./bin/sys/tty/init/tty.c.asm: sys/tty/init/tty.c libraries/sysload/sysload.h \
+ libraries/sysload/sys.h
 ./bin/sys/hello/init/hello.c.asm: sys/hello/init/hello.c libraries/sysload/sysload.h \
  libraries/sysload/sys.h
 ./bin/sys/sio2/body/sio2.c.asm: sys/sio2/body/sio2.c sys/sio2/body/../sio2.h \
@@ -412,8 +416,8 @@
 ./bin/mbrot.c.asm: mbrot.c config_request.h libraries/msxbios/msxbios.h \
  libraries/msxdos/msxdos.h v9958.h
 ./bin/rtccalb/rtccalb.c.asm: rtccalb/rtccalb.c print.h libraries/msxdos/msxdos.h
-./bin/ctty/ctty.c.asm: ctty/ctty.c ctty/argument.h
-./bin/ctty/argument.c.asm: ctty/argument.c ctty/argument.h
+./bin/ctty/ctty.c.asm: ctty/ctty.c ctty/argument.h sys/tty/tty.h
+./bin/ctty/argument.c.asm: ctty/argument.c ctty/argument.h libraries/extbio/serial.h
 ./bin/config_request.c.asm: config_request.c v9958.h
 ./bin/sraltest/baud_rate_clock_calculator.c.asm: sraltest/baud_rate_clock_calculator.c \
  sraltest/baud_rate_clock_calculator.h
@@ -477,6 +481,7 @@
 ./bin/libraries/extbio/extbio_usb_control_transfer.o: ./libraries/extbio/extbio_usb_control_transfer.asm ./msx.inc
 ./bin/libraries/extbio/extbio_usb_data_in_transfer_n.o: ./libraries/extbio/extbio_usb_data_in_transfer_n.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_get_available_ports.o: ./libraries/extbio/extbio_serial_get_available_ports.asm ./msx.inc
+./bin/libraries/extbio/extbio_tty_update.o: ./libraries/extbio/extbio_tty_update.asm ./msx.inc
 ./bin/libraries/extbio/extbio_rc2014_get_version.o: ./libraries/extbio/extbio_rc2014_get_version.asm ./msx.inc
 ./bin/libraries/extbio/debug_break.o: ./libraries/extbio/debug_break.asm ./msx.inc
 ./bin/libraries/extbio/extbio_serial_get_diagnostics.o: ./libraries/extbio/extbio_serial_get_diagnostics.asm ./msx.inc
@@ -529,6 +534,8 @@
 ./bin/libraries/msxbios/msxbios_init32.o: ./libraries/msxbios/msxbios_init32.asm ./msx.inc
 ./bin/libraries/msxbios/msxbios_soft_reset.o: ./libraries/msxbios/msxbios_soft_reset.asm ./msx.inc
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
+./bin/sys/tty/body/tty.o: ./sys/tty/body/tty.asm ./msx.inc
+./bin/sys/tty/body/crt.o: ./sys/tty/body/crt.asm
 ./bin/sys/hello/body/crt.o: ./sys/hello/body/crt.asm
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
 ./bin/sys/sio2/body/sio_out.o: ./sys/sio2/body/sio_out.asm ./msx.inc

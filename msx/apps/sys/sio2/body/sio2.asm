@@ -28,18 +28,14 @@ _extbio:
 	EX	AF, AF'
 
 EXBIO_EXIT:
-	DB	$C3	; JR opcode
+	DB	$C3	; JP opcode
 _extbio_next:
 	DW	0
 
 handle_extbio:
-	EI
 	LD	A, E
 	CP	EXTBIO_RC2014_SERIAL_FN
-	JR	Z, EXTBIO_RC2014_SERIAL
-
-	JP	EXBIO_EXIT
-
+	JP	NZ, EXBIO_EXIT
 
 EXTBIO_RC2014_SERIAL:
 	LD	A, C
