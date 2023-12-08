@@ -9,7 +9,7 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node500000 --allow-unsafe-read
 endif
 
-LIBS := -I./fdisk/ -I./libraries/msx/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb -I./libraries
+LIBS := -I./sys -I./fdisk/ -I./libraries/msx/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb -I./libraries
 
 # -DSTACK_TRACE_ENABLED
 ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -g -pragma-define:CLIB_32BIT_FLOAT=1 -DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2)) $(addsuffix .com,$(addprefix $(BIN),ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -67,12 +67,17 @@ prnt.body := $(addprefix $(BIN),$(call app_file,sys/prnt/body)) $(EXTBIO_LIB) $(
 prnt.init := $(addprefix $(BIN),$(call app_file,sys/prnt/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,prnt))
 
+tty.body := $(addprefix $(BIN),$(call app_file,sys/tty/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
+tty.init := $(addprefix $(BIN),$(call app_file,sys/tty/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
+$(eval $(call relocatable,tty))
+
 $(BIN)fossil.com: $(BIN)fossil.sys
 	@cp $< $@
 
 fossil.body := $(addprefix $(BIN),$(call app_file,sys/fossil/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)
 fossil.init := $(addprefix $(BIN),$(call app_file,sys/fossil/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,fossil))
+
 
 service_files = $(call app_file,service)
 $(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB) $(SYSTEM_VARS_LIB)

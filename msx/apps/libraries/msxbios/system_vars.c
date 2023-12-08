@@ -80,6 +80,10 @@ uint16_t HIMEM_ADDR HIMEM;
 // the interrupt is from the VDP
 uint8_t H_TIMI_ADDR H_TIMI[5];
 
+// F3F6: VDP-interupt counter that counts from 3 to 0, when it reaches zero, the
+// keyboard matrix is scanned, and the counters is reset at 3
+uint8_t SCNCNT_ADDR SCNCNT;
+
 uint8_t HOKVLD_ADDR HOKVLD;
 
 uint8_t EXTBIO_ADDR EXTBIO[5];

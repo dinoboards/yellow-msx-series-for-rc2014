@@ -24,6 +24,7 @@
 #define BOTTOM_ADDR __at(0xFC48)
 #define HIMEM_ADDR  __at(0xFC4A)
 #define H_TIMI_ADDR __at(0xFD9F)
+#define SCNCNT_ADDR __at(0xF3F6)
 
 #define HOKVLD_ADDR __at(0xFB20)
 #define EXTBIO_ADDR __at(0xFFCA)
@@ -106,6 +107,10 @@ extern uint16_t HIMEM_ADDR HIMEM;
 // called at start of interrupt subroutine, when it is clear that
 // the interrupt is from the VDP
 extern uint8_t H_TIMI_ADDR H_TIMI[5];
+
+// F3F6: VDP-interupt counter that counts from 3 to 0, when it reaches zero, the
+// keyboard matrix is scanned, and the counters is reset at 3
+extern uint8_t SCNCNT_ADDR SCNCNT;
 
 #define msxJiffy  JIFFY
 #define msxNewKey NEWKEY
