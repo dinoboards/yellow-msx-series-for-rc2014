@@ -5,6 +5,7 @@
 
 extern void msxbiosInit32(void);
 extern void msxbiosInitxt(void);
+extern void softReset(void);
 
 #define CURSOR_MOVE_LEFT "\x1D"
 #define CURSOR_OFF       "\x1B\x78\x35"

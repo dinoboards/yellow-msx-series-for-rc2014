@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),reboot ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -85,6 +85,10 @@ service.com.crt_enable_commandline:=1
 memory_files = $(call app_file,memory)
 $(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
 memory.com.crt_enable_commandline:=1
+
+reboot_files = $(call app_file,reboot)
+$(BIN)reboot.com: $(addprefix $(BIN),$(reboot_files)) $(EXTBIO_LIB)
+reboot.com.crt_enable_commandline:=1
 
 helloworld_files = ./helloworld.c.o
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(LIBGEN_LIB) $(MSXDOS_LIB)
