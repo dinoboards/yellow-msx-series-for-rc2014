@@ -1,4 +1,5 @@
 #include "../tty.h"
+#include "tty.h"
 #include <extbio/serial.h>
 #include <msxbios.h>
 #include <msxbios/hooks.h>
@@ -8,7 +9,6 @@
 #include <system_vars.h>
 
 extern uint8_t serial_read_di(const uint8_t port_number, uint8_t *const buf, uint16_t *const size);
-extern uint8_t serial_write_di(const uint8_t port_number, const uint8_t *const buf, const uint8_t size);
 
 uint8_t activate_stdin_port_number  = 0;
 uint8_t activate_stdout_port_number = 0;
@@ -49,8 +49,8 @@ void key_put_into_buf(const uint8_t code) __z88dk_fastcall {
     PUTPNT = buffer_put;
 }
 
-uint8_t tracking_escape_sequence  = false;
-uint8_t tracking_single_seqeuence = false;
+static uint8_t tracking_escape_sequence  = false;
+static uint8_t tracking_single_seqeuence = false;
 
 void translate_ansi_to_keyboard_buf(const uint8_t code) __z88dk_fastcall {
   if (tracking_escape_sequence) {
@@ -120,19 +120,4 @@ void _timi(void) {
     translate_ansi_to_keyboard_buf(*p++);
 
 finish:
-}
-
-void chput_to_serial(const unsigned char c) __z88dk_fastcall {
-
-  if (c == CHAR_MOVE_LEFT) {
-    serial_write_di(activate_stdout_port_number, "\x1b[D", 3);
-    return;
-  }
-
-  if (c == CHAR_MOVE_RIGHT) {
-    serial_write_di(activate_stdout_port_number, "\x1b[C", 3);
-    return;
-  }
-
-  serial_write_di(activate_stdout_port_number, &c, 1);
 }
