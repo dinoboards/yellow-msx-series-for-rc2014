@@ -368,9 +368,12 @@
  libraries/delay/delay.h libraries/msxbios/system_vars.h
 ./bin/fossilon.c.asm: fossilon.c libraries/msxdos/msxdos.h xstdio.h \
  libraries/msxbios/extbio.h
-./bin/sys/tty/body/tty.c.asm: sys/tty/body/tty.c sys/tty/body/../tty.h libraries/extbio/serial.h \
- libraries/msxbios/msxbios.h libraries/msxbios/hooks.h libraries/z80.h \
+./bin/sys/tty/body/tty.c.asm: sys/tty/body/tty.c sys/tty/body/../tty.h sys/tty/body/tty.h \
+ libraries/extbio/serial.h libraries/msxbios/msxbios.h \
+ libraries/msxbios/hooks.h libraries/z80.h \
  libraries/msxbios/system_vars.h
+./bin/sys/tty/body/tty_stdout.c.asm: sys/tty/body/tty_stdout.c sys/tty/body/../tty.h \
+ sys/tty/body/tty.h libraries/msxbios/msxbios.h
 ./bin/sys/tty/init/tty.c.asm: sys/tty/init/tty.c libraries/sysload/sysload.h \
  libraries/sysload/sys.h libraries/msxbios/msxbios.h \
  libraries/msxbios/hooks.h libraries/z80.h
