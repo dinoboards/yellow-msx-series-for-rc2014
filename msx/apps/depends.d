@@ -245,6 +245,9 @@
 ./bin/print.c.asm: print.c print.h
 ./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
+./bin/xmodem/xmodem.c.asm: xmodem/xmodem.c xmodem/arguments.h
+./bin/xmodem/arguments.c.asm: xmodem/arguments.c xmodem/arguments.h \
+ libraries/extbio/serial.h
 ./bin/muflash/arguments.c.asm: muflash/arguments.c muflash/arguments.h print.h
 ./bin/muflash/main.c.asm: muflash/main.c muflash/arguments.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h

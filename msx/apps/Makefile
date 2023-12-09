@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),reboot ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),xmodem reboot ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -89,6 +89,10 @@ memory.com.crt_enable_commandline:=1
 reboot_files = $(call app_file,reboot)
 $(BIN)reboot.com: $(addprefix $(BIN),$(reboot_files)) $(MSXBIOS_LIB)
 reboot.com.crt_enable_commandline:=1
+
+xmodem_files = $(call app_file,xmodem)
+$(BIN)xmodem.com: $(addprefix $(BIN),$(xmodem_files)) $(MSXBIOS_LIB) $(EXTBIO_LIB)
+xmodem.com.crt_enable_commandline:=1
 
 helloworld_files = ./helloworld.c.o
 $(BIN)helloworld.com: $(addprefix $(BIN),$(helloworld_files)) $(LIBGEN_LIB) $(MSXDOS_LIB)
