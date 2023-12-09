@@ -36,6 +36,7 @@
  libraries/msxdos/partition.h libraries/msxdos/fat.h \
  libraries/fusion/io.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
+./bin/reboot/reboot.c.asm: reboot/reboot.c libraries/msxbios/msxbios.h
 ./bin/vramtest.c.asm: vramtest.c v9958.h libraries/msxbios/msxbios.h \
  libraries/msxdos/msxdos.h
 ./bin/usbctrl/reporters.c.asm: usbctrl/reporters.c usbctrl/reporters.h \
