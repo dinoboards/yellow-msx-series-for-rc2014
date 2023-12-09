@@ -18,8 +18,8 @@
 
 bool                started;
 uint32_t            totalFileSize;
-const unsigned char rotatingChar[4][5]      = {CHAR_VERT_BAR CURSOR_MOVE_LEFT, CHAR_FOWARD_SLASH CURSOR_MOVE_LEFT,
-                                               CHAR_DASH CURSOR_MOVE_LEFT, CHAR_BACK_SLASH CURSOR_MOVE_LEFT};
+const unsigned char rotatingChar[4][5]      = {STR_VERT_BAR CURSOR_MOVE_LEFT, STR_FOWARD_SLASH CURSOR_MOVE_LEFT,
+                                               STR_DASH CURSOR_MOVE_LEFT, STR_BACK_SLASH CURSOR_MOVE_LEFT};
 uint8_t             rotatingIndex           = 0;
 const char          defaultWaitForMessage[] = ERASE_LINE "Waiting for data ...";
 char               *waitForMessage          = NULL;

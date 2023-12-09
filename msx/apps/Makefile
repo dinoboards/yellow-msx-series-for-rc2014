@@ -87,7 +87,7 @@ $(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(EXTBIO_LIB
 memory.com.crt_enable_commandline:=1
 
 reboot_files = $(call app_file,reboot)
-$(BIN)reboot.com: $(addprefix $(BIN),$(reboot_files)) $(EXTBIO_LIB)
+$(BIN)reboot.com: $(addprefix $(BIN),$(reboot_files)) $(MSXBIOS_LIB)
 reboot.com.crt_enable_commandline:=1
 
 helloworld_files = ./helloworld.c.o

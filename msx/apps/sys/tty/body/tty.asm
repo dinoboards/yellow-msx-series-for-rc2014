@@ -44,8 +44,6 @@ EXTBIO_UNKNOWN_SUB:
 	EXTERN	_activate_stdout_port_number
 	EXTERN	__timi
 _timi:
-	; LD	A, (_activate_stdin_port_number)
-	; OR	A
 	CALL	__timi
 
 	DB	$C3	; JP opcode
