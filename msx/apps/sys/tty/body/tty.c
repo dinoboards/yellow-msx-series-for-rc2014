@@ -73,6 +73,11 @@ void translate_ansi_to_keyboard_buf(const uint8_t code) __z88dk_fastcall {
       return;
     }
 
+    if (code == 'C') {
+      key_put_into_buf(CHAR_MOVE_RIGHT);
+      return;
+    }
+
     // if not recognised - just ignore it
     return;
   }
@@ -121,6 +126,11 @@ void chput_to_serial(const unsigned char c) __z88dk_fastcall {
 
   if (c == CHAR_MOVE_LEFT) {
     serial_write_di(activate_stdout_port_number, "\x1b[D", 3);
+    return;
+  }
+
+  if (c == CHAR_MOVE_RIGHT) {
+    serial_write_di(activate_stdout_port_number, "\x1b[C", 3);
     return;
   }
 

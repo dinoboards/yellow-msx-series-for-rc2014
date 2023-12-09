@@ -7,8 +7,9 @@ extern void msxbiosInit32(void);
 extern void msxbiosInitxt(void);
 extern void softReset(void);
 
-#define CHAR_ESCAPE    '\x1B'
-#define CHAR_MOVE_LEFT '\x1D'
+#define CHAR_ESCAPE     '\x1B'
+#define CHAR_MOVE_LEFT  '\x1D'
+#define CHAR_MOVE_RIGHT '\x1C'
 
 #define CURSOR_MOVE_LEFT "\x1D"
 #define CURSOR_OFF       "\x1B\x78\x35"
