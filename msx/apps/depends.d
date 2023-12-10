@@ -245,7 +245,12 @@
 ./bin/print.c.asm: print.c print.h
 ./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
-./bin/xmodem/xmodem.c.asm: xmodem/xmodem.c xmodem/arguments.h
+./bin/xmodem/crc16.c.asm: xmodem/crc16.c xmodem/crc16.h
+./bin/xmodem/xmodem.c.asm: xmodem/xmodem.c xmodem/arguments.h xmodem/xmodem-receive.h
+./bin/xmodem/xmodem-receive.c.asm: xmodem/xmodem-receive.c xmodem/arguments.h \
+ xmodem/crc16.h libraries/extbio/serial-helpers.h \
+ libraries/extbio/serial.h libraries/msx/libgen.h \
+ libraries/msxdos/msxdos.h
 ./bin/xmodem/arguments.c.asm: xmodem/arguments.c xmodem/arguments.h \
  libraries/extbio/serial.h
 ./bin/muflash/arguments.c.asm: muflash/arguments.c muflash/arguments.h print.h
