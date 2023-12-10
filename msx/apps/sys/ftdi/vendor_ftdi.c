@@ -209,6 +209,8 @@ usb_error ftdi_purge_rx_buffer(device_config_ftdi *const ftdi) {
   cmd.bValue[1] = SIO_RESET_PURGE_RX >> 8;
   cmd.bValue[0] = SIO_RESET_PURGE_RX & 0xFF;
 
+  ftdi->hold_size = 0;
+
   return usbdev_control_transfer((device_config *)ftdi, &cmd, NULL);
 }
 

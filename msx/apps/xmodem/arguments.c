@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-const char *pFileName    = NULL;
+const char *p_file_name  = NULL;
 uint8_t     receive_file = false;
 uint8_t     send_file    = false;
 uint8_t     port_number  = 0;
@@ -66,13 +66,13 @@ void process_cli_arguments(const uint16_t argc, char **const argv) {
   upcase_string(argv[2]);
 
   if (is_a_com_port_number(argv[1])) {
-    pFileName    = argv[2];
+    p_file_name  = argv[2];
     receive_file = true;
   }
 
   if (is_a_com_port_number(argv[2])) {
-    pFileName = argv[1];
-    send_file = true;
+    p_file_name = argv[1];
+    send_file   = true;
   }
 
   if (!send_file && !receive_file)
@@ -81,7 +81,7 @@ void process_cli_arguments(const uint16_t argc, char **const argv) {
   if (send_file && receive_file)
     abort_with_invalid_options();
 
-  if (pFileName[0] == 0)
+  if (p_file_name[0] == 0)
     abort_with_invalid_options();
 
   uint8_t available_ports = 0;
