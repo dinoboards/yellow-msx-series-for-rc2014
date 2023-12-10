@@ -90,7 +90,7 @@ reboot_files = $(call app_file,reboot)
 $(BIN)reboot.com: $(addprefix $(BIN),$(reboot_files)) $(MSXBIOS_LIB)
 reboot.com.crt_enable_commandline:=1
 
-xmodem_files = $(call app_file,xmodem)
+xmodem_files = $(call app_files,xmodem,memmap-override.asm)
 $(BIN)xmodem.com: $(addprefix $(BIN),$(xmodem_files)) $(MSXBIOS_LIB) $(EXTBIO_LIB) $(MSXDOS_LIB) $(LIBGEN_LIB)
 xmodem.com.crt_enable_commandline:=1
 

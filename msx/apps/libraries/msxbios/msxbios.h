@@ -20,4 +20,6 @@ extern void softReset(void);
 #define STR_DASH         "-"  /*"\x01\x57"*/
 #define STR_BACK_SLASH   "\\" /*"\x01\x5E"*/
 
+#define ERASE_LINE "\x1B\x6C\r"
+
 #endif

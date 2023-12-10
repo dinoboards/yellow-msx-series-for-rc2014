@@ -250,7 +250,7 @@
 ./bin/xmodem/xmodem-receive.c.asm: xmodem/xmodem-receive.c xmodem/arguments.h \
  xmodem/crc16.h libraries/extbio/serial-helpers.h \
  libraries/extbio/serial.h libraries/msx/libgen.h \
- libraries/msxdos/msxdos.h
+ libraries/msxbios/msxbios.h libraries/msxdos/msxdos.h
 ./bin/xmodem/arguments.c.asm: xmodem/arguments.c xmodem/arguments.h \
  libraries/extbio/serial.h
 ./bin/muflash/arguments.c.asm: muflash/arguments.c muflash/arguments.h print.h
