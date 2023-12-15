@@ -22,7 +22,7 @@ The story of the prototyping and development these boards can be found at the Ha
 </td>
 <td width="90%">
 
-Kit available at the dinotron store on [Tindie](https://www.tindie.com/stores/dinotron/)
+Kit available at the dinotron store on [Tindie](https://www.tindie.com/products/dinotron/msx-cassette-usb-module-designed-for-rc2014/)
 
 See the [README file here](./cassette-and-usb/README.md)
 
