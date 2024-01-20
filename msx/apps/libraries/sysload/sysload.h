@@ -31,7 +31,7 @@ typedef struct installed_sys_struct {
 typedef struct {
   z80_jump_t       first_extbio_handler; /* initialised to original_extbio_hook (redirected at 0x4000) */
   z80_jump_t       first_timi_handler;   /* initialised to original_timi_hook  (redirected at 0x4003) */
-  z80_jump_t       first_keyi_handler;   /* initialised to original_timi_hook  (redirected at 0x4006) */
+  z80_jump_t       first_keyi_handler;   /* initialised to original_keyi_hook  (redirected at 0x4006) */
   z80_jump_t       reserved_jump_hooks[RESERVED_JUMP_HOOKS];
   z80_jump_t       jump_hooks[SYS_JUMP_HOOKS];
   uint8_t          original_extbio_hook[5];
