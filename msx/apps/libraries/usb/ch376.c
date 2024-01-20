@@ -74,17 +74,6 @@ usb_error ch_get_status(void) {
   return USB_ERR_UNEXPECTED_STATUS_FROM_HOST;
 }
 
-uint8_t ch_read_data(uint8_t *buffer) __sdcccall(1) {
-  ch_command(CH_CMD_RD_USB_DATA0);
-  const uint8_t amount_received = CH376_DATA_PORT;
-  uint8_t       count           = amount_received;
-
-  while (count-- != 0)
-    *buffer++ = CH376_DATA_PORT;
-
-  return amount_received;
-}
-
 void ch_cmd_reset_all(void) { ch_command(CH_CMD_RESET_ALL); }
 
 inline uint8_t ch_cmd_check_exist(void) {
@@ -130,16 +119,6 @@ uint8_t ch_cmd_set_usb_mode(const uint8_t mode) __z88dk_fastcall {
 uint8_t ch_cmd_get_ic_version(void) {
   ch_command(CH_CMD_GET_IC_VER);
   return CH376_DATA_PORT & 0x1f;
-}
-
-const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) {
-  ch_command(CH_CMD_WR_HOST_DATA);
-  CH376_DATA_PORT = length;
-
-  while (length-- != 0)
-    CH376_DATA_PORT = *buffer++;
-
-  return buffer;
 }
 
 void ch_issue_token(const uint8_t toggle_bit, const uint8_t endpoint, const ch376_pid pid) {
