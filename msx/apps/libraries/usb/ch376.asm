@@ -66,12 +66,14 @@ _ch_read_data:
 	in	b, (c)
 
 	ld	a, b
-	ini
-	inir
 
+	or	a
+	ret	z
+
+	inir
 	ret
 
-;const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length) __sdcccall(1)
+;const uint8_t *ch_write_data(const uint8_t *buffer, uint8_t length)
 	PUBLIC	_ch_write_data
 _ch_write_data:
 ;libraries/usb/ch376.c:125: ch_command(CH_CMD_WR_HOST_DATA);
