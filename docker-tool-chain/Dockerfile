@@ -104,3 +104,5 @@ WORKDIR /src/
 LABEL Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
 
+RUN git config --global --add safe.directory /src && git config --global --add safe.directory ./
+
