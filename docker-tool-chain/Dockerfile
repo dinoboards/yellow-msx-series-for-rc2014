@@ -15,6 +15,7 @@ ENV Z88DK_PATH="/opt/z88dk" \
 
 
 RUN dpkg --add-architecture i386
+RUN sed -i 's/http:\/\/archive\.ubuntu\.com\/ubuntu/http:\/\/au.archive.ubuntu.com\/ubuntu/g' /etc/apt/sources.list
 RUN apt update -y
 RUN apt dist-upgrade -y
 RUN apt install -y --no-install-recommends ca-certificates mtools build-essential dos2unix libboost-all-dev texinfo texi2html libxml2-dev subversion bison flex zlib1g-dev m4 git wget dosfstools curl

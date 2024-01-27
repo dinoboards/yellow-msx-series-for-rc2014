@@ -71,11 +71,12 @@ $(BINDIR)$1.fdd.dsk: $1-nextor-kernel $(BINDIR)rcembdrv.bin
 	rm -f $(BINDIR)$1.fdd.dsk
 	dd status=none if=/dev/zero of=$(BINDIR)$1.fdd.dsk bs=$$$$(($$$$DATSIZ*18)) count=1
 	mkfs.vfat -F 12 -f 1 -n RC2014 -i 80000000 -a $(BINDIR)$1.fdd.dsk > /dev/null
-	mmd -i $(BINDIR)$1.fdd.dsk system
-	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/*.com ::/system/
-	mmove -i $(BINDIR)$1.fdd.dsk ::/system/command2.com ::/
-	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/nextor.sys ::/
+	mmd -i $(BINDIR)$1.fdd.dsk APPS
+	mmd -i $(BINDIR)$1.fdd.dsk SYSTEM
+	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/*.com ::/SYSTEM/
 	[[ $$$$(ls -A ./extras) ]] && mcopy -i $(BINDIR)$1.fdd.dsk ./extras/* ::/
+	mmove -i $(BINDIR)$1.fdd.dsk ::/SYSTEM/COMMAND2.com ::/
+	mcopy -i $(BINDIR)$1.fdd.dsk ../nextor/bin/working/$1/nextor.sys ::/
 	freespace=$$$$(mdir -i $(BINDIR)$1.fdd.dsk | grep free | sed 's/bytes free//' | sed 's/ //g')
 	echo "Built disk image $1.fdd.dsk ($$$$freespace bytes free)"
 
