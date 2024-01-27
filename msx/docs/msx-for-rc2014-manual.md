@@ -1,23 +1,104 @@
+$define{doc_title}{Yellow MSX For RC2014 Manual}$
+$include{"book.latex"}$
 
-# RC2014 MSX Manual
+# System Overview
 
-Details of applications, services and configuration that is specific to the Yellow MSX for RC2014 system.
+The Yellow MSX FOR RC2014 is a kit computer compatible with the MSX computer system from the 1980s, based on the physical architecture and system BUS of the RC2014 kit computer.
 
-# Boot Environment
+\begin{wrapfigure}{r}{0.40\textwidth}
+  \centering
+  \includegraphics[width=0.40\textwidth]{full-kit-profile-1.jpg}
+\end{wrapfigure}
 
-There are two basic ROM versions available for the platform (CBIOS or MSX-BASIC)
 
-## CBIOS/NEXTOR:
+The system is designed around a number of modules for various sub-systems, such as CPU, Memory, Storage, Sound, Keyboard and Video.  Each of these modules are connected into a  backplane.
 
-* Available in a 50Hz or 60Hz build
-* Does not include MSX-BASIC
-* Should be able to run all non-basic software
-* includes RC2014 specific bios Extensions
+Many of the official RC2014 and compatible RC2014 modules can also be installed into the system.
 
-## MSX-BASIC/NEXTOR:
-* available in various country configurations (date, time, number and keyboard configs)
-* Does include a working copy of MSX-BASIC
-* Includes RC2014 specific bios Extensions
+More specific details for each of the Yellow MSX kits can be found on the project's official GitHub page https://github.com/vipoo/yellow-msx-series-for-rc2014/tree/main?tab=readme-ov-file#summary-of-all-kits
+
+\pagebreak
+
+## Official Yellow MSX Modules
+
+Below is a list of all the MSX Kit Modules available.
+
+|Module|Description|MSX|RomWBW|
+|--|------|-|-|
+|12+1 Backplane|Support up to 12 Modules, and Cartridge Slot Extension|Yes|Yes|
+|Cartridge Slot|Add support for 2 MSX Cartridges|Optional|No|
+|Cassette+USB|Compatible cassette interface and a USB Port|Optional|No|
+|Game|Add basic sound and game controller inputs|Yes|Yes|
+|Keyboard|73 Key MSX keyboard|Yes|Yes|
+|Memory|1024K RAM/512K ROM Module|Yes|No|
+|Music|Extended Music Support (YM2413)|Optional|Yes|
+|PPI|Keyboard interface &  Memory Slot signals|Yes|No|
+|RTC|Real time clock|Optional|Yes|
+|Turbo CPU|Z80 CPU operating from 3.5Mhz to 20Mhz|Yes|Yes|
+|V99x8 MSX RGB|MSX RGB video output|Yes|Yes|
+
+\* It is possible to use the standard RC2014 Backplane Pro. Some additional wiring required for specific modules. Cartridge Slot Extension requires the 12+1 Backplane.|
+
+## Compatible RC2014 Modules
+
+Some of the official and 3rd-party RC2014 Modules will work in a system configured for MSX operation.  These includes:
+
+|Module|Notes|
+|-|--|
+|Z80 CPU v2.1 & Dual Clock|Clock must be configured at 3.5Mhz|
+|Compact Flash|Must be formatted for MSX (see FDISK utility)|
+|Dual Serial SIO/2|Only the B Port supported|
+|Bubble LED Display|Controlled through MSX Basic|
+|Others|So long as there are no port conflicts there is a good chance it will work in MSX configured kit|
+
+
+## System ROM
+
+On powerup and/or reset, the system will run the code within the ROM of the Memory Module. This single ROM image contains various sub-systems.  The configuration and choice of sub-system is flexible and can be customised as needed.
+
+|Unit|Description|
+|-|--|
+|SYSTEM BIOS|Manages the bootup sequence and supporting services for common hardware devices (keyboard, memory paging, video)|
+|MSX-DOS/NEXTOR KERNEL|The core kernel of disk operating system built for the MSX platform|
+|DISK DRIVERS|Disk drivers written for this platform (RC2014 Compact Flash, USB storages and others)|
+|EXTENDED BIOS|Additional hardware support code for the platform (SIO/2, general USB)|
+|EMBEDDED BOOT DISK|A small read only disk image containing MSX-DOS boot files and other utilities, to enable the platform to boot into MSX-DOS, when no external storage devices are detected|
+|MSX-BASIC|A specific country configured build of MSX BASIC|
+
+There are 2 core image types that can be installed on your system:
+
+1. CBIOS Basic system, configured for 50Hz or 60Hz video display rate
+2. MSX-BASIC system, configured for specific country and format defaults
+
+### CBIOS images
+
+The CBIOS image includes all units, except for MSX-BASIC.  It supports loading and running the vast majority of MSX-DOS programs and games.
+
+As it does not include MSX-BASIC, some programs and all BASIC programs will not be work.
+
+You can find more information of CBIOS at their website: https://cbios.sourceforge.net/
+
+There are 2 variations of the CBIOS image. One for 60Hz video displays and the other for 50Hz. Both of these images will work if your output is RGB.  If you are using composite or S-Video output, you will need to ensure the correct frequency for your display type (eg: 50Hz for PAL, 60Hz for NTSC).
+
+### MSX-BASIC images
+
+These are the recommended images, as they enable most compatibility. With one of these images, you should be able to run all MSX-DOS, GAMES and BASIC programs.
+
+At time of writing an image with the following configurations are available:
+
+|Country|Frequency|Char Set|Date Format|
+|-|-|-|-|
+|Australia|50Hz|International|D-M-Y|
+|Japan|60Hz|Japanese|Y-M-D|
+|USA|60Hz|International|M-D-Y|
+|international|50Hz|International|M-D-Y|
+|UK|50Hz|International|D-M-Y|
+|France|50Hz|International|D-M-Y|
+|Germany|50Hz|International|D-M-Y|
+|Italy|50Hz|International|D-M-Y|
+|Spain|50Hz|International|M-D-Y|
+|Arabic|60Hz|Japanese|Y-M-D|
+|Korean|60Hz|Japanese|Y-M-D|
 
 # RC2014 Extensions
 
@@ -66,3 +147,8 @@ To install,  add the following to `AUTOEXEC.BAT`:
 SERVICE=PRNT.SYS
 ```
 
+# Yellow MSX DOS Applications
+
+The Yellow MSX for RC2014 in addition to all the standard MSX-DOS applications, includes some programs specifically designed for the system and its hardware modules.
+
+$include{"../bin/app-manuals.md"}$
