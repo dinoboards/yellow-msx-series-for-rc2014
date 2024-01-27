@@ -11,21 +11,17 @@ PARITY=p
     Specifies how the system uses the parity bit to check for transmission
     errors. The p value can be one of the following: N (none), E (even), O
     (odd), M (mark), or S (space). The default value is E. Not all computers
-    support the values M and S. You can abbreviate this parameter by
-    omitting PARITY= and specifying a value for p.
+    support the values M and S.
 
 DATA=d
     Specifies the number of data bits in a character. Valid values for d are
     in the range 5 through 8. The default value is 8. Not all computers
-    support the values 5 and 6. You can abbreviate this parameter by
-    omitting DATA= and specifying a value for d.
+    support the values 5 and 6.
 
 STOP=s
     Specifies the number of stop bits that define the end of a character: 1,
     1.5, or 2. If the baud rate is 110, the default value is 2; otherwise,
-    the default value is 1. Not all computers support the value 1.5. You can
-    abbreviate this parameter by omitting STOP= and specifying a value for
-    s.
+    the default value is 1. Not all computers support the value 1.5.
 
 */
 

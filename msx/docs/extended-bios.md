@@ -821,7 +821,7 @@ Call GET_VER first to confirm if it is installed before using other extended BIO
 
 ### Function 0:
 <dl>
-<dt>Use:</dt><dd>    Get version number of μ</dd>
+<dt>Use:</dt><dd>    Get version number of μ-driver</dd>
 <dt>Entry:</dt><dd>  A = 0</br>
 D = 84H</dd>
 <dt>Output: </dt><dd>A = 1 when installed, 0 if not<br>

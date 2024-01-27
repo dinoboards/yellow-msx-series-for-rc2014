@@ -222,10 +222,11 @@ bin/rcmusic.rom:
 	cp rc2014-music/bin/rcmusic.rom ./bin/rcmusic.rom
 
 .PHONY: usbimage
-usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com
+usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com bin/msx-for-rc2014-manual.pdf
 	@rm -rf bin/usbimage
 	mkdir -p bin/usbimage/system
 	mkdir -p bin/usbimage/apps
+	mkdir -p bin/usbimage/docs
 	cp ./nextor/bin/working/rc2014/nextor.sys ./bin/usbimage/nextor.sys
 	cp ./nextor/bin/working/rc2014/command2.com ./bin/usbimage/command2.com
 	cp ./nextor/bin/working/rc2014/*.com ./bin/usbimage/system
@@ -233,6 +234,43 @@ usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin
 	cp -r ./apps/bin/*.com ./bin/usbimage/apps
 	cp -r ./apps/bin/*.sys ./bin/usbimage/system
 	rm ./bin/usbimage/system/command2.com
+	cp bin/msx-for-rc2014-manual.pdf ./bin/usbimage/docs
+	cp docs/extended-bios.md ./bin/usbimage/docs
+	cp docs/kunbasic.txt ./bin/usbimage/docs
+	cp docs/msx_technical_data_book.pdf ./bin/usbimage/docs
+	cp docs/MSX-Basic-v2.0-Reference-Chart.pdf ./bin/usbimage/docs
+	cp docs/MSX-BIOS-Book-01.pdf ./bin/usbimage/docs
+	cp docs/MSX-BIOS-Book-02.pdf ./bin/usbimage/docs
+	cp docs/msx-tech-handbook.txt ./bin/usbimage/docs
+	cp docs/msxbasicjvc.pdf ./bin/usbimage/docs
+	cp docs/msxdos-command.txt ./bin/usbimage/docs
+	cp docs/msxdos-function-specifications.txt ./bin/usbimage/docs
+	cp docs/msxdos-interface-specifications.txt ./bin/usbimage/docs
+	cp docs/portar.txt ./bin/usbimage/docs
+	cp docs/th-1.txt ./bin/usbimage/docs
+	cp docs/th-2.txt ./bin/usbimage/docs
+	cp docs/th-3.txt ./bin/usbimage/docs
+	cp docs/th-4a.txt ./bin/usbimage/docs
+	cp docs/th-4b.txt ./bin/usbimage/docs
+	cp docs/th-5a.txt ./bin/usbimage/docs
+	cp docs/th-5b.txt ./bin/usbimage/docs
+	cp docs/th-ap.txt ./bin/usbimage/docs
+	cp docs/the-msx-red-book.md ./bin/usbimage/docs
+
+bin/app-manuals.md: $(sort $(wildcard apps/*/app-manual.md))
+	@cat $^ > $@
+
+ifndef DRAFT
+DRAFT=1
+else
+endif
+
+bin/%.pdf: docs/%.md
+	@gpp -I ./docs -o $@.tmp -U "$$" "$$" "{" "}{" "}$$" "{" "}" "@@@" "" -M "$$" "$$" "{" "}{" "}$$" "{" "}" -Ddoc_draft=$(DRAFT) $<
+	pandoc $@.tmp -f markdown -t latex -s -o $@ --default-image-extension=pdf
+	rm -f $@.tmp
+
+bin/msx-for-rc2014-manual.pdf: docs/msx-for-rc2014-manual.md bin/app-manuals.md
 
 release: usbimage
 	@version=$$(date +%y-%m-%d)
@@ -252,9 +290,14 @@ release: usbimage
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar rcmusic.rom)
 	(cd ./bin && gzip -qf ../../release/msx-rc2014-$${version}.tar)
 	rm -f ../release/usbimage-$${version}.zip
-	(cd ./bin/usbimage && zip -r ../../../release/usbimage-$${version}.zip *)
-	(cd ./bin/usbimage && pwd && tar -cvf ../../../release/usbimage-$${version}.tar *)
+	(cd ./bin/usbimage && ls )
+	(cd ./bin/usbimage && zip -9 -r ../../../release/usbimage-$${version}.zip *)
+	(cd ./bin/usbimage && tar -cvf ../../../release/usbimage-$${version}.tar *)
 	(cd ./bin/usbimage && gzip -qf ../../../release/usbimage-$${version}.tar)
+	rm -f ../release/docs-$${version}.zip
+	(cd ./bin/usbimage/docs && zip -9 -r ../../../../release/docs-$${version}.zip *)
+	(cd ./bin/usbimage/docs && tar -cvf ../../../../release/docs-$${version}.tar *)
+	(cd ./bin/usbimage/docs && gzip -qf ../../../../release/docs-$${version}.tar)
 
 bin/bbcbasic.com: $(wildcard bbcbasic-z80/*)
 	@$(MAKE) -C bbcbasic-z80 --no-print-directory

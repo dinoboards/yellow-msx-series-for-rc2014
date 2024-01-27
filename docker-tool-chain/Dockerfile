@@ -3,7 +3,7 @@
 # To run the container:
 #   $ docker run -v ${PWD}:/src/ --privileged=true -u $(id -u ${USER}):$(id -g ${USER}) -it vipoo/yellow-msx-rc2014-tool-chain:latest
 
-FROM ubuntu:jammy-20230916 as basebuilder
+FROM ubuntu:jammy-20240111 as basebuilder
 
 LABEL Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
@@ -13,11 +13,11 @@ ENV Z88DK_PATH="/opt/z88dk" \
     BUILD_SDCC=1 \
     DEBIAN_FRONTEND=noninteractive
 
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/ubuntu/archive/|g' /etc/apt/sources.list && \
-    dpkg --add-architecture i386 && \
-    apt update -y && \
-    apt dist-upgrade -y && \
-    apt install -y --no-install-recommends ca-certificates mtools build-essential dos2unix libboost-all-dev texinfo texi2html libxml2-dev subversion bison flex zlib1g-dev m4 git wget dosfstools curl
+
+RUN dpkg --add-architecture i386
+RUN apt update -y
+RUN apt dist-upgrade -y
+RUN apt install -y --no-install-recommends ca-certificates mtools build-essential dos2unix libboost-all-dev texinfo texi2html libxml2-dev subversion bison flex zlib1g-dev m4 git wget dosfstools curl
 
 RUN mv /usr/bin/svn /usr/bin/org-svn
 COPY ./svnshim.sh /usr/bin/svn
@@ -73,21 +73,10 @@ RUN cd /opt && \
     make clean && \
     make
 
-FROM ubuntu:jammy-20230916
+FROM ubuntu:jammy-20240111
 
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirror.aarnet.edu.au/pub/ubuntu/archive/|g' /etc/apt/sources.list && \
-    apt update -y && \
-    apt dist-upgrade -y && \
-    apt install -y --no-install-recommends ca-certificates mtools dos2unix pasmo dosfstools clang-format m4 ssh xxd gnupg2 software-properties-common zip wget git && \
-    wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add - && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F && \
-    apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' && \
-    dpkg --add-architecture i386 && \
-    apt update -y && \
-    apt install -y --no-install-recommends wine32 build-essential && \
-    ln -s /usr/lib/wine/wine /usr/bin/wine && \
-    rm -rf /var/lib/apt/lists/* && \
-    adduser --disabled-password --gecos "" builder
+COPY ./prepare.sh /tmp/prepare.sh
+RUN /tmp/prepare.sh
 
 COPY --link Wincupl/Shared /opt/wincupl
 COPY --link --from=nodejsbuild /opt/nodejs /opt/nodejs
@@ -105,8 +94,6 @@ COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sdcc_ix /opt/z8
 COPY --link --from=z88dkbuild /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80 /opt/z88dk/libsrc/_DEVELOPMENT/lib/sccz80
 COPY --link bashrc /home/builder/.bashrc
 
-RUN git config --global --add safe.directory /src
-
 ENV Z88DK_PATH="/opt/z88dk" \
     PATH="/opt/z88dk/bin:/opt/nodejs/bin:/opt/sdcc-4.3.0/bin:/opt/hex2bin:/opt/cpm:/opt/sjasmplus:${PATH}" \
     ZCCCFG="/opt/z88dk/lib/config/"
@@ -115,3 +102,4 @@ WORKDIR /src/
 
 LABEL Maintainer="Dean Netherton" \
       Description="Tool chain to build units for the yellow msx for rc2014 kits"
+
