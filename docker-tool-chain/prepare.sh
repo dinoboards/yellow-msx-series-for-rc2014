@@ -10,7 +10,7 @@ apt upgrade -y
 
 DEBIAN_FRONTEND="noninteractive" apt install -y --no-install-recommends \
   tzdata ca-certificates mtools dos2unix pasmo dosfstools clang-format m4 xxd gnupg2 software-properties-common zip \
-  wget texlive-latex-base texlive-fonts-recommended texlive-latex-extra gpp lmodern
+  wget texlive-latex-base texlive-fonts-recommended texlive-latex-extra gpp lmodern git
 wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add -
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv F987672F
 apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'

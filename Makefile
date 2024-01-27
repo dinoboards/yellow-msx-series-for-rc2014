@@ -15,7 +15,6 @@ apps-rc2014:
 .PHONY: clean
 clean:
 	$(MAKE) -C msx clean
-	$(MAKE) -C apps-rc2014 clean
 
 .PHONY: release-notes
 release-notes:
@@ -55,11 +54,10 @@ release-build-rc2014-apps:
 release-build-package:
 	@version=$$(date +%y-%m-%d)
 	$(MAKE) release -C msx --no-print-directory
-	$(MAKE) release -C apps-rc2014 --no-print-directory
 
 .PHONY: release
 release:
-	DRAFT=0 RELEASE=true $(MAKE) clean
+	@DRAFT=0 RELEASE=true $(MAKE) clean
 	DRAFT=0 RELEASE=true $(MAKE) release-notes
 	DRAFT=0 RELEASE=true $(MAKE) release-build-jeds
 	DRAFT=0 RELEASE=true $(MAKE) release-build-msx-apps
@@ -71,11 +69,11 @@ release:
 # Mark documents with DRAFT
 .PHONY: draft-release
 draft-release:
-	DRAFT=1 RELEASE=true $(MAKE) clean
+	@DRAFT=1 RELEASE=true $(MAKE) clean
 	DRAFT=1 RELEASE=true $(MAKE) release-notes
 	DRAFT=1 RELEASE=true $(MAKE) release-build-jeds
 	DRAFT=1 RELEASE=true $(MAKE) release-build-msx-apps
 	DRAFT=1 RELEASE=true $(MAKE) release-build-msx-roms
-	DRAFT=1 RELEASE=true $(MAKE) release-build-rc2014-apps
 	DRAFT=1 RELEASE=true $(MAKE) release-build-package
+	version=$$(date +%y-%m-%d)
 	echo gh release create --draft -F ./release/release-$${version}.md -t "$${version}" $${version} release/*

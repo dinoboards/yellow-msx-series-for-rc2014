@@ -31,10 +31,9 @@ cbios:
 	cp -u ./cbios/derived/bin/*.rom ./bin
 
 
-# esp8266.com
-INCLUDED_APPS 	:= testram.com memtest.com memtest.eng pt3play.com iteratn.pt3 mbrot.com
-INCLUDED_SYSTEM := fdisk.com rtccalb.com siocfg.com service.com prnt.sys ftdi.sys sio2.sys
-INCLUDED_ROOT 	:= AUTOEXEC.BAT SROM.COM SROM.TXT SROM.INI
+INCLUDED_APPS 	:= esp8266.com iteratn.pt3 mbrot.com memtest.com pt3play.com SROM.COM SROM.INI term.com testram.com
+INCLUDED_SYSTEM := mode.com clrdir.com fdisk.com ftdi.sys prnt.sys rtccalb.com service.com sio2.sys
+INCLUDED_ROOT 	:= AUTOEXEC.BAT
 
 define BUILD_versions =
 
@@ -263,6 +262,7 @@ bin/app-manuals.md: $(sort $(wildcard apps/*/app-manual.md))
 ifndef DRAFT
 DRAFT=1
 else
+DRAFT=0
 endif
 
 bin/%.pdf: docs/%.md
