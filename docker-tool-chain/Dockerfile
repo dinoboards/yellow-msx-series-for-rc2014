@@ -44,7 +44,7 @@ RUN cd /opt && \
 FROM basebuilder as hex2binbuild
 
 RUN cd /opt && \
-    git clone --depth 1 https://github.com/vipoo/hex2bin.git && \
+    git clone --depth 1 https://github.com/dinoboards/hex2bin.git && \
 	cd hex2bin && \
 	make
 
