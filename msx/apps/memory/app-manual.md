@@ -1,4 +1,4 @@
-## MEMORY
+### MEMORY
 
 Reports the status and availability of different RAM under MSX-DOS
 

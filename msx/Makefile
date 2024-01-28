@@ -259,6 +259,9 @@ usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin
 bin/app-manuals.md: $(sort $(wildcard apps/*/app-manual.md))
 	@cat $^ > $@
 
+bin/sys-manuals.md: $(sort $(wildcard apps/sys/*/sys-manual.md))
+	@cat $^ > $@
+
 ifdef DRAFT
 DRAFT=1
 else
@@ -270,7 +273,7 @@ bin/%.pdf: docs/%.md
 	pandoc $@.tmp -f markdown -t latex -s -o $@ --default-image-extension=pdf
 	rm -f $@.tmp
 
-bin/msx-for-rc2014-manual.pdf: docs/msx-for-rc2014-manual.md bin/app-manuals.md
+bin/msx-for-rc2014-manual.pdf: docs/msx-for-rc2014-manual.md bin/app-manuals.md bin/sys-manuals.md
 
 release: usbimage
 	@version=$$(date +%y-%m-%d)

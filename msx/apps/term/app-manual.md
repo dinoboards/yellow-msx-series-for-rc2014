@@ -1,4 +1,4 @@
-## TERM
+### TERM
 
 A simple ANSI compliant telnet console.  For use with a serial connected device.
 

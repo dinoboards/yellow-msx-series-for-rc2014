@@ -1,4 +1,4 @@
-## MODE
+### MODE
 
 Program to change various system settings.
 
@@ -9,7 +9,7 @@ Supported sub commands:
 |Serial port:   |MODE COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s]|
 |Display width: |MODE \<cols>|
 
-### Serial Driver
+#### Serial Driver
 
 An appropriate serial driver needs to have been installed.  See the USB FTDI or SIO/2 system drivers.
 
@@ -23,7 +23,7 @@ An appropriate serial driver needs to have been installed.  See the USB FTDI or 
 |DATA=d|Specifies the number of data bits in a character. Valid values for d are in the range 5 through 8. The default value is 8. Not all computers support the values 5 and 6.|
 |STOP=s|Specifies the number of stop bits that define the end of a character: 1, 1.5, or 2. If the baud rate is 110, the default value is 2; otherwise, the default value is 1. Not all computers support the value 1.5.|
 
-### Display width
+#### Display width
 
 Changes the number of characters per line on the screen in text mode.
 

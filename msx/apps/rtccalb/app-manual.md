@@ -1,4 +1,4 @@
-## RTCCALB
+### RTCCALB
 
 Utility to aid in calibrating the RTC module, using the CPU Clock as a reference.
 

@@ -110,12 +110,6 @@ and interacting/enumerating USB devices attached to the Cassette+USB module.
 
 See [docs/extended-bios.md](docs/extended-bios.md) for details of the specific enhancements
 
-## SIO/2
-
-The embedded ROM includes a EXTBIO extension that installs a fossil compatible serial interface to drive the RC2014 SIO/2 module.
-
-See the applications, `xrecv`, `term`, `exp8266`
-
 ## Compact Flash
 
 The embedded ROM NEXTOR driver will detect and allow the use of the RC2014 Compact flash modules.
@@ -130,24 +124,33 @@ will boot from a read-only disk image included in the ROM.
 If you do have a compatible disk images (USB or CF), you can use `FDISK.COM` on the embedded boot image to prepare your desired boot device, and then copy the `NEXTOR.SYS` and `COMMAND2.COM` (and optionally the `AUTOEXEC.BAT`) files
 from this embedded image to the device.  When you reboot, the system should boot from attached device in preference to the embedded ROM disk image.
 
-## TSR/SERVICE framework
+# Applications & Services
 
-To enable support for additional hardware not supported by the embedded ROM, a TSR (Terminate Stay Resident) service
-framework has been developed.
+## System Services and Drivers
 
-This system allow the loading within MSX-DOS's `AUTOEXEC.BAT`, to install additional drivers or other
-supporting software.
+As the Yellow MSX system can support many different hardware extensions, appropriate driver software is required.  As there is limited space within the 512K ROM to store all the drivers required for all the potential hardware installed on your system, a dynamic service framework was developed.
 
-For example, to support USB printers, the `PRNT.SYS` service, can be installed to enable MSX-DOS to print via
-an attached USB to Centronics adapter.
+This framework is similar to the MSX [MemMan](https://www.msx.org/wiki/MemMan) system.
 
-To install,  add the following to `AUTOEXEC.BAT`:
+> (MemMan has an unknown compatibility issue, and as at writing has not been resolved.)
+
+This service framework, allows the installation of TSR (Terminate Stay Resident) software.  The services are copied into a free segment of 16K page, thus do not consume any of the TPA that is available for standard MSX-DOS and Basic programs.
+
+All service TSR programs have the extension `.SYS`, eg: `PRNT.SYS`
+
+To installed a service, you can use the `SERVICE.COM` application to load them. For example to install the USB printer driver, you can run the following command.
 
 ```
 SERVICE=PRNT.SYS
 ```
 
-# Yellow MSX DOS Applications
+This command can be placed into your AUTOEXEC.BAT script, so that the printer driver is always loaded at system start.
+
+## Services
+
+$include{"../bin/sys-manuals.md"}$
+
+## Yellow MSX specific apps
 
 The Yellow MSX for RC2014 in addition to all the standard MSX-DOS applications, includes some programs specifically designed for the system and its hardware modules.
 
