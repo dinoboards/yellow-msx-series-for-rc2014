@@ -57,23 +57,23 @@ release-build-package:
 
 .PHONY: release
 release:
-	@DRAFT=0 RELEASE=true $(MAKE) clean
-	DRAFT=0 RELEASE=true $(MAKE) release-notes
-	DRAFT=0 RELEASE=true $(MAKE) release-build-jeds
-	DRAFT=0 RELEASE=true $(MAKE) release-build-msx-apps
-	DRAFT=0 RELEASE=true $(MAKE) release-build-msx-roms
-	DRAFT=0 RELEASE=true $(MAKE) release-build-rc2014-apps
-	DRAFT=0 RELEASE=true $(MAKE) release-build-package
+	@$(MAKE) clean
+	$(MAKE) release-notes
+	$(MAKE) release-build-jeds
+	$(MAKE) release-build-msx-apps
+	$(MAKE) release-build-msx-roms
+	$(MAKE) release-build-rc2014-apps
+	$(MAKE) release-build-package
 	echo gh release create --draft -F ./release/release-$${version}.md -t "$${version}" $${version} release/*
 
 # Mark documents with DRAFT
 .PHONY: draft-release
 draft-release:
-	@DRAFT=1 RELEASE=true $(MAKE) clean
-	DRAFT=1 RELEASE=true $(MAKE) release-notes
-	DRAFT=1 RELEASE=true $(MAKE) release-build-jeds
-	DRAFT=1 RELEASE=true $(MAKE) release-build-msx-apps
-	DRAFT=1 RELEASE=true $(MAKE) release-build-msx-roms
-	DRAFT=1 RELEASE=true $(MAKE) release-build-package
+	@DRAFT=true $(MAKE) clean
+	DRAFT=true $(MAKE) release-notes
+	DRAFT=true $(MAKE) release-build-jeds
+	DRAFT=true $(MAKE) release-build-msx-apps
+	DRAFT=true $(MAKE) release-build-msx-roms
+	DRAFT=true $(MAKE) release-build-package
 	version=$$(date +%y-%m-%d)
 	echo gh release create --draft -F ./release/release-$${version}.md -t "$${version}" $${version} release/*

@@ -259,7 +259,7 @@ usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin
 bin/app-manuals.md: $(sort $(wildcard apps/*/app-manual.md))
 	@cat $^ > $@
 
-ifndef DRAFT
+ifdef DRAFT
 DRAFT=1
 else
 DRAFT=0
