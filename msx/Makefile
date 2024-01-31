@@ -270,7 +270,7 @@ endif
 
 bin/%.pdf: docs/%.md
 	@gpp -I ./docs -o $@.tmp -U "$$" "$$" "{" "}{" "}$$" "{" "}" "@@@" "" -M "$$" "$$" "{" "}{" "}$$" "{" "}" -Ddoc_draft=$(DRAFT) $<
-	pandoc $@.tmp -f markdown -t latex -s -o $@ --default-image-extension=pdf
+	pandoc $@.tmp -f markdown --template "./docs/eisvogel.tex"  --listings -t latex -s -o $@ --default-image-extension=pdf
 	rm -f $@.tmp
 
 bin/msx-for-rc2014-manual.pdf: docs/msx-for-rc2014-manual.md bin/app-manuals.md bin/sys-manuals.md

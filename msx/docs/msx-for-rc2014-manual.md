@@ -1,23 +1,123 @@
-$define{doc_title}{Yellow MSX For RC2014 Manual}$
-$include{"book.latex"}$
+$define{doc_title}{Yellow MSX User Manual}$
 
-# System Overview
+<!-- https://github.com/Wandmalfarbe/pandoc-latex-template/blob/master/examples/title-page-logo/document.md
+geometry:
+- top=2cm
+- bottom=3cm
+- left=2.5cm
+- right=2.0cm
+toc-depth: 2 -->
 
-The Yellow MSX FOR RC2014 is a kit computer compatible with the MSX computer system from the 1980s, based on the physical architecture and system BUS of the RC2014 kit computer.
+---
+title: Yellow MSX Manual
+author: Dean Netherton
+toc: false
+toc-own-page: false
+classoption:
+- oneside
+titlepage: true
+titlepage-rule-color: "fcc603"
+titlepage-rule-height: 4
+titlepage-logo: "docs/dino.png"
+logo-width: 120mm
+fontsize: 13pt
+papersize: A4
+numbersections: true
+secnumdepth: 2
+colorlinks: true
+geometry:
+- top=4cm
+- bottom=5cm
+- left=3.0cm
+- right=2.5cm
+header-includes:
+- |
+  ```{=latex}
+  \usepackage{awesomebox}
+  \usepackage{wrapfig}
+  \renewcommand{\linethickness}{10pt}
+  \definecolor{abnote}{RGB}{255, 204, 0}
+  \definecolor{yellow}{RGB}{255, 204, 0}
+  \definecolor{red}{RGB}{208, 72, 72}
+  \definecolor{orange}{RGB}{243, 185, 95}
+  \definecolor{blue}{RGB}{104, 149, 210}
+  ```
+pandoc-latex-environment:
+  noteblock: [note]
+  tipblock: [tip]
+  warningblock: [warning]
+  cautionblock: [caution]
+  importantblock: [important]
+...
+
+# Preface {.unlisted .unnumbered}
 
 \begin{wrapfigure}{r}{0.40\textwidth}
   \centering
-  \includegraphics[width=0.40\textwidth]{full-kit-profile-1.jpg}
+  \includegraphics[width=0.40\textwidth]{docs/full-kit-profile-1.jpg}
 \end{wrapfigure}
 
 
-The system is designed around a number of modules for various sub-systems, such as CPU, Memory, Storage, Sound, Keyboard and Video.  Each of these modules are connected into a  backplane.
+So you have finished building and assembling your MSX kits and you've put the soldering iron way.  You have a working MSX compatible computer built with your very own hands! Congratulations and well done - that's an achievement you certainly can be proud of.
 
-Many of the official RC2014 and compatible RC2014 modules can also be installed into the system.
+But now what, you ask?  Perhaps you have typed a few commands at the DOS prompt.  Perhaps you figured out how to load a game or write a little BASIC program and run.  But you want to explore and learn more.  What can you make this little machine do?
 
-More specific details for each of the Yellow MSX kits can be found on the project's official GitHub page https://github.com/vipoo/yellow-msx-series-for-rc2014/tree/main?tab=readme-ov-file#summary-of-all-kits
+Well this manual is here to help.  Whether you have lots of previous experience with 8 bit computers from the 80s or not, this guide will help you in your continuing exploration of all things 8 bit retro.
+
+\small
+\begin{noteblock}
+\begin{raggedright}
+
+The Yellow MSX is a retro self assembled computer kit.  Its made up of a number of modules (CPU, Memory, Storage, Sound, Keyboard and Video), that once assembled together into a working computer - give you a fully operational MSX compatible computer.
+
+Due to its modular nature, you can customise and extend the system in many ways, including installation of other RC2014 compatible modules.
+
+More details can be found on the official GitHub page:
+
+https://github.com/vipoo/yellow-msx-series-for-rc2014/tree/main?tab=readme-ov-file\#yellow-msx-series-for-rc2014
+\end{raggedright}
+\end{noteblock}
+\normalsize
 
 \pagebreak
+
+# Glossary {.unlisted .unnumbered}
+
+|Term|Meaning|
+|-|------|
+|8-bit|Refers to the computer's central processing unit (CPU) architecture, where each data unit is 8 bits long.|
+|Assembler|A program that converts assembly language code into machine code for the computer's CPU.|
+|BIOS|Basic Input/Output System, a set of software instructions stored in ROM that initializes hardware during the boot process.|
+|Cartridge|External plug-in modules containing additional software or hardware enhancements for the computer.|
+|CLI|Command Line Interface - A text-based interface where users interact with the computer by entering commands.|
+|CPU|Central Processing Unit, the primary component responsible for executing instructions in the computer.|
+|I/O|Input/Output - Refers to the communication between the computer and external devices.|
+|MSX-BASIC|The built-in programming language for MSX computers, providing a simple way to write and run programs.|
+|MSX™|A standardized home computer architecture developed by Microsoft and ASCII Corporation in the early 1980s.|
+|Palette|A set of colors available for use in graphics and display.|
+|Pixel|Short for picture element, the smallest unit of display on a computer screen.|
+|RAM|Random Access Memory, the volatile memory used by the computer for temporary storage of data and program code.|
+|ROM|Read-Only Memory, a type of non-volatile memory that stores the computer's firmware or permanent software.|
+|Sprite|A graphical object that can be moved independently on the screen, commonly used in 2D gaming graphics.|
+|VDP|Video Display Processor, a dedicated chip responsible for handling graphics and video output.|
+|RC2014™|A simple 8 bit Z80 based modular computer kit system (see https://rc2014.co.uk/)|
+
+\small
+\begin{cautionblock}
+\begin{raggedright}
+The term 'RC2014' is a registered trademark of RFC2795 Ltd. The Yellow MSX kits are not affiliated, authorized or endorsed by RFC2795 Ltd.
+
+All other trademarks mentioned in this document are the property of their respective owners and any use of these trademarks also does not imply affiliation, authorisation or endorsement.
+\end{raggedright}
+\end{cautionblock}
+\normalsize
+
+\newpage
+\hypersetup{linkcolor=}
+\tableofcontents
+
+
+# System Overview
 
 ## Official Yellow MSX Modules
 
@@ -37,7 +137,13 @@ Below is a list of all the MSX Kit Modules available.
 |Turbo CPU|Z80 CPU operating from 3.5Mhz to 20Mhz|Yes|Yes|
 |V99x8 MSX RGB|MSX RGB video output|Yes|Yes|
 
-\* It is possible to use the standard RC2014 Backplane Pro. Some additional wiring required for specific modules. Cartridge Slot Extension requires the 12+1 Backplane.|
+\begin{tipblock}
+\small
+
+It is possible to use the standard RC2014 Backplane Pro for some modules, but as not all lanes are supplied, some additional wiring will be required. The Cartridge Slot Extension, though is only compatible with the 12+1 Backplane.
+
+\end{tipblock}
+\normalsize
 
 ## Compatible RC2014 Modules
 
@@ -49,19 +155,24 @@ Some of the official and 3rd-party RC2014 Modules will work in a system configur
 |Compact Flash|Must be formatted for MSX (see FDISK utility)|
 |Dual Serial SIO/2|Only the B Port supported|
 |Bubble LED Display|Controlled through MSX Basic|
-|Others|So long as there are no port conflicts there is a good chance it will work in MSX configured kit|
+|Others|So long as there are no port conflicts there is a good chance it will work in a MSX configured kit|
 
+\pagebreak
 
 ## System ROM
 
-On powerup and/or reset, the system will run the code within the ROM of the Memory Module. This single ROM image contains various sub-systems.  The configuration and choice of sub-system is flexible and can be customised as needed.
+The Memory Module, includes a 512K boot ROM.  On powerup and/or reset, the system will execute the code flashed within. The ROM image contains numerous sub-systems for the operations of the computer - and there are numerous pre-built images available for you to download to suit your requirements.
+
+The ROM images available for download are for the most part, identical.  The key differences are the choice of system BIOS/MSX-BASIC and country/date formatting rules.
+
+The following table describes the key subsystem that the various system ROMs contain.
 
 |Unit|Description|
 |-|--|
-|SYSTEM BIOS|Manages the bootup sequence and supporting services for common hardware devices (keyboard, memory paging, video)|
+|SYSTEM BIOS|Manages the bootup sequence and provides basic I/O access for common hardware devices (keyboard, memory paging, video).|
 |MSX-DOS/NEXTOR KERNEL|The core kernel of disk operating system built for the MSX platform|
 |DISK DRIVERS|Disk drivers written for this platform (RC2014 Compact Flash, USB storages and others)|
-|EXTENDED BIOS|Additional hardware support code for the platform (SIO/2, general USB)|
+|EXTENDED BIOS|Additional hardware support for the platform (SIO/2 and USB)|
 |EMBEDDED BOOT DISK|A small read only disk image containing MSX-DOS boot files and other utilities, to enable the platform to boot into MSX-DOS, when no external storage devices are detected|
 |MSX-BASIC|A specific country configured build of MSX BASIC|
 

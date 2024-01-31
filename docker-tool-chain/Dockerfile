@@ -106,3 +106,11 @@ LABEL Maintainer="Dean Netherton" \
 
 RUN git config --global --add safe.directory /src && git config --global --add safe.directory ./
 
+RUN apt update && apt install -y texlive
+RUN apt install -y texlive-fonts-recommended
+RUN apt install -y texlive-fonts-extra
+
+ADD --chown=builder:builder https://git.umaneti.net/latex-awesomebox/plain/awesomebox.sty /usr/share/texlive/texmf-dist/tex/generic/awesomebox.sty
+
+RUN texhash
+
