@@ -221,7 +221,7 @@ bin/rcmusic.rom:
 	cp rc2014-music/bin/rcmusic.rom ./bin/rcmusic.rom
 
 .PHONY: usbimage
-usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com bin/msx-for-rc2014-manual.pdf
+usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com docs
 	@rm -rf bin/usbimage
 	mkdir -p bin/usbimage/system
 	mkdir -p bin/usbimage/apps
@@ -233,7 +233,7 @@ usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin
 	cp -r ./apps/bin/*.com ./bin/usbimage/apps
 	cp -r ./apps/bin/*.sys ./bin/usbimage/system
 	rm ./bin/usbimage/system/command2.com
-	cp bin/msx-for-rc2014-manual.pdf ./bin/usbimage/docs
+	cp bin/*.pdf ./bin/usbimage/docs
 	cp docs/extended-bios.md ./bin/usbimage/docs
 	cp docs/kunbasic.txt ./bin/usbimage/docs
 	cp docs/msx_technical_data_book.pdf ./bin/usbimage/docs
@@ -270,10 +270,32 @@ endif
 
 bin/%.pdf: docs/%.md
 	@gpp -I ./docs -o $@.tmp -U "$$" "$$" "{" "}{" "}$$" "{" "}" "@@@" "" -M "$$" "$$" "{" "}{" "}$$" "{" "}" -Ddoc_draft=$(DRAFT) $<
-	pandoc $@.tmp -f markdown --template "./docs/eisvogel.tex"  --listings -t latex -s -o $@ --default-image-extension=pdf
+	pandoc $@.tmp -f markdown --template "./docs/eisvogel.tex"  --listings -t latex -s -o $@ --default-image-extension=pdf --resource-path  nextor/docs/
 	rm -f $@.tmp
 
 bin/msx-for-rc2014-manual.pdf: docs/msx-for-rc2014-manual.md bin/app-manuals.md bin/sys-manuals.md
+bin/nextor-2.1-getting-started-guide.pdf: docs/nextor-2.1-getting-started-guide.md bin/Nextor\ 2.1\ Getting\ Started\ Guide.md
+bin/nextor-2.1-user-manual.pdf: docs/nextor-2.1-user-manual.md bin/Nextor\ 2.1\ User\ Manual.md
+
+bin/%.md: nextor/docs/%.md
+
+define extract-nextor-md
+	tac "$<" | sed -e '/## 1. Introduction/q' | tac > "$@"
+	sed -i 's/##/#/g' "$@"
+	sed -i 's/###/##/g' "$@"
+	sed -i 's/####/###/g' "$@"
+	sed -i 's/#####/####/g' "$@"
+	sed -i "s/‘/'/g" "$@"  # todo how to convert ‘ to valid latex?
+endef
+
+bin/Nextor\ 2.1\ Getting\ Started\ Guide.md: nextor/docs/Nextor\ 2.1\ Getting\ Started\ Guide.md
+	@$(extract-nextor-md)
+
+bin/Nextor\ 2.1\ User\ Manual.md: nextor/docs/Nextor\ 2.1\ User\ Manual.md
+	@$(extract-nextor-md)
+
+.PHONY: docs
+docs: bin/msx-for-rc2014-manual.pdf bin/nextor-2.1-getting-started-guide.pdf bin/nextor-2.1-user-manual.pdf
 
 release: usbimage
 	@version=$$(date +%y-%m-%d)

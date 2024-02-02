@@ -762,7 +762,7 @@ $if(listings)$
 \definecolor{listing-comment}{HTML}{8E8E8E}
 
 \lstdefinestyle{eisvogel_listing_style}{
-  language         = java,
+  language         = {[Visual]Basic},
 $if(listings-disable-line-numbers)$
   xleftmargin      = 0.6em,
   framexleftmargin = 0.4em,
@@ -774,14 +774,14 @@ $endif$
   backgroundcolor  = \color{listing-background},
   basicstyle       = \color{listing-text-color}\linespread{1.0}%
                       \lst@ifdisplaystyle%
-                      $if(code-block-font-size)$$code-block-font-size$$else$\small$endif$%
+                      $if(code-block-font-size)$$code-block-font-size$$else$\footnotesize$endif$%
                       \fi\ttfamily{},
   breaklines       = true,
   frame            = single,
   framesep         = 0.19em,
   rulecolor        = \color{listing-rule},
   frameround       = ffff,
-  tabsize          = 4,
+  tabsize          = 2,
   numberstyle      = \color{listing-numbers},
   aboveskip        = 1.0em,
   belowskip        = 0.1em,
@@ -882,7 +882,7 @@ $else$
   \ihead*{$if(header-left)$$header-left$$else$$title$$endif$}
   \chead*{$if(header-center)$$header-center$$else$$endif$}
   \ohead*{$if(header-right)$$header-right$$else$$date$$endif$}
-  \ifoot*{$if(footer-left)$$footer-left$$else$$for(author)$$author$$sep$, $endfor$$endif$}
+  \ifoot*{$if(footer-left)$$footer-left$$endif$}
   \cfoot*{$if(footer-center)$$footer-center$$else$$endif$}
   \ofoot*{$if(footer-right)$$footer-right$$else$\thepage$endif$}
   \addtokomafont{pageheadfoot}{\upshape}

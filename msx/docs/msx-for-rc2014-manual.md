@@ -1,54 +1,13 @@
-$define{doc_title}{Yellow MSX User Manual}$
-
-<!-- https://github.com/Wandmalfarbe/pandoc-latex-template/blob/master/examples/title-page-logo/document.md
-geometry:
-- top=2cm
-- bottom=3cm
-- left=2.5cm
-- right=2.0cm
-toc-depth: 2 -->
-
 ---
 title: Yellow MSX Manual
 author: Dean Netherton
 toc: false
 toc-own-page: false
-classoption:
-- oneside
-titlepage: true
-titlepage-rule-color: "fcc603"
-titlepage-rule-height: 4
 titlepage-logo: "docs/dino.png"
-logo-width: 120mm
-fontsize: 13pt
-papersize: A4
-numbersections: true
-secnumdepth: 2
-colorlinks: true
-geometry:
-- top=4cm
-- bottom=5cm
-- left=3.0cm
-- right=2.5cm
-header-includes:
-- |
-  ```{=latex}
-  \usepackage{awesomebox}
-  \usepackage{wrapfig}
-  \renewcommand{\linethickness}{10pt}
-  \definecolor{abnote}{RGB}{255, 204, 0}
-  \definecolor{yellow}{RGB}{255, 204, 0}
-  \definecolor{red}{RGB}{208, 72, 72}
-  \definecolor{orange}{RGB}{243, 185, 95}
-  \definecolor{blue}{RGB}{104, 149, 210}
-  ```
-pandoc-latex-environment:
-  noteblock: [note]
-  tipblock: [tip]
-  warningblock: [warning]
-  cautionblock: [caution]
-  importantblock: [important]
+logo-width: 70mm
 ...
+
+$include{"book-common.md"}$
 
 # Preface {.unlisted .unnumbered}
 
@@ -223,17 +182,36 @@ See [docs/extended-bios.md](docs/extended-bios.md) for details of the specific e
 
 ## Compact Flash
 
-The embedded ROM NEXTOR driver will detect and allow the use of the RC2014 Compact flash modules.
+The embedded ROM NEXTOR driver will detect and allow the use of the RC2014 Compact Flash module.
 
-The use of `FDISK` is probably required to initialise the disk with FAT12/FAT16 partitions.
+The use of `FDISK` is required to initialise the disk with FAT12/FAT16 partitions.
+
+## SIO/2
+
+When the appropriate serial driver is installed `SERVICE=SIO2.SYS`, the RC2014 Dual Serial module can be used by compatible programs for serial communications.
+
 
 ## Embedded Boot Disk
 
 On boot, if no disks devices are found containing a bootable MSX-DOS/NEXTOR image, then the system
 will boot from a read-only disk image included in the ROM.
 
-If you do have a compatible disk images (USB or CF), you can use `FDISK.COM` on the embedded boot image to prepare your desired boot device, and then copy the `NEXTOR.SYS` and `COMMAND2.COM` (and optionally the `AUTOEXEC.BAT`) files
-from this embedded image to the device.  When you reboot, the system should boot from attached device in preference to the embedded ROM disk image.
+Only drives that have the NEXTOR.SYS and COMMAND2.COM files on a standard FAT12/FAT16 image are bootable.
+
+You can prepare any external device for booting, by using the included `FDISK.COM` application to prepare a FAT12/FAT16 image.  Once the FAT format has been applied, you can then copy the operating system files (`NEXTOR.SYS` and `COMMAND2.COM`) to the new disk image.  Once prepared, on next boot the system should boot from that external drive.
+
+# Setup Operations
+
+## Disk Boot Order
+
+On powerup, the NEXTOR kernel included in the ROM, drives will be mounted and a specific drive selected for booting.  See section *3.2. Booting Nextor* in the `Nextor User Manual`.
+
+The physical device search order for Yellow MSX is as per below.  With devices assigned
+
+1. USB Storage devices (upto 4 only)
+2. Compact Flash Storage
+3. Music Module's ROM (optional read only disk image)
+4. Memory Module's ROM (read only embedded disk image)
 
 # Applications & Services
 
