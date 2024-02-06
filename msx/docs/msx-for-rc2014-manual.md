@@ -75,6 +75,7 @@ All other trademarks mentioned in this document are the property of their respec
 \hypersetup{linkcolor=}
 \tableofcontents
 
+\newpage
 
 # System Overview
 
@@ -235,12 +236,24 @@ SERVICE=PRNT.SYS
 
 This command can be placed into your AUTOEXEC.BAT script, so that the printer driver is always loaded at system start.
 
+\newpage
+
 ## Services
 
 $include{"../bin/sys-manuals.md"}$
 
-## Yellow MSX specific apps
+\newpage
 
-The Yellow MSX for RC2014 in addition to all the standard MSX-DOS applications, includes some programs specifically designed for the system and its hardware modules.
+## Yellow MSX specific Applications
+
+The Yellow MSX for RC2014 in addition to all the standard MSX-DOS applications, includes some programs specifically written and designed for the system and its hardware modules.
 
 $include{"../bin/app-manuals.md"}$
+
+\newpage
+
+## Other included Applications
+
+The following MSX-DOS applications have been tested and are available within the releases archives published on the projects GitHub releases.
+
+$include{"../bin/3rd-app-manuals.md"}$

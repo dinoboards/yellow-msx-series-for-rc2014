@@ -1,6 +1,6 @@
             *********************************************
-            *              SofaROM v3.0                 *
-            *     coded by Louthrax in December 2019    *
+            *              SofaROM v3.2                 *
+            *     coded by Louthrax in February 2021    *
             *          A.I. code by NYYRIKKI            *
             *********************************************
 

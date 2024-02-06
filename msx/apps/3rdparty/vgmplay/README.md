@@ -82,6 +82,8 @@ Supported sound chips
     * Neotron + Makoto
   * YM2612 OPN2 x2
     * Makoto + turboR PCM, Yamaha SFG + turboR PCM
+  * SAA1099
+    * SoundStar
 
 
 Usage instructions

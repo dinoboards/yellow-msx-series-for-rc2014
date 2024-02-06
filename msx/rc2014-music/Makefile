@@ -23,14 +23,19 @@ $(BIN)rcmusic.bin: rcmusic.asm
 
 DISK_SIZE := 507904		# (512-16)*1024
 
-DISK_FILES := $(wildcard ../3rdparty/vgmplay/*)
+DISK_FILES := $(wildcard ../apps/3rdparty/vgmplay/*)
 $(BIN)music.dsk: $(DISK_FILES)
 	@mkdir -p $(BIN)
 	rm -f $(BIN)music.dsk
 	dd status=none if=/dev/zero of=$(BIN)music.dsk bs=$(DISK_SIZE) count=1
 	mkfs.vfat -F 12 -f 1 $(BIN)music.dsk > /dev/null
 	mmd -i $(BIN)music.dsk vgmplay
-	mcopy -i $(BIN)music.dsk ../3rdparty/vgmplay/* ::/vgmplay/
+	mmd -i $(BIN)music.dsk pt3play
+	mcopy -i $(BIN)music.dsk ../apps/3rdparty/vgmplay/* ::/vgmplay/
+	mcopy -i $(BIN)music.dsk ../3rdparty/*.vg? ::/vgmplay/
+	mcopy -i $(BIN)music.dsk ../apps/3rdparty/vgmplay.com ::/vgmplay/
+	mcopy -i $(BIN)music.dsk ../3rdparty/*.pt3 ::/pt3play/
+	mcopy -i $(BIN)music.dsk ../apps/3rdparty/pt3play.com ::/pt3play/
 	echo "Built disk image $(BIN)music.dsk"
 
 clean:

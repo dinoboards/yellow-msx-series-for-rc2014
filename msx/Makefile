@@ -31,7 +31,7 @@ cbios:
 	cp -u ./cbios/derived/bin/*.rom ./bin
 
 
-INCLUDED_APPS 	:= esp8266.com iteratn.pt3 mbrot.com memtest.com pt3play.com SROM.COM SROM.INI term.com testram.com
+INCLUDED_APPS 	:= esp8266.com iteratn.pt3 mbrot.com memtest.com pt3play.com term.com testram.com
 INCLUDED_SYSTEM := mode.com clrdir.com fdisk.com ftdi.sys prnt.sys rtccalb.com service.com sio2.sys
 INCLUDED_ROOT 	:= AUTOEXEC.BAT
 
@@ -147,15 +147,11 @@ nextor-rc2014/extras/system/%.sys: bin/%.sys
 	@mkdir -p nextor-rc2014/extras/system
 	@cp -up "$<" "$@"
 
-nextor-rc2014/extras/SROM.%: 3rdparty/SROM.%
-	@mkdir -p nextor-rc2014/extras
-	@cp -up "$<" "$@"
-
 nextor-rc2014/extras/apps/%: 3rdparty/%
 	@mkdir -p nextor-rc2014/extras/apps
 	@cp -up "$<" "$@"
 
-nextor-rc2014/extras/apps/%.tsr: 3rdparty/%.tsr
+nextor-rc2014/extras/apps/%.com: apps/3rdparty/%.com
 	@mkdir -p nextor-rc2014/extras/apps
 	@cp -up "$<" "$@"
 
@@ -221,17 +217,21 @@ bin/rcmusic.rom:
 	cp rc2014-music/bin/rcmusic.rom ./bin/rcmusic.rom
 
 .PHONY: usbimage
-usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com docs
-	@rm -rf bin/usbimage
+usbimage: apps $(THIRDPARTYAPPS) pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com docs
+	rm -rf bin/usbimage
 	mkdir -p bin/usbimage/system
 	mkdir -p bin/usbimage/apps
 	mkdir -p bin/usbimage/docs
+	mkdir -p bin/usbimage/music
+	cp ./3rdparty/*.vg? ./bin/usbimage/music
+	cp ./3rdparty/*.pt3 ./bin/usbimage/music
 	cp ./nextor/bin/working/rc2014/nextor.sys ./bin/usbimage/nextor.sys
 	cp ./nextor/bin/working/rc2014/command2.com ./bin/usbimage/command2.com
 	cp ./nextor/bin/working/rc2014/*.com ./bin/usbimage/system
-	cp -r ./nextor-rc2014/extras/* ./bin/usbimage/
 	cp -r ./apps/bin/*.com ./bin/usbimage/apps
 	cp -r ./apps/bin/*.sys ./bin/usbimage/system
+	cp -r ./apps/3rdparty/* ./bin/usbimage/apps
+	rm bin/usbimage/apps/*.app-manual.md
 	rm ./bin/usbimage/system/command2.com
 	cp bin/*.pdf ./bin/usbimage/docs
 	cp docs/extended-bios.md ./bin/usbimage/docs
@@ -257,10 +257,13 @@ usbimage: apps pmsxsysromimages rom-image-pal rom-image-ntsc bin/rcmusic.rom bin
 	cp docs/the-msx-red-book.md ./bin/usbimage/docs
 
 bin/app-manuals.md: $(sort $(wildcard apps/*/app-manual.md))
-	@cat $^ > $@
+	@awk 'FNR==1{print ""}1' $^ > $@
 
 bin/sys-manuals.md: $(sort $(wildcard apps/sys/*/sys-manual.md))
-	@cat $^ > $@
+	@awk 'FNR==1{print ""}1' $^ > $@
+
+bin/3rd-app-manuals.md: $(sort $(wildcard apps/3rdparty/*.app-manual.md))
+	@awk 'FNR==1{print ""}1' $^ > $@
 
 ifdef DRAFT
 DRAFT=1
@@ -273,14 +276,14 @@ bin/%.pdf: docs/%.md
 	pandoc $@.tmp -f markdown --template "./docs/eisvogel.tex"  --listings -t latex -s -o $@ --default-image-extension=pdf --resource-path  nextor/docs/
 	rm -f $@.tmp
 
-bin/msx-for-rc2014-manual.pdf: docs/msx-for-rc2014-manual.md bin/app-manuals.md bin/sys-manuals.md
+bin/msx-for-rc2014-manual.pdf: docs/msx-for-rc2014-manual.md bin/app-manuals.md bin/sys-manuals.md bin/3rd-app-manuals.md
 bin/nextor-2.1-getting-started-guide.pdf: docs/nextor-2.1-getting-started-guide.md bin/Nextor\ 2.1\ Getting\ Started\ Guide.md
 bin/nextor-2.1-user-manual.pdf: docs/nextor-2.1-user-manual.md bin/Nextor\ 2.1\ User\ Manual.md
 
 bin/%.md: nextor/docs/%.md
 
 define extract-nextor-md
-	tac "$<" | sed -e '/## 1. Introduction/q' | tac > "$@"
+	@tac "$<" | sed -e '/## 1. Introduction/q' | tac > "$@"
 	sed -i 's/##/#/g' "$@"
 	sed -i 's/###/##/g' "$@"
 	sed -i 's/####/###/g' "$@"

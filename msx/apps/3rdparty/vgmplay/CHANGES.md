@@ -4,6 +4,13 @@ VGMPlay MSX change log
 For the complete list of changes please refer to the
 [revision history](https://hg.sr.ht/~grauw/vgmplay-msx/log).
 
+[1.4] — 2023-05-18
+------------------
+
+  * New chips: SAA1099
+  * New sound expansions: SoundStar
+  * Fixed MSX-AUDIO muting
+
 [1.3] — 2020-07-26
 ------------------
 
@@ -64,6 +71,7 @@ For the complete list of changes please refer to the
 Initial release.
 
 
+[1.4]: https://hg.sr.ht/~grauw/vgmplay-msx/log?rev=release-1.4
 [1.3]: https://hg.sr.ht/~grauw/vgmplay-msx/log?rev=release-1.3
 [1.2]: https://hg.sr.ht/~grauw/vgmplay-msx/log?rev=release-1.2
 [1.1]: https://hg.sr.ht/~grauw/vgmplay-msx/log?rev=release-1.1

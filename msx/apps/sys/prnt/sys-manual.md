@@ -1,5 +1,5 @@
 
-### PRNT.SYS
+### PRNT
 
 USB printer driver
 

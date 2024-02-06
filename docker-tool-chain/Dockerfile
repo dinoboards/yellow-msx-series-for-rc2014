@@ -114,3 +114,4 @@ ADD --chown=builder:builder https://git.umaneti.net/latex-awesomebox/plain/aweso
 
 RUN texhash
 
+RUN apt install -y wget unzip lhasa
