@@ -1,6 +1,6 @@
 #include "nextor.h"
 #include "print.h"
-// #include "printer_drv.h"
+#include "keyboard_drv.h"
 #include "usb-dev.h"
 #include "usb-lun-info.h"
 #include "work-area.h"
@@ -134,12 +134,25 @@ void initialise_scsi_devices(void) {
       scsi_sense_init(storage_device);
 }
 
+void initialise_keyboard_device(void) {
+  _usb_state *const boot_state = get_usb_boot_area();
+
+  for (device_config *storage_device = first_device_config(boot_state); storage_device;
+       storage_device                = next_device_config(boot_state, storage_device))
+    if (storage_device->type == USB_IS_KEYBOARD) {
+      install_keyboard((device_config_keyboard*)storage_device);
+      boot_state->interrupt_required = 1;
+    }
+}
+
 #define ERASE_LINE "\x1B\x6C\r"
 
 /**
  * @brief enumerate all usb devices, noting them in usb_boot_area (0xC000)
  *
- * @return uint16_t the number of bytes required to hold usb configuration
+ * @return uint16_t
+ *   Low Byte: the number of bytes required to hold usb configuration
+ *   High Byte: 1 if interrupts are required
  */
 uint16_t boot_phase_1(void) {
   _usb_state *const boot_state = get_usb_boot_area();
@@ -170,6 +183,8 @@ uint16_t boot_phase_1(void) {
 
       initialise_scsi_devices();
 
+      initialise_keyboard_device();
+
       goto finally;
     }
   }
@@ -181,7 +196,7 @@ finally:
 
   boot_state->bytes_required = (last - (uint16_t)boot_state) + 1;
 
-  return boot_state->bytes_required;
+  return (uint16_t)boot_state->bytes_required | ((uint16_t)boot_state->interrupt_required << 8);
 }
 
 /**
@@ -203,8 +218,6 @@ uint16_t boot_phase_2(void) {
   }
 
   p->present |= PRES_CH376;
-
-  // install_printer();
 
   state_devices(boot_state);
 

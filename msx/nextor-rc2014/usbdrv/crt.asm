@@ -6,12 +6,11 @@
 	EXTERN	_usb_dev_read
 	EXTERN	_usb_dev_write
 	EXTERN  _fn_enum
-	; EXTERN	_drv_direct4
 	EXTERN	_drv_direct1
 	EXTERN	_device_mapping
 	EXTERN	_convert_and_print_disk_size
 	EXTERN	_extbio_rc2014
-	EXTERN	_drv_timi
+	EXTERN	_drv_timi_keyboard
 
 	ORG	$4B00
 usb_host_init:
@@ -39,4 +38,4 @@ extbio_rc2014:
 drv_direct1:
 	JP	_drv_direct1
 drv_timi:
-	JP	_drv_timi
+	JP	_drv_timi_keyboard

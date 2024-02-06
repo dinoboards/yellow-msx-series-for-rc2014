@@ -21,15 +21,13 @@ void key_put_into_buf(const uint8_t code) __z88dk_fastcall {
 }
 
 void drv_timi_keyboard(void) {
-  device_config_keyboard *const keyboard_config = (device_config_keyboard *)find_device_config(USB_IS_KEYBOARD);
-  if (keyboard_config == NULL)
-    return;
-
   _usb_state *const p = get_usb_work_area();
   if (p->active)
     return;
 
   p->active = true;
+
+  device_config_keyboard *const keyboard_config = (device_config_keyboard *)find_device_config(USB_IS_KEYBOARD);
 
   keyboard_report report;
 
@@ -44,14 +42,8 @@ void drv_timi_keyboard(void) {
   p->active = false;
 }
 
-void install_keyboard(void) {
-  device_config_keyboard *const keyboard_config = (device_config_keyboard *)find_device_config(USB_IS_KEYBOARD);
-
-  const bool hasKeyboard = keyboard_config != NULL;
-
-  if (!hasKeyboard)
-    return;
-
+void install_keyboard(device_config_keyboard *const keyboard_config) {
   hid_set_protocol(keyboard_config, 1);
   hid_set_idle(keyboard_config, 0x80);
 }
+

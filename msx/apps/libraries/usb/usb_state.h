@@ -9,6 +9,7 @@
 
 typedef struct __usb_state {
   uint8_t active : 1; /* if true, a usb operation/interrupt handler is active, prevent re-entrant */
+  uint8_t reserved : 7;
   uint8_t count_of_detected_usb_devices;
   uint8_t device_configs[sizeof(device_config) * MAX_NUMBER_OF_STORAGE_DEVICES + sizeof(device_config) +
                          sizeof(device_config_keyboard)];
@@ -17,6 +18,7 @@ typedef struct __usb_state {
 
   uint8_t connected;
   uint8_t bytes_required;
+  uint8_t interrupt_required;
 } _usb_state;
 
 extern _usb_state    *get_usb_work_area(void);
