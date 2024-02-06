@@ -14,7 +14,7 @@ Supported sub commands:
 
 An appropriate serial driver needs to have been installed.  See the USB FTDI or SIO/2 system drivers.
 
-`MODE COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s]\r\n`
+`MODE COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s]`
 
 |Parameter|Description|
 |---|---|

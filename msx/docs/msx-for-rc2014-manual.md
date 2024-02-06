@@ -252,8 +252,16 @@ $include{"../bin/app-manuals.md"}$
 
 \newpage
 
-## Other included Applications
+## Other 3rd Party Applications
 
 The following MSX-DOS applications have been tested and are available within the releases archives published on the projects GitHub releases.
 
 $include{"../bin/3rd-app-manuals.md"}$
+
+\newpage
+
+\
+
+\newpage
+
+

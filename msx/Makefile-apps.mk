@@ -48,8 +48,6 @@ apps/3rdparty/testram:
 .PHONY: apps/3rdpartyapps
 THIRDPARTYAPPS = apps/3rdparty/akid.com apps/3rdparty/vgmplay apps/3rdparty/memtest apps/3rdparty/pt3play.com apps/3rdparty/sofarom apps/3rdparty/testram
 3rdpartyapps:
-	# @rm -rf apps/3rdparty
-	# mkdir -p apps/3rdparty
-	# $(MAKE) $(THIRDPARTYAPPS) -B -j
+	$(MAKE) $(THIRDPARTYAPPS) -B -j
 
 

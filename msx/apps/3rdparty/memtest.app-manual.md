@@ -1,10 +1,11 @@
-
 \newpage
+\ifoot*{MEMTEST (c) 1995.5.16 Masatoshi Fujimoto}
 
 ### MEMTEST
-\begin{flushright}
+
+```
 (c) 1995.5.16 Masatoshi Fujimoto
-\end{flushright}
+```
 
 MEMTEST allows to test your RAM on MSX-DOS. It is  Memory Mapper compatible.
 It is an improved version of the program previously developed in BASIC.
@@ -177,4 +178,5 @@ The use is free within the limits indicated below.
 
 
 \newpage
+\ifoot*{}
 
