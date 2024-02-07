@@ -1,6 +1,5 @@
 ---
 title: Yellow MSX Manual
-author: Dean Netherton
 toc: false
 toc-own-page: false
 titlepage-logo: "docs/dino.png"
