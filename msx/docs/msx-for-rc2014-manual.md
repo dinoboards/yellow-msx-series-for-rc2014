@@ -26,7 +26,6 @@ Well this manual is here to help.  Whether you have lots of previous experience 
 \small
 \begin{noteblock}
 \begin{raggedright}
-
 The Yellow MSX is a retro self assembled computer kit.  Its made up of a number of modules (CPU, Memory, Storage, Sound, Keyboard and Video), that once assembled together into a working computer - give you a fully operational MSX compatible computer.
 
 Due to its modular nature, you can customise and extend the system in many ways, including installation of other RC2014 compatible modules.
@@ -130,22 +129,22 @@ The following table describes the key subsystem that the various system ROMs con
 |Unit|Description|
 |-|--|
 |SYSTEM BIOS|Manages the bootup sequence and provides basic I/O access for common hardware devices (keyboard, memory paging, video).|
-|MSX-DOS/NEXTOR KERNEL|The core kernel of disk operating system built for the MSX platform|
+|MSX-DOS/NEXTOR KERNEL|The core kernel of the disk operating system built for the MSX platform|
 |DISK DRIVERS|Disk drivers written for this platform (RC2014 Compact Flash, USB storages and others)|
 |EXTENDED BIOS|RC2014 Platform specific services|
 |EMBEDDED BOOT DISK|A small read only disk image containing MSX-DOS boot files and other utilities, to enable the platform to boot into MSX-DOS, when no external storage devices are detected|
 |MSX-BASIC|A specific country configured build of MSX BASIC|
 
-There are 2 core image types that can be installed on your system:
+There are 2 core image types that you can choose to install on your system:
 
-1. CBIOS Basic system, configured for 50Hz or 60Hz video display rate
+1. CBIOS system, configured for 50Hz or 60Hz video display rate
 2. MSX-BASIC system, configured for specific country and format defaults
 
 ### CBIOS images
 
 The CBIOS image includes all units, except for MSX-BASIC.  It supports loading and running the vast majority of MSX-DOS programs and games.
 
-As it does not include MSX-BASIC, some programs and all BASIC programs will not be work.
+As it does not include MSX-BASIC, some programs and all BASIC programs will not work.
 
 You can find more information of CBIOS at their website: https://cbios.sourceforge.net/
 
@@ -155,14 +154,14 @@ There are 2 variations of the CBIOS image. One for 60Hz video displays and the o
 
 These are the recommended images, as they enable most compatibility. With one of these images, you should be able to run all MSX-DOS, GAMES and BASIC programs.
 
-At time of writing an image with the following configurations are available:
+At time of writing images with the following configurations are available:
 
 |Country|Frequency|Char Set|Date Format|
 |-|-|-|-|
 |Australia|50Hz|International|D-M-Y|
 |Japan|60Hz|Japanese|Y-M-D|
 |USA|60Hz|International|M-D-Y|
-|international|50Hz|International|M-D-Y|
+|International|50Hz|International|M-D-Y|
 |UK|50Hz|International|D-M-Y|
 |France|50Hz|International|D-M-Y|
 |Germany|50Hz|International|D-M-Y|
@@ -171,30 +170,49 @@ At time of writing an image with the following configurations are available:
 |Arabic|60Hz|Japanese|Y-M-D|
 |Korean|60Hz|Japanese|Y-M-D|
 
+### MSX-DOS/NEXTOR Operating System
+
+Both the CBIOS and MSX-BASIC ROM versions will boot into the NEXTOR version of MSX-DOS operating system. After the boot report is presented on the console, you will be presented with the standard MSX-DOS prompt (same as MS-DOS).  Eg: `A>`.
+
+For more information on using NEXTOR/MSX-DOS have a look at the official *Nextor User Manual* and the *Nextor Getting Started Guide* documents.
+
+If you have one of the MSX-BASIC images loaded in your ROM.  You can start basic, by typing BASIC at the DOS prompt:
+
+```
+A>BASIC
+```
+
+\newpage
+
 # RC2014 MSX Extensions
 
 ## BIOS BOOT
 
-During the boot/powerup a number of hardware probing and testing is conducted and reported to the console.
+During boot/powerup the hardware components are scanned, tests conducted, and then reported to the console.
 
-The systems probed and reported are:
+The systems scanned and reported are:
 
 |Item|Reports|
 |-|---|
 |CPU|Detects the CPU speed (3.5Mhz or Turbo 20Mhz)|
+|COMPACT FLASH *|Reports the capacity if detected|
+|MUSIC ROM *|Reports if a disk image detected in the MSX MUSIC module|
 |MSX RTC/F4|Reports if the module is operational|
 |MSX MUSIC|Reports if the module is operational|
 |MSX GAME|Reports if the module is operational|
 |V99x8|Reports if the V9938 or V9958 VDP is installed & its refresh rate (50Hz or 60Hz)|
-|CH376 *|Reports if Cassette+USB adapter present|
+|CH376 *|Reports if Cassette+USB module is present|
+|USB *|Reports any detected USB devices|
 
-\* The CH376 driver is actually conducted within the Nextor Driver boot sequence.
+\* These devices are installed within the Nextor RC2014 Kernel Driver.
 
 ## RC2014 Nextor Drivers
 
 ### CH376 USB Drivers
 
 The CH376 driver will report to the console any detected USB devices.
+
+The supported USB devices are:
 
 |Item|Report|
 |-|---|
@@ -207,64 +225,91 @@ The CH376 driver will report to the console any detected USB devices.
 
 \* Runtime drivers are required to be installed for operation. See the System Services and Drivers Section.
 
+\small
+\begin{importantblock}
+\begin{raggedright}
+
+The USB drivers do not support hot swapping of devices.  Drives will not be re-mounted if removed and re-inserted.  Always reset the computer after inserting or removing any USB devices.
+
+\end{raggedright}
+\end{importantblock}
+\normalsize
+
 ### Compact Flash
 
-The embedded ROM NEXTOR driver will detect and allow the use of the RC2014 Compact Flash module.
+The Nextor RC2014 Kernel Driver will detect and allow the use of the RC2014 Compact Flash module.
 
 The use of `FDISK` is required to initialise the disk with FAT12/FAT16 partitions.
 
 ### Music Module's Embedded Disk
 
-The MSX MUSIC module's ROM spare capacity can support an optional disk image.  If detected the driver will mount it as a read only disk.
+The MSX MUSIC module's ROM spare capacity can support an optional disk image.  If detected the Nextor RC2014 Kernel Driver will mount it as a read only disk.
+
+### USB Mass Storage
+
+The Nextor RC2014 Kernel Driver will detect and mount Mass Storage devices such as Flash drives and USB Hard Disks.
+
+### USB 3.5MB Floppy Drives
+
+The Nextor RC2014 Kernel Driver will detect and mount any floppy drives/disks detected.
 
 ### Embedded Boot Disk
 
 On boot, if no disks devices are found containing a bootable MSX-DOS/NEXTOR image, then the system
-will boot from a read-only disk image included in the ROM.
+will boot from the read-only disk image included in the system ROM.
 
-> Only drives that have the NEXTOR.SYS and COMMAND2.COM files on a standard FAT12/FAT16 image are bootable.
+\small
+\begin{noteblock}
+\begin{raggedright}
+Only drives that have the NEXTOR.SYS and COMMAND2.COM files on a standard FAT12/FAT16 image are bootable.
 
-> You can prepare any external device for booting, by using the included `FDISK.COM` application to prepare a FAT12/FAT16 image.  Once the FAT format has been applied, you can then copy the operating system files (`NEXTOR.SYS` and `COMMAND2.COM`) to the new disk image.  Once prepared, on next boot the system should boot from that external drive.
+You can prepare any external device for booting, by using the included `FDISK.COM` application to prepare a FAT12/FAT16 image.  Once the FAT format has been applied, you can then copy the operating system files (`NEXTOR.SYS` and `COMMAND2.COM`) to the new disk image.  On the next boot, the system will boot from that disk.
+\end{raggedright}
+\end{noteblock}
+\normalsize
 
 ### Disk Boot Order
 
-On powerup, the NEXTOR kernel included will scan and mount any disk drives detected.  See section *3.2. Booting Nextor* in the `Nextor User Manual`.
+On powerup, the Nextor RC2014 Kernel Driver will scan and mount any disk drives detected.  See section *3.2. Booting Nextor* in the `Nextor User Manual`.
 
-The physical device mount order is as per below.  With devices assigned by the kernel starting from `A:`
+The physical device mount order is as per below.
 
-1. USB Storage devices (upto 4 supported)
+1. USB Storage drives (upto 4 supported)
 2. Compact Flash Storage
 3. Music Module's ROM (optional read only disk image)
 4. Memory Module's ROM (read only embedded disk image)
 
-The consequence of this, if the attached devices are changed (ie: a usb flash drive is inserted or removed), the other devices may be assigned a different drive letter.
+Devices are assigned by the kernel starting from `A:`; the consequence of this is, if the attached devices are changed (ie: a USB Flash Drive is inserted or removed), the other devices may be assigned a different drive letter.
+
+The mount order of USB drives is to always mount Floppy Drives before the Mass Storage drives.
 
 ### Example of boot disk configuration
 
-#### A single USB flash drive
+#### A single USB Flash Drive
 
-If you have a system with a single USB flash disk only, the boot order would be:
+If you have a system with a single USB flash disk only, the mount order would be:
 
-    A: The USB flash drive
-    B: The embedded ROM disk image.
+    A: USB flash Drive
+    B: Embedded ROM disk image.
 
 > The system will boot from the first disk that has the NEXTOR.SYS and COMMAND2.COM files.
 
-#### Two USB flash drives
+#### Two USB Flash Drives
 
-In this configuration below, the embedded ROM disk is assigned to `C:`
+In this configuration, the USB disks are mounted first, then the embedded ROM disk.
 
     A: First detected USB disk
     B: Second detected USB disk
-    C: The embedded ROM disk image
+    C: Embedded ROM disk image
 
-#### A USB Flash drive and the Compact Flash Module
+#### A USB Flash Drive, a USB Floppy Drive and the Compact Flash Module
 
-The Compact Flash is mounted after the USB and before the embedded ROM (`B:`)
+In this configuration, the Floppy Drives are always mounted first.  The rest are mounted as per below:
 
-    A: First detected USB disk
-    B: Compact Flash Module
-    C: The embedded ROM disk image
+    A: USB Floppy Drive
+    B: USB Flash Drive
+    C: Compact Flash Module
+    D: Embedded ROM disk image
 
 \newpage
 
@@ -272,11 +317,14 @@ The Compact Flash is mounted after the USB and before the embedded ROM (`B:`)
 
 ## System Services and Drivers
 
-As the Yellow MSX system can support many different hardware extensions, appropriate driver software is required.  As there is limited space within the 512K ROM to store all the drivers required for all the potential hardware installed on your system, a dynamic service framework was developed.
+A custom built *Services* framework can be used to load various drivers and other support services at boot into RAM.  This allows the Yellow MSX system to support a large range of additional hardware extensions without the need for all driver software to fit within the 512K system ROM.
 
 This framework is similar to the MSX [MemMan](https://www.msx.org/wiki/MemMan) system.
 
-> (MemMan has an unknown compatibility issue, and as at writing has not been resolved.)
+\small
+> MemMan has an unknown compatibility issue with the Yellow MSX platform, and as at writing, has not been resolved.
+\normalsize
+
 
 This service framework, allows the installation of TSR (Terminate Stay Resident) software.  The services are copied into a free segment of 16K page, thus do not consume any of the TPA that is available for standard MSX-DOS and Basic programs.
 
