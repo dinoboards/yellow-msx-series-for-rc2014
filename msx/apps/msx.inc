@@ -20,6 +20,7 @@ LINL40	equ	$0F3AE
 CHGMOD	equ	$05f
 INIPLT	equ	$00141
 POSIT	EQU	0xC6
+WRTCLK	EQU	$01F9
 
 RAMAD0	equ	0F341h	; Slot of the Main-Ram on page 0~3FFFh
 EXTBIO	equ	0ffcah	; Call address to an extended Bios

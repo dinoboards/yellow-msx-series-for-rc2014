@@ -6,6 +6,7 @@
 extern void msxbiosInit32(void);
 extern void msxbiosInitxt(void);
 extern void softReset(void);
+extern void msxbiosWrtClk(const uint8_t reg, const uint8_t value) __sdcccall(1);
 
 #define CHAR_ESCAPE     '\x1B'
 #define CHAR_MOVE_LEFT  '\x1D'
