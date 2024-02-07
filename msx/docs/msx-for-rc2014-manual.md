@@ -132,7 +132,7 @@ The following table describes the key subsystem that the various system ROMs con
 |SYSTEM BIOS|Manages the bootup sequence and provides basic I/O access for common hardware devices (keyboard, memory paging, video).|
 |MSX-DOS/NEXTOR KERNEL|The core kernel of disk operating system built for the MSX platform|
 |DISK DRIVERS|Disk drivers written for this platform (RC2014 Compact Flash, USB storages and others)|
-|EXTENDED BIOS|Additional hardware support for the platform (SIO/2 and USB)|
+|EXTENDED BIOS|RC2014 Platform specific services|
 |EMBEDDED BOOT DISK|A small read only disk image containing MSX-DOS boot files and other utilities, to enable the platform to boot into MSX-DOS, when no external storage devices are detected|
 |MSX-BASIC|A specific country configured build of MSX BASIC|
 
@@ -171,48 +171,102 @@ At time of writing an image with the following configurations are available:
 |Arabic|60Hz|Japanese|Y-M-D|
 |Korean|60Hz|Japanese|Y-M-D|
 
-# RC2014 Extensions
+# RC2014 MSX Extensions
 
-The rom images mentioned above include bios extensions (using the MSX EXTBIO interface), to
-provide application services specific to the platform.
+## BIOS BOOT
 
-These allow control of items such as the RC2014 SIO/2 module
-and interacting/enumerating USB devices attached to the Cassette+USB module.
+During the boot/powerup a number of hardware probing and testing is conducted and reported to the console.
 
-See [docs/extended-bios.md](docs/extended-bios.md) for details of the specific enhancements
+The systems probed and reported are:
 
-## Compact Flash
+|Item|Reports|
+|-|---|
+|CPU|Detects the CPU speed (3.5Mhz or Turbo 20Mhz)|
+|MSX RTC/F4|Reports if the module is operational|
+|MSX MUSIC|Reports if the module is operational|
+|MSX GAME|Reports if the module is operational|
+|V99x8|Reports if the V9938 or V9958 VDP is installed & its refresh rate (50Hz or 60Hz)|
+|CH376 *|Reports if Cassette+USB adapter present|
+
+\* The CH376 driver is actually conducted within the Nextor Driver boot sequence.
+
+## RC2014 Nextor Drivers
+
+### CH376 USB Drivers
+
+The CH376 driver will report to the console any detected USB devices.
+
+|Item|Report|
+|-|---|
+|Keyboard|Standard USB HID Keyboard|
+|Printer \*|USB to Centronics Parallel Adapter|
+|Mass Storage|Flash, HDD, and other support storage devices|
+|Floppy Disk|USB to 3.5Mb Floppy disk drives|
+|UNKNOWN|An unknown and unsupported USB device|
+|CDC \*|Ethernet Network Adapter*|
+
+\* Runtime drivers are required to be installed for operation. See the System Services and Drivers Section.
+
+### Compact Flash
 
 The embedded ROM NEXTOR driver will detect and allow the use of the RC2014 Compact Flash module.
 
 The use of `FDISK` is required to initialise the disk with FAT12/FAT16 partitions.
 
-## SIO/2
+### Music Module's Embedded Disk
 
-When the appropriate serial driver is installed `SERVICE=SIO2.SYS`, the RC2014 Dual Serial module can be used by compatible programs for serial communications.
+The MSX MUSIC module's ROM spare capacity can support an optional disk image.  If detected the driver will mount it as a read only disk.
 
-
-## Embedded Boot Disk
+### Embedded Boot Disk
 
 On boot, if no disks devices are found containing a bootable MSX-DOS/NEXTOR image, then the system
 will boot from a read-only disk image included in the ROM.
 
-Only drives that have the NEXTOR.SYS and COMMAND2.COM files on a standard FAT12/FAT16 image are bootable.
+> Only drives that have the NEXTOR.SYS and COMMAND2.COM files on a standard FAT12/FAT16 image are bootable.
 
-You can prepare any external device for booting, by using the included `FDISK.COM` application to prepare a FAT12/FAT16 image.  Once the FAT format has been applied, you can then copy the operating system files (`NEXTOR.SYS` and `COMMAND2.COM`) to the new disk image.  Once prepared, on next boot the system should boot from that external drive.
+> You can prepare any external device for booting, by using the included `FDISK.COM` application to prepare a FAT12/FAT16 image.  Once the FAT format has been applied, you can then copy the operating system files (`NEXTOR.SYS` and `COMMAND2.COM`) to the new disk image.  Once prepared, on next boot the system should boot from that external drive.
 
-# Setup Operations
+### Disk Boot Order
 
-## Disk Boot Order
+On powerup, the NEXTOR kernel included will scan and mount any disk drives detected.  See section *3.2. Booting Nextor* in the `Nextor User Manual`.
 
-On powerup, the NEXTOR kernel included in the ROM, drives will be mounted and a specific drive selected for booting.  See section *3.2. Booting Nextor* in the `Nextor User Manual`.
+The physical device mount order is as per below.  With devices assigned by the kernel starting from `A:`
 
-The physical device search order for Yellow MSX is as per below.  With devices assigned
-
-1. USB Storage devices (upto 4 only)
+1. USB Storage devices (upto 4 supported)
 2. Compact Flash Storage
 3. Music Module's ROM (optional read only disk image)
 4. Memory Module's ROM (read only embedded disk image)
+
+The consequence of this, if the attached devices are changed (ie: a usb flash drive is inserted or removed), the other devices may be assigned a different drive letter.
+
+### Example of boot disk configuration
+
+#### A single USB flash drive
+
+If you have a system with a single USB flash disk only, the boot order would be:
+
+    A: The USB flash drive
+    B: The embedded ROM disk image.
+
+> The system will boot from the first disk that has the NEXTOR.SYS and COMMAND2.COM files.
+
+#### Two USB flash drives
+
+In this configuration below, the embedded ROM disk is assigned to `C:`
+
+    A: First detected USB disk
+    B: Second detected USB disk
+    C: The embedded ROM disk image
+
+#### A USB Flash drive and the Compact Flash Module
+
+The Compact Flash is mounted after the USB and before the embedded ROM (`B:`)
+
+    A: First detected USB disk
+    B: Compact Flash Module
+    C: The embedded ROM disk image
+
+\newpage
 
 # Applications & Services
 
