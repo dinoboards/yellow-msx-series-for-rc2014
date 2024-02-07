@@ -5,7 +5,6 @@
 #include "wget.h"
 #include <delay.h>
 #include <extbio.h>
-// #include <fossil.h>
 #include <extbio/serial-helpers.h>
 #include <extbio/serial.h>
 #include <msxdos.h>
@@ -84,9 +83,9 @@ void subCommandTimeSync(void) {
   }
 
   if (strlen(responseStr) != 24) {
-    printf("Invalid time string received ");
+    printf("Invalid time string received '");
     printf(responseStr);
-    printf("\r\n");
+    printf("'\r\n");
     return;
   }
 
@@ -170,6 +169,7 @@ uint8_t main(const int argc, const char *argv[]) {
   }
 
   serial_write_bytes("\r\nATE0\r\n", 8); // echo off
+  read_until_ok_or_error();
 
   if (subCommand == SUB_COMMAND_TIME_SYNC) {
     subCommandTimeSync();
