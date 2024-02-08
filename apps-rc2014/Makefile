@@ -34,7 +34,7 @@ $(TARGETS):
 	echo "Compiled $(notdir $@) from $(filter-out %.h,$^)"
 
 release:
-	@version=$$(date +%y-%m-%d)
+	version=$${version:-$$(date +%y-%m-%d)}
 	mkdir -p ../release
 	rm -f ../release/romwbw-apps-$${version}.zip
 	zip -j ../release/romwbw-apps-$${version}.zip ../bin/*

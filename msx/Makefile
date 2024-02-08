@@ -31,8 +31,8 @@ cbios:
 	cp -u ./cbios/derived/bin/*.rom ./bin
 
 
-INCLUDED_APPS 	:= esp8266.com iteratn.pt3 mbrot.com memtest.com pt3play.com term.com testram.com
-INCLUDED_SYSTEM := mode.com clrdir.com fdisk.com ftdi.sys prnt.sys rtccalb.com service.com sio2.sys
+INCLUDED_APPS 	:= akid.com esp8266.com iteratn.pt3 mbrot.com memtest.com pt3play.com term.com testram.com
+INCLUDED_SYSTEM := mode.com extbio.com memory.com clrdir.com fdisk.com ftdi.sys prnt.sys rtccalb.com service.com sio2.sys
 INCLUDED_ROOT 	:= AUTOEXEC.BAT
 
 define BUILD_versions =
@@ -266,7 +266,7 @@ bin/3rd-app-manuals.md: $(sort $(wildcard apps/3rdparty/*.app-manual.md))
 	@awk 'FNR==1{print ""}1' $^ > $@
 
 bin/%.pdf: docs/%.md
-	@version=$$(date +%Y-%m-%d)
+	version=$${version:-$$(date +%y-%m-%d)}
 	gpp -I ./docs -o $@.tmp -U "$$" "$$" "{" "}{" "}$$" "{" "}" "@@@" "" -M "$$" "$$" "{" "}{" "}$$" "{" "}" -Dversion=$${version} $<
 	pandoc $@.tmp -f markdown --template "./docs/eisvogel.tex"  --listings -t latex -s -o $@ --default-image-extension=pdf --resource-path  nextor/docs/
 	rm -f $@.tmp
@@ -296,7 +296,7 @@ bin/Nextor\ 2.1\ User\ Manual.md: nextor/docs/Nextor\ 2.1\ User\ Manual.md
 docs: bin/msx-for-rc2014-manual.pdf bin/nextor-2.1-getting-started-guide.pdf bin/nextor-2.1-user-manual.pdf
 
 release: usbimage
-	@version=$$(date +%y-%m-%d)
+	version=$${version:-$$(date +%y-%m-%d)}
 	mkdir -p ../release
 	rm -f ../release/msx-rc2014-$${version}.zip
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/*.jed
