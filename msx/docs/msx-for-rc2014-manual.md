@@ -1,10 +1,21 @@
 ---
 title: Yellow MSX Manual
+date: $version$
 toc: false
 toc-own-page: false
 titlepage-logo: "docs/dino.png"
 logo-width: 70mm
 ...
+
+\backgroundsetup{
+  position=current page.east,
+  angle=-90,
+  nodeanchor=east,
+  vshift=-3mm,
+  opacity=1,
+  scale=3,
+  contents=Draft
+}
 
 $include{"book-common.md"}$
 
@@ -83,23 +94,23 @@ Below is a list of all the MSX Kit Modules available.
 
 |Module|Description|MSX|RomWBW|
 |--|------|-|-|
-|12+1 Backplane|Support up to 12 Modules, and Cartridge Slot Extension|Yes|Yes|
+|12+1 Backplane|Support up to 12 Modules & Cartridge Slot Extension|Required|Yes|
 |Cartridge Slot|Add support for 2 MSX Cartridges|Optional|No|
 |Cassette+USB|Compatible cassette interface and a USB Port|Optional|No|
-|Game|Add basic sound and game controller inputs|Yes|Yes|
-|Keyboard|73 Key MSX keyboard|Yes|Yes|
-|Memory|1024K RAM/512K ROM Module|Yes|No|
-|Music|Extended Music Support (YM2413)|Optional|Yes|
-|PPI|Keyboard interface &  Memory Slot signals|Yes|No|
+|Game|Add basic sound and game controller inputs|Required|Yes|
+|Keyboard|73 Key MSX keyboard|Required|Yes|
+|Memory|1024K RAM/512K ROM Module|Required|No|
+|Music|Extended Music Support (YM2413)|Optional|No|
+|PPI|Keyboard interface & Memory Slot signals|Required|Yes|
 |RTC|Real time clock|Optional|Yes|
-|Turbo CPU|Z80 CPU operating from 3.5Mhz to 20Mhz|Yes|Yes|
-|V99x8 MSX RGB|MSX RGB video output|Yes|Yes|
-
-\begin{tipblock}
+|Turbo CPU|Z80 CPU operating from 3.5Mhz to 20Mhz|Required|Yes|
+|V99x8 MSX RGB|MSX RGB video output|Required|Yes|
 \small
-
+\begin{tipblock}
 It is possible to use the standard RC2014 Backplane Pro for some modules, but as not all lanes are supplied, some additional wiring will be required. The Cartridge Slot Extension, though is only compatible with the 12+1 Backplane.
-
+\end{tipblock}
+\begin{tipblock}
+The RC2014 Z80 CPU and Dual Clock modules could be used as an alternative to the Turbo CPU.
 \end{tipblock}
 \normalsize
 
@@ -109,7 +120,7 @@ Some of the official and 3rd-party RC2014 Modules will work in a system configur
 
 |Module|Notes|
 |-|--|
-|Z80 CPU v2.1 & Dual Clock|Clock must be configured at 3.5Mhz|
+|Z80 CPU v2.1 & Dual Clock|Alternative for the Turbo CPU Module.  Clock must be configured at 3.5Mhz|
 |Compact Flash|Must be formatted for MSX (see FDISK utility)|
 |Dual Serial SIO/2|Only the B Port supported|
 |Bubble LED Display|Controlled through MSX Basic|

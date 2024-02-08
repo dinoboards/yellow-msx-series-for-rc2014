@@ -23,7 +23,7 @@ Supported sub commands:
 
 `ESP8266 SET-WIFI <ssid> <password>`
 
-Use this command to assign a your Wi-Fi's access credentials.
+Use this command to assign your Wi-Fi's access credentials.
 
 example:
 

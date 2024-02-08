@@ -20,12 +20,22 @@ header-includes:
   ```{=latex}
   \usepackage{awesomebox}
   \usepackage{wrapfig}
+  \usepackage{background}
   \renewcommand{\linethickness}{10pt}
   \definecolor{abnote}{RGB}{255, 204, 0}
   \definecolor{yellow}{RGB}{255, 204, 0}
   \definecolor{red}{RGB}{208, 72, 72}
   \definecolor{orange}{RGB}{243, 185, 95}
   \definecolor{blue}{RGB}{104, 149, 210}
+  \backgroundsetup{
+    position=current page.east,
+    angle=-90,
+    nodeanchor=east,
+    vshift=-3mm,
+    opacity=0,
+    scale=3,
+    contents=Draft
+  }
   ```
 pandoc-latex-environment:
   noteblock: [note]

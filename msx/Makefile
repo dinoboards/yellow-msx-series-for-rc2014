@@ -265,14 +265,9 @@ bin/sys-manuals.md: $(sort $(wildcard apps/sys/*/sys-manual.md))
 bin/3rd-app-manuals.md: $(sort $(wildcard apps/3rdparty/*.app-manual.md))
 	@awk 'FNR==1{print ""}1' $^ > $@
 
-ifdef DRAFT
-DRAFT=1
-else
-DRAFT=0
-endif
-
 bin/%.pdf: docs/%.md
-	@gpp -I ./docs -o $@.tmp -U "$$" "$$" "{" "}{" "}$$" "{" "}" "@@@" "" -M "$$" "$$" "{" "}{" "}$$" "{" "}" -Ddoc_draft=$(DRAFT) $<
+	@version=$$(date +%Y-%m-%d)
+	gpp -I ./docs -o $@.tmp -U "$$" "$$" "{" "}{" "}$$" "{" "}" "@@@" "" -M "$$" "$$" "{" "}{" "}$$" "{" "}" -Dversion=$${version} $<
 	pandoc $@.tmp -f markdown --template "./docs/eisvogel.tex"  --listings -t latex -s -o $@ --default-image-extension=pdf --resource-path  nextor/docs/
 	rm -f $@.tmp
 
