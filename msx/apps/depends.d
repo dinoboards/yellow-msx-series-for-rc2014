@@ -1,5 +1,4 @@
 
-./bin/cpusptst/main.c.asm: cpusptst/main.c
 ./bin/dots.c.asm: dots.c config_request.h v9958.h libraries/msxbios/msxbios.h \
  libraries/msxdos/msxdos.h
 ./bin/extbio/main.c.asm: extbio/main.c libraries/fossil/fossil.h libraries/msxdos/msxdos.h \
@@ -461,7 +460,6 @@
 ./bin/romflash/romflash.c.asm: romflash/romflash.c romflash/flashloader.h \
  libraries/msxbios/extbio.h libraries/msxdos/msxdos.h \
  libraries/msxbios/system_vars.h
-./bin/cpusptst/cpusptst.o: ./cpusptst/cpusptst.asm
 ./bin/xstdio.o: ./xstdio.asm
 ./bin/clrdir/fdisk.o: ./clrdir/fdisk.asm
 ./bin/usbctrl/floopy_boot_code.o: ./usbctrl/floopy_boot_code.asm
@@ -553,12 +551,15 @@
 ./bin/libraries/sysload/sysload.o: ./libraries/sysload/sysload.asm ./msx.inc
 ./bin/libraries/msxbios/msxbios_initxt.o: ./libraries/msxbios/msxbios_initxt.asm ./msx.inc
 ./bin/libraries/msxbios/msxbios_init32.o: ./libraries/msxbios/msxbios_init32.asm ./msx.inc
+./bin/libraries/msxbios/msxbios_wrtclk.o: ./libraries/msxbios/msxbios_wrtclk.asm ./msx.inc
 ./bin/libraries/msxbios/msxbios_soft_reset.o: ./libraries/msxbios/msxbios_soft_reset.asm ./msx.inc
 ./bin/libraries/fossil/fossil.o: ./libraries/fossil/fossil.asm ./msx.inc
 ./bin/sys/tty/body/tty.o: ./sys/tty/body/tty.asm ./msx.inc
 ./bin/sys/tty/body/crt.o: ./sys/tty/body/crt.asm
 ./bin/sys/hello/body/crt.o: ./sys/hello/body/crt.asm
 ./bin/sys/hello/body/hello.o: ./sys/hello/body/hello.asm ./msx.inc
+./bin/sys/serial-todos/fossil.o: ./sys/serial-todos/fossil.asm
+./bin/sys/serial-todos/rs232.o: ./sys/serial-todos/rs232.asm
 ./bin/sys/sio2/body/sio_out.o: ./sys/sio2/body/sio_out.asm ./msx.inc
 ./bin/sys/sio2/body/crt.o: ./sys/sio2/body/crt.asm
 ./bin/sys/sio2/body/sio_in.o: ./sys/sio2/body/sio_in.asm ./msx.inc

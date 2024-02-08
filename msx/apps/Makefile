@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),xmodem reboot ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest cpusptst extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),xmodem reboot ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
 
 include	Makefile.rules.mk
 
@@ -76,7 +76,6 @@ $(BIN)fossil.com: $(BIN)fossil.sys
 fossil.body := $(addprefix $(BIN),$(call app_file,sys/fossil/body)) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB)
 fossil.init := $(addprefix $(BIN),$(call app_file,sys/fossil/init)) $(DELAY_LIB) $(EXTBIO_LIB) $(GETSLT_LIB) $(MSXDOS_LIB) $(USB_USER_LIB)
 $(eval $(call relocatable,fossil))
-
 
 service_files = $(call app_file,service)
 $(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB)
@@ -136,9 +135,6 @@ $(BIN)mbrot.com: $(addprefix $(BIN),$(mbrot_files)) $(MSXDOS_LIB) $(V9958_LIB) $
 
 vramtest_files = $(call app_file,vramtest)
 $(BIN)vramtest.com: $(addprefix $(BIN),$(vramtest_files)) $(MSXDOS_LIB) $(V9958_LIB)
-
-cpusptst_files = $(call app_file,cpusptst)
-$(BIN)cpusptst.com: $(addprefix $(BIN),$(cpusptst_files))
 
 extbio_files = $(call app_file,extbio)
 $(BIN)extbio.com: $(addprefix $(BIN),$(extbio_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
