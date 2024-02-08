@@ -43,7 +43,7 @@ release-build-msx-apps:
 .PHONY: release-build-msx-roms
 release-build-msx-roms:
 	version=$${version:-$$(date +%y-%m-%d)}
-	RELEASE=true $(MAKE) -C msx VERSION=$$(date +%Y-%m-%d)
+	RELEASE=true $(MAKE) -C msx VERSION=$$(date +%Y-%m-%d) # version presented on boot up
 
 .PHONY: release-build-rc2014-app
 release-build-rc2014-apps:
@@ -53,16 +53,16 @@ release-build-rc2014-apps:
 .PHONY: release-build-package
 release-build-package:
 	version=$${version:-$$(date +%y-%m-%d)}
-	$(MAKE) release -C msx --no-print-directory
+	$(MAKE) release -C msx --no-print-directory VERSION=$$(date +%Y-%m-%d) # version presented on boot up
 
 .PHONY: release
 release:
-	version=$${version:-$$(date +%y-%m-%d)}
-	@$(MAKE) clean
+	@version=$${version:-$$(date +%y-%m-%d)}
+	$(MAKE) clean
 	$(MAKE) release-notes
 	$(MAKE) release-build-jeds
 	$(MAKE) release-build-msx-apps
 	$(MAKE) release-build-msx-roms
 	$(MAKE) release-build-rc2014-apps
 	$(MAKE) release-build-package
-	echo gh release create --draft -F ./release/release-$${version}.md -t "$${version}" $${version} release
+	echo gh release create --draft -F ./release/release-$${version}.md -t "$${version}" $${version} release/*
