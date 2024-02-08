@@ -227,6 +227,7 @@ usbimage: apps $(THIRDPARTYAPPS) pmsxsysromimages rom-image-pal rom-image-ntsc b
 	cp ./3rdparty/*.pt3 ./bin/usbimage/music
 	cp ./nextor/bin/working/rc2014/nextor.sys ./bin/usbimage/nextor.sys
 	cp ./nextor/bin/working/rc2014/command2.com ./bin/usbimage/command2.com
+	cp ./AUTOEXEC.BAT ./bin/usbimage/AUTOEXEC.BAT
 	cp ./nextor/bin/working/rc2014/*.com ./bin/usbimage/system
 	cp -r ./apps/bin/*.com ./bin/usbimage/apps
 	cp -r ./apps/bin/*.sys ./bin/usbimage/system
