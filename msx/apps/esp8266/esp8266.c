@@ -24,8 +24,7 @@ void abortWithError(const char *pMessage) __z88dk_fastcall {
   exit(1);
 }
 
-bool serial_read_line(const bool withLogging) __z88dk_fastcall {
-  withLogging;
+bool serial_read_line(void) {
   uint8_t        length  = 0;
   int16_t        timeout = get_future_time(from_ms(5000));
   unsigned char *pBuffer = responseStr;
@@ -54,16 +53,13 @@ bool serial_read_line(const bool withLogging) __z88dk_fastcall {
 }
 
 bool read_until_ok_or_error(void) {
-  int16_t timeout      = get_future_time(from_ms(2000));
-  bool    lineReceived = true;
+  int16_t timeout = get_future_time(from_ms(2000));
 
   responseStr[0] = 0;
 
   while (true) {
-    if (lineReceived = serial_read_line(true)) {
-      timeout = get_future_time(from_ms(2000));
-      continue;
-    }
+    if (serial_read_line())
+      return false;
 
     if ((strncmp(responseStr, "OK", 2) != 0 && strncmp(responseStr, "ERROR", 5) != 0) && !is_time_past(timeout))
       continue;
@@ -76,8 +72,8 @@ bool read_until_ok_or_error(void) {
 
 void subCommandTimeSync(void) {
   serial_purge_buffers(port_number);
-  serial_write_bytes("\r\nAT+time?\r\n", 12);
-  if (serial_read_line(false)) {
+  serial_write_bytes_h("\r\nAT+time?\r\n", 12);
+  if (serial_read_line()) {
     printf("Error getting time\r\n");
     return;
   }
@@ -112,11 +108,11 @@ void subCommandTimeSync(void) {
 
 void subCommandSetTimeZone(void) {
   serial_purge_buffers(port_number);
-  serial_write_bytes("\r\nat+locale=", 12);
-  serial_write_string(pNewTimeZone);
-  serial_write_bytes("\r\n", 2);
+  serial_write_bytes_h("\r\nat+locale=", 12);
+  serial_write_string_h(pNewTimeZone);
+  serial_write_bytes_h("\r\n", 2);
 
-  if (serial_read_line(false)) {
+  if (serial_read_line()) {
     printf("Error setting timezone\r\n");
     return;
   }
@@ -133,23 +129,23 @@ void subCommandSetTimeZone(void) {
 
 void subCommandSetWiFi(void) {
   serial_purge_buffers(port_number);
-  serial_write_bytes("\r\nat+cwjap=", 11);
-  serial_write_string(pNewSSID);
-  serial_write_char(',');
-  serial_write_string(pNewPassword);
-  serial_write_bytes("\r\n", 2);
+  serial_write_bytes_h("\r\nat+cwjap=", 11);
+  serial_write_string_h(pNewSSID);
+  serial_write_char_h(',');
+  serial_write_string_h(pNewPassword);
+  serial_write_bytes_h("\r\n", 2);
 
   read_until_ok_or_error();
 }
 
 void resetModem(void) {
   delay(ONE_SECOND);
-  serial_write_bytes("+++", 3);
+  serial_write_bytes_h("+++", 3);
   delay(ONE_SECOND);
-  serial_write_bytes("\r\nATH\r\n", 7); // hang up
-  serial_read_line(false);
-  serial_write_bytes("\r\nATE0\r\n", 8); // echo off
-  serial_read_line(false);
+  serial_write_bytes_h("\r\nATH\r\n", 7); // hang up
+  serial_read_line();
+  serial_write_bytes_h("\r\nATE0\r\n", 8); // echo off
+  serial_read_line();
 }
 
 uint8_t main(const int argc, const char *argv[]) {
@@ -162,13 +158,13 @@ uint8_t main(const int argc, const char *argv[]) {
 
   if (subCommand == SUB_COMMAND_HANGUP) {
     delay(ONE_SECOND);
-    serial_write_bytes("+++", 3);
+    serial_write_bytes_h("+++", 3);
     delay(ONE_SECOND);
-    serial_write_bytes("\r\nATH\r\n", 7); // hang up
+    serial_write_bytes_h("\r\nATH\r\n", 7); // hang up
     goto done;
   }
 
-  serial_write_bytes("\r\nATE0\r\n", 8); // echo off
+  serial_write_bytes_h("\r\nATE0\r\n", 8); // echo off
   read_until_ok_or_error();
 
   if (subCommand == SUB_COMMAND_TIME_SYNC) {

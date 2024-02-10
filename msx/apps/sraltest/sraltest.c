@@ -74,8 +74,8 @@ void atok(void) {
   char     buffer[16];
   uint16_t read_count;
 
-  uint8_t result = serial_write_string("at\r\n");
-  printf("(%02X): serial_write_string: at\r\n", result);
+  uint8_t result = serial_write_string_h("at\r\n");
+  printf("(%02X): serial_write_string_h: at\r\n", result);
 
   read_count = 4;
   memset(buffer, 0, sizeof(buffer));

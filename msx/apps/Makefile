@@ -28,6 +28,7 @@ zcchelp:
 	@$(ZCC) -Cl
 
 LIBGEN_LIB := $(addprefix $(BIN)libraries/msx/libgen/,basename.c.lib dirname.c.lib)
+STRNSTR_LIB := $(addprefix $(BIN)libraries/msx/,strnstr.c.lib)
 GETSLT_LIB := $(addprefix $(BIN),getslt.lib)
 CONFIG_REQUEST_LIB := $(addprefix $(BIN),config_request.c.lib)
 MSXBIOS_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/msxbios/*.asm))) $(addprefix $(BIN),$(patsubst %.c,%.c.lib,$(wildcard libraries/msxbios/*.c)))
@@ -36,7 +37,7 @@ EXTBIO_LIB := $(addprefix $(BIN),$(patsubst %.asm,%.lib,$(wildcard libraries/ext
 EXTBIO_USB_LIB :=  $(addprefix $(BIN)libraries/extbio/,extbio_usb_control_transfer.lib extbio_usb_data_out_transfer.lib extbio_usb_data_in_transfer_n.lib extbio_usb_data_in_transfer.lib)
 FOSSIL_LIB := $(addprefix $(BIN)libraries/fossil/,fossil.lib fossil.c.lib)
 DELAY_LIB := $(BIN)libraries/delay/delay.c.lib
-XMODEM_LIB :=  $(addprefix $(BIN)libraries/xmodem/,xmodem.c.lib crc16.c.lib utils.c.lib)
+XMODEM_LIB :=  $(addprefix $(BIN)libraries/xmodem/,receive.c.lib crc16.c.lib file_storage.c.lib buffer.c.lib) $(STRNSTR_LIB)
 
 USB_KERNEL_LIB := $(addprefix $(BIN)libraries/usb/,ch376.lib usb_state.c.lib ch376.c.lib transfers.c.lib dev_transfers.c.lib enumerate_storage.c.lib enumerate.c.lib enumerate_hub.c.lib)
 USB_USER_LIB := $(addprefix $(BIN)libraries/usb/,format_mapping.c.lib trace_ufi_format_capacities_response.c.lib class_printer.c.lib class_hid.c.lib class_hid_keyboard.c.lib class_ufi.c.lib protocol.c.lib usb_cbi.c.lib dev_transfers.c.lib class_hub.c.lib class_printer.c.lib usb_cbi.c.lib class_scsi.c.lib find_device.c.lib)
@@ -90,7 +91,7 @@ $(BIN)reboot.com: $(addprefix $(BIN),$(reboot_files)) $(MSXBIOS_LIB)
 reboot.com.crt_enable_commandline:=1
 
 xmodem_files = $(call app_files,xmodem,memmap-override.asm)
-$(BIN)xmodem.com: $(addprefix $(BIN),$(xmodem_files)) $(MSXBIOS_LIB) $(EXTBIO_LIB) $(MSXDOS_LIB) $(LIBGEN_LIB)
+$(BIN)xmodem.com: $(addprefix $(BIN),$(xmodem_files)) $(MSXBIOS_LIB) $(EXTBIO_LIB) $(MSXDOS_LIB) $(LIBGEN_LIB) $(XMODEM_LIB)   $(DELAY_LIB)
 xmodem.com.crt_enable_commandline:=1
 
 helloworld_files = ./helloworld.c.o

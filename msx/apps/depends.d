@@ -6,15 +6,16 @@
 ./bin/lines.c.asm: lines.c config_request.h v9958.h libraries/msxbios/msxbios.h \
  libraries/msxdos/msxdos.h
 ./bin/esp8266/wget.c.asm: esp8266/wget.c esp8266/wget.h esp8266/arguments.h \
- esp8266/esp8266.h print.h libraries/extbio/serial-helpers.h \
+ esp8266/esp8266.h print.h libraries/delay/delay.h \
+ libraries/msxbios/system_vars.h libraries/extbio/serial-helpers.h \
  libraries/extbio/serial.h libraries/msx/libgen.h \
  libraries/msxbios/msxbios.h libraries/msxdos/msxdos.h \
- libraries/msxbios/system_vars.h libraries/xmodem/utils.h \
- libraries/xmodem/xmodem.h
+ libraries/xmodem/receive.h
 ./bin/esp8266/arguments.c.asm: esp8266/arguments.c esp8266/arguments.h print.h \
  libraries/extbio/serial-helpers.h libraries/extbio/serial.h
 ./bin/esp8266/msxhub.c.asm: esp8266/msxhub.c esp8266/msxhub.h esp8266/arguments.h \
- esp8266/esp8266.h print.h esp8266/wget.h libraries/xmodem/xmodem.h
+ esp8266/esp8266.h print.h esp8266/wget.h libraries/xmodem/buffer.h \
+ libraries/xmodem/file_storage.h libraries/xmodem/receive.h
 ./bin/esp8266/esp8266.c.asm: esp8266/esp8266.c esp8266/esp8266.h esp8266/arguments.h \
  esp8266/msxhub.h print.h esp8266/wget.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/msxbios/extbio.h \
@@ -25,8 +26,7 @@
 ./bin/xrecv2/arguments.c.asm: xrecv2/arguments.c xrecv2/arguments.h print.h
 ./bin/xrecv2/xrecv.c.asm: xrecv2/xrecv.c xrecv2/arguments.h libraries/msxdos/msxdos.h \
  print.h libraries/delay/delay.h libraries/msxbios/system_vars.h \
- libraries/msxbios/extbio.h libraries/fossil/fossil.h \
- libraries/xmodem/utils.h libraries/xmodem/xmodem.h
+ libraries/msxbios/extbio.h libraries/fossil/fossil.h
 ./bin/clrdir/arguments.c.asm: clrdir/arguments.c clrdir/arguments.h
 ./bin/clrdir/fdisk2.c.asm: clrdir/fdisk2.c clrdir/fdisk2.h datatypes.h \
  libraries/msxdos/partition.h libraries/msxdos/fat.h \
@@ -244,12 +244,8 @@
 ./bin/print.c.asm: print.c print.h
 ./bin/rs232tst.c.asm: rs232tst.c libraries/msxbios/extbio.h \
  libraries/msxdos/msxdos.h libraries/msxbios/system_vars.h
-./bin/xmodem/crc16.c.asm: xmodem/crc16.c xmodem/crc16.h
-./bin/xmodem/xmodem.c.asm: xmodem/xmodem.c xmodem/arguments.h xmodem/xmodem-receive.h
-./bin/xmodem/xmodem-receive.c.asm: xmodem/xmodem-receive.c xmodem/arguments.h \
- xmodem/crc16.h libraries/extbio/serial-helpers.h \
- libraries/extbio/serial.h libraries/msx/libgen.h \
- libraries/msxbios/msxbios.h libraries/msxdos/msxdos.h
+./bin/xmodem/xmodem.c.asm: xmodem/xmodem.c xmodem/arguments.h libraries/msxbios/msxbios.h \
+ libraries/xmodem/receive.h
 ./bin/xmodem/arguments.c.asm: xmodem/arguments.c xmodem/arguments.h \
  libraries/extbio/serial.h
 ./bin/muflash/arguments.c.asm: muflash/arguments.c muflash/arguments.h print.h
@@ -277,14 +273,29 @@
 ./bin/libraries/fusion/fprintf.c.asm: libraries/fusion/fprintf.c libraries/fusion/fusion_ext.h \
  libraries/fusion/io.h
 ./bin/libraries/msxdos/rename.c.asm: libraries/msxdos/rename.c
+./bin/libraries/xmodem.retired/crc16.c.asm: libraries/xmodem.retired/crc16.c \
+ libraries/xmodem.retired/crc16.h
+./bin/libraries/xmodem.retired/xmodem.c.asm: libraries/xmodem.retired/xmodem.c \
+ libraries/xmodem.retired/xmodem.h libraries/xmodem.retired/crc16.h \
+ libraries/delay/delay.h libraries/msxbios/system_vars.h \
+ libraries/extbio/serial-helpers.h libraries/extbio/serial.h \
+ libraries/z80.h
+./bin/libraries/xmodem.retired/utils.c.asm: libraries/xmodem.retired/utils.c \
+ libraries/xmodem.retired/utils.h
 ./bin/libraries/xmodem/crc16.c.asm: libraries/xmodem/crc16.c libraries/xmodem/crc16.h
-./bin/libraries/xmodem/xmodem.c.asm: libraries/xmodem/xmodem.c libraries/xmodem/xmodem.h \
- libraries/xmodem/crc16.h libraries/delay/delay.h \
+./bin/libraries/xmodem/file_storage.c.asm: libraries/xmodem/file_storage.c \
+ libraries/xmodem/file_storage.h libraries/xmodem/buffer.h \
+ libraries/msx/libgen.h libraries/msxdos/msxdos.h
+./bin/libraries/xmodem/receive.c.asm: libraries/xmodem/receive.c libraries/xmodem/receive.h \
+ xrecv2/arguments.h libraries/xmodem/buffer.h libraries/xmodem/crc16.h \
+ libraries/xmodem/file_storage.h libraries/delay/delay.h \
  libraries/msxbios/system_vars.h libraries/extbio/serial-helpers.h \
- libraries/extbio/serial.h libraries/z80.h
-./bin/libraries/xmodem/utils.c.asm: libraries/xmodem/utils.c libraries/xmodem/utils.h
+ libraries/extbio/serial.h libraries/msxbios/msxbios.h \
+ libraries/msx/strnstr.h
+./bin/libraries/xmodem/buffer.c.asm: libraries/xmodem/buffer.c libraries/xmodem/buffer.h
 ./bin/libraries/delay/delay.c.asm: libraries/delay/delay.c libraries/delay/delay.h \
  libraries/msxbios/system_vars.h
+./bin/libraries/msx/strnstr.c.asm: libraries/msx/strnstr.c libraries/msx/strnstr.h
 ./bin/libraries/msx/libgen/basename.c.asm: libraries/msx/libgen/basename.c \
  libraries/msx/libgen/../libgen.h
 ./bin/libraries/msx/libgen/dirname.c.asm: libraries/msx/libgen/dirname.c \

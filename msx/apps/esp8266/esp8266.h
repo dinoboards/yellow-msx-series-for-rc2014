@@ -12,7 +12,7 @@
 extern unsigned char responseStr[MAX_RESPONSE_STRING_LEN + 1];
 
 extern void fossil_rs_flush_with_log(void);
-extern bool serial_read_line(const bool withLogging) __z88dk_fastcall;
+extern bool serial_read_line(void);
 
 extern void resetModem(void);
 

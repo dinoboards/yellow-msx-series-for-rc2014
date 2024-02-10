@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 
-const char *p_file_name  = NULL;
-uint8_t     receive_file = false;
-uint8_t     send_file    = false;
-uint8_t     port_number  = 0;
+const char *arg_p_file_name  = NULL;
+uint8_t     arg_receive_file = false;
+uint8_t     arg_send_file    = false;
+uint8_t     port_number      = 0;
 
 /*
   TO SAVE A FILE RECEIVED VIA XMODEM ON COM1
@@ -66,22 +66,22 @@ void process_cli_arguments(const uint16_t argc, char **const argv) {
   upcase_string(argv[2]);
 
   if (is_a_com_port_number(argv[1])) {
-    p_file_name  = argv[2];
-    receive_file = true;
+    arg_p_file_name  = argv[2];
+    arg_receive_file = true;
   }
 
   if (is_a_com_port_number(argv[2])) {
-    p_file_name = argv[1];
-    send_file   = true;
+    arg_p_file_name = argv[1];
+    arg_send_file   = true;
   }
 
-  if (!send_file && !receive_file)
+  if (!arg_send_file && !arg_receive_file)
     abort_with_invalid_options();
 
-  if (send_file && receive_file)
+  if (arg_send_file && arg_receive_file)
     abort_with_invalid_options();
 
-  if (p_file_name[0] == 0)
+  if (arg_p_file_name[0] == 0)
     abort_with_invalid_options();
 
   uint8_t available_ports = 0;
