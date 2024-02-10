@@ -58,7 +58,7 @@ Use this command to set your computer's date and time to the current date/time a
 
 Use this command to retrieve a file using the ESP8266's internet connection.
 
-> Please note, TLS `https://` connection are supported, but there may be some sites that the ESP8266 module's is not capable of retrieving.
+> Please note, TLS `https://` connection are supported, but there may be some sites that the ESP8266 module's is not capable of retrieving.  Also the ESP8266 code does not validated the domain's certificate -- meaning requests are vulnerable to man-in-the-middle attacks.
 
 To Retrieve a simple webpage into a file called `home.htm`.
 
