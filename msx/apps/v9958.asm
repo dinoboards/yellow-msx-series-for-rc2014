@@ -1,24 +1,10 @@
 
-	PUBLIC	_outDat, _outCmd, _commandDrawLine, _waitForCommandCompletion
+	PUBLIC	_commandDrawLine, _waitForCommandCompletion
 	PUBLIC	__fromX, __fromY, _longSide, _shortSide, __color, _dir, __operation
 
 	SECTION CODE
 
 	include "msx.inc"
-
-
-; void outDat(uint8_t b) __z88dk_fastcall
-_outDat:
-	LD	A, L
-	OUT	(VDP_DATA), A
-	RET
-
-; void outCmd(uint8_t b) __z88dk_fastcall
-_outCmd:
-	LD	A, L
-	OUT	(VDP_ADDR), A
-	RET
-
 
 _commandDrawLine:
 	DI

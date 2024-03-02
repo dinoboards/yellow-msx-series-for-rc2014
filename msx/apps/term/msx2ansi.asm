@@ -1405,25 +1405,29 @@ V9938_Init:
 	OUT	(0x99),A
 	LD	A,0x80+7
 	OUT	(0x99),A				; Write to register 7
+
 	LD	A,(VDP_08)				; Get a copy of register 8
 	OR	0b00100010				; Set bit so color 0 is 0 in palette and disable sprites
 	LD	(VDP_08),A				; Save our value
 	OUT	(0x99),A				; Send value to VDP
 	LD	A,0x80+8
 	OUT	(0x99),A				; Write to register 8
+
 	LD	A,(VDP_09)				; Get a copy of register 9
 	OR	0b10000000				; 212 Lines by seting 8th bit
 	LD	(VDP_09),A				; Save our new value
 	OUT	(0x99),A				; Send value to VDP
 	LD	A,0x80+9
 	OUT	(0x99),A				; Write to register 9
+
 	LD	A,0x00					; Palette register pointer set to 0
 	LD	(VDP_16),A				; Save R16 status
 	OUT	(0x99),A				; Send value to VDP
 	LD	A,0x80+16
 	OUT	(0x99),A				; Write to register 16, new palette pointer
-	EI							; Ok to have interrupts now
-	LD	HL,ANSI_PAL			; Address of our palette
+
+	EI						; Ok to have interrupts now
+	LD	HL,ANSI_PAL				; Address of our palette
 	LD	BC,0x209A				; 32 bytes to move to port 0x9a which will auto-increment palette registers
 	OTIR						; Send it
 	RET							; Done!

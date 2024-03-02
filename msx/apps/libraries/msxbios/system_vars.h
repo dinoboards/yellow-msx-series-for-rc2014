@@ -29,6 +29,17 @@
 #define HOKVLD_ADDR __at(0xFB20)
 #define EXTBIO_ADDR __at(0xFFCA)
 
+#define RG0SAV_ADDR  __at(0xF3DF)
+#define RG1SAV_ADDR  __at(0xF3E0)
+#define RG2SAV_ADDR  __at(0xF3E1)
+#define RG3SAV_ADDR  __at(0xF3E2)
+#define RG4SAV_ADDR  __at(0xF3E3)
+#define RG5SAV_ADDR  __at(0xF3E4)
+#define RG6SAV_ADDR  __at(0xF3E5)
+#define RG7SAV_ADDR  __at(0xF3E6)
+#define RG8SAV_ADDR  __at(0xFFE7)
+#define RG25SAV_ADDR __at(0xFFFA)
+
 extern uint8_t HOKVLD_ADDR HOKVLD;
 extern uint8_t EXTBIO_ADDR EXTBIO[5];
 
@@ -110,6 +121,24 @@ extern uint8_t SCNCNT_ADDR SCNCNT;
 
 extern uint8_t SCRMOD_ADDR SCRMOD;
 
+// F3DF-D3E6: storage for the last written value towards VDP registers 0 till 7
+// this is needed because these registers are write only
+extern uint8_t RG0SAV_ADDR RGS0TO7AV[8];
+extern uint8_t RG0SAV_ADDR RG0SAV;
+extern uint8_t RG1SAV_ADDR RG1SAV;
+extern uint8_t RG2SAV_ADDR RG2SAV;
+extern uint8_t RG3SAV_ADDR RG3SAV;
+extern uint8_t RG4SAV_ADDR RG4SAV;
+extern uint8_t RG5SAV_ADDR RG5SAV;
+extern uint8_t RG6SAV_ADDR RG6SAV;
+extern uint8_t RG7SAV_ADDR RG7SAV;
+
+// FFE7-FFF6: storage of VDP 8-23
+extern uint8_t RG8SAV_ADDR RG8SAV[23 - 8];
+
+// FFFA-FFFC: storage of VDP 25-27
+extern uint8_t RG25SAV_ADDR RG25SAV[27 - 25];
+
 #define msxJiffy  JIFFY
 #define msxNewKey NEWKEY
 #define msxPutPtr PUTPNT
@@ -123,5 +152,10 @@ extern uint8_t RG8SAV_ADDR RG8SAV[23 - 8];
 #define GET_VDP_REGISTER(a) ((a >= 8 && a <= 23) ? RG8SAV[a] : 0)
 
 #define GET_VDP_FREQUENCY() (GET_VDP_REGISTER(9) & 2 ? 60 : 50)
+
+__sfr __at(0x98) VDP_VRAM;
+__sfr __at(0x99) VDP_REG;
+__sfr __at(0x9A) VDP_PALETTE;
+__sfr __at(0x9B) VDP_REG_INDIRECT;
 
 #endif

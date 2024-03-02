@@ -100,4 +100,6 @@ void main(void) {
 
   while (!kbhit())
     ;
+
+  exit(0);
 }

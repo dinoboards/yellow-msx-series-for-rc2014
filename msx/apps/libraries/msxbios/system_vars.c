@@ -85,3 +85,21 @@ uint8_t SCRMOD_ADDR SCRMOD;
 uint8_t HOKVLD_ADDR HOKVLD;
 
 uint8_t EXTBIO_ADDR EXTBIO[5];
+
+// F3DF-D3E6: storage for the last written value towards VDP registers 0 till 7
+// this is needed because these registers are write only
+uint8_t RG0SAV_ADDR RGS0TO7AV[8];
+uint8_t RG0SAV_ADDR RG0SAV;
+uint8_t RG1SAV_ADDR RG1SAV;
+uint8_t RG2SAV_ADDR RG2SAV;
+uint8_t RG3SAV_ADDR RG3SAV;
+uint8_t RG4SAV_ADDR RG4SAV;
+uint8_t RG5SAV_ADDR RG5SAV;
+uint8_t RG6SAV_ADDR RG6SAV;
+uint8_t RG7SAV_ADDR RG7SAV;
+
+// FFE7-FFF6: storage of VDP 8-23
+uint8_t RG8SAV_ADDR RG8SAV[23 - 8];
+
+// FFFA-FFFC: storage of VDP 25-27
+uint8_t RG25SAV_ADDR RG25SAV[27 - 25];

@@ -1,6 +1,7 @@
 #include "v9958.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <system_vars.h>
 
 // clang-format off
 #define DI        \
@@ -14,78 +15,32 @@
         __endasm
 // clang-format on
 
-void outPal(uint8_t b) __z88dk_fastcall {
-  (void *)b;
-  // clang-format off
-  __asm
-  LD  A, L
-  OUT (0x9A), A
-  __endasm;
-  // clang-format on
-}
+void outPal(const uint8_t b) __z88dk_fastcall { VDP_PALETTE = b; }
 
-void outRegIndByte(uint8_t b) __z88dk_fastcall {
-  (void *)b;
-  // clang-format off
-  __asm
-  LD  A, L
-  OUT (0x9B), A
-  __endasm;
-  // clang-format on
-}
+void outRegIndByte(const uint8_t b) __z88dk_fastcall { VDP_REG_INDIRECT = b; }
 
 void outRegIndInt(uint16_t b) __z88dk_fastcall {
-  (void *)b;
-  // clang-format off
-  __asm
-  LD  A, L
-  OUT (0x9B), A
-  LD  A, H
-  OUT (0x9B), A
-  __endasm;
-  // clang-format on
+  VDP_REG_INDIRECT = b & 0xFF;
+  VDP_REG_INDIRECT = b >> 8;
 }
 
-uint8_t inDat(void) __naked __z88dk_fastcall {
-  // clang-format off
-  __asm
-  IN A, (0x98)
-  LD  L, A
-  RET
-  __endasm;
-  // clang-format on
-}
-
-uint8_t readStatus(uint8_t r) __naked __z88dk_fastcall {
-  writeRegister(15, r);
-  // clang-format off
-  __asm
-	IN    A, (0x99)
-  PUSH  AF
-  __endasm;
-  // clang-format on
-  writeRegister(15, 0);
-  // clang-format off
-  __asm
-  POP   AF
-  LD    L, A
-  RET
-  __endasm;
-  // clang-format on
-}
+uint8_t inDat(void) __naked __z88dk_fastcall { return VDP_VRAM; }
 
 void _writeRegister(uint16_t rd) __z88dk_fastcall {
-  (void)rd;
-  // clang-format off
-  __asm
-	LD	A, L
-	OUT	(0x99), a
+  const uint8_t val = rd & 0xFF;
+  const uint8_t reg = (rd >> 8) | 0x80;
 
-	LD	A, 128
-  OR  H
-	OUT	(0x99), A
-  __endasm;
-  // clang-format on
+  VDP_REG = val;
+  VDP_REG = reg;
+
+  if (reg < 8)
+    RGS0TO7AV[reg] = val;
+
+  else if (reg >= 8 && reg <= 23)
+    RG8SAV[reg - 8] = val;
+
+  else if (reg >= 24 && reg <= 27)
+    RG25SAV[reg - 25] = val;
 }
 
 void setBaseRegisters(uint8_t *pReg) __z88dk_fastcall {

@@ -225,7 +225,7 @@
  fdisk/device_selection.h libraries/msxdos/msxdos.h \
  fdisk/driver_selection.h fdisk/key_inputs.h fdisk/lun_selection.h \
  fdisk/screen_control.h fdisk/temp.h
-./bin/v9958.c.asm: v9958.c v9958.h
+./bin/v9958.c.asm: v9958.c v9958.h libraries/msxbios/system_vars.h
 ./bin/term/xymodem.c.asm: term/xymodem.c term/xymodem.h term/aofossilhelper.h \
  libraries/fusion/msx_fusion.h term/print.h libraries/fusion/io.h
 ./bin/term/term.c.asm: term/term.c term/term.h libraries/fusion/msx_fusion.h \
@@ -480,7 +480,6 @@
 ./bin/fdisk/fdisk.o: ./fdisk/fdisk.asm
 ./bin/term/print.o: ./term/print.asm
 ./bin/term/msx2ansi.o: ./term/msx2ansi.asm
-./bin/term/screen.o: ./term/screen.asm
 ./bin/memmap-override.o: ./memmap-override.asm
 ./bin/muflash/slot_helpers.o: ./muflash/slot_helpers.asm
 ./bin/getslt.o: ./getslt.asm ./msx.inc

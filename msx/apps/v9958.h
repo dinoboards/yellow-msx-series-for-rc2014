@@ -13,8 +13,8 @@ typedef struct {
   uint8_t green;
 } RGB;
 
-extern void outCmd(uint8_t b) __z88dk_fastcall;
-extern void outDat(uint8_t b) __z88dk_fastcall;
+#define outCmd(a) (VDP_REG = a)
+#define outDat(a) (VDP_VRAM = a)
 
 extern void clearAllMemory(void);
 extern void setPalette(RGB *) __z88dk_fastcall;
