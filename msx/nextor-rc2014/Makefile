@@ -27,9 +27,9 @@ $(BINDIR)rcembdrv.bin: rcembdrv.asm embinc.asm rc2014dr.inc.asm
 	fi
 	echo "Assembled $@"
 
-$(BINDIR)rc2014dr.bin: rc2014dr.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc.asm version.asm ch376drv.asm $(BINDIR)usbdrv.bin drvend.asm
+$(BINDIR)rc2014dr.bin: rc2014dr.asm statement.asm cfdrv.asm musicdriver.asm embinc.asm rc2014dr.inc.asm version.asm ch376drv.asm $(BINDIR)usbdrv.bin drvend.asm
 	@mkdir -p $(BINDIR)
-	$(ASM) rc2014dr.asm ch376drv.asm rc2014dr.inc.asm drvend.asm
+	$(ASM) rc2014dr.asm statement.asm ch376drv.asm rc2014dr.inc.asm  drvend.asm
 	basedrv_filesize=$$(stat -c%s "$(BINDIR)rc2014dr.bin")
 	cat $(BINDIR)rc2014dr.bin $(BINDIR)usbdrv.bin > $(BINDIR)tmp.bin
 	rm $(BINDIR)rc2014dr.bin

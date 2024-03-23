@@ -357,15 +357,16 @@ DRV_VERSION:
 	ret
 
 
-;-----------------------------------------------------------------------------
-;
-; BASIC expanded statement ("CALL") handler.
-; Works the expected way, except that if invoking CALBAS is needed,
-; it must be done via the CALLB0 routine in kernel page 0.
+; ;-----------------------------------------------------------------------------
+; ;
+; ; BASIC expanded statement ("CALL") handler.
+; ; Works the expected way, except that if invoking CALBAS is needed,
+; ; it must be done via the CALLB0 routine in kernel page 0.
 
-DRV_BASSTAT:
-	scf
-	ret
+; DRV_BASSTAT:
+
+; 	scf
+; 	ret
 
 
 ;-----------------------------------------------------------------------------
