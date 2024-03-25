@@ -1,92 +1,121 @@
-; include	"msx.inc"
 
-; ; BASIC expanded statement ("CALL") handler.
-; ; Works the expected way, except that if invoking CALBAS0 is needed,
-; ; it must be done via the CALLB0 routine in kernel page 0.
+; Implement the following basic statements
 
-PROCNM          EQU     $FD89
-FRMEVL          EQU     #4C64
-VALTYP          EQU     $F663
-DAC             EQU     $F7F6
-CALBAS	        EQU	$0159
-GETBYT          EQU     $521C
-BASIC_ERR       EQU     $406F
-CHRGTR  EQU     $4666
+; _VDP_SET_REG(REG_NUM, VALUE)
+; set the VDP's register REG_NUM to VALUE.  Both REG_NUM and VALUE must be bytes
+;
+; CALL VDP_GET_REG(REG_NUM, <INT_VAR>)
+; attempt to retrieve the specified register.  Only support with by the FPGA V9958 emulated VDP
+; <INT_VAR> must be an inter variable to received the current value
+;
+; CALL VDP_GET_STATUS(REG_NUM, <INT_VAR>)
+; retrieve the VDP's current status register value
+; <INT_VAR> must be an inter variable to received the current value
+;
+; _SUPER_SCREEN(mode)
+; switch on Super colour resolution.  Mode is only active if SCREEN 8 has been selected.
+; mode = 0 to disable super colour resolution
+; mode = 1 to enable super colour resolution
+;
+; _SUPER_COLOR(R, G, B)
+; for use with super modes. set the current VDP's `Colour Register` to the specified RGB value.
+; R, G, B must be bytes
+;
+; _SUPER_CLS
+; clear the current super screen.
+
+PROCNM		EQU	$FD89
+FRMEVL		EQU	#4C64
+VALTYP		EQU	$F663
+DAC		EQU	$F7F6
+CALBAS		EQU	$0159
+GETBYT		EQU	$521C
+BASIC_ERR	EQU	$406F
+CHRGTR		EQU	$4666
 
 DRV_BASSTAT:
-; Save HL
-        push    hl
+	PUSH	HL			; Save HL
 
 	; HL points to PROCNM
-	ld	hl, PROCNM
+	LD	HL, PROCNM
 
 	; DE points to MY_STATEMENTS
-	ld 	de, MY_STATEMENTS
+	LD	DE, MY_STATEMENTS
 
 ; Compare strings
 compare_loop:
-	ld 	a, (de)
-	or 	a
-	JP 	z, no_statements  ; End of table, return
+	LD	A, (DE)
+	OR	A
+	JP	Z, no_statements  	; End of table, return
 
-	push 	hl
-	push 	de
+	PUSH	HL
+	PUSH	DE
 
 	; Point DE to the string in the table
-	ld 	a, (de)
-	ld 	b, a
-	inc 	de
-	ld 	a, (de)
-	ld 	d, a
-	ld	e, b
+	LD	A, (DE)
+	LD	B, A
+	INC	DE
+	LD	A, (DE)
+	LD	D, A
+	LD	E, B
 
 ; Compare strings
 compare_strings:
-	ld	a, (de)
-	cp	(hl)
-	jr	nz, no_match
-	inc	de
-	inc	hl
-	ld	a, (de)
-	or	a
-	jr	nz, compare_strings
+	LD	A, (DE)
+	CP	(HL)
+	JR	NZ, no_match
+	INC	DE
+	INC	HL
+	LD	A, (DE)
+	OR	A
+	JR	NZ, compare_strings
 
 ; If we get here, the strings match
-	pop 	de
-	pop 	hl
+	POP	DE
+	POP	HL
 
-	inc 	de
-	inc 	de
-	ex	de, hl
-	jp 	(hl)  ; Jump to the function
+	INC	DE
+	INC	DE
+	EX	DE, HL
+	JP	(HL)  			; Jump to the function
 
 no_match:
-    ; If we get here, the strings don't match
-	pop 	de
-	pop 	hl
-	inc 	de
-	inc 	de
-	inc 	de
-	inc 	de
-	inc 	de
-	jr 	compare_loop
+	; If we get here, the strings don't match
+	POP	DE
+	POP	HL
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	JR	compare_loop
 
 // _SUPER_SCREEN(1) // super colour resolution
 SUPER_SCREEN_FN:
-        POP     HL
+	POP	 HL
 
 	CALL	CHKCHAR
 	DEFB	"("
 
-        LD	IX,GETBYT
-        call    CALBAS0
+	LD	IX,GETBYT
+	call	CALBAS0
 
-	CP	1			; only super color res supported at this stage
-	JP	NZ, SYNTAX_ERROR
+	PUSH	AF
 
 	CALL	CHKCHAR
 	DEFB	")"
 
+	POP	AF
+
+	CP	1			; activate super colour res when in SCREEN 8 mode.
+	JR	Z, ENABLE_SUPER_COL
+
+	CP	0			; disable super colour override of SCREEN 8 mode
+	JR	Z, DISABLE_SUPER
+
+	JP	SYNTAX_ERROR
+
+ENABLE_SUPER_COL:
 	DI				; write 1 to R#31
 	LD	A, 1
 	OUT	($99), A
@@ -94,8 +123,19 @@ SUPER_SCREEN_FN:
 	OUT	($99), A
 	EI
 
-        AND     A               	; Clear carry flag
-        RET
+	AND	 A		  	; Clear carry flag
+	RET
+
+DISABLE_SUPER:
+	DI				; clear out R#31
+	XOR	A
+	OUT	($99), A
+	LD	A, $80 + 31
+	OUT	($99), A
+	EI
+
+	AND	 A		  	; Clear carry flag
+	RET
 
 SUPER_COLOR_FN:
 	POP	HL
@@ -103,24 +143,24 @@ SUPER_COLOR_FN:
 	CALL	CHKCHAR
 	DEFB	"("
 
-        LD	IX,GETBYT
-        call    CALBAS0
+	LD	IX,GETBYT
+	call	CALBAS0
 
 	PUSH	AF			; save red
 
 	CALL	CHKCHAR
 	DEFB	","
 
-        LD	IX,GETBYT
-        call    CALBAS0
+	LD	IX,GETBYT
+	call	CALBAS0
 
-	PUSH	AF		        ; save greem
+	PUSH	AF			; save greem
 
 	CALL	CHKCHAR
 	DEFB	","
 
-        LD	IX,GETBYT
-        call    CALBAS0
+	LD	IX,GETBYT
+	call	CALBAS0
 
 	PUSH	AF			; save blue
 
@@ -157,34 +197,32 @@ SUPER_COLOR_FN:
 	EI
 
 	EXX				; restore HL
-	AND	A               	; Clear carry flag
-        RET
+	AND	A		  	; Clear carry flag
+	RET
 
 VDP_SET_REG_FN:
-        POP     HL
+	POP	 HL
 
 	CALL	CHKCHAR
 	DEFB	"("
 
-        LD	IX,GETBYT
-        call    CALBAS0
+	LD	IX,GETBYT
+	call	CALBAS0
 
-	PUSH	AF
-        ; register number
+	PUSH	AF			; register number
 
 	CALL	CHKCHAR
 	DEFB	","
 
-        LD	IX,GETBYT
-        call    CALBAS0
-	; register_value
+	LD	IX,GETBYT
+	call	CALBAS0
 
-	push	af
+	PUSH	AF			; register_value
 	CALL	CHKCHAR
 	DEFB	")"
 
 	POP	AF
-	POP	DE	; /D = register_number; A = register_value
+	POP	DE			; /D = register_number; A = register_value
 
 	DI
 	OUT	($99), A
@@ -193,25 +231,25 @@ VDP_SET_REG_FN:
 	OUT	($99), A
 	EI
 
-        and     a               ; Clear carry flag
-        ret
+	AND	 A		   	; Clear carry flag
+	RET
 
 VDP_GET_REG_FN:
-        pop     hl
+	POP	 HL
 
 	CALL	CHKCHAR
 	DEFB	"("
 
-        LD	IX,GETBYT
-        call    CALBAS0
+	LD	IX,GETBYT
+	CALL	CALBAS0
 
-	push	af	; register number
+	PUSH	AF			; register number
 
 	CALL	CHKCHAR
 	DEFB	","
 
-	; capture variable to receive value
-	; must be an int type
+	; capture variable to receive
+	; value must be an int type
 	LD	A, 0
 	LD	($F6A5), A
 	LD	IX, $5EA4
@@ -221,7 +259,7 @@ VDP_GET_REG_FN:
 	// DE -2 is 2 byte NAME
 	// DE - 3 is type
 
-	push 	de
+	PUSH		DE
 
 	CALL	CHKCHAR
 	DEFB	")"
@@ -233,7 +271,7 @@ VDP_GET_REG_FN:
 	DEC	HL
 	DEC	HL
 	LD	A, (HL)
-	CP	2 			; Check if it's a int
+	CP	2			; Check if it's a int
 	JR	NZ, TYPE_MISMATCH
 	INC	HL
 	INC	HL
@@ -256,19 +294,19 @@ VDP_GET_REG_FN:
 
 	EXX
 
-        and     a               ; Clear carry flag
-        ret
+	AND	 A		  	 ; Clear carry flag
+	RET
 
 VDP_GET_STATUS_FN:
-        pop     hl
+	POP	 HL
 
 	CALL	CHKCHAR
 	DEFB	"("
 
-        LD	IX,GETBYT
-        call    CALBAS0
+	LD	IX,GETBYT
+	call	CALBAS0
 
-	push	af	; register number
+	PUSH	AF			; register number
 
 	CALL	CHKCHAR
 	DEFB	","
@@ -284,7 +322,7 @@ VDP_GET_STATUS_FN:
 	// DE -2 is 2 byte NAME
 	// DE - 3 is type
 
-	push 	de
+	PUSH	DE			; address to store 16 bit int of current register value
 
 	CALL	CHKCHAR
 	DEFB	")"
@@ -292,91 +330,84 @@ VDP_GET_STATUS_FN:
 	EXX
 
 	POP	HL
-        DEC	HL
+	DEC	HL
 	DEC	HL
 	DEC	HL
 	LD	A, (HL)
-	CP	2 			; Check if it's a int
+	CP	2			; Check if it's a int
 	JR	NZ, TYPE_MISMATCH
 	INC	HL
 	INC	HL
 	INC	HL
 
-	// store register value at HL
-
-	// set reg 15 to A
 	POP	AF
 
-	LD	C, $99
 	DI
-	OUT	(C), A
+	OUT	($99), A		; set R#15 to A
 	LD	A, 0x80 | 15
-	OUT	(C), A
-	IN	A, (C)
-	LD	D, A
+	OUT	($99), A		; retrieve its value
+	IN	A, ($99)
+	LD	D, A			; store in D
 
-	XOR	A
-	OUT	(C), A
+	XOR	A			; restore R#15 to 0
+	OUT	($99), A		; set R#15 to 0
 	LD	A, 0x80 | 15
-	OUT	(C), A
-
+	OUT	($99), A
 	EI
 
 	LD	(HL), D
 
-
 	EXX
 
-        and     a               ; Clear carry flag
-        ret
+	AND	 A			; Clear carry flag
+	RET
 
 no_statements:
 ; If we get here, the strings don't match
-        scf                     ; Set carry flag
-        pop     hl              ; Restore HL
-        ret
+	SCF				; Set carry flag
+	POP	 HL		  	; Restore HL
+	RET
 
 SYNTAX_ERROR:
-        LD      E,2
-	LD	IX,BASIC_ERR    ; Call the Basic error ha$dler
-        JP      CALBAS0
+	LD	E, 2
+	JR	BASIC_ERROR
 
 TYPE_MISMATCH:
-        LD      E,13
-	LD	IX,BASIC_ERR    ; Call the Basic error ha$dler
-        JP      CALBAS0
+	LD	E, 13
+	JR	BASIC_ERROR
 
 MISSING_OPERAND:
-        LD      E,24
-	LD	IX,BASIC_ERR    ; Call the Basic error ha$dler
-        JP      CALBAS0
+	LD	E, 24
+BASIC_ERROR:
+	LD	IX, BASIC_ERR		; Call the Basic error ha$dler
+	JP	CALBAS0
 
 CHKCHAR:
-	CALL	GETPREVCHAR	; Get previous basic char
-	EX	(SP),HL
-	CP	(HL) 	        ; Check if good char
-	JR	NZ,SYNTAX_ERROR	; No, Syntax error
+	CALL	GETPREVCHAR		; Get previous basic char
+	EX	(SP), HL
+	CP	(HL)			; Check if good char
+	JR	NZ, SYNTAX_ERROR	; No, Syntax error
 	INC	HL
-	EX	(SP),HL
-	INC	HL		; Get next basic char
+	EX	(SP), HL
+	INC	HL			; Get next basic char
 
 GETPREVCHAR:
 	DEC	HL
-	LD	IX,CHRGTR
-	JP      CALBAS0
+	LD	IX, CHRGTR
+	JP	CALBAS0
 
 CALBAS0:
-        exx
-        ld      hl,CALBAS
-        ld      ($f1d0),hl
-        exx
-        JP    	CALLB0
+	EXX
+	LD	HL,CALBAS
+	LD	($F1D0), HL
+	EXX
+	JP	CALLB0
 
 MY_STATEMENTS:
-	DEFW 	SUPER_SCREEN
+	DEFW	SUPER_SCREEN
 	JP	SUPER_SCREEN_FN
 
-	DEFW 	SUPER_COLOR
+	DEFW	SUPER_COLOR
 	JP	SUPER_COLOR_FN
 
 	DEFW	VDP_SET_REG
@@ -397,18 +428,11 @@ SUPER_COLOR:
 	DEFM	"SUPER_COLOR", 0
 
 VDP_SET_REG:
-        DEFM    "VDP_SET_REG", 0
+	DEFM	"VDP_SET_REG", 0
 
 VDP_GET_REG:
-        DEFM    "VDP_GET_REG", 0
+	DEFM	"VDP_GET_REG", 0
 
 VDP_GET_STATUS:
-	DEFM    "VDP_GET_STATUS", 0
+	DEFM	"VDP_GET_STATUS", 0
 
-; CALL VDP_SET_REG(REG_NUM, VALUE)
-; CALL VDP_GET_REG(REG_NUM, <INT_VAR>)
-; CALL VDP_GET_STATUS(REG_NUM, <INT_VAR>)
-
-; _SUPER_SCREEN(1) // super colour resolution
-; _SUPER_COLOR(R,G,B) // set super colour
-; _SUPER_CLS
