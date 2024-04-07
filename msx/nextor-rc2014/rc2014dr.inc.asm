@@ -13,7 +13,7 @@ USB		DS	0	; _size_of_usb_state
 
 	ENDS
 
-DRIVER_ASM_END			EQU		$4C00
+DRIVER_ASM_END			EQU		$4D00
 _usb_host_init:			EQU		DRIVER_ASM_END	; entry point within cextens section
 _usb_dev_info:			EQU  	        DRIVER_ASM_END+3
 _usb_lun_info:			EQU		DRIVER_ASM_END+6

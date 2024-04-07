@@ -12,7 +12,7 @@
 	EXTERN	_extbio_rc2014
 	EXTERN	_drv_timi_keyboard
 
-	ORG	$4C00
+	ORG	$4D00
 usb_host_init:
 	JP	_usb_host_init
 usb_dev_info:

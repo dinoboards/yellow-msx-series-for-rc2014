@@ -4,13 +4,13 @@
 ; _VDP_SET_REG(REG_NUM, VALUE)
 ; set the VDP's register REG_NUM to VALUE.  Both REG_NUM and VALUE must be bytes
 ;
-; CALL VDP_GET_REG(REG_NUM, <INT_VAR>)
+; _VDP_GET_REG(REG_NUM, <INT_VAR>)
 ; attempt to retrieve the specified register.  Only support with by the FPGA V9958 emulated VDP
-; <INT_VAR> must be an inter variable to received the current value
+; <INT_VAR> must be an integer variable to received the current value
 ;
-; CALL VDP_GET_STATUS(REG_NUM, <INT_VAR>)
+; _VDP_GET_STATUS(REG_NUM, <INT_VAR>)
 ; retrieve the VDP's current status register value
-; <INT_VAR> must be an inter variable to received the current value
+; <INT_VAR> must be an integer variable to received the current value
 ;
 ; _SUPER_SCREEN(mode)
 ; switch on Super colour resolution.  Mode is only active if SCREEN 8 has been selected.
@@ -21,8 +21,16 @@
 ; for use with super modes. set the current VDP's `Colour Register` to the specified RGB value.
 ; R, G, B must be bytes
 ;
-; _SUPER_CLS
-; clear the current super screen.
+; _SUPER_CLS(R, G, B)
+; for use with super modes. Fill the entire screen with the specified RGB value.
+; R, G, B must be bytes
+;;
+; _SUPER_PSET(X, Y)
+; set the current FG colour to point x, y - differs from standard PSET in that x and y are not clipped.
+;
+; _SUPER_POINT(X, Y, R, G, B)
+; retrieve the 24 bit RGB colour code from point x, y
+; R, G, B must be integer variables
 
 PROCNM		EQU	$FD89
 FRMEVL		EQU	#4C64
@@ -30,8 +38,11 @@ VALTYP		EQU	$F663
 DAC		EQU	$F7F6
 CALBAS		EQU	$0159
 GETBYT		EQU	$521C
+FRMQNT		EQU	$542F
 BASIC_ERR	EQU	$406F
 CHRGTR		EQU	$4666
+VDP_ADDR	EQU	$99
+VDP_REGS:       equ     $9B             ; VDP register access (write only)
 
 DRV_BASSTAT:
 	PUSH	HL			; Save HL
@@ -90,6 +101,89 @@ no_match:
 	INC	DE
 	JR	compare_loop
 
+SUPER_PSET_FN:
+	POP	HL
+
+	CALL	CHKCHAR
+	DEFB	"("
+
+	LD	IX,FRMQNT
+	CALL	CALBAS0
+
+	PUSH	DE			; save X
+
+	CALL	CHKCHAR
+	DEFB	","
+
+	LD	IX,FRMQNT
+	CALL	CALBAS0
+
+	PUSH	DE			; save Y
+
+	CALL	CHKCHAR
+	DEFB	")"
+
+	POP	DE			; DE = Y
+	POP	BC			; BC = X
+
+	DI
+	LD	A, 2			; Select status register to 2
+	OUT	(VDP_ADDR), A		; R#15 to 2
+	LD	A, $80 | 15
+	OUT	(VDP_ADDR), A		; retrieve S#2
+
+_commandDrawReady:
+	IN	A, ($99)		; WAIT FOR ANY PREVIOUS COMMAND TO COMPLETE
+	RRCA
+	JR	C, _commandDrawReady
+
+	LD	A, 36			; SET INDIRECT REGISTER TO 36
+	OUT	(VDP_ADDR), A
+	LD	A, 0x80 | 17
+	OUT	(VDP_ADDR), A
+
+; ; __fromX:	DW	0
+; ; __fromY:	DW	0
+; ; _longSide:	DW	0
+; ; _shortSide:	DW	0
+; ; __color:	DB	0
+; ; _dir:		DB	0
+; ; __operation:	DB	0
+
+	LD	A, C			; X LOW
+	OUT	(VDP_REGS), A		; REG 36
+	LD	A, B			; X HIGH
+	OUT	(VDP_REGS), A		; REG 37
+	LD	A, E			; Y LOW
+	OUT	(VDP_REGS), A		; REG 38
+	LD	A, D			; Y HIGH
+	OUT	(VDP_REGS), A		; REG 39
+
+	XOR	A
+	OUT	(VDP_REGS), A		; REG 40
+	OUT	(VDP_REGS), A		; REG 41
+	OUT	(VDP_REGS), A		; REG 42
+	OUT	(VDP_REGS), A		; REG 43
+	LD	A, 255
+	OUT	(VDP_REGS), A		; REG 44
+	XOR	A
+	OUT	(VDP_REGS), A		; REG 45
+
+CMD_PSET	EQU	0b01010000
+
+	LD	A, CMD_PSET
+	OUT	(VDP_REGS), A		; REG 46
+
+	XOR	A			; restore R#15 to zero
+	OUT	(VDP_ADDR), A
+	LD	A, 0x80 | 15
+	OUT	(VDP_ADDR), A
+
+	EI
+
+	AND	 A		  	; Clear carry flag
+	RET
+
 // _SUPER_SCREEN(1) // super colour resolution
 SUPER_SCREEN_FN:
 	POP	 HL
@@ -98,7 +192,7 @@ SUPER_SCREEN_FN:
 	DEFB	"("
 
 	LD	IX,GETBYT
-	call	CALBAS0
+	CALL	CALBAS0
 
 	PUSH	AF
 
@@ -106,6 +200,9 @@ SUPER_SCREEN_FN:
 	DEFB	")"
 
 	POP	AF
+
+	CP	2
+	JR	Z, ENABLE_SUPER_MID
 
 	CP	1			; activate super colour res when in SCREEN 8 mode.
 	JR	Z, ENABLE_SUPER_COL
@@ -118,6 +215,8 @@ SUPER_SCREEN_FN:
 ENABLE_SUPER_COL:
 	DI				; write 1 to R#31
 	LD	A, 1
+
+WRITE_REG_31:
 	OUT	($99), A
 	LD	A, $80 + 31
 	OUT	($99), A
@@ -125,17 +224,16 @@ ENABLE_SUPER_COL:
 
 	AND	 A		  	; Clear carry flag
 	RET
+
+ENABLE_SUPER_MID:
+	DI				; write 3 to R#31
+	LD	A, 3
+	JR	WRITE_REG_31
 
 DISABLE_SUPER:
 	DI				; clear out R#31
 	XOR	A
-	OUT	($99), A
-	LD	A, $80 + 31
-	OUT	($99), A
-	EI
-
-	AND	 A		  	; Clear carry flag
-	RET
+	JR	WRITE_REG_31
 
 SUPER_COLOR_FN:
 	POP	HL
@@ -144,7 +242,7 @@ SUPER_COLOR_FN:
 	DEFB	"("
 
 	LD	IX,GETBYT
-	call	CALBAS0
+	CALL	CALBAS0
 
 	PUSH	AF			; save red
 
@@ -152,7 +250,7 @@ SUPER_COLOR_FN:
 	DEFB	","
 
 	LD	IX,GETBYT
-	call	CALBAS0
+	CALL	CALBAS0
 
 	PUSH	AF			; save greem
 
@@ -160,7 +258,7 @@ SUPER_COLOR_FN:
 	DEFB	","
 
 	LD	IX,GETBYT
-	call	CALBAS0
+	CALL	CALBAS0
 
 	PUSH	AF			; save blue
 
@@ -169,36 +267,44 @@ SUPER_COLOR_FN:
 
 	EXX				; protect HL
 
-	POP	DE			; DE = blue
-	POP	BC			; BC = green
-	POP	HL			; HL = red
+	POP	DE			; D = blue
+	POP	BC			; B = green
+	POP	HL			; H = red
 
-	DI				; set bit 7 of R#31 to start RGB colour register loading
+	DI				; set bit 7 of R#30 to start RGB colour register loading
 	LD	A, $80 | 1		; todo - do not assume colour res (bit 0) is set
 	OUT	($99), A
-	LD	A, $80 | 31
+	LD	A, $80 | 30
 	OUT	($99), A
 
 	LD	A, H
 	OUT	($99), A		; load in Red
-	LD	A, $80 | 30
-	OUT	($99), A		; load into R#30
+	LD	A, $80 | 29
+	OUT	($99), A		; load into R#29
 
 	LD	A, B
 	OUT	($99), A		; load in Green
-	LD	A, $80 | 30
-	OUT	($99), A		; load into R#30
+	LD	A, $80 | 29
+	OUT	($99), A		; load into R#29
 
 	LD	A, D
 	OUT	($99), A		; load in Blue
-	LD	A, $80 | 30
-	OUT	($99), A		; load into R#30
+	LD	A, $80 | 29
+	OUT	($99), A		; load into R#29
 
 	EI
 
 	EXX				; restore HL
 	AND	A		  	; Clear carry flag
 	RET
+
+SUPER_CLS_FN:
+	POP	HL
+
+	AND	A		  	; Clear carry flag
+	RET
+	RET
+
 
 VDP_SET_REG_FN:
 	POP	 HL
@@ -207,7 +313,7 @@ VDP_SET_REG_FN:
 	DEFB	"("
 
 	LD	IX,GETBYT
-	call	CALBAS0
+	CALL	CALBAS0
 
 	PUSH	AF			; register number
 
@@ -215,7 +321,7 @@ VDP_SET_REG_FN:
 	DEFB	","
 
 	LD	IX,GETBYT
-	call	CALBAS0
+	CALL	CALBAS0
 
 	PUSH	AF			; register_value
 	CALL	CHKCHAR
@@ -275,19 +381,15 @@ VDP_GET_REG_FN:
 	JR	NZ, TYPE_MISMATCH
 	INC	HL
 	INC	HL
-	INC	HL
+	INC	HL			; HL points to variable storage
 
-	// store register value at HL
+	POP	AF			; set reg 17 to A
 
-	// set reg 17 to A
-	POP	AF
-
-	LD	C, $99
 	DI
-	OUT	(C), A
+	OUT	($99), A
 	LD	A, 0x80 | 17
-	OUT	(C), A
-	IN	A, ($9B)
+	OUT	($99), A
+	IN	A, ($9B)		; request register value
 	EI
 
 	LD	(HL), a
@@ -304,7 +406,7 @@ VDP_GET_STATUS_FN:
 	DEFB	"("
 
 	LD	IX,GETBYT
-	call	CALBAS0
+	CALL	CALBAS0
 
 	PUSH	AF			; register number
 
@@ -379,7 +481,7 @@ TYPE_MISMATCH:
 MISSING_OPERAND:
 	LD	E, 24
 BASIC_ERROR:
-	LD	IX, BASIC_ERR		; Call the Basic error ha$dler
+	LD	IX, BASIC_ERR		; CALL the Basic error ha$dler
 	JP	CALBAS0
 
 CHKCHAR:
@@ -404,11 +506,17 @@ CALBAS0:
 	JP	CALLB0
 
 MY_STATEMENTS:
-	DEFW	SUPER_SCREEN
-	JP	SUPER_SCREEN_FN
+	DEFW	SUPER_PSET
+	JP	SUPER_PSET_FN
 
 	DEFW	SUPER_COLOR
 	JP	SUPER_COLOR_FN
+
+	DEFW	SUPER_SCREEN
+	JP	SUPER_SCREEN_FN
+
+	DEFW	SUPER_CLS
+	JP	SUPER_CLS_FN
 
 	DEFW	VDP_SET_REG
 	JP	VDP_SET_REG_FN
@@ -436,3 +544,8 @@ VDP_GET_REG:
 VDP_GET_STATUS:
 	DEFM	"VDP_GET_STATUS", 0
 
+SUPER_CLS:
+	DEFM	"SUPER_CLS", 0
+
+SUPER_PSET:
+	DEFM	"SUPER_PSET", 0
