@@ -11,7 +11,7 @@ WRK_DIR := ./working/$(COUNTRY)-$(RTC)-rtc/
 
 .PRECIOUS: $(WRK_DIR)%.hex $(WRK_DIR)%.mac $(WRK_DIR)%.inc
 
-all: $(WRK_DIR)main.rom $(WRK_DIR)subrom.rom $(WRK_DIR)optrom.rom
+all: $(WRK_DIR)mainrom.rom $(WRK_DIR)subrom.rom $(WRK_DIR)optrom.rom
 
 PREP := $(shell WRK_DIR="$(WRK_DIR)" $(PWD)/tools/prep.sh > /dev/null; echo "$$?")
 ifneq ($(PREP),0)
@@ -38,6 +38,9 @@ $(WRK_DIR)msx.inc: base300.inc
 	unix2dos -f -n "$@" "$@"
 
 $(WRK_DIR)%.mac: msxsyssrc/$(MSXSYS)/%.mac
+	@unix2dos -f -n "$<" "$@"
+
+$(WRK_DIR)%.l80: msxsyssrc/$(MSXSYS)/%.l80
 	@unix2dos -f -n "$<" "$@"
 
 working/music100.mac: msxsyssrc/music100/music.mac
@@ -73,7 +76,9 @@ working/%.rel: working/%.mac
 
 $(WRK_DIR)%.hex:
 
-$(WRK_DIR)bios.rel: $(addprefix $(WRK_DIR), msx.inc keyint.mac chrint.mac chrkor.mac chrrus.mac chrjapv2.mac chrger.mac)
+$(WRK_DIR)bio.rel: $(addprefix $(WRK_DIR), msx.inc keyint.mac keyfr.mac keyuk.mac keyger.mac keyrus.mac keyspa.mac)
+$(WRK_DIR)biohdr.rel: $(addprefix $(WRK_DIR), msx.inc)
+$(WRK_DIR)msxchr.rel: $(addprefix $(WRK_DIR), msx.inc chrint.mac chrkor.mac chrger.mac chrrus.mac chrjapv2.mac)
 $(WRK_DIR)basic1.rel: $(addprefix $(WRK_DIR), msx.inc)
 $(WRK_DIR)basic2.rel: $(addprefix $(WRK_DIR), msx.inc)
 $(WRK_DIR)optrom.rel: $(addprefix $(WRK_DIR), msx.inc)
@@ -87,17 +92,20 @@ working/%.rom: $(addprefix working/, %.hex)
 	@hex2bin $<
 	mv $(basename $@).bin $@
 
-$(WRK_DIR)main.hex: $(addprefix $(WRK_DIR), bios.rel basic1.rel basic2.rel)
+$(WRK_DIR)mainrom.hex: $(addprefix $(WRK_DIR), mainrom.l80 biohdr.rel slot.rel msxio.rel queuetl.rel msxgrp.rel caset.rel bio.rel msxchr.rel msxinl.rel bashdr.rel f4.rel bintrp.rel msxexp.rel maclng.rel gengrp.rel advgrp.rel biptrg.rel biprtu.rel bimisc.rel bistrs.rel spcdsk.rel dskcom.rel spcdev.rel basbio.rel msxsts.rel init.rel)
 	@cd $(WRK_DIR)
-	l80.sh main.hex MAIN/X/E/N/P:0,BIOS,BASIC1,BASIC2
+	l80.sh mainrom.hex mainrom.l80
 
-$(WRK_DIR)subrom.hex: $(addprefix $(WRK_DIR), subrom.rel)
-	@cd $(WRK_DIR)
-	l80.sh subrom.hex SUBROM/X/E/N/P:0,SUBROM
+$(WRK_DIR)main.rom: $(WRK_DIR)mainrom.rom
+	@cp $< $@
 
-$(WRK_DIR)optrom.hex: $(addprefix $(WRK_DIR), optrom.rel)
+$(WRK_DIR)subrom.hex: $(addprefix $(WRK_DIR), subrom.l80 subrom.rel)
 	@cd $(WRK_DIR)
-	l80.sh optrom.hex OPTROM/X/E/N/P:4000,OPTROM
+	l80.sh subrom.hex subrom.l80
+
+$(WRK_DIR)optrom.hex: $(addprefix $(WRK_DIR), optrom.l80 optrom.rel)
+	@cd $(WRK_DIR)
+	l80.sh optrom.hex optrom.l80
 
 working/music100.hex: working/music100.rel
 	@cd working

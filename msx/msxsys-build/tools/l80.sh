@@ -12,16 +12,28 @@ function finish {
 
 trap finish EXIT
 
-echo -e "L80\r\n${@:2}\rN\r\n\r\nbye"  | \
-    cpm 2>&1 | \
+if [[ "${@:2}" == *.l80 ]]; then
+  L80_COMMANDS=$(cat "${@:2}")
+  L80_COMMANDS="L80\r\n${L80_COMMANDS}\r\nbye\r\n"
+else
+  L80_COMMANDS="L80\r\n${@:2}\rN\r\n\r\nbye"
+fi
+
+echo -e "${L80_COMMANDS}" | cpm 2>&1 | \
     tee ${outfile} | \
-    grep --color=always -E "\?Out of memory|$" | \
-    grep --color=always -E "\?.*+Not Found|$" | \
-    grep --color=always -E "\?Loading Error|$" | \
+    grep -v "Overlapped record detected" | \
+    grep -v "Overlaying Data area" | \
+    grep -v "Overlaying Program area" | \
     grep -v "Sorry, terminal not found, using cooked mode." | \
+    grep -v "hex2bin v2\.5\.1" | \
     grep -v "A>bye\s*\$" | \
+    grep -v "A>N\s*\$" | \
+    grep -v "N?\s*\$" | \
     grep -v "A>\s*\$" | \
-    grep --color -E "[0-9]+\s+Undefined Global\(s\)|$"
+    grep --color=always -e "Undefined Global" -e ^ | \
+    grep --color=always -e "\?Out of memory|$" -e ^ | \
+    grep --color=always -e "\?.*+Not Found|$" -e ^ | \
+    grep --color=always -e "\?Loading Error|$" -e ^
 
 if grep -q ' Not Found' ${outfile}; then
   rm -f ${1}
