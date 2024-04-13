@@ -8,7 +8,14 @@ OPTENT_ALT	EQU	08010H			; SUBROM WILL LOAD OPTROM AT THIS ADDRESS IN IN MODE 1
 MSXVER	EQU	2			; MSX version
 
 
-OPTENT	EQU	07A00H			; optrom entrypoint - for building optrom
+OPTENT	EQU	04100H			; optrom entrypoint - for building optrom
+
+
+DISABLE_MEMORY_DISK	EQU	1	; DEFINED     = Enable BASIC RAMDISK DEVICE (MEM)
+					; NOT-DEFINED = BASIC RAMDISK DEVICE (MEM)
+
+SUPER_HDMI		EQU	1	; NOT-DEFINED = Disable support for HDMI Module's Super resolutions
+					; DEFINED     = Enable support for HDMI Module's Super resolutions
 
 ;	RTCENA	use RP-501
 ;		not defined  = Do not use RP-501
