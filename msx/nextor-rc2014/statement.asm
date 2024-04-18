@@ -12,25 +12,10 @@
 ; retrieve the VDP's current status register value
 ; <INT_VAR> must be an integer variable to received the current value
 ;
-; _SUPER_SCREEN(mode)
-; switch on Super colour resolution.  Mode is only active if SCREEN 8 has been selected.
-; mode = 0 to disable super colour resolution
-; mode = 1 to enable super colour resolution
-;
 ; _SUPER_COLOR(R, G, B)
 ; for use with super modes. set the current VDP's `Colour Register` to the specified RGB value.
 ; R, G, B must be bytes
 ;
-; _SUPER_CLS(R, G, B)
-; for use with super modes. Fill the entire screen with the specified RGB value.
-; R, G, B must be bytes
-;;
-; _SUPER_PSET(X, Y)
-; set the current FG colour to point x, y - differs from standard PSET in that x and y are not clipped.
-;
-; _SUPER_POINT(X, Y, R, G, B)
-; retrieve the 24 bit RGB colour code from point x, y
-; R, G, B must be integer variables
 
 PROCNM		EQU	$FD89
 FRMEVL		EQU	#4C64
@@ -43,10 +28,6 @@ BASIC_ERR	EQU	$406F
 CHRGTR		EQU	$4666
 VDP_ADDR	EQU	$99
 VDP_REGS:       equ     $9B             ; VDP register access (write only)
-
-// SUPER HDMI FLAGS
-SUPF1	EQU	0FFF8H	; BIT 7 = 1 - SUPER HDMI FOUND AND ENABLED
-SUPF2	EQU	0FFF9H	; BIT 7 = 1 - SUPER MODE ON, BITS 0-1 -> SUPER MODE (COLOR, MID, HIGH)
 
 DRV_BASSTAT:
 	PUSH	HL			; Save HL
@@ -105,146 +86,6 @@ no_match:
 	INC	DE
 	JR	compare_loop
 
-SUPER_PSET_FN:
-	POP	HL
-
-	CALL	CHKCHAR
-	DEFB	"("
-
-	LD	IX,FRMQNT
-	CALL	CALBAS0
-
-	PUSH	DE			; save X
-
-	CALL	CHKCHAR
-	DEFB	","
-
-	LD	IX,FRMQNT
-	CALL	CALBAS0
-
-	PUSH	DE			; save Y
-
-	CALL	CHKCHAR
-	DEFB	")"
-
-	POP	DE			; DE = Y
-	POP	BC			; BC = X
-
-	DI
-	LD	A, 2			; Select status register to 2
-	OUT	(VDP_ADDR), A		; R#15 to 2
-	LD	A, $80 | 15
-	OUT	(VDP_ADDR), A		; retrieve S#2
-
-_commandDrawReady:
-	IN	A, ($99)		; WAIT FOR ANY PREVIOUS COMMAND TO COMPLETE
-	RRCA
-	JR	C, _commandDrawReady
-
-	LD	A, 36			; SET INDIRECT REGISTER TO 36
-	OUT	(VDP_ADDR), A
-	LD	A, 0x80 | 17
-	OUT	(VDP_ADDR), A
-
-; ; __fromX:	DW	0
-; ; __fromY:	DW	0
-; ; _longSide:	DW	0
-; ; _shortSide:	DW	0
-; ; __color:	DB	0
-; ; _dir:		DB	0
-; ; __operation:	DB	0
-
-	LD	A, C			; X LOW
-	OUT	(VDP_REGS), A		; REG 36
-	LD	A, B			; X HIGH
-	OUT	(VDP_REGS), A		; REG 37
-	LD	A, E			; Y LOW
-	OUT	(VDP_REGS), A		; REG 38
-	LD	A, D			; Y HIGH
-	OUT	(VDP_REGS), A		; REG 39
-
-	XOR	A
-	OUT	(VDP_REGS), A		; REG 40
-	OUT	(VDP_REGS), A		; REG 41
-	OUT	(VDP_REGS), A		; REG 42
-	OUT	(VDP_REGS), A		; REG 43
-	LD	A, 255
-	OUT	(VDP_REGS), A		; REG 44
-	XOR	A
-	OUT	(VDP_REGS), A		; REG 45
-
-CMD_PSET	EQU	0b01010000
-
-	LD	A, CMD_PSET
-	OUT	(VDP_REGS), A		; REG 46
-
-	XOR	A			; restore R#15 to zero
-	OUT	(VDP_ADDR), A
-	LD	A, 0x80 | 15
-	OUT	(VDP_ADDR), A
-
-	EI
-
-	AND	 A		  	; Clear carry flag
-	RET
-
-// _SUPER_SCREEN(1) // super colour resolution
-SUPER_SCREEN_FN:
-	POP	 HL
-
-	CALL	CHKCHAR
-	DEFB	"("
-
-	LD	IX,GETBYT
-	CALL	CALBAS0
-
-	PUSH	AF
-
-	CALL	CHKCHAR
-	DEFB	")"
-
-	POP	AF
-
-	CP	2
-	JR	Z, ENABLE_SUPER_MID
-
-	CP	1			; activate super colour res when in SCREEN 8 mode.
-	JR	Z, ENABLE_SUPER_COL
-
-	CP	0			; disable super colour override of SCREEN 8 mode
-	JR	Z, DISABLE_SUPER
-
-	JP	SYNTAX_ERROR
-
-ENABLE_SUPER_COL:
-	DI				; write 1 to R#31
-	LD	A, 0x81
-	LD	(SUPF2), A
-	LD	A, 1
-	JR	WRITE_REG_31
-
-WRITE_REG_31:
-	OUT	($99), A
-	EX	AF, AF'
-	LD	A, $80 + 31
-	OUT	($99), A
-	EI
-
-	AND	 A		  	; Clear carry flag
-	RET
-
-ENABLE_SUPER_MID:
-	DI				; write 3 to R#31
-	LD	A, 0x83
-	LD	(SUPF2), A
-	LD	A, 3
-	JR	WRITE_REG_31
-
-DISABLE_SUPER:
-	DI				; clear out R#31
-	XOR	A
-	LD	(SUPF2), A
-	JR	WRITE_REG_31
 
 SUPER_COLOR_FN:
 	POP	HL
@@ -307,13 +148,6 @@ SUPER_COLOR_FN:
 
 	EXX				; restore HL
 	AND	A		  	; Clear carry flag
-	RET
-
-SUPER_CLS_FN:
-	POP	HL
-
-	AND	A		  	; Clear carry flag
-	RET
 	RET
 
 
@@ -517,17 +351,8 @@ CALBAS0:
 	JP	CALLB0
 
 MY_STATEMENTS:
-	DEFW	SUPER_PSET
-	JP	SUPER_PSET_FN
-
 	DEFW	SUPER_COLOR
 	JP	SUPER_COLOR_FN
-
-	DEFW	SUPER_SCREEN
-	JP	SUPER_SCREEN_FN
-
-	DEFW	SUPER_CLS
-	JP	SUPER_CLS_FN
 
 	DEFW	VDP_SET_REG
 	JP	VDP_SET_REG_FN
@@ -540,9 +365,6 @@ MY_STATEMENTS:
 	DEFB	0
 
 
-SUPER_SCREEN:
-	DEFM	"SUPER_SCREEN", 0
-
 SUPER_COLOR:
 	DEFM	"SUPER_COLOR", 0
 
@@ -554,9 +376,3 @@ VDP_GET_REG:
 
 VDP_GET_STATUS:
 	DEFM	"VDP_GET_STATUS", 0
-
-SUPER_CLS:
-	DEFM	"SUPER_CLS", 0
-
-SUPER_PSET:
-	DEFM	"SUPER_PSET", 0
