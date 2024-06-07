@@ -135,7 +135,9 @@ See the [PPI README file here](./ppi/README.md)
 
 See the [Keyboard README file here](./keyboard/README.md)
 
-Switches & Caps available at the [Tindie](https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard)
+A set of compatible switches available here [Switches](https://www.tindie.com/products/dinotron/switches-and-stabilizers-for-msx-rc2014-keyboard/)
+
+A set of compatible caps available here [Caps](https://www.tindie.com/products/dinotron/keycap-set-for-msx-rc2014-keyboard/)
 
 </td></tr></table>
 
