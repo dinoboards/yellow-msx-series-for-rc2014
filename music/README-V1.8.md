@@ -6,9 +6,7 @@
 
 ## YM2413 MSX-Music Module Designed for RC2014
 
-* V1.9 revision available with improved sound quality. <img src="../cassette-and-usb/images/new.png" width="30px"/>
-
-<img src="images/assembled-profile-1.9.jpg" alt="Assembled Profiled" width="80%"/>
+<img src="images/MSX-MUSIC-PROFILE.jpg" alt="Assembled Profiled" width="80%"/>
 
 ## Brief Description
 
@@ -65,14 +63,9 @@ A video of the board in operation: https://www.youtube.com/watch?v=Sx03ejKu43Y
 * Onboard ROM, with MSX-MUSIC basic extensions and bios implemented
 * Full SST39SF040 ROM (re)flashing with MSX-DOS flash utility
 
-### Changes for V1.9
+### Key difference with previous revision of this board
 
-* Increased amplification of op-amp to improve signal to noise ratio
-* Further adjustment to frequency roll-off improving higher frequency responses.
-
-### Changes for V1.8
-
-* Improved noise filtering.  A low pass filter added to the power supply to the YM2413 and audio circuit to reduce some of the digital and EMF interference that can be heard when no sound was playing.
+* Improved noise filtering.  A low pass filter added to the power supply to the YM2413 and audio circuit to reduce some of the digital and EMF interference that be heard when no sound was playing.
 * Pads for some components are slightly bigger to aid in soldering
 * Small change to the roll off frequency of the audio output to produce a slightly warmer sound - (closer to the original spec).
 
@@ -99,17 +92,18 @@ The SST39SF040 ROM is supplied flashed with MSX-MUSIC extensions for MSX BASIC.
 |  1     | 3.5mm audio socket|
 |  2     | 1uF Electrolytic Capacitors|
 |  2     | 2.2uF  Electrolytic Capacitors|
-|  1     | 220uF  Electrolytic Capacitors LOW ESR|
-|  1     | 1000uF  Electrolytic Capacitors LOW ESR|
+|  2     | 220uF  Electrolytic Capacitors LOW ESR|
+|  2     | 1000uF  Electrolytic Capacitors LOW ESR|
 |  8     | 0.1uF Ceramic Capacitors|
 |  2     | 33pF Ceramic Capacitors|
-|  2     | 330pf |
 |  2     | 10-22nF Ceramic Capacitors (C9, C10)*|
+|  1     | 1nF Ceramic Capacitor|
 |  1     | 1x2 Right Angle Header |
 |  1     | 560 uH Inductor |
 |  1     | 1K Ω Resistor |
-|  4     | 2.2K Ω Resistor |
-|  2     | 169K Ω Resistor |
+|  1     | 100K Ω Resistor |
+|  4     | 2K2 Ω Resistor |
+|  1     | 169K Ω Resistor |
 |  2     | 22K Ω Resistor |
 |  1     | Yamaha YM2413 |
 |  1     | 74HCT273|
@@ -257,19 +251,18 @@ The noise from nearby digital circuits of your RC2014 will be picked up and ampl
 
 <table>
   <tr>
-    <td width="50%"><a href="images/assembled-top-1.9.jpg"><img src="images/assembled-top-1.9.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="images/MSX-MUSIC-ASSEMBLED.jpg"><img src="images/MSX-MUSIC-ASSEMBLED.jpg" width="90%"/></a></td>
     <td width="50%"><a href="images/MSX-MUSIC-INSTALLED.jpg"><img src="./images/MSX-MUSIC-INSTALLED.jpg" width="90%"/></a></td>
   </tr>
   <tr>
-    <td width="50%"><a href="images/pcb-front-1.9.jpg"><img src="images/pcb-front-1.9.jpg" width="90%"/></a></td>
-    <td width="50%"><a href="images/pcb-back-1.9.jpg"><img src="images/pcb-back-1.9.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="images/MSX-MUSIC-FRONT.jpg"><img src="images/MSX-MUSIC-FRONT.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="images/MSX-MUSIC-BACK.jpg"><img src="images/MSX-MUSIC-BACK.jpg" width="90%"/></a></td>
   </tr>
 </table>
 
 
 ## Resources
 
-* Schematic: [schematic (v1.7).pdf](./schematic-v1.9.pdf "Schematic V1.9")
 * Schematic: [schematic (v1.7).pdf](./schematic-v1.7.pdf "Schematic V1.7")
 * Datasheet: [YM2413-Yamaha.pdf](./YM2413-Yamaha.pdf "YM2413-Yamaha Datasheet")
 
