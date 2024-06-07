@@ -269,7 +269,7 @@ The noise from nearby digital circuits of your RC2014 will be picked up and ampl
 
 ## Resources
 
-* Schematic: [schematic (v1.7).pdf](./schematic-v1.9.pdf "Schematic V1.9")
+* Schematic: [schematic (v1.9).pdf](./schematic-v1.9.pdf "Schematic V1.9")
 * Schematic: [schematic (v1.7).pdf](./schematic-v1.7.pdf "Schematic V1.7")
 * Datasheet: [YM2413-Yamaha.pdf](./YM2413-Yamaha.pdf "YM2413-Yamaha Datasheet")
 
