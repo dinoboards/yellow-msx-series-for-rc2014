@@ -65,6 +65,22 @@ Also included is a 20Mhz and an alternative 16Mhz oscillator.
 
 I have tested running at 20Mhz on my specific back-plane and set of modules without any problems.  But due to differences in combination and configuration of RC2014 kits - you may find with your specific situation, there are signal degradation issues at 20Mhz that may cause non-reliable operation.  With the supplied 16Mhz alternative oscillator, you should be able to achieve good operation, but at a slightly lower speed.
 
+### Compatibility with latest build of RomWBW identified
+
+> 2024-07-21: Please note, a recent incompatibility of the Turbo CPU with the latest build of RomWBW has been identified.  The issue appears with the serial SIO/2 driver not functioning shortly after booting.  
+
+I am not sure yet what the issue is, nor exactly when it got introduced.  But a quick fix is to build with the latest version of RomWBW with the interrupts disabled.  To do this follow these steps:
+
+1. Within the file Source/HBIOS/cfg_rcz80.asm, look for this line:
+
+```
+INTMODE         .EQU    1               ; INTERRUPTS: 0=NONE, 1=MODE 1, 2=MODE 2, 3=MODE 3 (Z280)
+```
+
+2. Change the value from 1 to 0 - this will disable the SIO/2 interrupt logic - and it will just poll the SIO/2 chip.
+
+3. Build a new version, as per the build steps for RomWBW and re-flash your ROM chip.
+
 ### Bill of Materials
 
 |Count   | Name  |
