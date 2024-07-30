@@ -25,25 +25,23 @@ The V9938 and V9958 are very similar in capability.  See the relevant datasheets
 ### Key difference with previous revision of this board
 
 * Support for either a V9958 or a V9938 Video Processor
-* A LM311 Voltage Comparator for improved CSYNC processing, especially for V9938 chips.
+* Pads for some components are slightly bigger to aid in soldering
+* Re-arrangements of some components to reduced output noise from nearby digital signals
 
-## Images
-<table>
-  <tr><td style="text-align: center"><img src="./pictures/rgb-v3.8-profile.jpg" width="60%"/></td></tr>
-</table>
+## Assembly Images
 
 <table>
   <tr>
-    <td width="50%"><a href="pictures/rgb-v3.8-base-kit-parts.jpg"><img src="./pictures/rgb-v3.8-base-kit-parts.jpg" width="90%"/></a></td>
-    <td width="50%"><a href="pictures/rgb-v3.8-parts-packaged.jpg"><img src="./pictures/rgb-v3.8-parts-packaged.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="pictures/RGB-V9938-ASSEMBLED.jpg"><img src="./pictures/RGB-V9938-ASSEMBLED.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="pictures/RGB-V9938-PROFILE.jpg"><img src="./pictures/RGB-V9938-PROFILE.jpg" width="90%"/></a></td>
   </tr>
   <tr>
-    <td width="50%"><a href="pictures/rgb-v3.8-pcb-front.jpg"><img src="./pictures/rgb-v3.8-pcb-front.jpg" width="90%"/></a></td>
-    <td width="50%"><a href="pictures/rgb-v3.8-pcb-back.jpg"><img src="./pictures/rgb-v3.8-pcb-back.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="pictures/RGB-V9958-ASSEMBLED.jpg"><img src="./pictures/RGB-V9958-ASSEMBLED.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="pictures/RGB-V9958-PROFILE.jpg"><img src="./pictures/RGB-V9958-PROFILE.jpg" width="90%"/></a></td>
   </tr>
   <tr>
-    <td width="50%"><a href="pictures/rgb-v3.8-v9938-assembled.jpg"><img src="./pictures/rgb-v3.8-v9938-assembled.jpg" width="90%"/></a></td>
-    <td width="50%"><a href="pictures/rgb-v3.8-v9958-assembled.jpg"><img src="./pictures/rgb-v3.8-v9958-assembled.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="pictures/RGB-PCB-FRONT.jpg"><img src="./pictures/RGB-PCB-FRONT.jpg" width="90%"/></a></td>
+    <td width="50%"><a href="pictures/RGB-PCB-BACK.jpg"><img src="./pictures/RGB-PCB-BACK.jpg" width="90%"/></a></td>
   </tr>
 </table>
 
@@ -64,13 +62,13 @@ The V9938 and V9958 are very similar in capability.  See the relevant datasheets
 
 </table>
 
-### Bill of Materials (Base Kit)
+### Bill of Materials
 
 |Count   | Name  |
 |:------:|-------|
 | 2	     | 22pF |
 | 1	     | 47pF |
-| 10     | 0.1uF |
+| 8	     | 0.1uF |
 | 3      | 10uF   |
 | 1	     | 10uF (LOW ESR) |
 | 4	     | 220uF |
@@ -81,39 +79,29 @@ The V9938 and V9958 are very similar in capability.  See the relevant datasheets
 | 1      | 15-PIN DSUB  |
 | 3	     | 2N3906 |
 | 1	     | 2N3904 |
-| 6	     | 10k Ω (3.4mm) |
-| 3	     | 12k Ω (3.4mm) |
-| 3	     | 27k Ω (3.4mm) |
-| 1	     | 4k7 Ω (3.4mm) |
-| 1	     | 2k2 Ω (3.4mm) |
-| 7	     | 1k Ω (3.4mm) |
-| 1	     | 470 Ω (3.4mm) |
-| 8	     | 100 Ω (3.4mm) |
-| 1	     | LM311N |
+| 6	     | 10K Ω |
+| 3	     | 12K Ω |
+| 3	     | 27k Ω |
+| 1	     | 4k7 Ω |
+| 5	     | 1K Ω |
+| 1	     | 470 Ω |
+| 8	     | 100 Ω |
 | 1	     | ATF16V8 |
 | 1      | V9958 or V9938   |
 | 4      | 41464C  |
 | 1	     | 21.47727MHz |
 | 1	     | Right Angle 20x2 Header |
 | 1	     | Right Angle 1x20 Header |
-| 1	     | 8 POS IC SOCKET |
-| 4	     | 18 POS IC SOCKET |
 | 1	     | 20 POS IC SOCKET |
+| 4	     | 18 POS IC SOCKET |
 | 1	     | 64 POS IC SOCKET |
-
-### Bill of Materials (VDP + RAM)
-
-|Count   | Name  |
-|:------:|-------|
-| 1	     | V9938 or V9958 VDP |
-| 4	     | 41464C RAM |
 
 
 ### Output connections
 
 You will want to think about how you plan to connect this board to your chosen monitor.  The video signals produced by 80's hardware is not trivial to connect to modern LCD monitors.  For such monitors you will need a converter to upscale the output.  Although VGA Monitors can accept a RGB signal, they are unlikely to support the lower frequency of 15Khz produced by these modules.
 
-The RGBs module provides connection via the 15-pin DSUB/VGA connector.  This output is well suited to connect via a VGA cable to a compatible HDMI/VGA up-converter that accepts a RGBs signal over the 15pin connection, such as the GBS-8200 or HD-VC9900 converters.  For more information on the DSUB RGB/VGA see [RetroRGB's VGA article](https://www.retrorgb.com/vgaconnector.html)
+The RGBs module provides connection via the 15-pin DSUB/VGA connector.  This output is well suited to connect via a VGA cable to a compatible HDMI/VGA up-converter that accepts a RGBs signal over the 15pin connection, such as the OSSC, GBS-8200 or HD-VC9900 converters.  For more information on the DSUB RGB/VGA see [RetroRGB's VGA article](https://www.retrorgb.com/vgaconnector.html)
 
 The [RetroRGB upscalers article](https://www.retrorgb.com/upscalers.html) has a good description for some of the converter options.
 
@@ -126,13 +114,21 @@ The GBS-8200 can also be easily modified to produce more customisable and higher
 
 ### Video Upscaling Testing status
 
-I have tested both V9958 and V9938 versions of the kit with the low cost GBS-8200 and HD-VC9900 upscalers.  These have produced solid stable images for the respective VGA and HDMI output.  They seem very tolerant of CSYNC voltage signal levels.
+1. I have tested both V9958 and V9938 versions of the kit with the low cost GBS-8200 and HD-VC9900 upscalers.  These have produced solid stable images for the respective VGA and HDMI output.  They seem very tolerant of CSYNC voltage signal levels.
+
+2. I also successfully tested the previous iteration of the V9958 RGB kit on the OSSC. With the new iteration of the Video kit, there have emerged some compatibility issues.
+
+> Please note that the version of the OSSC I have is from a few years ago.  I note the newer revision of the OSSC have more refinements with its processing of the CYSNC signal - your milage may vary.  No guarantee can be stated here.
+
+With the V9958 version of this kit, I was able to get the kit to work through my version of the OSSC, but I did need to **remove the jumper from J3** - the jumper at the top right.
+
+With the V9938 version of this kit, I am currently not able to get the OSSC to sync.  Further refinements will need to be figured out.
 
 My recommendation is to use GBS-8200 or the HD-VC9900 upscalers.  The quality is fine and I do most of my testing on these converters.  Just google their codes and you will find the usual retailers/marketplaces (eg: ebay/amazon/aliexpress) have plenty of purchase options.
 
-Other upscalers, such as the OSSC and retroTink may work, but I am unable to verify and confirm.  Your milage may very.  Adapter cables would need to be constructed.
-
-I have **not** tested the unit on a real RGB CRT monitor.
+I have **not** tested this kit with:
+1. A real CRT monitor.
+2. retroTink
 
 ## Sample Apps
 
@@ -168,7 +164,8 @@ For specific details on programming the chip, I recommend:
 
 ## Resources
 
-* Schematic (revision 3.8): [schematic-video-rgb-v3.8.pdf](./schematic-video-rgb-v3.8.pdf "Schematic (revision 3.8")
+* Schematic (revision 3.3): [schematic-video-rgb-v3.3.pdf](./schematic-video-rgb-v3.3.pdf "Schematic (revision 3.3")
+
 
 ## Construction notes
 
@@ -176,11 +173,10 @@ Please note that due to the finer pitch pins of the V9958, the soldering of this
 
 Extra care needed when inserting the V9958 into its socket - there are lots of pins, take your time to avoid bending pins.
 
-> **Extremely important to ensure the jumpers are in the correction position for your chosen Video Display Processor.  Incorrect selection may result in damage to your video processor.  See the silkscreen for the 2 relevant jumpers.  Short the top 2 pins only for a V9958.  Short the bottom 2 pins only for a V9938.**
+> **Extremely important to ensure the jumpers are in the correction position for your chosen Video Display Processor.  Incorrect selection may result in damage to your video processor.  See the silkscreen for the 3 relevant jumpers.  Short the top 2 pins only for a V9958.  Short the bottom 2 pins only for a V9938.**
 
 ## License
-
-Copyright 2024 Dean Netherton
+Copyright 2023 Dean Netherton
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

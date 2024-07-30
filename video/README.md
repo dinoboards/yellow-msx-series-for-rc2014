@@ -5,7 +5,29 @@ Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project
 
 There have been a few variations of the Video Module.
 
-## V99x8 MSX RGB Module for RC2014 (V3.3)
+## V99x8 MSX RGB Module for RC2014 (V3.8)
+
+This kit supports a RGBs output via a standard 15-pin DSUB/VGA connector. A standard VGA cable can be used to plug directly into a compatible device (converter or native 15kHz supported monitor).
+
+It can accommodate a V9938 or the slightly more advanced chip the V9958.
+
+This kit is very similar to version V3.3, but with improved support for the V9938 and the processing of the CSYNC signal improves image stability.
+
+* Kits available at: https://www.tindie.com/products/dinotron/v99x8-msx-rgb-video-module-for-rc2014/
+
+<table>
+  <tr><td style="text-align: center"><img src="./pictures/rgb-v3.8-profile.jpg" width="60%"/></td></tr>
+</table>
+
+[Click here for full Details](./README-RGB.md)
+
+<br/>
+<hr/>
+<br/>
+
+# Retired Modules
+
+## V99x8 MSX RGB Module for RC2014 (V3.3) (Retired)
 
 This kit supports a RGBs output via a standard 15-pin DSUB/VGA connector. A standard VGA cable can be used to plug directly into a compatible device (converter or native 15kHz supported monitor).
 
@@ -14,15 +36,12 @@ It can accommodate a V9938 or the slightly more advanced chip the V9958.
 * Kits available at: https://www.tindie.com/products/dinotron/v99x8-msx-rgb-video-module-for-rc2014/
 
 <table>
-  <tr><td style="text-align: center"><img src="./pictures/RGB-V9938-PROFILE.jpg" width="60%"/></td></tr>
+  <tr><td style="text-align: left"><img src="./pictures/RGB-V9938-PROFILE.jpg" width="30%"/></td></tr>
 </table>
 
-[Click here for full Details](./README-RGB.md)
+[Click here for full Details](./README-RGB-V3.3.md)
 
-
-# Retired Modules
-
-## V9958 MSX RGB Module for RC2014 (V2.2)
+## V9958 MSX RGB Module for RC2014 (V2.2) (Retired)
 
 This kit supports a RGBs output via a standard 15-pin DSUB/VGA connector. A standard VGA cable can be used to plug directly into a compatible device (converter or native 15kHz supported monitor).
 
@@ -31,7 +50,7 @@ It also has pin outs for installing optional headers for various V9958 signals, 
 * Kits available at: https://www.tindie.com/products/dinotron/v9958-msx-rgb-video-module-for-rc2014/
 
 <table>
-  <tr><td style="text-align: center"><img src="./pictures/video-rgb-profile.jpg" width="60%"/></td></tr>
+  <tr><td style="text-align: left"><img src="./pictures/video-rgb-profile.jpg" width="30%"/></td></tr>
 </table>
 
 [Click here for full Details](./README-RGB-V2.md)
@@ -45,7 +64,7 @@ Due to space restrictions, the RGBs output is via a mini-din connector, thus nec
 * Kits available at: https://www.tindie.com/products/dinotron/v9958-msx-video-advanced-module-for-rc2014/
 
 <table>
-  <tr><td style="text-align: center"><img src="./pictures/video-adv-profile.jpg" width="60%"/></td></tr>
+  <tr><td style="text-align: left"><img src="./pictures/video-adv-profile.jpg" width="30%"/></td></tr>
 </table>
 
 [Click here for full Details](./README-ADV.md)
