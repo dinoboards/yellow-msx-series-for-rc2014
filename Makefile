@@ -4,6 +4,12 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
+#set JOBS to "-j" is not set
+JOBS ?= -j
+
+#pass JOBS down to all submakes
+export JOBS
+
 .PHONY: msx
 msx:
 	@$(MAKE) -C msx --no-print-directory

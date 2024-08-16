@@ -3,7 +3,7 @@
 .PHONY: apps
 apps:
 	@mkdir -p bin
-	$(MAKE) --no-print-directory -j -C apps
+	$(MAKE) --no-print-directory $(JOBS) -C apps
 	cp -up ./apps/bin/*.com ./bin/
 	cp -up ./apps/bin/*.sys ./bin/
 
@@ -48,6 +48,6 @@ apps/3rdparty/testram:
 .PHONY: apps/3rdpartyapps
 THIRDPARTYAPPS = apps/3rdparty/akid.com apps/3rdparty/vgmplay apps/3rdparty/memtest apps/3rdparty/pt3play.com apps/3rdparty/sofarom apps/3rdparty/testram
 3rdpartyapps:
-	$(MAKE) $(THIRDPARTYAPPS) -B -j
+	$(MAKE) $(THIRDPARTYAPPS) -B $(JOBS)
 
 

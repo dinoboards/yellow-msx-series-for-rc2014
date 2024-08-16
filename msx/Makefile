@@ -9,7 +9,7 @@ MAKEFLAGS += -s
 all: apps pmsxsysromimages nextor-mfr rom-image-pal rom-image-ntsc bin/rcmusic.rom bin/bbcbasic.com usbimage
 
 pmsxsysromimages:
-	@$(MAKE) -j -O msxsysromimages --no-print-directory
+	@$(MAKE) $(JOBS) -O msxsysromimages --no-print-directory
 	printf "Built bin/msxsyssrc-rc2014-<country>-<with>-rtc.rom (s)\r\n\r\n"
 
 jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/turbo-cpu-mwait.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed bin/v9958-cs-v3.8-and-up.jed
@@ -42,7 +42,7 @@ define BUILD_versions =
 bin/$1.nextor.rom: $(addprefix nextor-rc2014/extras/apps/,$(INCLUDED_APPS)) $(addprefix nextor-rc2014/extras/system/,$(INCLUDED_SYSTEM))  $(addprefix nextor-rc2014/extras/,$(INCLUDED_ROOT))
 	@mkdir -p ./bin
 	cd nextor-rc2014
-	$(MAKE) ./bin/$1.nextor.rom -O -j --no-print-directory
+	$(MAKE) ./bin/$1.nextor.rom -O $(JOBS) --no-print-directory
 	cp -u ./bin/$1.nextor.rom ../bin
 endef
 
@@ -53,7 +53,7 @@ $(eval $(call BUILD_versions,rc2014))
 nextor-mfr:
 	mkdir -p ./bin
 	cd nextor/source
-	BUILD_TYPE=std $(MAKE) ../bin/mfr.nextor.rom -O -j --no-print-directory -f Makefile-rc2014.mk
+	BUILD_TYPE=std $(MAKE) ../bin/mfr.nextor.rom -O $(JOBS) --no-print-directory -f Makefile-rc2014.mk
 	cp -u ../bin/mfr.nextor.rom ../../bin/
 	BUILD_TYPE=std $(MAKE) ../bin/mfr.dsk --no-print-directory -f Makefile-rc2014.mk
 	cp -u ../bin/mfr.dsk ../../bin
@@ -186,7 +186,7 @@ rom-msxsyssrc-$1-$2-rtc: bin/rc2014.nextor.rom cbios msxsys-$1-$2-rtc ./rc2014-e
 .PHONY: msxsys-$1-$2-rtc
 msxsys-$1-$2-rtc:
 	@cd msxsys-build
-	RTC=$2 COUNTRY=$1 $(MAKE) --no-print-directory ./working/$1-$2-rtc/main.rom ./working/$1-$2-rtc/optrom.rom ./working/$1-$2-rtc/subrom.rom -O -j
+	RTC=$2 COUNTRY=$1 $(MAKE) --no-print-directory ./working/$1-$2-rtc/main.rom ./working/$1-$2-rtc/optrom.rom ./working/$1-$2-rtc/subrom.rom -O $(JOBS)
 	cp -up ./working/$1-$2-rtc/main.rom    ../bin/$1-$2-rtc-main.rom
 	cp -up ./working/$1-$2-rtc/optrom.rom  ../bin/$1-$2-rtc-optrom.rom
 	cp -up ./working/$1-$2-rtc/subrom.rom  ../bin/$1-$2-rtc-subrom.rom
