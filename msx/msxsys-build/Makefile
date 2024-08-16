@@ -77,6 +77,7 @@ working/%.rel: working/%.mac
 $(WRK_DIR)%.hex:
 
 $(WRK_DIR)bio.rel: $(addprefix $(WRK_DIR), msx.inc keyint.mac keyfr.mac keyuk.mac keyger.mac keyrus.mac keyspa.mac)
+$(WRK_DIR)msxio.rel: $(addprefix $(WRK_DIR), msx.inc keyint.mac keyfr.mac keyuk.mac keyger.mac keyrus.mac keyspa.mac)
 $(WRK_DIR)biohdr.rel: $(addprefix $(WRK_DIR), msx.inc)
 $(WRK_DIR)msxchr.rel: $(addprefix $(WRK_DIR), msx.inc chrint.mac chrkor.mac chrger.mac chrrus.mac chrjapv2.mac)
 $(WRK_DIR)basic1.rel: $(addprefix $(WRK_DIR), msx.inc)
