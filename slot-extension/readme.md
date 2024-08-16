@@ -100,7 +100,7 @@ You will need to download into your system onto your Compact Flash drive, the fo
 
 * `opfxsd.com` from https://www.msxcartridgeshop.com/bin/opfxsd.zip
 * `mfr.dsk` (from the releases section of this repo)
-* `mfr.nextor-2.1.1.rom` (rename it to short file name such as `mfr.com`) (also from the release section of this repo)
+* `mfr.nextor-<VERSION>.rom` (rename it to short file name such as `mfr.rom`) (also from the release section of this repo)
 
 then execute the following at the MSXDOS command prompt:
 
