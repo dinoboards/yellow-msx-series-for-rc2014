@@ -53,8 +53,8 @@ $(eval $(call BUILD_versions,rc2014))
 nextor-mfr:
 	mkdir -p ./bin
 	cd nextor/source
-	BUILD_TYPE=std $(MAKE) ../bin/mfr.nextor-$(VERSION).rom -O -j --no-print-directory -f Makefile-rc2014.mk
-	cp -u ../bin/mfr.nextor-$(VERSION).rom ../../bin/
+	BUILD_TYPE=std $(MAKE) ../bin/mfr.nextor.rom -O -j --no-print-directory -f Makefile-rc2014.mk
+	cp -u ../bin/mfr.nextor.rom ../../bin/
 	BUILD_TYPE=std $(MAKE) ../bin/mfr.dsk --no-print-directory -f Makefile-rc2014.mk
 	cp -u ../bin/mfr.dsk ../../bin
 
@@ -307,12 +307,16 @@ release: usbimage
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/msxsyssrc-*.rom
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/yellow-*.rom
 	zip -j ../release/msx-rc2014-$${version}.zip ./bin/rcmusic.rom
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/mfr.nextor.rom
+	zip -j ../release/msx-rc2014-$${version}.zip ./bin/mfr.dsk
 	(cd ./bin && tar -cvf ../../release/msx-rc2014-$${version}.tar *.jed)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar *.doc)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar *.com)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar msxsyssrc-*.rom)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar yellow-*.rom)
 	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar rcmusic.rom)
+	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar mfr.nextor.rom)
+	(cd ./bin && tar -uvf ../../release/msx-rc2014-$${version}.tar mfr.dsk)
 	(cd ./bin && gzip -qf ../../release/msx-rc2014-$${version}.tar)
 	rm -f ../release/usbimage-$${version}.zip
 	(cd ./bin/usbimage && ls )
@@ -323,6 +327,12 @@ release: usbimage
 	(cd ./bin/usbimage/docs && zip -9 -r ../../../../release/docs-$${version}.zip *)
 	(cd ./bin/usbimage/docs && tar -cvf ../../../../release/docs-$${version}.tar *)
 	(cd ./bin/usbimage/docs && gzip -qf ../../../../release/docs-$${version}.tar)
+	cp ../release/msx-rc2014-$${version}.zip ../release/msx-rc2014.zip
+	cp ../release/msx-rc2014-$${version}.tar.gz ../release/msx-rc2014.tar.gz
+	cp ../release/usbimage-$${version}.zip ../release/usbimage.zip
+	cp ../release/usbimage-$${version}.tar.gz ../release/usbimage.tar.gz
+	cp ../release/docs-$${version}.zip ../release/docs.zip
+	cp ../release/docs-$${version}.tar.gz ../release/docs.tar.gz
 
 bin/bbcbasic.com: $(wildcard bbcbasic-z80/*)
 	@$(MAKE) -C bbcbasic-z80 --no-print-directory

@@ -41,10 +41,34 @@ jobs:
       - name: build-release-candidate
         run: docker run --rm --privileged=true -v ./:/src/ -t vipoo/yellow-msx-rc2014-tool-chain:0.0.21 make release-build-package
 
-      - name: Archive release candiate elements
-        uses: actions/upload-artifact@v3
+      - name: Archive (msx/bin) directly
+        uses: actions/upload-artifact@v4
         with:
-          name: release-candidate
+          name: msx-bin
           path: |
-            release
             msx/bin
+
+      - name: Archive Documents
+        uses: actions/upload-artifact@v4
+        with:
+          compression-level: 0
+          name: docs
+          path: |
+            release/docs.zip
+
+      - name: Archive usb-image
+        uses: actions/upload-artifact@v4
+        with:
+          compression-level: 0
+          name: usbimage
+          path: |
+            release/usbimage.zip
+
+      - name: Archive msx-rc2014
+        uses: actions/upload-artifact@v4
+        with:
+          compression-level: 0
+          name: msx-rc2014
+          path: |
+            release/msx-rc2014.zip
+
