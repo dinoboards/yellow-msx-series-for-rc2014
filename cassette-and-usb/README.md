@@ -269,7 +269,7 @@ The full kits includes everything you need (PCB, capacitors, IC sockets, CH376S 
 * A working MSX system on RC2014 bus
 * An updated system ROM for the [MSX Memory Board for RC2014](../memory/README.md)
 
-> You need a ROM image released on or after `2023-10-20`.  You can find prebuilt images under the [project's github releases.](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
+> You need a ROM image released on or after `2023-10-20`.  You can find prebuilt images under the [project's github releases.](https://github.com/dinoboards/yellow-msx-series-for-rc2014/releases)
 
 > The cassette part of the module, as it requires specific MSX signals will only work in conjunction with the full MSX on RC2014 kits.
 

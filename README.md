@@ -1,7 +1,5 @@
 # Yellow MSX Series for RC2014
 
-[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev)
-
 Hackaday Project: [msx-compatible-boards-for-rc2014](https://hackaday.io/project/175574-msx-compatible-boards-for-rc2014)
 
 
@@ -198,7 +196,7 @@ Kits are available from the official RC2014 stores at [z80Kits](https://z80kits.
 
 This repo contains submodules.  So to clone the repo's submodules, you may need to do the following:
 
-`git clone --recursive git@github.com:vipoo/yellow-msx-series-for-rc2014.git`
+`git clone --recursive git@github.com:dinoboards/yellow-msx-series-for-rc2014.git`
 
 If you had already cloned it, without the `--recursive` switch:
 
@@ -208,7 +206,7 @@ If you had already cloned it, without the `--recursive` switch:
 
 **Please note: github submodule configuration assumes you are using ssh to access the repos**
 
-If you get a permission denied error when attempting to clone the submodules, it may be due to your github access method.  The submodules are referenced using git ssh paths (eg:  git@github.com:vipoo/Nextor.git), as such if you attempt to clone these submodules using only https access, you may get a permission denied error.
+If you get a permission denied error when attempting to clone the submodules, it may be due to your github access method.  The submodules are referenced using git ssh paths (eg:  git@github.com:dinoboards/Nextor.git), as such if you attempt to clone these submodules using only https access, you may get a permission denied error.
 
 To setup github access using ssl - follow the instruction on github at: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
 

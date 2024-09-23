@@ -23,7 +23,7 @@ In addition to keeping time, it also has a small amount of onboard RAM, that is 
 
 ### Operation
 
-Detail of building, configuring, calibrating the board can be found on the [github project page](https://github.com/vipoo/yellow-msx-series-for-rc2014/blob/main/rtc/README.md)
+Detail of building, configuring, calibrating the board can be found on the [github project page](https://github.com/dinoboards/yellow-msx-series-for-rc2014/blob/main/rtc/README.md)
 
 #### Reset on power
 

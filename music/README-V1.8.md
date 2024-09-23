@@ -201,7 +201,7 @@ Or you can use the inherent capabilities of the MSX-MUSIC module to update its o
 
 To update the image on the ROM to a later version -- follow these steps:
 
-1. Download (or assembly your own version) from the github's release page, https://github.com/vipoo/yellow-msx-series-for-rc2014/releases, the file `msx-rc2014-XX-XX-XX.zip`
+1. Download (or assembly your own version) from the github's release page, https://github.com/dinoboards/yellow-msx-series-for-rc2014/releases, the file `msx-rc2014-XX-XX-XX.zip`
 2. Extract the `rcmusic.rom` and `muflash.com` files from this zip file
 3. Copy the `rcmusic.rom` and `muflash.com` files to your system (Compact Flash or via serial to RAMDISK)
 4. At the MSX-DOS prompt - run the command `muflash rcmusic.rom`
@@ -218,7 +218,7 @@ To do this process, the Compact Flash module (or some other storage solution) is
 
 To perform a MSX-Memory ROM update using the MSX-MUSIC flashing capability, following these steps:
 
-1. Download (or assemble your own version) from the github's release page, https://github.com/vipoo/yellow-msx-series-for-rc2014/releases, the file `msx-rc2014-XX-XX-XX.zip`
+1. Download (or assemble your own version) from the github's release page, https://github.com/dinoboards/yellow-msx-series-for-rc2014/releases, the file `msx-rc2014-XX-XX-XX.zip`
 2. Extract the `muflash.com` and the rom image you would like to apply to your MSX-Memory system (eg: `msxsyssrc-rc2014-japan-with-rtc.rom`)
 3. Copy the ROM image to your Compact Flash card (renaming to 8.3 file name eg: `msxjapan.rom`)
 4. From the MSX-DOS prompt run the command `muflash msxjapan.rom`

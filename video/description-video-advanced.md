@@ -102,7 +102,7 @@ Extra care needed when inserting the V9958 into its socket - there are lots of p
 
 You need to identify if you plan to build a PAL or NTSC version and select the correct resistor and capacitors for R13 and C14.
 
-For more notes and any revisions please have a look at the [github page](https://github.com/vipoo/yellow-msx-series-for-rc2014/blob/main/video/README.md)
+For more notes and any revisions please have a look at the [github page](https://github.com/dinoboards/yellow-msx-series-for-rc2014/blob/main/video/README.md)
 
 ### Disclaimer
 

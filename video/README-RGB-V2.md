@@ -110,7 +110,7 @@ The GBS-8200 can also be easily modified to produce more customisable and higher
 
 For a base ROMWBW build you can find compatible demo apps in the [apps-rc2014](../apps-rc2014) directory - they can be run under CP/M on a RC2014 system.  The prebuilt binaries can be found in the [bin](../bin) directory.
 
-For a MSX-DOS system, binaries for various apps and demos can be found in the [github releases](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
+For a MSX-DOS system, binaries for various apps and demos can be found in the [github releases](https://github.com/dinoboards/yellow-msx-series-for-rc2014/releases)
 
 ## Port Mapping
 

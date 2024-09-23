@@ -1,10 +1,6 @@
 
 # Yellow MSX for RC2014 ROM Image Builder
 
-[![CircleCI](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev.svg?style=svg)](https://circleci.com/gh/vipoo/yellow-msx-series-for-rc2014/tree/dev)
-
-</br>
-
 ### MSX BIOS AND MSX-DOS
 
 This sections contains the software required for the Yellow MSX Series of boards allowing for MSX BIOS bootup.
@@ -13,7 +9,7 @@ This sections contains the software required for the Yellow MSX Series of boards
 
 This repo contains submodules.  So to clone the repo's submodules, you may need to do the following:
 
-`git clone --recursive git@github.com:vipoo/yellow-msx-series-for-rc2014.git`
+`git clone --recursive git@github.com:dinoboards/yellow-msx-series-for-rc2014.git`
 
 If you had already cloned it, without the `--recursive` switch:
 
@@ -33,7 +29,7 @@ This submodule contains a fork of the C-BIOS open source alternative to MSX BIOS
 
 But due to the lack of MSX-BASIC, some applications may not work.
 
-[README](https://github.com/vipoo/cbios/tree/main)
+[README](https://github.com/dinoboards/cbios/tree/main)
 
 http://cbios.sourceforge.net/
 
@@ -48,7 +44,7 @@ This local fork, also includes drivers specifically for RC2014, including:
 
 There are plans to add additional RC2014 hardware support, including Floppy drives, Serial and others.
 
-[README](https://github.com/vipoo/Nextor/blob/dean/1/v2.1/README.md)
+[README](https://github.com/dinoboards/Nextor/blob/dean/1/v2.1/README.md)
 
 ### MSXSYSSRC
 
@@ -60,7 +56,7 @@ https://sourceforge.net/projects/msxsyssrc/
 
 ## Updating your ROM
 
-You can assembly a new ROM image by following the instructions below, or download one of the pre-assembled [released packages](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
+You can assembly a new ROM image by following the instructions below, or download one of the pre-assembled [released packages](https://github.com/dinoboards/yellow-msx-series-for-rc2014/releases)
 
 There are 2 different ways to compile and assemble the rom.  Docker or host.  With Docker, you only need to have docker installed.  Alternatively, you can install the full tool chain (z88dk, pasmo, linux packages etc)
 

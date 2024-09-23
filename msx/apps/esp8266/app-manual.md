@@ -5,7 +5,7 @@ A utility to allow access to some of the key functions of the RC2014 ESP8266 bas
 \small
 \begin{importantblock}
 \begin{raggedright}
-You will need to connect your RC2014 Wi-Fi Module to your RC2014 serial interface (USB FTDI or SIO/2 Port B).  And the RC2014 Wi-Fi Module's ESP8266 must be flashed as per the GitHub repository at https://github.com/vipoo/yellow-msx-esp8266-wifi-module
+You will need to connect your RC2014 Wi-Fi Module to your RC2014 serial interface (USB FTDI or SIO/2 Port B).  And the RC2014 Wi-Fi Module's ESP8266 must be flashed as per the GitHub repository at https://github.com/dinoboards/yellow-msx-esp8266-wifi-module
 \end{raggedright}
 \end{importantblock}
 \normalsize

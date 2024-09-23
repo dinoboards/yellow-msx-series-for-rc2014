@@ -42,7 +42,7 @@ Due to its modular nature, you can customise and extend the system in many ways,
 
 More details can be found on the official GitHub page:
 
-https://github.com/vipoo/yellow-msx-series-for-rc2014/tree/main?tab=readme-ov-file\#yellow-msx-series-for-rc2014
+https://github.com/dinoboards/yellow-msx-series-for-rc2014/tree/main?tab=readme-ov-file\#yellow-msx-series-for-rc2014
 \end{raggedright}
 \end{noteblock}
 \normalsize

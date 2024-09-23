@@ -122,7 +122,7 @@ If the module is not calibrated, the clock will still work, but may slowly gain 
 
 To aid in calibration, I wrote a small MSX-DOS application `RTCCALB.COM`, that allows you to calibrate the RTC against your CPU's clock.  This should allow for a good approximation.  Do not worry if you can not get the clock the sync with the CPU clock.  Just get as close as you can.  If you notice your clock is gaining or losing time, you may want to retry calibration and apply a fudge factor to your calibration.
 
-You can build the application from within this repo, or download a pre-compiled version under the github [releases](https://github.com/vipoo/yellow-msx-series-for-rc2014/releases)
+You can build the application from within this repo, or download a pre-compiled version under the github [releases](https://github.com/dinoboards/yellow-msx-series-for-rc2014/releases)
 
 ## Synchronizing with external time using ESP8266 Wifi Module.
 

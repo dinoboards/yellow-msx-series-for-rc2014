@@ -27,7 +27,7 @@ Links:
 
 The following documentation is available for Nextor:
 
-* [Getting Started Guide](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20Getting%20Started%20Guide.md): Step-by-step tutorial to get started with Nextor, wither with an emulator or with real hardware.
-* [User Manual](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20User%20Manual.md): Manual for end users, explains how Nextor expands the features of MSX-DOS 2 and contains a reference of the Nextor tools and built-in commands.
-* [Programmers Reference](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20Programmers%20Reference.md): For application developers, contains a reference of the new function calls implemented by Nextor and the new and expanded Disk BASIC commands.
-* [Driver Development Guide](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20Driver%20Development%20Guide.md): You need this if you want to develop a device driver for Nextor.
+* [Getting Started Guide](https://github.com/dinoboards/Nextor/blob/v2.1/docs/Nextor%202.1%20Getting%20Started%20Guide.md): Step-by-step tutorial to get started with Nextor, wither with an emulator or with real hardware.
+* [User Manual](https://github.com/dinoboards/Nextor/blob/v2.1/docs/Nextor%202.1%20User%20Manual.md): Manual for end users, explains how Nextor expands the features of MSX-DOS 2 and contains a reference of the Nextor tools and built-in commands.
+* [Programmers Reference](https://github.com/dinoboards/Nextor/blob/v2.1/docs/Nextor%202.1%20Programmers%20Reference.md): For application developers, contains a reference of the new function calls implemented by Nextor and the new and expanded Disk BASIC commands.
+* [Driver Development Guide](https://github.com/dinoboards/Nextor/blob/v2.1/docs/Nextor%202.1%20Driver%20Development%20Guide.md): You need this if you want to develop a device driver for Nextor.

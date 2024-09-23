@@ -92,7 +92,7 @@ Some things to try out and get a feel for your MSX on RC2014 system.
 | `BASIC`                   | If your ROM contains basic, jumps to the BASIC interpreter |
 
 
-> This page can not provide a full description of using MSX-DOS - that would be a whole book.  I suggest the [starting guide here](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20Getting%20Started%20Guide.md), [MSX-DOS User Manual](../msx/docs/command.txt), and [Nextor's User Manual](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20User%20Manual.md)
+> This page can not provide a full description of using MSX-DOS - that would be a whole book.  I suggest the [starting guide here](https://github.com/dinoboards/Nextor/blob/v2.1/docs/Nextor%202.1%20Getting%20Started%20Guide.md), [MSX-DOS User Manual](../msx/docs/command.txt), and [Nextor's User Manual](https://github.com/dinoboards/Nextor/blob/v2.1/docs/Nextor%202.1%20User%20Manual.md)
 
 > And if you would like a bit of history of the OS - where is started - https://www.msx.org/wiki/The_History_of_MSX-DOS
 
@@ -126,7 +126,7 @@ When you first boot up, the embedded disk image will be mounted as drive A.
 
 9. At this point, you can create your own `AUTOEXEC.BAT` file to customise your environments.
 
-If you created more than one parition, you may need to use the [MAPDRV](https://github.com/vipoo/Nextor/blob/v2.1/docs/Nextor%202.1%20User%20Manual.md#341-mapdrv-the-drive-mapping-tool) command to mount them.
+If you created more than one partition, you may need to use the [MAPDRV](https://github.com/dinoboards/Nextor/blob/v2.1/docs/Nextor%202.1%20User%20Manual.md#341-mapdrv-the-drive-mapping-tool) command to mount them.
 
 
 ### Xmodem for SIO/2

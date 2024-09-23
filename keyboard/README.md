@@ -44,7 +44,7 @@ The msxkeyb.com application can be used to test the keyboard matrix lines are wo
 Although the keyboard and PPI board are designed to work under MSX software, it can be used in a stock RC2014 build.
 
 You can write your own software to interface to the keyboard (see the demo app msxkeyb), or you can activate the
-custom driver written for RomWBW's HBIOS.  The drivers code is on my fork of [RomWBW](https://github.com/vipoo/RomWBW/tree/yellow-msx-boards).
+custom driver written for RomWBW's HBIOS.
 
 ## Assembly Notes
 

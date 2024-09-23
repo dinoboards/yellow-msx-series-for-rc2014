@@ -9,7 +9,7 @@ There are a couple of things that need to be undertaken to enable this integrati
 
 ## Updating the ESP8266 firmware
 
-The software written for the ESP8266 module can be found at https://github.com/vipoo/yellow-msx-esp8266-wifi-module
+The software written for the ESP8266 module can be found at https://github.com/dinoboards/yellow-msx-esp8266-wifi-module
 
 You will need to clone that repo, and ensure you have a serial/FTDI interface between your PC and the module.  See the above repo's readme file for specific instructions.
 

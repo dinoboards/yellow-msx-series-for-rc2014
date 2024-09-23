@@ -20,7 +20,7 @@ Please note, this kits does not include the switches, caps and stabilizers.  You
 
 ### Using the keyboard on RomWBW
 
-Although this kit is designed to work under MSX's software, it can be used in a stock RC2014 with a custom RomWBW build.  See the fork at [GitHub](https://github.com/vipoo/RomWBW/tree/yellow-msx-boards)
+Although this kit is designed to work under MSX's software, it can be used in a stock RC2014 a correctly configured RomWBW build.
 
 ### What is the 'Yellow MSX Series of Boards'?
 

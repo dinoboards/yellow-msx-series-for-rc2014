@@ -73,7 +73,7 @@ In the [apps-rc2014](../apps-rc2014) directory you will find the source code for
 
 I am also in the process of writing/updating my chip8 interpreter, including the [Octo - https://github.com/JohnEarnest/Octo](https://github.com/JohnEarnest/Octo) extensions, for the v9958 chip.
 
-That project can be found at: https://github.com/vipoo/rc2014-chip8/tree/v9958
+That project can be found at: https://github.com/dinoboards/rc2014-chip8/tree/v9958
 
 A short video demonstration of a Octo game running on my RC2014 - https://youtu.be/Io6a7p538Uc
 

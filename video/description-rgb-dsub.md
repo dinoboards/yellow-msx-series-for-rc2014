@@ -86,7 +86,7 @@ Please note that due to the finer pitch pins of the V9958, the soldering of this
 
 Extra care needed when inserting the V9958 into its socket - there are lots of pins, take your time to avoid bending pins.
 
-For more notes and any revisions please have a look at the [github page](https://github.com/vipoo/yellow-msx-series-for-rc2014/blob/main/video/README.md)
+For more notes and any revisions please have a look at the [github page](https://github.com/dinoboards/yellow-msx-series-for-rc2014/blob/main/video/README.md)
 
 ### Disclaimer
 
