@@ -118,7 +118,7 @@ The following images show the space bar and other stabilizers mounted onto the P
 
 ## Resources
 
-* Schematic: [schematic.pdf](./schematic.pdf "Schematic")
+* Schematic: [schematic.png](./schematic.png "Schematic")
 
 ## Other references
 
