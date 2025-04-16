@@ -13,7 +13,7 @@ The story of the prototyping and development these boards can be found at the Ha
 
 ## Summary of all kits
 
-### MSX Cassette + USB Module <img src="cassette-and-usb/images/new.png" width="30px"/>
+### MSX Cassette + USB Module
 
 <table><tr><td  >
 <a href="https://www.tindie.com/products/edit/msx-cassette-usb-module-designed-for-rc2014"><img src="cassette-and-usb/images/pcb-profile-usb-top.jpg" width="100%"/></a>

@@ -14,9 +14,6 @@ With diodes associated with every switch, it possible to identify all multi key 
 * Power, caps-lock, and code indicator LEDs
 * Designed for cherry compatible 5 pin switches
 
-### Caps and Switches
-
-Please note, this kits does not include the switches, caps and stabilizers.  You can choose to source these yourself, or include in your purchase the [Switches & Keycaps for MSX RC2014 Keyboard](https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard/) pack
 
 ### Using the keyboard on RomWBW
 
@@ -37,13 +34,13 @@ This project includes both the keyboard kit and the PPI interface board kit.
 * Keyboard PCB and components (passive components, IDC socket, and ICs)
 * PPI PCB and components (passive components, IDC socket, and ICs including the 82C55 chip)
 
-> **Please note, this kit does not include switches and keycaps.  You can choose to source these yourself, or purchase the associated switches pack [Switches & Keycaps for MSX RC2014 Keyboard](https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard/) pack**
+> Please note, this kit does not include switches and keycaps.  You can choose to source these yourself, or purchase the [Keyboard caps here](https://www.tindie.com/products/dinotron/keycap-set-for-msx-rc2014-keyboard/) and [compatible switches here](https://www.tindie.com/products/dinotron/switches-and-stabilizers-for-msx-rc2014-keyboard/)
 
 ### What else do I need to make this work?
 
 * You need a working RC2014 system (CPU, RomWBW, Clock, etc).
 * Enhanced Bus backplane required.
-* Switches, keycaps and pcb mounted stabilizers (See [Switches & Keycaps for MSX RC2014 Keyboard](https://www.tindie.com/products/dinotron/switches-keycaps-for-msx-rc2014-keyboard/)) pack
+* Switches, keycaps and PCB mounted stabilizers sold separately
 
 ### Disclaimer
 

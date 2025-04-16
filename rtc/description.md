@@ -17,9 +17,7 @@ In addition to keeping time, it also has a small amount of onboard RAM, that is 
 * MSX2 compatible Real Time Clock
 * Optional Reset on Power signal
 * MSX2+ compatible F4 cold/boot register
-* Compatible with RomWBW*
-
-\* see RomWBW's dev branch
+* Compatible with RomWBW
 
 ### Operation
 

@@ -130,10 +130,7 @@ It is possible to synchronise the RTC via the ESP8266 to an internet synchronise
 
 ## RomWBW
 
-A driver for this chip has been submitted and accepted by Wayne Warthen, currently on the pre-release dev branch.
-
-[https://github.com/wwarthen/RomWBW/blob/dev/Source/HBIOS/rp5rtc.asm](https://github.com/wwarthen/RomWBW/blob/dev/Source/HBIOS/rp5rtc.asm)
-
+A driver for this chip has been submitted and accepted by Wayne Warthen and is now included in the main release.
 
 ## Port Mappings
 

@@ -67,7 +67,7 @@ I have tested running at 20Mhz on my specific back-plane and set of modules with
 
 ### Compatibility with latest build of RomWBW identified
 
-> 2024-07-21: Please note, a recent incompatibility of the Turbo CPU with the latest build of RomWBW has been identified.  The issue appears with the serial SIO/2 driver not functioning shortly after booting.  
+> 2024-07-21: Please note, a recent incompatibility of the Turbo CPU with the latest build of RomWBW has been identified.  The issue appears with the serial SIO/2 driver not functioning shortly after booting.
 
 I am not sure yet what the issue is, nor exactly when it got introduced.  But a quick fix is to build with the latest version of RomWBW with the interrupts disabled.  To do this follow these steps:
 
@@ -178,7 +178,7 @@ If you instead short the top 2 pins, then the CPU will be boosted to the speed o
 
 This jumper is typically just shorted.  This jumper maps the 3.6864Mhz clock signal to the CPU slow down speed.  This is the speed the CPU will be clocked at, when any I/O operations are performed (eg when the CPU talks to your other modules such at the serial or video modules).  For MSX configuration, this jumper needs to be shorted.
 
-<p align="center">
+<div style="text-align: center;">
 <img src="images/jumpers.jpg" alt="Jumpers" width="40%"/>
 </p>
 
