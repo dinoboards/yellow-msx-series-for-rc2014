@@ -176,7 +176,7 @@ Please note that due to the finer pitch pins of the V9958, the soldering of this
 
 Extra care needed when inserting the V9958 into its socket - there are lots of pins, take your time to avoid bending pins.
 
-> **Extremely important to ensure the jumpers are in the correction position for your chosen Video Display Processor.  Incorrect selection may result in damage to your video processor.  See the silkscreen for the 2 relevant jumpers.  Short the top 2 pins only for a V9958.  Short the bottom 2 pins only for a V9938.**
+> **Extremely important to ensure the jumpers are in the correction position for your chosen Video Display Processor.  Incorrect selection may result in damage to your video processor.  See the silkscreen for the 2 relevant jumpers.  V3.8 and V3.9 have the top pins for the V9938 configuration and the bottom pins for V9958**
 
 ## License
 
