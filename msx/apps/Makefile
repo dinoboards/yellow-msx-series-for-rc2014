@@ -20,7 +20,7 @@ SRC := ./
 
 #
 .PHONY: all
-all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),xmodem reboot ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl))
+all:  $(addsuffix .sys,$(addprefix $(BIN),hello prnt ftdi sio2 tty)) $(addsuffix .com,$(addprefix $(BIN),xmodem reboot ctty mode fdisk fossil sraltest service memory helloworld clrdir dots lines mbrot vramtest extbio rs232tst fosiltst fossilon rtccalb term esp8266 romflash chip8 chip8asm muflash siocfg usbtst usbctrl hdrpt))
 
 include	Makefile.rules.mk
 
@@ -81,6 +81,10 @@ $(eval $(call relocatable,fossil))
 service_files = $(call app_file,service)
 $(BIN)service.com: $(addprefix $(BIN),$(service_files)) $(MSXDOS_LIB)
 service.com.crt_enable_commandline:=1
+
+hdrpt_files = $(call app_file,hdrpt)
+$(BIN)hdrpt.com: $(addprefix $(BIN),$(hdrpt_files)) $(MSXDOS_LIB)
+hdrpt.com.crt_enable_commandline:=1
 
 memory_files = $(call app_file,memory)
 $(BIN)memory.com: $(addprefix $(BIN),$(memory_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(GETSLT_LIB)
