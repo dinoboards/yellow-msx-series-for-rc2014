@@ -9,7 +9,7 @@
 [submodule "msxsys-build/msxsyssrc"]
 	path = msx/msxsys-build/msxsyssrc
 	url = git@github.com:dinoboards/msxsrcsrc.git
-	branch = dean/main
+	branch = dean/main3
 [submodule "referened-repos/MSX-Development"]
 	path = referened-repos/MSX-Development
 	url = git@github.com:ducasp/MSX-Development.git
