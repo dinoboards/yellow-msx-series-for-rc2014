@@ -344,9 +344,19 @@ COPY MYTEXT.TXT PRN
 
 ## Resources
 
-* Schematic: [schematic](./schematic.pdf)
+* Schematic 1.0: [schematic 1.0](./schematic1.0.pdf)
+* Schematic 1.3: [schematic 1.3](./schematic.pdf)
+* CH376 Image [image](./images/ch376s.jpg)
 * Datasheet: [LM311N Voltage Comparator](./datasheets/lm311-n.pdf)
 * Datasheet: [CH376](./datasheets/CH376DS1.PDF)
+
+## CH376
+
+Please note there are at least 2 form factors for the CH376 module.  See blog post: [https://www.dinoboards.com.au/2023/11/19/CH376-Module-Challenge.html](https://www.dinoboards.com.au/2023/11/19/CH376-Module-Challenge.html)
+
+Here is a close up image of the module I have used:
+
+<a href="./images/ch376s.jpg" target="_newwindow"><img src="./images/ch376s.jpg" width="20%"/></a>
 
 ## References
 
