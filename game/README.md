@@ -9,7 +9,7 @@ The YM2149 sound and controller board, designed for RC2014 systems, is part of p
 Highlights:
 * YM2149 PSG - 3 channel audio, +1 noise channel
 * 2 Controller Inputs (joystick, game-pad, and other input types) - MSX compatible
-* optional additional audio input lines, for mixing into the audio out.
+* optional additional audio output line, for connecting to optional MSX-MUSIC module
 
 A video of it in operation with the V9958 Video board at: https://youtu.be/dUCEZpBlxgY
 
@@ -79,25 +79,26 @@ The following table describes the registers of the PSG:
 
 Assembled
 ---------
-<img src="images/assembled.jpg" alt="Assembled" width="100%"/>
+<img src="images/assembled.jpg" alt="Assembled" width="70%"/>
 
 Kit
 ---------
-<img src="images/kit.jpg" alt="Kit" width="100%"/>
+<img src="images/kit.jpg" alt="Kit" width="70%"/>
 
 PCB Front
 ---------
-<img src="images/pcb-front.jpg" alt="PCB front" width="100%"/>
+<img src="images/pcb-front.jpg" alt="PCB front" width="70%"/>
 
 PCB Back
 ---------
-<img src="images/pcb-back.jpg" alt="PCB back" width="100%"/>
+<img src="images/pcb-back.jpg" alt="PCB back" width="70%"/>
 
 Installed
 ---------
-<img src="images/installed.jpg" alt="Installed" width="100%"/>
+<img src="images/installed.jpg" alt="Installed" width="70%"/>
 
 ## Resources
 
-* Schematic: [schematic.pdf](./schematic.pdf "Schematic")
+* Schematic 1.6: [schematic.pdf](./schematic.pdf "Schematic")
+* Schematic 1.1: [schematic.pdf](./schematic1.1.pdf "Schematic")
 * [YM2149 Datasheet](../datasheets/ym2149.pdf)
