@@ -161,13 +161,48 @@ So to make this a little easier, the kit is supplied with an 8pin DIP socket, wi
 
 Please pay careful attention when you insert the oscillator into the DIP socket (or directly in the PCB), to its orientation.  If you get this wrong, you will almost certainly destroy the oscillator.  You may guess how I found this out!
 
-## Jumper settings for clock control
+## Jumper settings for clock control (V1.8 and up)
 
 ### CLK1 & CLK2
 
 In the top right of the PCB, you will see all the jumper settings to manage the clock signals for your RC2014.
 
-The jumpers CLK1 and CLK2, set the clock rate to be transmitted on the respective RC2014 clock lines.  Modules such at the SIO/2 use these signals to control the baud rates for its serial communication.  For default MSX configuration, set CLK1 to 3.6864 and CLK2 to 0.3073.
+The jumpers CLK1 and CLK2, set the clock rate to be optionally transmitted to the respective RC2014 bus lanes.  Modules such at the SIO/2 use these signals to control the baud rates for its serial communication.  For default MSX configuration, set CLK1 to 3.6864 and CLK2 to 0.3073.
+
+**IMPORTANT**: If you have an external clock source on your system, do not populate the respective CLKx jumper.
+
+### TURBO
+The Turbo Jumper, is use to set the CPU's boost speed.  If you short the bottom 2 pins, the CPU will never run faster than 7.3728 Mhz (stock RC2014) - this is a safe speed that matches the stock RC2014 CPU module.
+
+If you instead short the top 2 pins, then the CPU will be boosted to the speed of the installed oscillator.
+
+Typically the top two pins are shorted to get maximum turbo performance from your CPU.
+
+### J1 SLOW-CLOCK
+
+> This jumper is different for V1.8 and above.
+
+This jumper allows you to configure the source of the 'slow clock' for the CPU.  When the CPU is communicating with I/O devices, such as the Serial I/O modules, the CPU frequency will be controlled by this jumper.
+
+If CLKx jumpers are configured, then shorting the 2 left pins or the 2 right pins, will configure your CPU slow clock as per the respective CLKx setting.
+
+If the CLKx jumpers are not set, then the CPU slow clock will be driven by your external clock source (A clock module or the V9958 with Bus Clock jumper applied)
+
+Typically the two left pins are shorted to set the slow clock to the CLK1 source.
+
+
+<div style="text-align: center;">
+<img src="images/turbo-cpu-1.8-jumpers.jpg" alt="Jumpers" width="40%"/>
+</div>
+
+
+## Jumper settings for clock control (prior to V1.8)
+
+### CLK1 & CLK2
+
+In the top right of the PCB, you will see all the jumper settings to manage the clock signals for your RC2014.
+
+The jumpers CLK1 and CLK2, set the clock rate to be transmitted on the respective RC2014 bus lanes.  Modules such at the SIO/2 use these signals to control the baud rates for its serial communication.  For default MSX configuration, set CLK1 to 3.6864 and CLK2 to 0.3073.
 
 ### TURBO
 The Turbo Jumper, is use to set the CPU's boost speed.  If you short the bottom 2 pins, the CPU will never run faster than 7.3728 Mhz (stock RC2014) - this is a safe speed that matches the stock RC2014 CPU module.
@@ -180,7 +215,7 @@ This jumper is typically just shorted.  This jumper maps the 3.6864Mhz clock sig
 
 <div style="text-align: center;">
 <img src="images/jumpers.jpg" alt="Jumpers" width="40%"/>
-</p>
+</div>
 
 
 ## PLD Code
@@ -201,27 +236,40 @@ The 3 way slider's state is sent to these 2 chips to allow the user to select 2 
 
 Please note that this is a kit, produced by a non-professional (me) for hackers, DIYers' and retro lovers, to tinker with. I will do my best to answer any support questions you may have.
 
-## Images
-
-Installed
----------
-<img src="images/installed.jpg" alt="Installed" width="100%"/>
+## Images (V1.8)
 
 Assembled
 ---------
-<img src="images/assembled-profile.jpg" alt="Assembled Profiled" width="100%"/>
-
-<img src="images/assembled-top.jpg" alt="Assembled Top" width="100%"/>
+<img src="images/pcb1.8-assembled.jpg" alt="Assembled Top" width="80%"/>
 
 PCB
 ---------
-<img src="images/top.jpg" alt="PCB Top" width="100%"/>
+<img src="images/pcb1.8-top.jpg" alt="PCB Top" width="80%"/>
 
-<img src="images/back.jpg" alt="PCB Back" width="100%"/>
+<img src="images/pcb1.8-back.jpg" alt="PCB Back" width="80%"/>
+
+
+## Images (Prior to V1.8)
+
+Installed
+---------
+<img src="images/installed.jpg" alt="Installed" width="80%"/>
+
+Assembled
+---------
+<img src="images/assembled-profile.jpg" alt="Assembled Profiled" width="80%"/>
+
+<img src="images/assembled-top.jpg" alt="Assembled Top" width="80%"/>
+
+PCB
+---------
+<img src="images/top.jpg" alt="PCB Top" width="80%"/>
+
+<img src="images/back.jpg" alt="PCB Back" width="80%"/>
 
 Kit
 ---------
-<img src="images/kit.jpg" alt="PCB Back" width="100%"/>
+<img src="images/kit.jpg" alt="PCB Back" width="80%"/>
 
 ## Resources
 
