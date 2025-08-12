@@ -273,6 +273,8 @@ Kit
 
 ## Resources
 
+* Schematic 1.8: [schematic 1.8.pdf](./schematic1.8.pdf "Schematic 1.8")
+
 * Schematic: [schematic.pdf](./schematic.pdf "Schematic")
 
 ## References
