@@ -165,25 +165,36 @@ usb_error op_get_config_descriptor(_working *const working) __sdcccall(1) {
 
 usb_error read_all_configs(enumeration_state *const state) {
   uint8_t           result;
-  _usb_state *const work_area = get_usb_boot_area();
+  _usb_state *const work_area   = get_usb_boot_area();
+  uint8_t           retry_count = 0;
+  _working          working;
 
-  _working working;
   memset(&working, 0, sizeof(_working));
   working.state = state;
 
-  CHECK(usbtrn_get_descriptor(&working.desc));
+retry:
+  CHECKD(usbtrn_get_descriptor(&working.desc));
 
   state->next_device_address++;
   working.current_device_address = state->next_device_address;
-  CHECK(usbtrn_set_address(working.current_device_address));
+  CHECKD(usbtrn_set_address(working.current_device_address));
 
   for (uint8_t config_index = 0; config_index < working.desc.bNumConfigurations; config_index++) {
     working.config_index = config_index;
 
-    CHECK(op_get_config_descriptor(&working));
+    CHECKD(op_get_config_descriptor(&working));
   }
 
   return USB_ERR_OK;
+
+done:
+  if (result == USB_ERR_STALL && retry_count == 0) {
+    retry_count++;
+    ch_command(CMD1H_CLR_STALL);
+    ch_get_status();
+    goto retry;
+  }
+  return result;
 }
 
 usb_error enumerate_all_devices(void) {

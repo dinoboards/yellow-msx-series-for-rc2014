@@ -96,6 +96,13 @@ extern int printf(const char *msg, ...);
       return result;                                                                                                               \
   }
 
+#define CHECKD(fn)                                                                                                                 \
+  {                                                                                                                                \
+    result = fn;                                                                                                                   \
+    if (result != USB_ERR_OK)                                                                                                      \
+      goto done;                                                                                                                   \
+  }
+
 #define RETURN_CHECK(fn)                                                                                                           \
   {                                                                                                                                \
     result = fn;                                                                                                                   \

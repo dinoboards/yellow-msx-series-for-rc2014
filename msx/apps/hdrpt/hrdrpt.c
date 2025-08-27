@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
 // clang-format off
 #define DI        \
@@ -22,8 +22,8 @@ uint8_t main(const int argc, const char *argv[]) {
   (void)argv;
 
   DI;
-  AYSEL=3;
-  AY_RDAT=255;
+  AYSEL                  = 3;
+  AY_RDAT                = 255;
   const uint8_t response = AY_RIN;
   EI;
 
