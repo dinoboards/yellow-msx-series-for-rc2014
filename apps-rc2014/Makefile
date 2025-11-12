@@ -5,7 +5,13 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 BIN = ../bin/
-ZCC := zcc +cpm -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 -create-app
+
+USER_ID := $(shell id -u ${USER})
+GROUP_ID := $(shell id -g ${USER})
+Z88DK_DOCKER := docker run --rm -w /host/$${PWD} -v /:/host/ -u $(USER_ID):$(GROUP_ID) -t z88dk/z88dk
+Z88DK_DOCKER_MAKE := $(Z88DK_DOCKER)
+
+ZCC := $(Z88DK_DOCKER_MAKE) zcc +cpm -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -pragma-define:CLIB_32BIT_FLOAT=1 -create-app
 
 APPS := dots lines mbrot control msxkeyb rtctest
 
