@@ -119,6 +119,13 @@ If you wish to reset your MegaFlashROM, follow the official process to restore y
 4. reboot your system, holding the UP arrow key
 5. Choose option F4 - Install SD kernel
 
+## Programming using minipro
+
+```bash
+minipro -z -u --skip_verify -p ATF16V8B -w slot-backplane-driver.jed
+```
+
+
 
 ### Compatibility Update
 

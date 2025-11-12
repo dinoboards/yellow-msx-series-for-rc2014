@@ -70,6 +70,13 @@ Due to space restrictions, the RGBs output is via a mini-din connector, thus nec
 [Click here for full Details](./README-ADV.md)
 
 
+## Programming using minipro
+
+```bash
+minipro -z -u --skip_verify -p ATF16V8B -w v9958-cs-v3.8-and-up.jed
+```
+
+
 
 ## License
 Copyright 2021 Dean Netherton

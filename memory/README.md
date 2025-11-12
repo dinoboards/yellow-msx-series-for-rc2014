@@ -189,7 +189,18 @@ Previous Revision
 
 As the slot selection signals are produced by the PPI interface board,
 The Memory board requires a wiring to the PPI Interface board.
+
 ## Resources
 
 * Schematic: [schematic.pdf](./schematic.pdf "Schematic")
 
+
+## Programming chips using minipro
+
+```bash
+minipro -z -p SST39SF040 -w ./msx/bin/<file-file-name>.rom
+
+minipro -z -u --skip_verify -p ATF16V8C -w turbo-cpu-mwait.jed
+minipro -z -u -p "ATF22V10C(UES)" -w turbo-cpu.jed
+
+```
