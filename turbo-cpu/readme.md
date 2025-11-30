@@ -285,3 +285,11 @@ Kits available at: https://www.tindie.com/products/dinotron/?????
 
 * http://www.6502.org/mini-projects/clock-switching/clock-switching.html
 * http://kb.gr8bit.ru/KB0009/GR8BIT-KB0009-Accelerating-your-GR8BIT.html
+
+## Programming chips using minipro
+
+```bash
+minipro -z -u --skip_verify -p ATF16V8C -w turbo-cpu-mwait.jed
+minipro -z -u -p "ATF22V10C(UES)" -w turbo-cpu.jed
+
+```
