@@ -195,12 +195,12 @@ muflash.com.crt_enable_commandline:=1
 
 .PHONY: bin/chip8.com
 bin/chip8.com:
-	@$(MAKE) --no-print-directory -C chip8 chip8 $(JOBS)
+	@$(MAKE) --no-print-directory -C chip8 chip8
 	cp ./chip8/bin/chip8.com ./bin/chip8.com
 
 .PHONY: bin/chip8asm.com
 bin/chip8asm.com:
-	@$(MAKE) --no-print-directory -C chip8 chip8asm $(JOBS)
+	@$(MAKE) --no-print-directory -C chip8 chip8asm
 	cp ./chip8/bin/chip8asm.com ./bin/chip8asm.com
 
 .PHONY: test
@@ -208,7 +208,7 @@ test: chip8test
 
 .PHONY: chip8test
 chip8test:
-	$(MAKE) --no-print-directory -C chip8 test $(JOBS)
+	$(MAKE) --no-print-directory -C chip8 test
 
 .PHONY: clean
 clean:
