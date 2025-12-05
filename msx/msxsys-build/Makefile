@@ -24,20 +24,21 @@ ifneq ($(WORKING_PREP),0)
 endif
 
 $(WRK_DIR)msx.inc: base300.inc
-	@unix2dos -f -n "$<" "$@"
-	./tools/country-to-code.sh $(COUNTRY)
+	temp_file="$@.tmp";
+	unix2dos -f -n "$<" "$$temp_file"
 	CNTRY=$$(./tools/country-to-code.sh $(COUNTRY))
-	echo "$$(echo -n CNTRY  EQU  $${CNTRY}; cat "$@")" > "$@"
-	echo "$$(echo; cat "$@")" > "$@"
+	echo "$$(echo -n CNTRY  EQU  $${CNTRY}; cat "$$temp_file")" > "$$temp_file"
+	echo "$$(echo; cat "$$temp_file")" > "$$temp_file"
 	if [ "$(RTC)" = "with" ]; then
-		echo "$$(echo -n RTC  EQU  1; cat "$@")" > "$@"
+		echo "$$(echo -n RTC  EQU  1; cat "$$temp_file")" > "$$temp_file"
 	else
-		echo "$$(echo -n RTC  EQU  0; cat "$@")" > "$@"
+		echo "$$(echo -n RTC  EQU  0; cat "$$temp_file")" > "$$temp_file"
 	fi
-	echo "$$(echo; cat "$@")" > "$@"
-	unix2dos -f -n "$@" "$@"
+	echo "$$(echo; cat "$$temp_file")" > "$$temp_file"
+	unix2dos -f -n "$$temp_file" "$$temp_file"
+	mv "$$temp_file" "$@"
 
-$(WRK_DIR)%.mac: msxsyssrc/$(MSXSYS)/%.mac
+$(WRK_DIR)%.mac: msxsyssrc/$(MSXSYS)/%.mac $(WRK_DIR)msx.inc
 	@unix2dos -f -n "$<" "$@"
 
 $(WRK_DIR)%.l80: msxsyssrc/$(MSXSYS)/%.l80

@@ -4,6 +4,9 @@ SHELL := /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
+#set JOBS to "-j" is not set
+JOBS ?= -j
+
 ZCCRELFLAGS=
 ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node500000 --allow-unsafe-read
@@ -195,12 +198,12 @@ muflash.com.crt_enable_commandline:=1
 
 .PHONY: bin/chip8.com
 bin/chip8.com:
-	@$(MAKE) --no-print-directory -C chip8 chip8
+	@$(MAKE) --no-print-directory -C chip8 chip8 $(JOBS)
 	cp ./chip8/bin/chip8.com ./bin/chip8.com
 
 .PHONY: bin/chip8asm.com
 bin/chip8asm.com:
-	@$(MAKE) --no-print-directory -C chip8 chip8asm
+	@$(MAKE) --no-print-directory -C chip8 chip8asm $(JOBS)
 	cp ./chip8/bin/chip8asm.com ./bin/chip8asm.com
 
 .PHONY: test
@@ -208,7 +211,7 @@ test: chip8test
 
 .PHONY: chip8test
 chip8test:
-	$(MAKE) --no-print-directory -C chip8 test
+	$(MAKE) --no-print-directory -C chip8 test $(JOBS)
 
 .PHONY: clean
 clean:
