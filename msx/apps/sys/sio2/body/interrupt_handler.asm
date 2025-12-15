@@ -21,7 +21,7 @@ sio_interrupt:
 
 	EXX
 	LD	HL, _sio_data_count
-	LD	D, 48			; BUFFER HIGH MARK
+	LD	D, 40			; BUFFER HIGH MARK
 	EXX
 
 	LD	DE, RC_SIOB_DAT << 8 | RC_SIOB_CMD		; E => CMD, D => DAT

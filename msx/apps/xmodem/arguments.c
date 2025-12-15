@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+/* Set the BAUD rate using the MODE COMx command */
+
 const char *arg_p_file_name  = NULL;
 uint8_t     arg_receive_file = false;
 uint8_t     arg_send_file    = false;
@@ -28,9 +30,7 @@ void upcase_string(char *str) {
 uint8_t abort_with_help(void) {
   printf("Usage: \r\n\r\n"
          " XMODEM COMn <filename>\r\n"
-         "   receive file on COMm and save\n\r\n"
-         " XMODEM <filename> COMn\r\n"
-         "   send file to COMm port\n\r\n");
+         "   receive file on COMm\n\r\n");
 
   exit(1);
 

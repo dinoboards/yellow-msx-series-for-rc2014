@@ -1,5 +1,5 @@
 #include "receive.h"
-#include "arguments.h"
+// #include "arguments.h"
 #include "buffer.h"
 #include "crc16.h"
 #include "file_storage.h"
@@ -65,7 +65,7 @@ static uint8_t read_single_char(void) {
 static uint8_t read_block(void) {
   uint16_t      actual_size = PACKET_SIZE - 1;
   const uint8_t r           = serial_demand_read(port_number, block + 1, &actual_size, 3000);
-  return r == 0;
+  return r == 0 && actual_size == (PACKET_SIZE - 1);
 }
 
 /**
@@ -85,7 +85,7 @@ uint8_t xmodem_receive(const char *p_file_name, uint32_t *const retrieved_bytes,
   waiting_for_info_packet = false;
   block_size              = DATA_SIZE;
 
-  // serial_purge_buffers(port_number);
+  serial_purge_buffers(port_number);
 
   printf(CURSOR_OFF);
   printf(rotatingChar[rotatingIndex]);
@@ -99,12 +99,12 @@ uint8_t xmodem_receive(const char *p_file_name, uint32_t *const retrieved_bytes,
   while (true) {
     if (!read_single_char()) {
     nak_and_retry:
-      // serial_purge_buffers(port_number);
+      serial_purge_buffers(port_number);
       serial_write_char_h(NAK);
       retries++;
 
       if (retries > MAX_RETRIES) {
-        printf("Too many errors\r\n");
+        printf("Too many errors.  Retired %d times\r\n", retries);
         goto aborted;
       }
 

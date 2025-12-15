@@ -15,8 +15,7 @@ PARITY=p
 
 DATA=d
     Specifies the number of data bits in a character. Valid values for d are
-    in the range 5 through 8. The default value is 8. Not all computers
-    support the values 5 and 6.
+    in the range 7 through 8. The default value is 8.
 
 STOP=s
     Specifies the number of stop bits that define the end of a character: 1,
@@ -26,13 +25,14 @@ STOP=s
 */
 
 uint32_t baud_rate;
-uint16_t parity; // one of SERIAL_PARITY_NONE, SERIAL_PARITY_ODD, SERIAL_PARITY_EVEN, SERIAL_PARITY_MARK, SERIAL_PARITY_SPACE
-uint16_t stop_bit_count; // one of SERIAL_STOPBITS_1, SERIAL_STOPBITS_15, SERIAL_STOPBITS_2
 uint8_t  port_number;
-uint8_t  data_bits;
+// uint16_t parity; // one of SERIAL_PARITY_NONE, SERIAL_PARITY_ODD, SERIAL_PARITY_EVEN, SERIAL_PARITY_MARK, SERIAL_PARITY_SPACE
+// uint16_t stop_bit_count; // one of SERIAL_STOPBITS_1, SERIAL_STOPBITS_15, SERIAL_STOPBITS_2
+// uint8_t  data_bits;
 
 #define process_port_optional_args process_port_baud
 
+/*
 uint8_t process_unknown_arg(const char *argv) {
   printf("Unknown argument: %s\r\n", argv);
   return 255;
@@ -98,13 +98,15 @@ uint8_t process_port_parity(const char *argv) {
   return process_port_data(argv);
 }
 
+*/
+
 uint8_t process_port_baud(const char *argv) {
   if (strncmp(argv, "BAUD=", 5) == 0) {
     baud_rate = atol(argv + 5);
     return 0;
   }
 
-  return process_port_parity(argv);
+  return 1; /*process_port_parity(argv);*/
 }
 
 uint8_t process_port(const int argc, char **argv) {
@@ -120,16 +122,18 @@ uint8_t process_port(const int argc, char **argv) {
 
   for (int i = 2; i < argc; i++) {
     if (process_port_optional_args(argv[i])) {
-      printf("Usage: mode COMm[:] [BAUD=b] [PARITY=p] [DATA=d] [STOP=s] [RETRY=r]\r\n");
+      printf("Usage: mode COMm[:] [BAUD=b]\r\n");
 
       return 255;
     }
   }
 
   printf("COM port_number number: %d\r\n", port_number);
+  /*
   printf("Baud rate: %ld\r\n", baud_rate);
   printf("Parity: %04X\r\n", parity);
   printf("Stop bit count: %04X\r\n", stop_bit_count);
+  */
 
   return 0;
 }

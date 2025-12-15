@@ -12,7 +12,7 @@ ifdef RELEASE
 ZCCRELFLAGS=-SO3 --max-allocs-per-node500000 --allow-unsafe-read
 endif
 
-LIBS := -I./sys -I./fdisk/ -I./libraries/msx/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./xrecv2 -I./libraries/usb -I./libraries
+LIBS := -I./sys -I./fdisk/ -I./libraries/msx/ -I./telnet/ -I./libraries/fusion/ -I./libraries/msxbios -I./libraries/msxdos -I./libraries/fossil  -I./libraries/delay -I./libraries/usb -I./libraries
 
 # -DSTACK_TRACE_ENABLED
 ZCC := zcc +msx -subtype=msxdos2 -compiler=sdcc --vc -Cs --Werror -lmath32 -Cc-D__MATH_MATH32 -D__MATH_MATH32 -g -pragma-define:CLIB_32BIT_FLOAT=1 -DAMALLOC1 -pragma-define:CRT_MODEL=0 -pragma-define:CRT_COMMANDLINE_REDIRECTION=0 $(ZCCRELFLAGS) $(LIBS)
@@ -159,10 +159,6 @@ $(BIN)fossilon.com: $(addprefix $(BIN),$(fossilon_files)) $(EXTBIO_LIB) $(GETSLT
 term_files = $(call app_files,term,memmap-override.asm)
 $(BIN)term.com: $(addprefix $(BIN),$(term_files)) $(MSXDOS_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB)
 term.com.crt_enable_commandline:=1
-
-xrecv2_files = $(call app_files,xrecv2,memmap-override.asm print.c)
-$(BIN)xrecv2.com: $(addprefix $(BIN),$(xrecv2_files)) $(MSXDOS_LIB) $(FOSSIL_LIB) $(DELAY_LIB) $(EXTBIO_LIB) $(FUSION_LIB) $(GETSLT_LIB) $(XMODEM_LIB)
-xrecv2.com.crt_enable_commandline:=1
 
 rtccalb_files = $(call app_files,rtccalb,memmap-override.asm print.c)
 $(BIN)rtccalb.com: $(addprefix $(BIN),$(rtccalb_files)) $(MSXDOS_LIB)

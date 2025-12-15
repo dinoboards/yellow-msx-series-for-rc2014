@@ -35,7 +35,7 @@ cbios:
 	cp -u ./cbios/derived/bin/*.rom ./bin
 
 
-INCLUDED_APPS 	:= akid.com esp8266.com iteratn.pt3 mbrot.com memtest.com pt3play.com term.com testram.com
+INCLUDED_APPS 	:= akid.com iteratn.pt3 mbrot.com memtest.com pt3play.com term.com testram.com xmodem.com
 INCLUDED_SYSTEM := mode.com extbio.com memory.com clrdir.com fdisk.com ftdi.sys prnt.sys rtccalb.com service.com sio2.sys
 INCLUDED_ROOT 	:= AUTOEXEC.BAT
 
@@ -116,19 +116,11 @@ clean:
 VPATH = ./tools/xmodem:./bin/
 PASMO := pasmo --public -v -I ./bin/
 
-tools: apps/bin/xrecv2.com bin/chkspd.com
+tools: bin/chkspd.com
 
 bin/chkspd.com: ./tools/chkspd/chkspd.asm
 	@mkdir -p bin
 	$(PASMO) $< $@
-
-.PHONY: apps/bin/xrecv2.com
-apps/bin/xrecv2.com:
-	@make -C apps bin/xrecv2.com --no-print-directory
-
-nextor-rc2014/extras/system/xrecv2.com: apps/bin/xrecv2.com
-	@mkdir -p nextor-rc2014/extras/system
-	cp -up apps/bin/xrecv2.com nextor-rc2014/extras/system/xrecv2.com
 
 bin/%.com: %.asm
 	@mkdir -p bin
