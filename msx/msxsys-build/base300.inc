@@ -4,6 +4,9 @@
 OPTROM_MODE	EQU	1			; OPTROM/LOGO ROM LOADED FROM SLOT 0/OPTENT
 OPTENT_ALT	EQU	08010H			; SUBROM WILL LOAD OPTROM AT THIS ADDRESS IN IN MODE 1
 
+VDP_DATA       equ     098H             ; VDP data port (VRAM read/write)
+VDP_ADDR       equ     099H             ; VDP address (write only)
+
 KYRWS	EQU	9
 
 MSXVER	EQU	2			; MSX version
