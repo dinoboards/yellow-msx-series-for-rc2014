@@ -140,8 +140,8 @@ These binaries are for flashing onto the SST39SF040 ROM for the MSX Memory Modul
 |--------------------------------------------|-------------------------------------------------------------------|
 | yellow-msx-pal-rc2104.rom                  | The CBIOS based build configured for 50Hz                         |
 | yellow-msx-ntsc-rc2104.rom                 | The CBIOS based build configured for 60Hz                         |
-| msxsyssrc-rc2014-<country>-with-rtc.rom    | The MSXSYS based build per country settings, with RTC enabled     |
-| msxsyssrc-rc2014-<country>-without-rtc.rom | The MSXSYS based build per country settings, with RTC disabled    |
+| msxsyssrc-rc2014-\<country\>-with-rtc.rom    | The MSXSYS based build per country settings, with RTC enabled     |
+| msxsyssrc-rc2014-\<country\>-without-rtc.rom | The MSXSYS based build per country settings, with RTC disabled    |
 
 > The *without-rtc* versions are required for configuration without the RTC module - otherwise system will not start
 
