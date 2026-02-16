@@ -11,18 +11,18 @@ Device   g22v10 ;
 
 /************* INPUT PINS *********************/
 PIN  1 = CLK;
-PIN  2 = !M1;
-PIN  3 = !RD;
+// PIN  2 = NC;
+// PIN  3 = NC;
 PIN  4 = !IORQ;
-PIN  5 = !MREQ;
-//PIN  6 = NC;
+// PIN  5 = NC;
+// PIN  6 = NC;
 PIN  7 = !MODE_FAST;
 PIN  8 = !MODE_NORMAL;
 PIN  9 = !RFSH;
-//PIN 10 = NC;
-//PIN 11 = NC;
+// PIN 10 = NC;
+// PIN 11 = NC;
 PIN 12 = GND;
-//PIN 13 = ;
+// PIN 13 = NC;
 
 /**************** OUTPUT PINS *********************/
 //PIN 14 = NC;
@@ -34,7 +34,7 @@ PIN 19 = IORQ_SLOW_DOWN;
 PIN 20 = !BRAKE;
 PIN 21 = C4;
 PIN 22 = C5;
-//PIN 23 = NC;
+// PIN 23 = NC;
 PIN 24 = VCC;
 
 field WAITCOUNT = [C0, C1, C2, C3, C4];
