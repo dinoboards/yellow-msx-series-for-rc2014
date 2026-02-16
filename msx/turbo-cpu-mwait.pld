@@ -54,14 +54,14 @@ MODE_MIDDLE=!MODE_NORMAL & !MODE_FAST;
 
 WAIT_REQ = (MODE_NORMAL & MREQ & !RFSH & M1) # (!MODE_NORMAL & MREQ & !RFSH) # (!MODE_NORMAL & IORQ);
 
-T0 = WAIT_REQ & !T1 & !ACTIVE & !T5;
+ACTIVE.D = T0 # _T1 # _T2 # _T3; /*ACTIVE IS TRUE, WHEN IN T1, T2, T3 OR T4) */
+
+T0 = WAIT_REQ & !T1 & !ACTIVE & !T5 & !T6;
 _T1 = T1 & !T2;
 _T2 = T2 & !T3 & MODE_MIDDLE;
 _T3 = T3 & !T4;
 _T4 = (T4 # (!MODE_MIDDLE & T2));  /* IF NOT MODE_MIDDLE, THERE IS NO T2..T3) */
 _T5 = T5 & !T6;
-
-ACTIVE.D = T0 # _T1 # _T2 # _T3; /*ACTIVE IS TRUE, WHEN IN T1, T2, T3 OR T4) */
 
 T1.D = T0;
 T2.D = _T1;
@@ -70,5 +70,5 @@ T4.D = _T3;
 T5.D = _T4;
 T6.D = _T5;
 
-CWAIT = BWAIT # ACTIVE # (T0 & !T6);
+CWAIT = BWAIT # (T0 # _T1 # _T2 # _T3) # (T0 & !T6);
 
