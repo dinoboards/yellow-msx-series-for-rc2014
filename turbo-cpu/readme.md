@@ -232,6 +232,11 @@ The ATF16V8 is responsible for issuing any additional WAIT states to the CPU.
 
 The 3 way slider's state is sent to these 2 chips to allow the user to select 2 turbo modes or a turbo off mode.
 
+[msx/turbo-cpu-mwait-fast.pld](../msx/turbo-cpu-mwait-fast.pld)
+
+An alternative for the wait state generator to run the system with tighter wait states for faster operation.
+
+
 ## Disclaimer
 
 Please note that this is a kit, produced by a non-professional (me) for hackers, DIYers' and retro lovers, to tinker with. I will do my best to answer any support questions you may have.

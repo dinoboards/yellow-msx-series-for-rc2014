@@ -15,7 +15,7 @@ pmsxsysromimages:
 	@$(MAKE) $(JOBS) -O msxsysromimages --no-print-directory
 	printf "Built bin/msxsyssrc-rc2014-<country>-<with>-rtc.rom (s)\r\n\r\n"
 
-jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/turbo-cpu-mwait.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed bin/v9958-cs-v3.8-and-up.jed
+jeds: bin/mem-selector.jed bin/rom-mapper.jed bin/turbo-cpu.jed bin/turbo-cpu-mwait.jed bin/turbo-cpu-mwait-fast.jed bin/slot-backplane-driver.jed bin/v9958-cs.jed bin/v9958-cs-v3.8-and-up.jed
 
 bin/%.jed:
 	./build-jed.sh $<
@@ -24,6 +24,7 @@ bin/mem-selector.jed: mem-selector.pld
 bin/rom-mapper.jed: rom-mapper.pld
 bin/turbo-cpu.jed: turbo-cpu.pld
 bin/turbo-cpu-mwait.jed: turbo-cpu-mwait.pld
+bin/turbo-cpu-mwait-fast.jed: turbo-cpu-mwait-fast.pld
 bin/slot-backplane-driver.jed: slot-backplane-driver.pld
 bin/v9958-cs.jed: v9958-cs.pld
 bin/v9958-cs-v3.8-and-up.jed: v9958-cs-v3.8-and-up.pld
