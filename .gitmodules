@@ -1,6 +1,6 @@
 [submodule "cbios"]
 	path = msx/cbios
-	url = git@github.com:dinoboards/cbios.git
+	url = https://codeberg.org/dinoboards/cbios.git
 	branch = main
 [submodule "nextor"]
 	path = msx/nextor
